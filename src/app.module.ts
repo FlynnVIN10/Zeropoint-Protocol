@@ -8,12 +8,15 @@ import { AppService } from './app.service.js';
 import { AuthController } from './controllers/auth.controller.js';
 import { AuthService } from './services/auth.service.js';
 import { HealthController } from './controllers/health.controller.js';
+import { AgentStateController } from './controllers/agent-state.controller.js';
+import { AgentStateService } from './services/agent-state.service.js';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { User } from './entities/user.entity.js';
 import { Session } from './entities/session.entity.js';
 import { AuditLog } from './entities/audit-log.entity.js';
+import { AgentState } from './entities/agent-state.entity.js';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
@@ -34,7 +37,7 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User, Session, AuditLog]),
+    TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ 
       secret: process.env.JWT_SECRET, 
@@ -42,10 +45,11 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
   ],
-  controllers: [AppController, AuthController, HealthController],
+  controllers: [AppController, AuthController, HealthController, AgentStateController],
   providers: [
     AppService, 
     AuthService, 
+    AgentStateService,
     JwtStrategy, 
     JwtAuthGuard,
     {

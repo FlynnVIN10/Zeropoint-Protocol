@@ -5,6 +5,8 @@ import { WonderCraftEngine } from './agents/simulation/wondercraft.engine.js';
 import { TrainLoop } from './agents/train/train.loop.js';
 import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { AllExceptionsFilter } from './filters/http-exception.filter.js';
+import { ValidationPipe } from './pipes/validation.pipe.js';
+import { LoggingInterceptor } from './interceptors/logging.interceptor.js';
 import helmet from 'helmet';
 import cors from 'cors';
 async function runAgentLifecycle(agentIds) {
@@ -40,8 +42,11 @@ async function runAgentLifecycle(agentIds) {
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.useGlobalFilters(new AllExceptionsFilter());
+    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalInterceptors(new LoggingInterceptor());
     app.use(helmet());
     app.use(cors());
+    app.setGlobalPrefix('v1');
     await app.listen(3000);
     const agentIds = ['agent1', 'agent2', 'agent3'];
     try {

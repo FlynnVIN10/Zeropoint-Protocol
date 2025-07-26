@@ -10,6 +10,7 @@ import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuthController } from './controllers/auth.controller.js';
 import { AuthService } from './services/auth.service.js';
+import { HealthController } from './controllers/health.controller.js';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
@@ -45,7 +46,7 @@ AppModule = __decorate([
             }),
             ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
         ],
-        controllers: [AppController, AuthController],
+        controllers: [AppController, AuthController, HealthController],
         providers: [AppService, AuthService, JwtStrategy, JwtAuthGuard],
     })
 ], AppModule);

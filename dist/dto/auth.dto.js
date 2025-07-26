@@ -7,13 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { IsString, IsEmail, MinLength, MaxLength, IsOptional, IsArray } from 'class-validator';
+import { IsString, IsEmail, MaxLength, IsOptional, IsArray } from 'class-validator';
+import { IsStrongPassword, IsValidUsername } from '../decorators/validation.decorators.js';
 export class RegisterDto {
 }
 __decorate([
-    IsString(),
-    MinLength(3),
-    MaxLength(50),
+    IsValidUsername(),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "username", void 0);
 __decorate([
@@ -21,9 +20,7 @@ __decorate([
     __metadata("design:type", String)
 ], RegisterDto.prototype, "email", void 0);
 __decorate([
-    IsString(),
-    MinLength(8),
-    MaxLength(100),
+    IsStrongPassword(),
     __metadata("design:type", String)
 ], RegisterDto.prototype, "password", void 0);
 __decorate([
@@ -61,9 +58,7 @@ __decorate([
     __metadata("design:type", String)
 ], ChangePasswordDto.prototype, "currentPassword", void 0);
 __decorate([
-    IsString(),
-    MinLength(8),
-    MaxLength(100),
+    IsStrongPassword(),
     __metadata("design:type", String)
 ], ChangePasswordDto.prototype, "newPassword", void 0);
 export class UpdateProfileDto {
@@ -117,9 +112,7 @@ __decorate([
     __metadata("design:type", String)
 ], ResetPasswordDto.prototype, "token", void 0);
 __decorate([
-    IsString(),
-    MinLength(8),
-    MaxLength(100),
+    IsStrongPassword(),
     __metadata("design:type", String)
 ], ResetPasswordDto.prototype, "newPassword", void 0);
 //# sourceMappingURL=auth.dto.js.map

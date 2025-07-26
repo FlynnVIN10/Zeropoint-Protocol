@@ -22,7 +22,7 @@ class SoulchainLedger {
         }
         const agentMeta = {
             name: transaction.agentId,
-            did: `did:lexame:${transaction.agentId}`,
+            did: `did:zeropoint:${transaction.agentId}`,
             handle: `@${transaction.agentId}`,
             intent: '#xp-log',
             context: {

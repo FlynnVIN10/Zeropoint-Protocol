@@ -21,7 +21,7 @@ MemoryCore.prototype.summarizeHistory = function (agentId) {
                     threadId: 'thread-1',
                 },
                 tags: [
-                    { type: '#who', name: agentId, did: `did:lexame:${agentId}`, handle: `@${agentId}` },
+                    { type: '#who', name: agentId, did: `did:zeropoint:${agentId}`, handle: `@${agentId}` },
                     { type: '#intent', purpose: '#reflect', validation: 'good-heart' },
                 ],
                 xp: 10,

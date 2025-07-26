@@ -55,7 +55,7 @@ export class IntrospectCore {
         const summary = this.memory.summarizeHistory(agentId);
         const agentMeta = {
             name: 'Synthient-' + agentId,
-            did: 'did:lexame:' + agentId,
+            did: 'did:zeropoint:' + agentId,
             handle: '@synthient-' + agentId,
             intent: '#reflect',
             context: {

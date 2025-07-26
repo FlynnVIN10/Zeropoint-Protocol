@@ -1,4 +1,4 @@
-# Lexame-JADE_FLYNN
+# Zeropoint Protocol
 
 **Unified API Gateway, Persistent Storage, and Auth**
 

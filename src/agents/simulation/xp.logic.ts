@@ -1,6 +1,6 @@
 // src/agents/simulation/xp.logic.ts
 
-// Lexame XP Progression Layer: WonderCraft Protocol
+// Zeropoint Protocol XP Progression Layer: WonderCraft Protocol
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // XP rewards ethical alignment, creativity, tag depth.
 

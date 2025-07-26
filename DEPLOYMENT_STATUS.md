@@ -1,4 +1,4 @@
-# Lexame Deployment Status Report
+# Zeropoint Protocol Deployment Status Report
 
 ## ✅ **SUCCESSFULLY COMPLETED**
 
@@ -118,7 +118,7 @@ CMD ["python", "app.py"]
 ```yaml
 version: '3.8'
 services:
-  lexame-api:
+  zeropoint-api:
     build: .
     ports:
       - "3000:3000"
@@ -190,7 +190,7 @@ The core framework is solid and the build system is working. The next phase focu
 
 - All modules (introspection, simulation, swarm, training, Soulchain) are now linked for a full agent lifecycle loop.
 - Integration test script and main app both verified (with caveat: Soulchain XP logging requires IPFS/Helia backend for live runs).
-- Repository is now public: https://github.com/FlynnVIN10/Lexame-JADE_FLYNN
+- Repository is now public: https://github.com/FlynnVIN10/Zeropoint-Protocol
 - Ready for v17 System Optimization (performance metrics, auto-scaling hooks, Zeroth-gated).
 
 ## ✅ v18 DEPLOYMENT PREPARATION COMPLETE (July 2025)

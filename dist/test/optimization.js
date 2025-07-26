@@ -8,7 +8,7 @@ soulchain.addXPTransaction = async (tx) => {
 async function testOptimization() {
     const agentMeta = {
         name: 'optimizer',
-        did: 'did:lexame:optimizer',
+        did: 'did:zeropoint:optimizer',
         handle: '@optimizer',
         intent: '#optimize',
         context: {

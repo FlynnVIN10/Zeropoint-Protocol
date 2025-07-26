@@ -1,6 +1,6 @@
 // src/agents/train/train.loop.ts
 
-// Lexame Autopoietic Cognition Layer: Recursive Self-Training Protocol
+// Zeropoint Protocol Autopoietic Cognition Layer: Recursive Self-Training Protocol
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // All operations embed ethical gating; misalignment halts recursion.
 

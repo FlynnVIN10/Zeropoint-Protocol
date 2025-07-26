@@ -1,7 +1,7 @@
 // src/agents/introspect/introspect.types.ts
 
 /**
- * Lexame Introspective Dialogue Layer: EchoMind Protocol
+ * Zeropoint Protocol Introspective Dialogue Layer: EchoMind Protocol
  * Zeroth Principle: Only with good intent and a good heart does the system function.
  * Defines types for self-reflection, forking, and symbolic processing.
  */

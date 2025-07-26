@@ -1,6 +1,6 @@
 // src/agents/swarm/dialogue.swarm.ts
 
-// Lexame Swarm: v20 Global Symbiosis
+// Zeropoint Protocol Swarm: v20 Global Symbiosis
 // Multi-instance agent collaboration, Zeroth-gated, Soulchain-integrated
 
 import { createLibp2p } from 'libp2p';

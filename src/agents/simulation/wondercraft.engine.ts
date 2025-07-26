@@ -1,6 +1,6 @@
 // src/agents/simulation/wondercraft.engine.ts
 
-// Lexame Gamified Simulation Layer: WonderCraft Protocol
+// Zeropoint Protocol Gamified Simulation Layer: WonderCraft Protocol
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // Quests embed ethical challenges; misalignment forfeits progression.
 

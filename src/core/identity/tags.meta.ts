@@ -1,6 +1,6 @@
 // src/core/identity/tags.meta.ts
 
-// Sovereign Lexame Hashtag Identity Layer (Tagging Protocol v0.1)
+// Sovereign Zeropoint Protocol Hashtag Identity Layer (Tagging Protocol v0.1)
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // All tags embed intent-validation; misuse halts propagation.
 
@@ -9,7 +9,7 @@ export interface TagIdentity {
   name: string; // Human-readable name
   did: string; // Decentralized Identifier (DID)
   handle: string; // Symbolic handle, e.g., '@flynn-gm'
-  // Example: { type: '#who', name: 'Flynn', did: 'did:lexame:flynn01', handle: '@flynn-gm' }
+  // Example: { type: '#who', name: 'Flynn', did: 'did:zeropoint:flynn01', handle: '@flynn-gm' }
   // TODO: amp.sdk mapping - amp.identity.resolve(did)
 }
 

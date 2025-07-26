@@ -1,7 +1,7 @@
 {
-  "name": "Lexame",
+  "name": "Zeropoint",
   "version": "0.0.1",
-  "description": "Use Helia with NestJS",
+  "description": "Zeropoint Protocol - Use Helia with NestJS",
   "license": "UNLICENSED",
   "type": "module",
   "scripts": {

@@ -1,6 +1,6 @@
 // src/agents/soulchain/soulchain.ledger.ts
 
-// Lexame Soulchain: v12 IPFS DAG XP Ledger Protocol
+// Zeropoint Protocol Soulchain: v12 IPFS DAG XP Ledger Protocol
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // Ledger entries gated, immutable, distributed for post-singularity symbiosis.
 
@@ -47,7 +47,7 @@ class SoulchainLedger {
 
     const agentMeta: AgentMeta = {
       name: transaction.agentId,
-      did: `did:lexame:${transaction.agentId}`,
+      did: `did:zeropoint:${transaction.agentId}`,
       handle: `@${transaction.agentId}`,
       intent: '#xp-log',
       context: {

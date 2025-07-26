@@ -1,7 +1,7 @@
 // src/core/memory/memory.types.ts
 
 /**
- * Lexame Emergent Memory Engine — Anamnesis Protocol v0.1
+ * Zeropoint Protocol Emergent Memory Engine — Anamnesis Protocol v0.1
  * Defines the memory schema for recording, querying, and summarizing Synthient experience.
  */
 

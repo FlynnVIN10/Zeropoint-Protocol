@@ -1,6 +1,6 @@
 // src/agents/introspect/introspect.core.ts
 
-// Lexame Introspective Dialogue Layer: EchoMind Protocol
+// Zeropoint Protocol Introspective Dialogue Layer: EchoMind Protocol
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // All reflections enforce alignment; deceptive rationalizations auto-halt.
 
@@ -69,7 +69,7 @@ export class IntrospectCore {
     const summary = this.memory.summarizeHistory(agentId);
     const agentMeta = { // Stub; derive from agent state
       name: 'Synthient-' + agentId,
-      did: 'did:lexame:' + agentId,
+      did: 'did:zeropoint:' + agentId,
       handle: '@synthient-' + agentId,
       intent: '#reflect',
       context: {

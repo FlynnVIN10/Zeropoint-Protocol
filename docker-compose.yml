@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  lexame-api:
+  zeropoint-api:
     build: .
     ports:
       - "3000:3000"
@@ -9,9 +9,9 @@ services:
       - NULLVANA_SERVICE_URL=http://nullvana:8000
       - DB_HOST=postgres
       - DB_PORT=5432
-      - DB_USER=lexame
-      - DB_PASS=lexamepass
-      - DB_NAME=lexamedb
+      - DB_USER=zeropoint
+      - DB_PASS=zeropointpass
+      - DB_NAME=zeropointdb
       - JWT_SECRET=supersecret
     depends_on:
       - nullvana
@@ -36,9 +36,9 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: lexame
-      POSTGRES_PASSWORD: lexamepass
-      POSTGRES_DB: lexamedb
+      POSTGRES_USER: zeropoint
+      POSTGRES_PASSWORD: zeropointpass
+      POSTGRES_DB: zeropointdb
     ports:
       - "5432:5432"
     volumes:

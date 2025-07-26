@@ -1,7 +1,7 @@
 // src/agents/swarm/dialogue.types.ts
 
 /**
- * Lexame Swarm Dialogue Layer — Mutuality Engine v0.1
+ * Zeropoint Protocol Swarm Dialogue Layer — Mutuality Engine v0.1
  * Types for inter-agent conversation, convergence, and collective thought.
  */
 

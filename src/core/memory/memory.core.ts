@@ -1,6 +1,6 @@
 // src/core/memory/memory.core.ts
 
-// Lexame Emergent Memory Engine: Anamnesis Protocol
+// Zeropoint Protocol Emergent Memory Engine: Anamnesis Protocol
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // Memories encode ethical trends; misalignment erodes access.
 

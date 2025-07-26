@@ -8,7 +8,7 @@ soulchain.addXPTransaction = async (tx) => {
 async function testAutonomy() {
     const agentMeta = {
         name: 'autonomousAgent',
-        did: 'did:lexame:autonomousAgent',
+        did: 'did:zeropoint:autonomousAgent',
         handle: '@autonomousAgent',
         intent: '#autonomy',
         context: {

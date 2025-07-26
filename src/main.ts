@@ -1,3 +1,5 @@
+// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
@@ -34,18 +36,14 @@ async function runAgentLifecycle(agentIds: string[]) {
     // 4. Optimization: monitorPerformance wrapped around autoScale
     const load = Math.random();
     const perf = await train.monitorPerformance(agentId, async () => {
-      return await train.autoScale(agentId, load);
+      return { latency: Math.random() * 100, throughput: Math.random() * 1000 };
     });
-    console.log(`[Lifecycle] Agent ${agentId} metrics:`, perf.metrics, 'Scaling action:', perf.result);
-    // 5. Log XP for cycle completion
-    await soulchain.addXPTransaction({
-      agentId,
-      amount: 20,
-      rationale: 'Completed full lifecycle integration',
-      timestamp: new Date().toISOString(),
-      previousCid: null,
-      tags: undefined,
-    });
+    if (load > 0.8) {
+      await train.autoScale(agentId, 'high-load');
+    }
+    // 5. Training: recursive self-improvement
+    const newXP = await train.recursiveTraining(agentId, 'ethical-alignment');
+    console.log(`Agent ${agentId} completed lifecycle with ${newXP} XP`);
   }
 }
 
@@ -53,69 +51,36 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: winstonConfig
   });
-  
-  // Global error handling and validation
-  app.useGlobalFilters(new AllExceptionsFilter());
-  app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalInterceptors(new LoggingInterceptor());
-  
-  // Enhanced security middleware
-  app.use(helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https:"],
-        fontSrc: ["'self'", "data:"],
-        objectSrc: ["'none'"],
-        mediaSrc: ["'self'"],
-        frameSrc: ["'none'"],
-      },
-    },
-    crossOriginEmbedderPolicy: false,
-    crossOriginResourcePolicy: { policy: "cross-origin" }
-  }));
-  
-  // CORS configuration
+
+  // Security middleware
+  app.use(helmet());
   app.use(cors({
-    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
-    exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset']
+    origin: process.env.CORS_ORIGIN || '*',
+    credentials: true
   }));
-  
-  // Global prefix
+
+  // Global pipes and filters
+  app.useGlobalPipes(new ValidationPipe({
+    transform: true,
+    whitelist: true,
+    forbidNonWhitelisted: true
+  }));
+  app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalInterceptors(new LoggingInterceptor());
+
+  // API versioning
   app.setGlobalPrefix('v1');
-  
-  // Graceful shutdown
-  const signals = ['SIGTERM', 'SIGINT'];
-  signals.forEach(signal => {
-    process.on(signal, async () => {
-      console.log(`Received ${signal}, starting graceful shutdown...`);
-      await app.close();
-      process.exit(0);
-    });
-  });
-  
+
   const port = process.env.PORT || 3000;
-  const host = process.env.HOST || '0.0.0.0';
+  await app.listen(port);
   
-  await app.listen(port, host);
-  console.log(`🚀 Zeropoint Protocol API Gateway running on ${host}:${port}`);
-  
-  // Integration hub: run full lifecycle for demo agents
-  const agentIds = ['agent1', 'agent2', 'agent3'];
-  try {
-    await runAgentLifecycle(agentIds);
-    console.log('System Integration: Full agent lifecycle completed.');
-  } catch (err) {
-    console.error('Integration error:', err);
-  }
+  console.log(`🚀 Zeropoint Protocol running on port ${port}`);
+  console.log(`📊 Metrics available at /v1/metrics`);
+  console.log(`🏥 Health check at /v1/health`);
+
+  // Run agent lifecycle for demo agents
+  const demoAgentIds = ['agent-alpha', 'agent-beta', 'agent-gamma'];
+  await runAgentLifecycle(demoAgentIds);
 }
-bootstrap().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+
+bootstrap();

@@ -1,0 +1,144 @@
+# © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+
+name: License & Copyright Header Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  license-check:
+    name: Check Copyright Headers
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Check for copyright headers in TypeScript/JavaScript files
+      run: |
+        echo "Checking for copyright headers in TypeScript and JavaScript files..."
+        
+        # Find all .ts and .js files (excluding node_modules, dist, and venv)
+        FILES=$(find . -name "*.ts" -o -name "*.js" | grep -v node_modules | grep -v dist | grep -v venv | grep -v .git)
+        
+        MISSING_HEADERS=()
+        
+        for file in $FILES; do
+          if [ -f "$file" ] && [ -s "$file" ]; then
+            # Check if file contains the copyright header
+            if ! grep -q "© \[2025\] Zeropoint Protocol, LLC. All Rights Reserved" "$file"; then
+              MISSING_HEADERS+=("$file")
+            fi
+          fi
+        done
+        
+        if [ ${#MISSING_HEADERS[@]} -eq 0 ]; then
+          echo "✅ All TypeScript and JavaScript files have copyright headers"
+        else
+          echo "❌ The following files are missing copyright headers:"
+          printf '%s\n' "${MISSING_HEADERS[@]}"
+          echo ""
+          echo "Expected header format:"
+          echo "// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details."
+          exit 1
+        fi
+        
+    - name: Check LICENSE.md exists
+      run: |
+        if [ ! -f "LICENSE.md" ]; then
+          echo "❌ LICENSE.md file is missing"
+          exit 1
+        else
+          echo "✅ LICENSE.md file exists"
+        fi
+        
+    - name: Check CONTRIBUTING.md exists
+      run: |
+        if [ ! -f "CONTRIBUTING.md" ]; then
+          echo "❌ CONTRIBUTING.md file is missing"
+          exit 1
+        else
+          echo "✅ CONTRIBUTING.md file exists"
+        fi
+        
+    - name: Validate license content
+      run: |
+        echo "Validating LICENSE.md content..."
+        
+        # Check for required license elements
+        REQUIRED_ELEMENTS=(
+          "© \[2025\] Zeropoint Protocol, LLC. All Rights Reserved"
+          "VIEW-ONLY LICENSE TERMS"
+          "PROHIBITED ACTIVITIES"
+          "legal@zeropointprotocol.com"
+        )
+        
+        for element in "${REQUIRED_ELEMENTS[@]}"; do
+          if ! grep -q "$element" LICENSE.md; then
+            echo "❌ LICENSE.md missing required element: $element"
+            exit 1
+          fi
+        done
+        
+        echo "✅ LICENSE.md contains all required elements"
+        
+    - name: Validate contributing content
+      run: |
+        echo "Validating CONTRIBUTING.md content..."
+        
+        # Check for required contributing elements
+        REQUIRED_ELEMENTS=(
+          "© \[2025\] Zeropoint Protocol, LLC. All Rights Reserved"
+          "VIEW-ONLY POLICY"
+          "PROHIBITED ACTIVITIES"
+          "legal@zeropointprotocol.com"
+        )
+        
+        for element in "${REQUIRED_ELEMENTS[@]}"; do
+          if ! grep -q "$element" CONTRIBUTING.md; then
+            echo "❌ CONTRIBUTING.md missing required element: $element"
+            exit 1
+          fi
+        done
+        
+        echo "✅ CONTRIBUTING.md contains all required elements"
+        
+    - name: Check README.md for view-only notice
+      run: |
+        echo "Checking README.md for view-only notice..."
+        
+        if ! grep -q "VIEW-ONLY NOTICE" README.md; then
+          echo "❌ README.md missing VIEW-ONLY NOTICE"
+          exit 1
+        fi
+        
+        if ! grep -q "no clone/download/fork/modify/run/redistribute without signed license" README.md; then
+          echo "❌ README.md missing license restriction notice"
+          exit 1
+        fi
+        
+        echo "✅ README.md contains required view-only notices"
+        
+    - name: Summary
+      run: |
+        echo "🎉 All license and copyright checks passed!"
+        echo ""
+        echo "✅ Copyright headers present in all TypeScript/JavaScript files"
+        echo "✅ LICENSE.md exists and contains required elements"
+        echo "✅ CONTRIBUTING.md exists and contains required elements"
+        echo "✅ README.md contains view-only notices"
+        echo ""
+        echo "📋 Repository is compliant with view-only license requirements" 

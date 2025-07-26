@@ -1,4 +1,6 @@
-# Zeropoint Protocol
+# Zeropoint Protocol (View-Only)
+
+**⚠️ VIEW-ONLY NOTICE: View only; no clone/download/fork/modify/run/redistribute without signed license. See [LICENSE.md](./LICENSE.md) for details.**
 
 **Advanced AI Agent System with Ethical AI Principles**
 
@@ -136,6 +138,8 @@ npm run test:e2e
 
 ## 🤝 **Contributing**
 
+**⚠️ CONTRIBUTION POLICY: View-only; no PRs/forks/clones without signed agreement. Contact legal@zeropointprotocol.com for licensing inquiries.**
+
 This project follows ethical AI principles with Zeroth-gate compliance. All contributions must align with responsible AI development practices.
 
 ### **Contribution Requirements**
@@ -145,8 +149,8 @@ This project follows ethical AI principles with Zeroth-gate compliance. All cont
 - All code must respect human rights and dignity
 
 ### **Getting Started**
-1. Read the [Contributor License Agreement (CLA)](./CLA.md)
-2. Review the [Zeroth Alignment Addendum (ZAA)](./ZAA.md)
+1. Contact legal@zeropointprotocol.com for licensing inquiries
+2. Complete a signed license agreement
 3. Follow the ethical guidelines and coding standards
 4. Submit your contribution with appropriate documentation
 
@@ -154,73 +158,49 @@ For more information, see our [Contributing Guidelines](./CONTRIBUTING.md).
 
 ## 📄 **License**
 
-### **GNU Affero General Public License v3 (AGPL v3) + Zeroth Alignment Addendum (ZAA)**
+### **View-Only License - © [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
 
-This project is licensed under the **GNU Affero General Public License v3 (AGPL v3)** with the **Zeroth Alignment Addendum (ZAA)**. This combination ensures both open-source freedom and ethical AI development.
+This software is provided for **VIEW-ONLY** purposes under a proprietary license. All rights are reserved by Zeropoint Protocol, LLC.
 
-### **Key License Features**
+### **License Terms**
 
-#### **AGPL v3 Benefits:**
-- **Copyleft Protection**: Ensures derivatives remain open source
-- **Network Use Provision**: Requires source code availability for network services
-- **Patent Protection**: Includes patent license grants
-- **Freedom Preservation**: Maintains user freedoms and rights
+#### **PROHIBITED ACTIVITIES:**
+- **Cloning** this repository
+- **Downloading** the source code
+- **Forking** this repository
+- **Modifying** any code or documentation
+- **Running** the software
+- **Distributing** the software or any derivatives
+- **Contributing** code or documentation
+- **Creating derivative works**
+- **Commercial use** of any kind
 
-#### **ZAA Ethical Requirements:**
-- **Zeroth Principle**: "Only with good intent and a good heart does the system function"
-- **Intent Validation**: All operations must pass ethical validation
-- **Benevolent Purpose**: Software may only be used for beneficial purposes
-- **Prohibited Uses**: Explicit restrictions on harmful applications
+#### **PERMITTED ACTIVITIES:**
+- **Viewing** the code and documentation on GitHub
+- **Reading** the documentation for informational purposes
+- **Contacting** us for licensing inquiries
 
-### **License Compliance**
-
-#### **For Users:**
-- You may use, modify, and distribute the software
-- You must provide source code when offering network services
-- You must comply with ethical requirements in the ZAA
-- You may not use the software for harmful purposes
-
-#### **For Contributors:**
-- All contributions are licensed under the same terms
-- Contributors must agree to the [CLA](./CLA.md)
-- Contributions must pass ethical validation
-- Code must align with the Zeroth Principle
-
-#### **For Distributors:**
-- Must include the complete license text (AGPL v3 + ZAA)
-- Must provide source code and installation information
-- Must maintain ethical safeguards and Zeroth-gate system
-- Must not enable harmful or malicious applications
-
-### **License Files**
-- **[LICENSE](./LICENSE)**: Complete AGPL v3 text with embedded ZAA
-- **[ZAA.md](./ZAA.md)**: Standalone Zeroth Alignment Addendum
-- **[CLA.md](./CLA.md)**: Contributor License Agreement
+### **License Requirements**
+To obtain rights beyond view-only access, you must:
+1. Contact legal@zeropointprotocol.com
+2. Complete a signed license agreement
+3. Receive written approval from Zeropoint Protocol, LLC
+4. Comply with all terms and conditions of the signed agreement
 
 ### **Contact Information**
-- **Ethical Questions**: ethics@zeropointprotocol.org
-- **Legal Questions**: legal@zeropointprotocol.org
-- **License Questions**: license@zeropointprotocol.org
+- **Legal Questions**: legal@zeropointprotocol.com
+- **License Inquiries**: legal@zeropointprotocol.com
+- **Website**: https://zeropointprotocol.com/legal
+
+### **License Files**
+- **[LICENSE.md](./LICENSE.md)**: Complete view-only license terms
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contribution and access policy
 
 ### **License Summary**
 ```
-Copyright (C) 2024 Zeropoint Protocol Contributors
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Affero General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-GNU Affero General Public License for more details.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <https://www.gnu.org/licenses/>.
-
-This software is also subject to the Zeroth Alignment Addendum (ZAA),
-which requires ethical compliance and benevolent use only.
+© [2025] Zeropoint Protocol, LLC. All Rights Reserved.
+View-Only License: No clone, modify, run or distribute without signed license.
+See LICENSE.md for details.
 ```
 
-For the complete license text, see [LICENSE](./LICENSE).
+For the complete license text, see [LICENSE.md](./LICENSE.md).

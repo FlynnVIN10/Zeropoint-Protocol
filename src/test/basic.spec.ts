@@ -1,3 +1,5 @@
+// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+
 import { checkIntent } from '../guards/synthient.guard';
 
 describe('Basic Functionality Tests', () => {

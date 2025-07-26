@@ -1,3 +1,5 @@
+// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+
 // src/agents/train/train.loop.ts
 
 // Zeropoint Protocol Autopoietic Cognition Layer: Recursive Self-Training Protocol

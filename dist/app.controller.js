@@ -10,14 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Controller, Get, Post, Body, Param, Res, UseGuards, UsePipes, ValidationPipe, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Res, UseGuards, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, HttpStatus, HttpException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AppService } from './app.service.js';
 import { checkIntent } from './guards/synthient.guard.js';
 import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
-import { IsString, MinLength } from 'class-validator';
+import { IsString, MinLength, IsOptional, IsObject } from 'class-validator';
 class RegisterDto {
 }
 __decorate([
@@ -40,6 +40,42 @@ __decorate([
     IsString(),
     __metadata("design:type", String)
 ], LoginDto.prototype, "password", void 0);
+class GenerateTextDto {
+}
+__decorate([
+    IsString(),
+    MinLength(1),
+    __metadata("design:type", String)
+], GenerateTextDto.prototype, "text", void 0);
+__decorate([
+    IsOptional(),
+    IsObject(),
+    __metadata("design:type", Object)
+], GenerateTextDto.prototype, "options", void 0);
+class GenerateImageDto {
+}
+__decorate([
+    IsString(),
+    MinLength(1),
+    __metadata("design:type", String)
+], GenerateImageDto.prototype, "prompt", void 0);
+__decorate([
+    IsOptional(),
+    IsObject(),
+    __metadata("design:type", Object)
+], GenerateImageDto.prototype, "options", void 0);
+class GenerateCodeDto {
+}
+__decorate([
+    IsString(),
+    MinLength(1),
+    __metadata("design:type", String)
+], GenerateCodeDto.prototype, "prompt", void 0);
+__decorate([
+    IsOptional(),
+    IsString(),
+    __metadata("design:type", String)
+], GenerateCodeDto.prototype, "language", void 0);
 let AppController = class AppController {
     constructor(appService, jwtService) {
         this.appService = appService;
@@ -65,59 +101,194 @@ let AppController = class AppController {
             throw new Error('Zeroth violation: Protected route blocked.');
         return { message: 'You have accessed a protected route.' };
     }
-    async generateText(text) {
-        if (!checkIntent(text))
+    async generateText(dto) {
+        if (!checkIntent(dto.text))
             throw new Error('Zeroth violation: generate-text blocked.');
-        return this.appService.callNullvana(text);
+        return this.appService.generateText(dto.text, dto.options);
+    }
+    async generateImage(dto) {
+        if (!checkIntent(dto.prompt))
+            throw new Error('Zeroth violation: generate-image blocked.');
+        return this.appService.generateImage(dto.prompt, dto.options);
+    }
+    async generateCode(dto) {
+        if (!checkIntent(dto.prompt))
+            throw new Error('Zeroth violation: generate-code blocked.');
+        return this.appService.generateCode(dto.prompt, dto.language);
+    }
+    async generateLegacy(text) {
+        if (!checkIntent(text))
+            throw new Error('Zeroth violation: generate blocked.');
+        return this.appService.generateText(text);
     }
     async register(dto) {
         if (!checkIntent(dto.username + dto.password))
             throw new Error('Zeroth violation: Registration blocked.');
-        const user = await this.appService.registerUser(dto.username, dto.password);
-        return { id: user.id, username: user.username };
+        try {
+            const user = await this.appService.registerUser(dto.username, dto.password);
+            return {
+                success: true,
+                id: user.id,
+                username: user.username,
+                message: 'User registered successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.BAD_REQUEST);
+        }
     }
     async login(dto) {
         if (!checkIntent(dto.username + dto.password))
             throw new Error('Zeroth violation: Login blocked.');
-        const user = await this.appService.validateUser(dto.username, dto.password);
-        if (!user)
-            throw new Error('Invalid credentials');
-        const payload = { sub: user.id, username: user.username };
-        const token = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
-        return { access_token: token };
+        try {
+            const user = await this.appService.validateUser(dto.username, dto.password);
+            if (!user) {
+                throw new HttpException({
+                    success: false,
+                    message: 'Invalid credentials'
+                }, HttpStatus.UNAUTHORIZED);
+            }
+            const payload = { sub: user.id, username: user.username };
+            const token = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
+            return {
+                success: true,
+                access_token: token,
+                user: {
+                    id: user.id,
+                    username: user.username
+                }
+            };
+        }
+        catch (error) {
+            if (error instanceof HttpException)
+                throw error;
+            throw new HttpException({
+                success: false,
+                message: 'Login failed'
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     async healthCheck() {
         if (!checkIntent('health-check'))
             throw new Error('Zeroth violation: Health check blocked.');
-        return { status: 'ok', timestamp: new Date().toISOString() };
+        return this.appService.healthCheck();
     }
     async uploadFile(file, rationale) {
         if (!checkIntent(rationale))
             throw new Error('Zeroth violation: File upload blocked.');
-        if (!file)
-            throw new Error('No file provided');
-        const cid = await this.appService.uploadFile(file.buffer, rationale);
-        return { cid, filename: file.originalname, size: file.size };
+        if (!file) {
+            throw new HttpException({
+                success: false,
+                message: 'No file provided'
+            }, HttpStatus.BAD_REQUEST);
+        }
+        try {
+            const cid = await this.appService.uploadFile(file.buffer, rationale);
+            return {
+                success: true,
+                cid,
+                filename: file.originalname,
+                size: file.size,
+                message: 'File uploaded successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     async downloadFile(cid, rationale, res) {
         if (!checkIntent(rationale))
             throw new Error('Zeroth violation: File download blocked.');
-        const buffer = await this.appService.downloadFile(cid, rationale);
-        res.set('Content-Type', 'application/octet-stream');
-        res.set('Content-Disposition', `attachment; filename="file-${cid}"`);
-        res.send(buffer);
+        try {
+            const buffer = await this.appService.downloadFile(cid, rationale);
+            res.set('Content-Type', 'application/octet-stream');
+            res.set('Content-Disposition', `attachment; filename="file-${cid}"`);
+            res.send(buffer);
+        }
+        catch (error) {
+            res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                message: error.message
+            });
+        }
     }
     async listDirectory(cid) {
         if (!checkIntent('list-directory'))
             throw new Error('Zeroth violation: Directory listing blocked.');
-        const entries = await this.appService.listDirectory(cid);
-        return { cid, entries };
+        try {
+            const entries = await this.appService.listDirectory(cid);
+            return {
+                success: true,
+                cid,
+                entries,
+                count: entries.length
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     async persistSoulchain() {
         if (!checkIntent('persist-soulchain'))
             throw new Error('Zeroth violation: Soulchain persist blocked.');
-        const cid = await soulchain.persistLedgerToIPFS();
-        return { cid, message: 'Soulchain ledger persisted to IPFS' };
+        try {
+            const cid = await soulchain.persistLedgerToIPFS();
+            return {
+                success: true,
+                cid,
+                message: 'Soulchain ledger persisted to IPFS successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getStatus() {
+        if (!checkIntent('get-status'))
+            throw new Error('Zeroth violation: Status check blocked.');
+        return {
+            service: 'Zeropoint Protocol API Gateway',
+            version: '1.0.0',
+            status: 'operational',
+            timestamp: new Date().toISOString(),
+            endpoints: {
+                auth: ['/v1/register', '/v1/login', '/v1/protected'],
+                generation: ['/v1/generate-text', '/v1/generate-image', '/v1/generate-code'],
+                storage: ['/v1/ipfs/upload', '/v1/ipfs/download', '/v1/ipfs/list'],
+                monitoring: ['/v1/health', '/v1/metrics', '/v1/ledger-metrics'],
+                blockchain: ['/v1/soulchain/persist']
+            }
+        };
+    }
+    async proposeWithPetals(proposal) {
+        if (!checkIntent(proposal.rationale))
+            throw new Error('Zeroth violation: Petals proposal blocked.');
+        try {
+            const response = await this.appService.proposeWithPetals(proposal);
+            return {
+                success: true,
+                response,
+                message: 'Petals proposal processed successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
     async onApplicationShutdown() {
     }
@@ -151,11 +322,35 @@ __decorate([
 ], AppController.prototype, "protectedRoute", null);
 __decorate([
     Post('generate-text'),
+    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [GenerateTextDto]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "generateText", null);
+__decorate([
+    Post('generate-image'),
+    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [GenerateImageDto]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "generateImage", null);
+__decorate([
+    Post('generate-code'),
+    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [GenerateCodeDto]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "generateCode", null);
+__decorate([
+    Post('generate'),
     __param(0, Body('text')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
-], AppController.prototype, "generateText", null);
+], AppController.prototype, "generateLegacy", null);
 __decorate([
     Post('register'),
     UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
@@ -209,6 +404,20 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "persistSoulchain", null);
+__decorate([
+    Get('status'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getStatus", null);
+__decorate([
+    Post('petals/propose'),
+    UseGuards(JwtAuthGuard),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "proposeWithPetals", null);
 AppController = __decorate([
     Controller('v1'),
     __metadata("design:paramtypes", [AppService, JwtService])

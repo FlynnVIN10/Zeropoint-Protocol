@@ -1,6 +1,17 @@
 # Zeropoint Protocol
 
-**Unified API Gateway, Persistent Storage, and Auth**
+**Advanced AI Agent System with Ethical AI Principles**
+
+Zeropoint Protocol is a comprehensive AI agent system featuring multi-agent collaboration, decentralized storage, and ethical AI principles with Zeroth-gate compliance.
+
+## 🎯 **Core Features**
+
+- **🤖 Multi-Agent Intelligence**: Swarm collaboration and collective cognition
+- **🔗 Decentralized Storage**: IPFS-based ledger and persistent memory
+- **⚖️ Ethical AI**: Zeroth-gate compliance for responsible AI development
+- **🧠 Autopoietic Cognition**: Recursive self-training and adaptation
+- **🎮 Gamified Experience**: XP progression and WonderCraft simulation
+- **🔐 Secure Authentication**: JWT-based user management and protection
 
 - All endpoints are versioned under `/v1/`.
 - Proxy endpoints (e.g., `/v1/generate-text`) forward to Python backend using HttpModule.
@@ -33,28 +44,100 @@ curl http://localhost:3000/v1/metrics
 curl http://localhost:3000/v1/ledger-metrics
 ```
 
-## Error Handling, Validation, and Health Checks
-- All DTOs validated with class-validator and ValidationPipe.
-- Global ExceptionFilter provides structured error handling (Zeroth-gated).
-- Health-check endpoint at `/v1/health` (Zeroth-gated, Prometheus-ready).
-- All error and validation flows are robust, ethical, and production-ready.
+## 🚀 **Quick Start**
 
-## Testing
-- Jest configuration updated for TypeScript ESM support
-- IPFS core functionality tests passing (9/9 tests)
-- Basic functionality tests passing (3/3 tests)
-- Run tests with `npm test` or `npx jest --config=jest-e2e.json`
+### Prerequisites
+- Node.js 20+
+- PostgreSQL
+- Docker & Docker Compose
 
-## IPFS Integration
-- Helia IPFS client fully implemented in `app.service.ts`
-- File upload/download endpoints with multer support
-- Soulchain ledger persistence to IPFS
-- All IPFS operations Zeroth-gated for ethical compliance
-- Prometheus metrics for IPFS operations
+### Installation
+```bash
+# Clone the repository
+git clone https://github.com/FlynnVIN10/Zeropoint-Protocol.git
+cd Zeropoint-Protocol
 
-## Integrations & CI
-- Petals client integrated, all API methods audited and Zeroth-gated.
-- GitHub Actions CI runs tests and lint on every push (Zeroth-gated).
-- See .github/workflows/ci.yml for details.
+# Install dependencies
+npm install
 
-See DEPLOYMENT_STATUS.md for full deployment and architecture details.
+# Start with Docker
+docker-compose up -d
+
+# Or start locally
+npm run start:dev
+```
+
+## 🔧 **API Usage**
+
+### Authentication
+```bash
+# Register
+curl -X POST http://localhost:3000/v1/register \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"user1","password":"pass1"}'
+
+# Login
+curl -X POST http://localhost:3000/v1/login \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"user1","password":"pass1"}'
+
+# Access Protected Route
+curl -H "Authorization: Bearer <access_token>" \
+  http://localhost:3000/v1/protected
+```
+
+### Monitoring
+```bash
+# Prometheus Metrics
+curl http://localhost:3000/v1/metrics
+curl http://localhost:3000/v1/ledger-metrics
+
+# Health Check
+curl http://localhost:3000/v1/health
+```
+
+## 🧪 **Testing**
+
+```bash
+# Run all tests
+npm test
+
+# Run with coverage
+npm run test:cov
+
+# Run E2E tests
+npm run test:e2e
+```
+
+**Current Status:** 9/9 tests passing ✅
+
+## 🏗️ **Architecture**
+
+### **System Components**
+- **Backend**: NestJS with TypeScript
+- **Database**: PostgreSQL with TypeORM
+- **Storage**: IPFS (Helia client)
+- **Containerization**: Docker & Docker Compose
+- **Testing**: Jest with ESM support
+- **Authentication**: JWT with Passport
+
+### **Agent Modules**
+- **Introspection**: Self-reflection and dialogue layer
+- **Simulation**: Gamified XP progression system
+- **Swarm**: Multi-agent collaboration engine
+- **Training**: Autopoietic cognition and self-training
+- **Soulchain**: IPFS-based ledger and persistence
+
+## 📚 **Documentation**
+
+- **📋 PM Status Report**: [PM_STATUS_REPORT.md](./PM_STATUS_REPORT.md) - Project management and communication
+- **🚀 Deployment Status**: [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) - Technical deployment details
+- **🔧 API Documentation**: Coming soon
+
+## 🤝 **Contributing**
+
+This project follows ethical AI principles with Zeroth-gate compliance. All contributions must align with responsible AI development practices.
+
+## 📄 **License**
+
+See [LICENSE](./LICENSE) for details.

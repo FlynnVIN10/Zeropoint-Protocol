@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  lexame-api:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NULLVANA_SERVICE_URL=http://nullvana:8000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=lexame
+      - DB_PASS=lexamepass
+      - DB_NAME=lexamedb
+      - JWT_SECRET=supersecret
+    depends_on:
+      - nullvana
+      - postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/v1/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  nullvana:
+    build: ./Nullvana
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: lexame
+      POSTGRES_PASSWORD: lexamepass
+      POSTGRES_DB: lexamedb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata: 

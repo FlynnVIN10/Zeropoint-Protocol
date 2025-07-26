@@ -284,7 +284,7 @@ describe('Authentication System (Phase 3)', () => {
       user.username = 'testuser';
       user.password = 'hashedpassword';
 
-      const jsonUser = user.toJSON();
+      const jsonUser = user.toJSON() as any;
 
       expect(jsonUser.password).toBeUndefined();
       expect(jsonUser.id).toBe('test-id');

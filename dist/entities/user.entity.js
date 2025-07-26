@@ -7,23 +7,89 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, BeforeInsert, BeforeUpdate } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 let User = class User {
+    async hashPassword() {
+        if (this.password && this.password.length < 60) {
+            this.password = await bcrypt.hash(this.password, 12);
+        }
+    }
+    async validatePassword(password) {
+        return bcrypt.compare(password, this.password);
+    }
+    toJSON() {
+        const { password, ...user } = this;
+        return user;
+    }
 };
 __decorate([
-    PrimaryGeneratedColumn(),
-    __metadata("design:type", Number)
+    PrimaryGeneratedColumn('uuid'),
+    __metadata("design:type", String)
 ], User.prototype, "id", void 0);
 __decorate([
-    Column({ unique: true }),
+    Column({ length: 50, unique: true }),
     __metadata("design:type", String)
 ], User.prototype, "username", void 0);
 __decorate([
-    Column(),
+    Column({ length: 100, unique: true }),
+    __metadata("design:type", String)
+], User.prototype, "email", void 0);
+__decorate([
+    Column({ length: 255 }),
     __metadata("design:type", String)
 ], User.prototype, "password", void 0);
+__decorate([
+    Column({ length: 100, nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "firstName", void 0);
+__decorate([
+    Column({ length: 100, nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "lastName", void 0);
+__decorate([
+    Column({ default: true }),
+    __metadata("design:type", Boolean)
+], User.prototype, "isActive", void 0);
+__decorate([
+    Column({ default: false }),
+    __metadata("design:type", Boolean)
+], User.prototype, "isVerified", void 0);
+__decorate([
+    Column({ nullable: true }),
+    __metadata("design:type", Date)
+], User.prototype, "lastLoginAt", void 0);
+__decorate([
+    Column({ nullable: true }),
+    __metadata("design:type", Date)
+], User.prototype, "emailVerifiedAt", void 0);
+__decorate([
+    Column({ type: 'jsonb', nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "preferences", void 0);
+__decorate([
+    Column({ type: 'text', array: true, default: [] }),
+    __metadata("design:type", Array)
+], User.prototype, "roles", void 0);
+__decorate([
+    CreateDateColumn(),
+    __metadata("design:type", Date)
+], User.prototype, "createdAt", void 0);
+__decorate([
+    UpdateDateColumn(),
+    __metadata("design:type", Date)
+], User.prototype, "updatedAt", void 0);
+__decorate([
+    BeforeInsert(),
+    BeforeUpdate(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], User.prototype, "hashPassword", null);
 User = __decorate([
-    Entity()
+    Entity('users'),
+    Index(['username'], { unique: true }),
+    Index(['email'], { unique: true })
 ], User);
 export { User };
 //# sourceMappingURL=user.entity.js.map

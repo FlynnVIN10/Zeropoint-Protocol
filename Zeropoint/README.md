@@ -1,6 +1,6 @@
-# Petals-IPFS Microservice
+# Zeropoint Protocol Microservice
 
-A Python microservice that combines the power of distributed AI (Petals) with decentralized storage (IPFS) to provide text generation, image generation, and content storage capabilities.
+A Python microservice that combines the power of distributed AI (Petals) with decentralized storage (IPFS) to provide text generation, image generation, and content storage capabilities for the Zeropoint Protocol ecosystem.
 
 ## Features
 
@@ -8,6 +8,7 @@ A Python microservice that combines the power of distributed AI (Petals) with de
 - **Image Generation**: Generate images using Stable Diffusion
 - **IPFS Integration**: Store and retrieve content on the IPFS network
 - **RESTful API**: Simple API for interacting with all services
+- **Zeropoint Protocol Integration**: Seamless integration with the main Zeropoint Protocol system
 
 ## Prerequisites
 
@@ -79,7 +80,7 @@ The service will run on `http://localhost:8000` by default.
 A test script is provided to demonstrate the service's capabilities:
 
 ```bash
-python test_petals_ipfs.py
+python test_zeropoint_service.py
 ```
 
 This script will:
@@ -108,6 +109,15 @@ All generated content can optionally be stored on IPFS, providing:
 2. Decentralized storage (content is stored across the IPFS network)
 3. Persistent links (IPFS hashes remain valid as long as the content is pinned somewhere)
 
+### Zeropoint Protocol Integration
+
+This microservice is designed to work seamlessly with the main Zeropoint Protocol system:
+
+1. **Ethical Compliance**: All operations are Zeroth-gated for ethical validation
+2. **Soulchain Integration**: Generated content can be logged to the Soulchain ledger
+3. **Agent Support**: Provides AI capabilities for the agent system
+4. **Unified API**: Accessible through the main Zeropoint Protocol API gateway
+
 ## Customization
 
 You can customize the service by modifying the following variables in `app.py`:
@@ -116,6 +126,16 @@ You can customize the service by modifying the following variables in `app.py`:
 - `IMAGE_MODEL_NAME`: The diffusion model to use (default: "runwayml/stable-diffusion-v1-5")
 - `IPFS_API`: The IPFS API endpoint (default: "/ip4/127.0.0.1/tcp/5001")
 - `CACHE_DIR`: Directory for temporary files (default: "./cache")
+
+## Environment Variables
+
+The service supports the following environment variables:
+
+- `CACHE_DIR`: Directory for temporary files (default: "./cache")
+- `IPFS_API`: IPFS API endpoint (default: "/ip4/127.0.0.1/tcp/5001")
+- `TEXT_MODEL_NAME`: Petals model name (default: "bigscience/bloom-petals")
+- `IMAGE_MODEL_NAME`: Diffusion model name (default: "runwayml/stable-diffusion-v1-5")
+- `LOG_LEVEL`: Logging level (default: "info")
 
 ## Limitations
 

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuthController } from './controllers/auth.controller.js';
@@ -15,6 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CustomThrottlerGuard } from './guards/throttler.guard.js';
 
 @Module({
   imports: [
@@ -39,6 +41,15 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
   ],
   controllers: [AppController, AuthController, HealthController],
-  providers: [AppService, AuthService, JwtStrategy, JwtAuthGuard],
+  providers: [
+    AppService, 
+    AuthService, 
+    JwtStrategy, 
+    JwtAuthGuard,
+    {
+      provide: APP_GUARD,
+      useClass: CustomThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

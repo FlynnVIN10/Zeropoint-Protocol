@@ -18,7 +18,7 @@ from transformers import AutoTokenizer
 # Diffusers for image generation
 from diffusers import StableDiffusionPipeline
 
-app = Sanic("PetalsIPFSMicroservice")
+app = Sanic("ZeropointProtocolMicroservice")
 
 # Configuration
 TEXT_MODEL_NAME = "bigscience/bloom-petals"
@@ -58,15 +58,11 @@ async def load_text_model():
 async def load_image_model():
     global image_model
     try:
-        print("Loading Stable Diffusion model (this may take a minute)...")
-        # Load in fp16 precision to save memory
+        print("Loading Stable Diffusion model...")
         image_model = StableDiffusionPipeline.from_pretrained(
             IMAGE_MODEL_NAME,
-            torch_dtype=torch.float16,
-            revision="fp16"
+            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
         )
-        
-        # Move to GPU if available
         if torch.cuda.is_available():
             image_model = image_model.to("cuda")
         print("Image model loaded successfully!")
@@ -83,9 +79,9 @@ async def connect_to_ipfs():
         print(f"Error connecting to IPFS: {e}")
         print("IPFS functionality will be disabled")
 
-@app.route("/hello", methods=["GET"])
+@app.route("/", methods=["GET"])
 async def hello(request):
-    return json({"message": "Hello from Petals-IPFS Microservice!"})
+    return json({"message": "Hello from Zeropoint Protocol Microservice!"})
 
 @app.route("/status", methods=["GET"])
 async def status(request):
@@ -212,88 +208,97 @@ async def generate_image(request):
         
         # Store on IPFS if requested and IPFS is connected
         if store_on_ipfs and ipfs_client:
-            with open(image_filename, "rb") as f:
-                ipfs_result = ipfs_client.add(image_filename)
-                ipfs_hash = ipfs_result["Hash"]
+            try:
+                # Save image to IPFS
+                with open(image_filename, "rb") as f:
+                    ipfs_hash = ipfs_client.add(f.read())
                 response["ipfs_hash"] = ipfs_hash
                 response["ipfs_gateway_url"] = f"https://ipfs.io/ipfs/{ipfs_hash}"
+            except Exception as e:
+                response["ipfs_error"] = str(e)
         
         return json(response)
     except Exception as e:
         return json({"error": str(e)}, status=500)
 
+@app.route("/peers", methods=["GET"])
+async def get_peers(request):
+    global text_model
+    
+    if text_model is None:
+        return json({"error": "Text model is not loaded"}, status=503)
+    
+    try:
+        peers_info = text_model.get_peers_info()
+        return json({
+            "peers": peers_info,
+            "total_peers": len(peers_info)
+        })
+    except Exception as e:
+        return json({"error": str(e)}, status=500)
+
 @app.route("/ipfs/add", methods=["POST"])
 async def add_to_ipfs(request):
-    # Check if IPFS is connected
+    global ipfs_client
+    
     if ipfs_client is None:
         return json({"error": "IPFS is not connected"}, status=503)
     
-    # Check if file is in request
-    if not request.files:
-        return json({"error": "No file provided"}, status=400)
-    
     try:
-        # Get the file from the request
-        file = request.files.get("file")
-        if not file:
-            return json({"error": "No file provided under 'file' key"}, status=400)
+        file_obj = request.files.get("file")
+        if not file_obj:
+            return json({"error": "No file provided"}, status=400)
         
-        # Save file to temporary location
-        file_path = f"{CACHE_DIR}/{file.name}"
-        async with aiofiles.open(file_path, "wb") as f:
-            await f.write(file.body)
+        # Save uploaded file temporarily
+        timestamp = int(time.time())
+        temp_filename = f"{CACHE_DIR}/upload_{timestamp}_{file_obj.name}"
         
-        # Add file to IPFS
-        ipfs_result = ipfs_client.add(file_path)
-        ipfs_hash = ipfs_result["Hash"]
+        async with aiofiles.open(temp_filename, "wb") as f:
+            await f.write(file_obj.body)
+        
+        # Add to IPFS
+        with open(temp_filename, "rb") as f:
+            ipfs_hash = ipfs_client.add(f.read())
+        
+        # Clean up temporary file
+        os.remove(temp_filename)
         
         return json({
-            "filename": file.name,
+            "filename": file_obj.name,
             "ipfs_hash": ipfs_hash,
             "ipfs_gateway_url": f"https://ipfs.io/ipfs/{ipfs_hash}"
         })
     except Exception as e:
         return json({"error": str(e)}, status=500)
 
-@app.route("/ipfs/get/<ipfs_hash>", methods=["GET"])
+@app.route("/ipfs/get/<ipfs_hash:path>", methods=["GET"])
 async def get_from_ipfs(request, ipfs_hash):
-    # Check if IPFS is connected
+    global ipfs_client
+    
     if ipfs_client is None:
         return json({"error": "IPFS is not connected"}, status=503)
     
     try:
-        # Get file from IPFS
         content = ipfs_client.cat(ipfs_hash)
-        
-        # Determine if it's text or binary
-        try:
-            # Try to decode as text
-            text_content = content.decode("utf-8")
-            return json({"content": text_content, "type": "text"})
-        except UnicodeDecodeError:
-            # It's binary data (like an image)
-            file_path = f"{CACHE_DIR}/{ipfs_hash}"
-            with open(file_path, "wb") as f:
-                f.write(content)
-            
-            return await file(file_path)
-    except Exception as e:
-        return json({"error": str(e)}, status=500)
-
-@app.route("/peers", methods=["GET"])
-async def get_peers(request):
-    if text_model is None:
-        return json({"error": "Text model is not loaded yet"}, status=503)
-    
-    try:
-        peers_info = text_model.get_peers_info()
         return json({
-            "model_name": TEXT_MODEL_NAME,
-            "peers_count": len(peers_info),
-            "peers": peers_info
+            "ipfs_hash": ipfs_hash,
+            "content": content.decode("utf-8"),
+            "size": len(content)
         })
     except Exception as e:
         return json({"error": str(e)}, status=500)
+
+@app.route("/health", methods=["GET"])
+async def health_check(request):
+    return json({
+        "status": "healthy",
+        "timestamp": time.time(),
+        "services": {
+            "text_model": text_model is not None,
+            "image_model": image_model is not None,
+            "ipfs": ipfs_client is not None
+        }
+    })
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)

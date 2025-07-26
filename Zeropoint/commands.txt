@@ -1,5 +1,5 @@
 """
-# Petals-IPFS Microservice Commands
+# Zeropoint Protocol Microservice Commands
 
 # 1. Install dependencies
 pip install -r requirements.txt
@@ -25,7 +25,7 @@ ipfs daemon
 python app.py
 
 # 6. Test the service (in a separate terminal)
-python test_petals_ipfs.py
+python test_zeropoint_service.py
 
 # 7. API Usage Examples
 

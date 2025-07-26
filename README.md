@@ -138,6 +138,89 @@ npm run test:e2e
 
 This project follows ethical AI principles with Zeroth-gate compliance. All contributions must align with responsible AI development practices.
 
+### **Contribution Requirements**
+- All contributions must pass ethical validation through the Zeroth-gate system
+- Code must align with the Zeroth Principle: "Only with good intent and a good heart does the system function"
+- Contributions must not enable harmful or malicious applications
+- All code must respect human rights and dignity
+
+### **Getting Started**
+1. Read the [Contributor License Agreement (CLA)](./CLA.md)
+2. Review the [Zeroth Alignment Addendum (ZAA)](./ZAA.md)
+3. Follow the ethical guidelines and coding standards
+4. Submit your contribution with appropriate documentation
+
+For more information, see our [Contributing Guidelines](./CONTRIBUTING.md).
+
 ## 📄 **License**
 
-See [LICENSE](./LICENSE) for details.
+### **GNU Affero General Public License v3 (AGPL v3) + Zeroth Alignment Addendum (ZAA)**
+
+This project is licensed under the **GNU Affero General Public License v3 (AGPL v3)** with the **Zeroth Alignment Addendum (ZAA)**. This combination ensures both open-source freedom and ethical AI development.
+
+### **Key License Features**
+
+#### **AGPL v3 Benefits:**
+- **Copyleft Protection**: Ensures derivatives remain open source
+- **Network Use Provision**: Requires source code availability for network services
+- **Patent Protection**: Includes patent license grants
+- **Freedom Preservation**: Maintains user freedoms and rights
+
+#### **ZAA Ethical Requirements:**
+- **Zeroth Principle**: "Only with good intent and a good heart does the system function"
+- **Intent Validation**: All operations must pass ethical validation
+- **Benevolent Purpose**: Software may only be used for beneficial purposes
+- **Prohibited Uses**: Explicit restrictions on harmful applications
+
+### **License Compliance**
+
+#### **For Users:**
+- You may use, modify, and distribute the software
+- You must provide source code when offering network services
+- You must comply with ethical requirements in the ZAA
+- You may not use the software for harmful purposes
+
+#### **For Contributors:**
+- All contributions are licensed under the same terms
+- Contributors must agree to the [CLA](./CLA.md)
+- Contributions must pass ethical validation
+- Code must align with the Zeroth Principle
+
+#### **For Distributors:**
+- Must include the complete license text (AGPL v3 + ZAA)
+- Must provide source code and installation information
+- Must maintain ethical safeguards and Zeroth-gate system
+- Must not enable harmful or malicious applications
+
+### **License Files**
+- **[LICENSE](./LICENSE)**: Complete AGPL v3 text with embedded ZAA
+- **[ZAA.md](./ZAA.md)**: Standalone Zeroth Alignment Addendum
+- **[CLA.md](./CLA.md)**: Contributor License Agreement
+
+### **Contact Information**
+- **Ethical Questions**: ethics@zeropointprotocol.org
+- **Legal Questions**: legal@zeropointprotocol.org
+- **License Questions**: license@zeropointprotocol.org
+
+### **License Summary**
+```
+Copyright (C) 2024 Zeropoint Protocol Contributors
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+This software is also subject to the Zeroth Alignment Addendum (ZAA),
+which requires ethical compliance and benevolent use only.
+```
+
+For the complete license text, see [LICENSE](./LICENSE).

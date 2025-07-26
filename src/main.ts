@@ -8,6 +8,7 @@ import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { AllExceptionsFilter } from './filters/http-exception.filter.js';
 import { ValidationPipe } from './pipes/validation.pipe.js';
 import { LoggingInterceptor } from './interceptors/logging.interceptor.js';
+import { winstonConfig } from './config/winston.config.js';
 import helmet from 'helmet';
 import cors from 'cors';
 
@@ -49,21 +50,62 @@ async function runAgentLifecycle(agentIds: string[]) {
 }
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: winstonConfig
+  });
   
   // Global error handling and validation
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new LoggingInterceptor());
   
-  // Security middleware
-  app.use(helmet());
-  app.use(cors());
+  // Enhanced security middleware
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https:"],
+        fontSrc: ["'self'", "data:"],
+        objectSrc: ["'none'"],
+        mediaSrc: ["'self'"],
+        frameSrc: ["'none'"],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+  }));
+  
+  // CORS configuration
+  app.use(cors({
+    origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+    exposedHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'X-RateLimit-Reset']
+  }));
   
   // Global prefix
   app.setGlobalPrefix('v1');
   
-  await app.listen(3000);
+  // Graceful shutdown
+  const signals = ['SIGTERM', 'SIGINT'];
+  signals.forEach(signal => {
+    process.on(signal, async () => {
+      console.log(`Received ${signal}, starting graceful shutdown...`);
+      await app.close();
+      process.exit(0);
+    });
+  });
+  
+  const port = process.env.PORT || 3000;
+  const host = process.env.HOST || '0.0.0.0';
+  
+  await app.listen(port, host);
+  console.log(`🚀 Zeropoint Protocol API Gateway running on ${host}:${port}`);
+  
   // Integration hub: run full lifecycle for demo agents
   const agentIds = ['agent1', 'agent2', 'agent3'];
   try {

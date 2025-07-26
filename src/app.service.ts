@@ -101,10 +101,10 @@ export class AppService {
   // Enhanced API Gateway Methods
   async callPythonBackend(endpoint: string, data: any, rationale: string): Promise<any> {
     const startTime = Date.now();
-    const nullvanaUrl = this.configService.get<string>('NULLVANA_SERVICE_URL');
+    const zeropointUrl = this.configService.get<string>('ZEROPOINT_SERVICE_URL');
     
-    if (!nullvanaUrl) {
-      throw new Error('NULLVANA_SERVICE_URL not configured');
+    if (!zeropointUrl) {
+      throw new Error('ZEROPOINT_SERVICE_URL not configured');
     }
 
     if (!checkIntent(rationale)) {
@@ -115,7 +115,7 @@ export class AppService {
       this.logger.log(`Calling Python backend: ${endpoint}`);
       
       const response = await firstValueFrom(
-        this.httpService.post(`${nullvanaUrl}/v1/${endpoint}`, data, {
+        this.httpService.post(`${zeropointUrl}/v1/${endpoint}`, data, {
           timeout: 30000, // 30 second timeout
           headers: {
             'Content-Type': 'application/json',
@@ -413,11 +413,11 @@ export class AppService {
 
   private async checkPythonBackendHealth(): Promise<string> {
     try {
-      const nullvanaUrl = this.configService.get<string>('NULLVANA_SERVICE_URL');
-      if (!nullvanaUrl) return 'not_configured';
+      const zeropointUrl = this.configService.get<string>('ZEROPOINT_SERVICE_URL');
+      if (!zeropointUrl) return 'not_configured';
       
       await firstValueFrom(
-        this.httpService.get(`${nullvanaUrl}/health`, { timeout: 5000 })
+        this.httpService.get(`${zeropointUrl}/health`, { timeout: 5000 })
       );
       return 'healthy';
     } catch (error) {

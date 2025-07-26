@@ -39,11 +39,29 @@ async function runAgentLifecycle(agentIds: string[]) {
       return { latency: Math.random() * 100, throughput: Math.random() * 1000 };
     });
     if (load > 0.8) {
-      await train.autoScale(agentId, 'high-load');
+      await train.autoScale(agentId, load);
     }
-    // 5. Training: recursive self-improvement
-    const newXP = await train.recursiveTraining(agentId, 'ethical-alignment');
-    console.log(`Agent ${agentId} completed lifecycle with ${newXP} XP`);
+    // 5. Training: self-improvement cycle using existing methods
+    const agentMeta = {
+      name: agentId,
+      did: `did:zeropoint:${agentId}`,
+      handle: `@${agentId}`,
+      intent: 'ethical-alignment',
+      context: {
+        taskId: 'training-cycle',
+        lineage: [],
+        swarmLink: '',
+        layer: '#training' as const,
+        domain: 'ai-ethics'
+      }
+    };
+    const flaggedFunctions = await train.reflect(agentId);
+    if (flaggedFunctions.length > 0) {
+      const proposal = await train.proposeRewrite(agentMeta, flaggedFunctions[0]);
+      const response = await train.sendToPetals(proposal);
+      await train.applyIfAllowed(response);
+    }
+    console.log(`Agent ${agentId} completed lifecycle with ${perf.metrics.runtime}ms runtime`);
   }
 }
 
@@ -60,11 +78,7 @@ async function bootstrap() {
   }));
 
   // Global pipes and filters
-  app.useGlobalPipes(new ValidationPipe({
-    transform: true,
-    whitelist: true,
-    forbidNonWhitelisted: true
-  }));
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalInterceptors(new LoggingInterceptor());
 

@@ -1,4 +1,4 @@
-// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+// © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
 import { IsString, IsEmail, MinLength, MaxLength, IsOptional, IsBoolean, IsArray, IsObject } from 'class-validator';
 import { IsStrongPassword, IsValidUsername } from '../decorators/validation.decorators.js';

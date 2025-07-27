@@ -1,6 +1,6 @@
 # Zeropoint Protocol AI
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE.md)
 [![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
@@ -203,9 +203,17 @@ npm run test:e2e
 - Update documentation
 - Ensure ethical AI compliance
 
+## 🏢 Corporate Information
+
+**Zeropoint Protocol, Inc.**  
+A Texas C Corporation  
+Principal Office: Austin, TX  
+Domain: zeropointprotocol.ai  
+Contact: legal@zeropointprotocol.ai
+
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under a proprietary view-only license - see the [LICENSE](LICENSE.md) file for details. No clone, modify, run or distribute without signed agreement.
 
 ## 🙏 Acknowledgments
 

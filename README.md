@@ -211,8 +211,14 @@ Principal Office: Austin, TX
 Domain: zeropointprotocol.ai  
 Contact: legal@zeropointprotocol.ai
 
-## 📄 License
+## 📑 License & Access
+**© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. Domain: zeropointprotocol.ai, Contact: legal@zeropointprotocol.ai**
 
+### **View-Only License: Browse on GitHub Only**
+
+
+
+**All other uses require signed license agreement.**
 This project is licensed under a proprietary view-only license - see the [LICENSE](LICENSE.md) file for details. No clone, modify, run or distribute without signed agreement.
 
 ## 🙏 Acknowledgments

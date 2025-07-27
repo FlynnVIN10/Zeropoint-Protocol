@@ -1,206 +1,225 @@
-# Zeropoint Protocol (View-Only)
+# Zeropoint Protocol AI
 
-**⚠️ VIEW-ONLY NOTICE: View only; no clone/download/fork/modify/run/redistribute without signed license. See [LICENSE.md](./LICENSE.md) for details.**
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
 
-**Advanced AI Agent System with Ethical AI Principles**
+> **Zeroth Principle**: Only with good intent and a good heart does the system function.
 
-Zeropoint Protocol is a comprehensive AI agent system featuring multi-agent collaboration, decentralized storage, and ethical AI principles with Zeroth-gate compliance.
+## 🌟 Overview
 
-## 🎯 **Core Features**
+Zeropoint Protocol AI is an advanced AI system that combines distributed machine learning, ethical AI governance, and decentralized identity management. The system features a dual-architecture with a Python backend for AI model inference and a NestJS API gateway for orchestration and security.
 
-- **🤖 Multi-Agent Intelligence**: Swarm collaboration and collective cognition
-- **🔗 Decentralized Storage**: IPFS-based ledger and persistent memory
-- **⚖️ Ethical AI**: Zeroth-gate compliance for responsible AI development
-- **🧠 Autopoietic Cognition**: Recursive self-training and adaptation
-- **🎮 Gamified Experience**: XP progression and WonderCraft simulation
-- **🔐 Secure Authentication**: JWT-based user management and protection
+## 🏗️ Architecture
 
-- All endpoints are versioned under `/v1/`.
-- Proxy endpoints (e.g., `/v1/generate-text`) forward to Python backend using HttpModule.
-- Persistent storage via PostgreSQL/TypeORM; User entity for registration/login.
-- JWT authentication with `/v1/register`, `/v1/login`, and `/v1/protected` endpoints.
-- Prometheus metrics exposed at `/v1/metrics` and `/v1/ledger-metrics`.
-- All sensitive flows and endpoints are Zeroth-gated for ethical compliance.
-- All secrets (DB, JWT, etc.) are loaded from environment variables (`process.env`).
+### Core Components
 
-## Example Usage
+- **🤖 AI Backend (Python)**: Distributed text and image generation using Petals and Stable Diffusion
+- **🌐 API Gateway (NestJS)**: RESTful API with JWT authentication and rate limiting
+- **🔗 IPFS Integration**: Decentralized file storage and content addressing
+- **⚡ Soulchain**: Ethical AI governance and intent validation
+- **📊 Monitoring**: Prometheus metrics and health checks
 
-### Register
-```bash
-curl -X POST http://localhost:3000/v1/register -H 'Content-Type: application/json' -d '{"username":"user1","password":"pass1"}'
+### Technology Stack
+
+```
+Frontend/API Gateway:
+├── NestJS (TypeScript)
+├── JWT Authentication
+├── Rate Limiting
+├── Prometheus Metrics
+└── Helia IPFS Client
+
+AI Backend:
+├── Python 3.12+
+├── Petals (Distributed BLOOM)
+├── Stable Diffusion
+├── Sanic Web Framework
+└── IPFS Integration
+
+Infrastructure:
+├── Docker & Docker Compose
+├── PostgreSQL Database
+├── Redis Cache
+├── IPFS Node
+└── Prometheus Monitoring
 ```
 
-### Login
-```bash
-curl -X POST http://localhost:3000/v1/login -H 'Content-Type: application/json' -d '{"username":"user1","password":"pass1"}'
-```
-
-### Access Protected Route
-```bash
-curl -H "Authorization: Bearer <access_token>" http://localhost:3000/v1/protected
-```
-
-### Prometheus Metrics
-```bash
-curl http://localhost:3000/v1/metrics
-curl http://localhost:3000/v1/ledger-metrics
-```
-
-## 🚀 **Quick Start**
+## 🚀 Quick Start
 
 ### Prerequisites
+
+- Python 3.12+
 - Node.js 20+
-- PostgreSQL
-- Docker & Docker Compose
+- Docker (optional, for full deployment)
+- Git
 
-### Installation
+### Local Development Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/FlynnVIN10/zeropointprotocol.ai.git
+   cd zeropointprotocol.ai
+   ```
+
+2. **Start Python AI Backend**
+   ```bash
+   cd Zeropoint
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   python app_simple.py
+   ```
+   The AI service will be available at `http://localhost:8000`
+
+3. **Start NestJS API Gateway**
+   ```bash
+   cd ..
+   npm install
+   export JWT_SECRET="your-secret-key"
+   export JWT_EXPIRES_IN="24h"
+   export NODE_ENV="development"
+   npm run start
+   ```
+   The API gateway will be available at `http://localhost:3000`
+
+### Docker Deployment
+
 ```bash
-# Clone the repository
-git clone https://github.com/FlynnVIN10/Zeropoint-Protocol.git
-cd Zeropoint-Protocol
-
-# Install dependencies
-npm install
-
-# Start with Docker
+# Start all services
 docker-compose up -d
 
-# Or start locally
-npm run start:dev
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
 ```
 
-## 🔧 **API Usage**
+## 📡 API Endpoints
 
-### Authentication
+### Health & Status
+- `GET /v1/health` - Service health check
+- `GET /v1/status` - System status and metrics
+- `GET /v1/metrics` - Prometheus metrics
+
+### AI Generation
+- `POST /v1/generate/text` - Text generation with BLOOM
+- `POST /v1/generate/image` - Image generation with Stable Diffusion
+- `POST /v1/generate/code` - Code generation
+
+### IPFS Operations
+- `POST /v1/ipfs/upload` - Upload files to IPFS
+- `GET /v1/ipfs/download/:cid` - Download files from IPFS
+- `GET /v1/ipfs/list/:cid` - List IPFS directory contents
+
+### Authentication (when database is enabled)
+- `POST /v1/register` - User registration
+- `POST /v1/login` - User authentication
+
+## 🔧 Configuration
+
+### Environment Variables
+
 ```bash
-# Register
-curl -X POST http://localhost:3000/v1/register \
-  -H 'Content-Type: application/json' \
-  -d '{"username":"user1","password":"pass1"}'
+# JWT Configuration
+JWT_SECRET=your-secret-key
+JWT_EXPIRES_IN=24h
 
-# Login
-curl -X POST http://localhost:3000/v1/login \
-  -H 'Content-Type: application/json' \
-  -d '{"username":"user1","password":"pass1"}'
+# Database (PostgreSQL)
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USERNAME=zeropoint
+DATABASE_PASSWORD=zeropoint_password
+DATABASE_NAME=zeropoint_protocol
 
-# Access Protected Route
-curl -H "Authorization: Bearer <access_token>" \
-  http://localhost:3000/v1/protected
+# Service URLs
+ZEROPOINT_SERVICE_URL=http://localhost:8000
+IPFS_GATEWAY_URL=http://localhost:5001
+
+# Application
+NODE_ENV=development
+PORT=3000
+LOG_LEVEL=info
 ```
 
-### Monitoring
-```bash
-# Prometheus Metrics
-curl http://localhost:3000/v1/metrics
-curl http://localhost:3000/v1/ledger-metrics
+## 🧪 Testing
 
-# Health Check
-curl http://localhost:3000/v1/health
+### Python Backend Tests
+```bash
+cd Zeropoint
+python -m pytest test_zeropoint_service.py
 ```
 
-## 🧪 **Testing**
-
+### NestJS API Tests
 ```bash
-# Run all tests
-npm test
-
-# Run with coverage
-npm run test:cov
-
-# Run E2E tests
+npm run test
 npm run test:e2e
 ```
 
-**Current Status:** 9/9 tests passing ✅
+## 📊 Monitoring
 
-## 🏗️ **Architecture**
+### Health Checks
+- **API Gateway**: `http://localhost:3000/v1/health`
+- **AI Backend**: `http://localhost:8000/health`
+- **Database**: Automatic connection monitoring
+- **IPFS**: Node connectivity checks
 
-### **System Components**
-- **Backend**: NestJS with TypeScript
-- **Database**: PostgreSQL with TypeORM
-- **Storage**: IPFS (Helia client)
-- **Containerization**: Docker & Docker Compose
-- **Testing**: Jest with ESM support
-- **Authentication**: JWT with Passport
+### Metrics
+- **Prometheus**: `http://localhost:9090`
+- **API Metrics**: Request counts, latency, error rates
+- **AI Metrics**: Model loading status, inference times
+- **System Metrics**: CPU, memory, disk usage
 
-### **Agent Modules**
-- **Introspection**: Self-reflection and dialogue layer
-- **Simulation**: Gamified XP progression system
-- **Swarm**: Multi-agent collaboration engine
-- **Training**: Autopoietic cognition and self-training
-- **Soulchain**: IPFS-based ledger and persistence
+## 🔒 Security Features
 
-## 📚 **Documentation**
+### Zeroth Gate Ethical Validation
+- Intent validation for all AI operations
+- Ethical compliance checking
+- Malicious request blocking
 
-- **📋 PM Status Report**: [PM_STATUS_REPORT.md](./PM_STATUS_REPORT.md) - Project management and communication
-- **🚀 Deployment Status**: [DEPLOYMENT_STATUS.md](./DEPLOYMENT_STATUS.md) - Technical deployment details
-- **🔧 API Documentation**: Coming soon
+### Authentication & Authorization
+- JWT-based authentication
+- Role-based access control
+- Rate limiting and throttling
 
-## 🤝 **Contributing**
+### Data Protection
+- IPFS content addressing
+- Encrypted storage
+- Audit logging
 
-**⚠️ CONTRIBUTION POLICY: View-only; no PRs/forks/clones without signed agreement. Contact legal@zeropointprotocol.com for licensing inquiries.**
+## 🤝 Contributing
 
-This project follows ethical AI principles with Zeroth-gate compliance. All contributions must align with responsible AI development practices.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-### **Contribution Requirements**
-- All contributions must pass ethical validation through the Zeroth-gate system
-- Code must align with the Zeroth Principle: "Only with good intent and a good heart does the system function"
-- Contributions must not enable harmful or malicious applications
-- All code must respect human rights and dignity
+### Development Guidelines
+- Follow TypeScript/ESLint rules
+- Write comprehensive tests
+- Update documentation
+- Ensure ethical AI compliance
 
-### **Getting Started**
-1. Contact legal@zeropointprotocol.com for licensing inquiries
-2. Complete a signed license agreement
-3. Follow the ethical guidelines and coding standards
-4. Submit your contribution with appropriate documentation
+## 📄 License
 
-For more information, see our [Contributing Guidelines](./CONTRIBUTING.md).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📄 **License**
+## 🙏 Acknowledgments
 
-### **View-Only License - © [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+- **Petals Team**: Distributed BLOOM implementation
+- **Hugging Face**: Transformers and Diffusers libraries
+- **IPFS**: Decentralized file storage
+- **NestJS**: Modern Node.js framework
 
-This software is provided for **VIEW-ONLY** purposes under a proprietary license. All rights are reserved by Zeropoint Protocol, LLC.
+## 📞 Support
 
-### **License Terms**
+- **Website**: [https://zeropointprotocol.ai](https://zeropointprotocol.ai)
+- **Legal Inquiries**: legal@zeropointprotocol.ai
+- **Documentation**: [https://zeropointprotocol.ai/docs](https://zeropointprotocol.ai/docs)
 
-#### **PROHIBITED ACTIVITIES:**
-- **Cloning** this repository
-- **Downloading** the source code
-- **Forking** this repository
-- **Modifying** any code or documentation
-- **Running** the software
-- **Distributing** the software or any derivatives
-- **Contributing** code or documentation
-- **Creating derivative works**
-- **Commercial use** of any kind
+---
 
-#### **PERMITTED ACTIVITIES:**
-- **Viewing** the code and documentation on GitHub
-- **Reading** the documentation for informational purposes
-- **Contacting** us for licensing inquiries
-
-### **License Requirements**
-To obtain rights beyond view-only access, you must:
-1. Contact legal@zeropointprotocol.com
-2. Complete a signed license agreement
-3. Receive written approval from Zeropoint Protocol, LLC
-4. Comply with all terms and conditions of the signed agreement
-
-### **Contact Information**
-- **Legal Questions**: legal@zeropointprotocol.com
-- **License Inquiries**: legal@zeropointprotocol.com
-- **Website**: https://zeropointprotocol.com/legal
-
-### **License Files**
-- **[LICENSE.md](./LICENSE.md)**: Complete view-only license terms
-- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contribution and access policy
-
-### **License Summary**
-```
-© [2025] Zeropoint Protocol, LLC. All Rights Reserved.
-View-Only License: No clone, modify, run or distribute without signed license.
-See LICENSE.md for details.
-```
-
-For the complete license text, see [LICENSE.md](./LICENSE.md).
+**Remember**: Only with good intent and a good heart does the system function. 🌟

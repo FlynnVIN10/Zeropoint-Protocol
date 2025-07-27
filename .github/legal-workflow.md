@@ -1,6 +1,6 @@
 # Legal Invitation Workflow
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.**
 
 ## Overview
 
@@ -9,7 +9,7 @@ This document outlines the legal invitation workflow for granting access to the 
 ## Workflow Steps
 
 ### 1. Initial Contact
-**Trigger**: User contacts legal@zeropointprotocol.com
+**Trigger**: User contacts legal@zeropointprotocol.ai
 
 **Required Information**:
 - Full name and title
@@ -76,7 +76,7 @@ This document outlines the legal invitation workflow for granting access to the 
       "routingOrder": 1
     },
     {
-      "email": "legal@zeropointprotocol.com",
+      "email": "legal@zeropointprotocol.ai",
       "name": "Zeropoint Legal Team",
       "role": "signer",
       "routingOrder": 2
@@ -226,23 +226,23 @@ const workflowSteps = [
 ## Contact Information
 
 ### **Legal Department**
-- **Email**: legal@zeropointprotocol.com
+- **Email**: legal@zeropointprotocol.ai
 - **Phone**: [Legal Department Phone]
 - **Address**: [Legal Department Address]
 - **Hours**: Monday-Friday, 9 AM - 5 PM EST
 
 ### **Technical Support**
-- **Email**: support@zeropointprotocol.com
-- **Documentation**: https://zeropointprotocol.com/docs
-- **API Reference**: https://zeropointprotocol.com/api
+- **Email**: support@zeropointprotocol.ai
+- **Documentation**: https://zeropointprotocol.ai/docs
+- **API Reference**: https://zeropointprotocol.ai/api
 
 ### **Emergency Contacts**
-- **Security Issues**: security@zeropointprotocol.com
-- **Compliance Violations**: compliance@zeropointprotocol.com
+- **Security Issues**: security@zeropointprotocol.ai
+- **Compliance Violations**: compliance@zeropointprotocol.ai
 - **Legal Emergencies**: [Emergency Legal Phone]
 
 ---
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved.**
 **View-Only License: No clone, modify, run or distribute without signed license.**
-**Contact legal@zeropointprotocol.com for licensing inquiries.** 
+**Contact legal@zeropointprotocol.ai for licensing inquiries.** 

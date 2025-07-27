@@ -1,4 +1,4 @@
-# © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+# © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
 name: License & Copyright Header Check
 
@@ -39,7 +39,7 @@ jobs:
         for file in $FILES; do
           if [ -f "$file" ] && [ -s "$file" ]; then
             # Check if file contains the copyright header
-            if ! grep -q "© \[2025\] Zeropoint Protocol, LLC. All Rights Reserved" "$file"; then
+            if ! grep -q "© \[2025\] Zeropoint Protocol (C Corp). All Rights Reserved" "$file"; then
               MISSING_HEADERS+=("$file")
             fi
           fi
@@ -52,7 +52,7 @@ jobs:
           printf '%s\n' "${MISSING_HEADERS[@]}"
           echo ""
           echo "Expected header format:"
-          echo "// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details."
+          echo "// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details."
           exit 1
         fi
         
@@ -80,10 +80,10 @@ jobs:
         
         # Check for required license elements
         REQUIRED_ELEMENTS=(
-          "© \[2025\] Zeropoint Protocol, LLC. All Rights Reserved"
+          "© \[2025\] Zeropoint Protocol (C Corp). All Rights Reserved"
           "VIEW-ONLY LICENSE TERMS"
           "PROHIBITED ACTIVITIES"
-          "legal@zeropointprotocol.com"
+          "legal@zeropointprotocol.ai"
         )
         
         for element in "${REQUIRED_ELEMENTS[@]}"; do
@@ -101,10 +101,10 @@ jobs:
         
         # Check for required contributing elements
         REQUIRED_ELEMENTS=(
-          "© \[2025\] Zeropoint Protocol, LLC. All Rights Reserved"
+          "© \[2025\] Zeropoint Protocol (C Corp). All Rights Reserved"
           "VIEW-ONLY POLICY"
           "PROHIBITED ACTIVITIES"
-          "legal@zeropointprotocol.com"
+          "legal@zeropointprotocol.ai"
         )
         
         for element in "${REQUIRED_ELEMENTS[@]}"; do

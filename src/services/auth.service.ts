@@ -1,6 +1,6 @@
-// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
-import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,11 +10,14 @@ import { AuditLog } from '../entities/audit-log.entity.js';
 import { RegisterDto, LoginDto, ChangePasswordDto, UpdateProfileDto } from '../dto/auth.dto.js';
 import { checkIntent } from '../guards/synthient.guard.js';
 import { ConfigService } from '@nestjs/config';
+import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -27,117 +30,182 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto, ipAddress: string, userAgent: string): Promise<any> {
-    if (!checkIntent(registerDto.username + registerDto.email + registerDto.password)) {
-      throw new UnauthorizedException('Zeroth violation: Registration blocked.');
-    }
+    try {
+      if (!checkIntent(registerDto.username + registerDto.email + registerDto.password)) {
+        await this.logSoulchainEvent('register_blocked', 'Zeroth violation: Registration blocked', {
+          username: registerDto.username,
+          email: registerDto.email,
+          ipAddress,
+          userAgent
+        });
+        throw new UnauthorizedException('Zeroth violation: Registration blocked.');
+      }
 
-    // Check if user already exists
-    const existingUser = await this.userRepository.findOne({
-      where: [
-        { username: registerDto.username },
-        { email: registerDto.email }
-      ]
-    });
+      // Check if user already exists
+      const existingUser = await this.userRepository.findOne({
+        where: [
+          { username: registerDto.username },
+          { email: registerDto.email }
+        ]
+      });
 
-    if (existingUser) {
-      throw new ConflictException('Username or email already exists');
-    }
+      if (existingUser) {
+        await this.logSoulchainEvent('register_failed', 'Username or email already exists', {
+          username: registerDto.username,
+          email: registerDto.email,
+          ipAddress,
+          userAgent
+        });
+        throw new ConflictException('Username or email already exists');
+      }
 
-    // Create new user
-    const user = this.userRepository.create({
-      ...registerDto,
-      roles: ['user'],
-      preferences: {}
-    });
+      // Create new user
+      const user = this.userRepository.create({
+        ...registerDto,
+        roles: ['user'],
+        preferences: {}
+      });
 
-    const savedUser = await this.userRepository.save(user);
+      const savedUser = await this.userRepository.save(user);
 
-    // Log registration
-    await this.logAuditEvent(
-      savedUser.id,
-      'register',
-      'auth',
-      ipAddress,
-      userAgent,
-      { success: true }
-    );
-
-    // Generate tokens
-    const tokens = await this.generateTokens(savedUser);
-
-    return {
-      success: true,
-      user: savedUser.toJSON(),
-      ...tokens,
-      message: 'User registered successfully'
-    };
-  }
-
-  async login(loginDto: LoginDto, ipAddress: string, userAgent: string): Promise<any> {
-    if (!checkIntent(loginDto.username + loginDto.password)) {
-      throw new UnauthorizedException('Zeroth violation: Login blocked.');
-    }
-
-    // Find user by username or email
-    const user = await this.userRepository.findOne({
-      where: [
-        { username: loginDto.username },
-        { email: loginDto.username }
-      ]
-    });
-
-    if (!user || !user.isActive) {
+      // Log registration to audit log
       await this.logAuditEvent(
-        null,
-        'login',
+        savedUser.id,
+        'register',
         'auth',
         ipAddress,
         userAgent,
-        { success: false, reason: 'invalid_credentials' }
+        { success: true }
       );
-      throw new UnauthorizedException('Invalid credentials');
-    }
 
-    // Validate password
-    const isValidPassword = await user.validatePassword(loginDto.password);
-    if (!isValidPassword) {
+      // Log to Soulchain
+      await this.logSoulchainEvent('register_success', 'User registered successfully', {
+        userId: savedUser.id,
+        username: savedUser.username,
+        email: savedUser.email,
+        ipAddress,
+        userAgent
+      });
+
+      // Generate tokens
+      const tokens = await this.generateTokens(savedUser);
+
+      return {
+        success: true,
+        user: savedUser.toJSON(),
+        ...tokens,
+        message: 'User registered successfully'
+      };
+    } catch (error) {
+      this.logger.error(`Registration error: ${error.message}`, error.stack);
+      await this.logSoulchainEvent('register_error', error.message, {
+        username: registerDto.username,
+        email: registerDto.email,
+        ipAddress,
+        userAgent
+      });
+      throw error;
+    }
+  }
+
+  async login(loginDto: LoginDto, ipAddress: string, userAgent: string): Promise<any> {
+    try {
+      if (!checkIntent(loginDto.username + loginDto.password)) {
+        await this.logSoulchainEvent('login_blocked', 'Zeroth violation: Login blocked', {
+          username: loginDto.username,
+          ipAddress,
+          userAgent
+        });
+        throw new UnauthorizedException('Zeroth violation: Login blocked.');
+      }
+
+      // Find user by username or email
+      const user = await this.userRepository.findOne({
+        where: [
+          { username: loginDto.username },
+          { email: loginDto.username }
+        ]
+      });
+
+      if (!user || !user.isActive) {
+        await this.logSoulchainEvent('login_failed', 'Invalid credentials - user not found or inactive', {
+          username: loginDto.username,
+          ipAddress,
+          userAgent
+        });
+        await this.logAuditEvent(
+          null,
+          'login',
+          'auth',
+          ipAddress,
+          userAgent,
+          { success: false, reason: 'invalid_credentials' }
+        );
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      // Validate password
+      const isValidPassword = await user.validatePassword(loginDto.password);
+      if (!isValidPassword) {
+        await this.logSoulchainEvent('login_failed', 'Invalid password', {
+          userId: user.id,
+          username: user.username,
+          ipAddress,
+          userAgent
+        });
+        await this.logAuditEvent(
+          user.id,
+          'login',
+          'auth',
+          ipAddress,
+          userAgent,
+          { success: false, reason: 'invalid_password' }
+        );
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      // Update last login
+      user.lastLoginAt = new Date();
+      await this.userRepository.save(user);
+
+      // Generate tokens
+      const tokens = await this.generateTokens(user);
+
+      // Create session
+      await this.createSession(user.id, tokens.refreshToken, ipAddress, userAgent);
+
+      // Log successful login
+      await this.logSoulchainEvent('login_success', 'Login successful', {
+        userId: user.id,
+        username: user.username,
+        email: user.email,
+        ipAddress,
+        userAgent
+      });
       await this.logAuditEvent(
         user.id,
         'login',
         'auth',
         ipAddress,
         userAgent,
-        { success: false, reason: 'invalid_password' }
+        { success: true }
       );
-      throw new UnauthorizedException('Invalid credentials');
+
+      return {
+        success: true,
+        user: user.toJSON(),
+        ...tokens,
+        message: 'Login successful'
+      };
+    } catch (error) {
+      this.logger.error(`Login error: ${error.message}`, error.stack);
+      await this.logSoulchainEvent('login_error', error.message, {
+        username: loginDto.username,
+        ipAddress,
+        userAgent
+      });
+      throw error;
     }
-
-    // Update last login
-    user.lastLoginAt = new Date();
-    await this.userRepository.save(user);
-
-    // Generate tokens
-    const tokens = await this.generateTokens(user);
-
-    // Create session
-    await this.createSession(user.id, tokens.refreshToken, ipAddress, userAgent);
-
-    // Log successful login
-    await this.logAuditEvent(
-      user.id,
-      'login',
-      'auth',
-      ipAddress,
-      userAgent,
-      { success: true }
-    );
-
-    return {
-      success: true,
-      user: user.toJSON(),
-      ...tokens,
-      message: 'Login successful'
-    };
   }
 
   async logout(userId: string, refreshToken: string, ipAddress: string): Promise<any> {
@@ -365,6 +433,50 @@ export class AuthService {
     });
 
     await this.auditLogRepository.save(auditLog);
+  }
+
+  private async logSoulchainEvent(action: string, reason: string, context: any): Promise<void> {
+    try {
+      const agentId = context.userId || context.username || 'anonymous';
+      const amount = action.includes('success') ? 10 : action.includes('blocked') ? -20 : action.includes('failed') ? -10 : -5;
+
+      await soulchain.addXPTransaction({
+        agentId,
+        amount,
+        rationale: `Auth Service: ${action} - ${reason}`,
+        timestamp: new Date().toISOString(),
+        previousCid: null,
+        tags: [
+          {
+            type: '#who',
+            name: context.username || 'anonymous',
+            did: context.userId ? `did:zeropoint:${context.userId}` : 'did:zeropoint:anonymous',
+            handle: context.username ? `@${context.username}` : '@anonymous'
+          },
+          {
+            type: '#intent',
+            purpose: '#auth-service',
+            validation: 'good-heart'
+          },
+          {
+            type: '#thread',
+            taskId: action,
+            lineage: ['auth', 'service'],
+            swarmLink: 'auth-service-swarm'
+          },
+          {
+            type: '#layer',
+            level: '#live'
+          },
+          {
+            type: '#domain',
+            field: 'security'
+          }
+        ]
+      });
+    } catch (error) {
+      this.logger.error(`Failed to log auth event to Soulchain: ${error.message}`);
+    }
   }
 
   async cleanupExpiredSessions(): Promise<void> {

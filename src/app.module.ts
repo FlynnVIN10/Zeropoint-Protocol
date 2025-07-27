@@ -1,22 +1,22 @@
-// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-import { AuthController } from './controllers/auth.controller.js';
-import { AuthService } from './services/auth.service.js';
+// import { AuthController } from './controllers/auth.controller.js';
+// import { AuthService } from './services/auth.service.js';
 import { HealthController } from './controllers/health.controller.js';
-import { AgentStateController } from './controllers/agent-state.controller.js';
-import { AgentStateService } from './services/agent-state.service.js';
+// import { AgentStateController } from './controllers/agent-state.controller.js';
+// import { AgentStateService } from './services/agent-state.service.js';
 import { HttpModule } from '@nestjs/axios';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
-import { User } from './entities/user.entity.js';
-import { Session } from './entities/session.entity.js';
-import { AuditLog } from './entities/audit-log.entity.js';
-import { AgentState } from './entities/agent-state.entity.js';
+// import { User } from './entities/user.entity.js';
+// import { Session } from './entities/session.entity.js';
+// import { AuditLog } from './entities/audit-log.entity.js';
+// import { AgentState } from './entities/agent-state.entity.js';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
@@ -27,17 +27,17 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     HttpModule,
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST,
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      autoLoadEntities: true,
-      synchronize: true,
-    }),
-    TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
+    // TypeOrmModule.forRoot({
+    //   type: 'postgres',
+    //   host: process.env.DB_HOST,
+    //   port: parseInt(process.env.DB_PORT || '5432', 10),
+    //   username: process.env.DB_USER,
+    //   password: process.env.DB_PASS,
+    //   database: process.env.DB_NAME,
+    //   autoLoadEntities: true,
+    //   synchronize: true,
+    // }),
+    // TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({ 
       secret: process.env.JWT_SECRET, 
@@ -45,11 +45,11 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
   ],
-  controllers: [AppController, AuthController, HealthController, AgentStateController],
+  controllers: [AppController, HealthController],
   providers: [
     AppService, 
-    AuthService, 
-    AgentStateService,
+    // AuthService, 
+    // AgentStateService,
     JwtStrategy, 
     JwtAuthGuard,
     {

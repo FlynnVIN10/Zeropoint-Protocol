@@ -1,6 +1,6 @@
 # Zeropoint Protocol API Documentation
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.**
 
 ## Overview
 
@@ -9,7 +9,7 @@ The Zeropoint Protocol API Gateway provides a unified interface for accessing AI
 ## Base URL
 
 ```
-https://api.zeropointprotocol.com/v1
+https://api.zeropointprotocol.ai/v1
 ```
 
 ## Authentication
@@ -503,7 +503,7 @@ npm install @zeropoint/api-client
 import { ZeropointClient } from '@zeropoint/api-client';
 
 const client = new ZeropointClient({
-  baseUrl: 'https://api.zeropointprotocol.com/v1',
+  baseUrl: 'https://api.zeropointprotocol.ai/v1',
   token: 'your-jwt-token'
 });
 
@@ -522,7 +522,7 @@ pip install zeropoint-api-client
 from zeropoint_api import ZeropointClient
 
 client = ZeropointClient(
-    base_url='https://api.zeropointprotocol.com/v1',
+    base_url='https://api.zeropointprotocol.ai/v1',
     token='your-jwt-token'
 )
 
@@ -534,13 +534,13 @@ response = client.generate_text(
 
 ## Support and Contact
 
-- **API Documentation**: https://docs.zeropointprotocol.com
-- **Support Email**: support@zeropointprotocol.com
-- **Status Page**: https://status.zeropointprotocol.com
+- **API Documentation**: https://docs.zeropointprotocol.ai
+- **Support Email**: support@zeropointprotocol.ai
+- **Status Page**: https://status.zeropointprotocol.ai
 - **GitHub Issues**: https://github.com/FlynnVIN10/Zeropoint-Protocol/issues
 
 ---
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved.**
 **View-Only License: No clone, modify, run or distribute without signed license.**
-**Contact legal@zeropointprotocol.com for licensing inquiries.** 
+**Contact legal@zeropointprotocol.ai for licensing inquiries.** 

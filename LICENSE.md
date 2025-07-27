@@ -1,13 +1,13 @@
 # Zeropoint Protocol License Agreement
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+**© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. Domain: zeropointprotocol.ai, Contact: legal@zeropointprotocol.ai**
 
 ## VIEW-ONLY LICENSE TERMS
 
 This software and associated documentation (the "Software") is provided for **VIEW-ONLY** purposes. 
 
 ### **PROHIBITED ACTIVITIES**
-Without a signed license agreement from Zeropoint Protocol, LLC, you are **EXPRESSLY PROHIBITED** from:
+Without a signed license agreement from Zeropoint Protocol, Inc., you are **EXPRESSLY PROHIBITED** from:
 
 - **Cloning** this repository
 - **Downloading** the source code
@@ -28,13 +28,13 @@ You may only:
 
 ### **LICENSE REQUIREMENTS**
 To obtain rights beyond view-only access, you must:
-1. Contact legal@zeropointprotocol.com
+1. Contact legal@zeropointprotocol.ai
 2. Complete a signed license agreement
-3. Receive written approval from Zeropoint Protocol, LLC
+3. Receive written approval from Zeropoint Protocol, Inc.
 4. Comply with all terms and conditions of the signed agreement
 
 ### **ENFORCEMENT**
-Zeropoint Protocol, LLC reserves the right to:
+Zeropoint Protocol, Inc. reserves the right to:
 - Monitor compliance with these terms
 - Take legal action against violations
 - Pursue damages for unauthorized use
@@ -42,8 +42,8 @@ Zeropoint Protocol, LLC reserves the right to:
 
 ### **CONTACT INFORMATION**
 For licensing inquiries:
-- **Email:** legal@zeropointprotocol.com
-- **Website:** https://zeropointprotocol.com/legal
+- **Email:** legal@zeropointprotocol.ai
+- **Website:** https://zeropointprotocol.ai/legal
 - **Address:** [Legal Department Address]
 
 ### **EFFECTIVE DATE**
@@ -51,5 +51,5 @@ This license is effective immediately and applies to all versions of the Softwar
 
 ---
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+**© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved.**
 **View-Only License: No clone, modify, run or distribute without signed license.** 

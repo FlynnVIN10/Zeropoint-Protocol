@@ -1,4 +1,4 @@
-// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
 import { Controller, Get, Post, Body, Param, OnApplicationShutdown, Res, Req, UseGuards, UsePipes, ValidationPipe, UploadedFile, UseInterceptors, HttpStatus, HttpException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -118,58 +118,58 @@ export class AppController implements OnApplicationShutdown {
     return this.appService.generateText(text);
   }
 
-  @Post('register')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async register(@Body() dto: RegisterDto): Promise<any> {
-    if (!checkIntent(dto.username + dto.password)) throw new Error('Zeroth violation: Registration blocked.');
-    try {
-      const user = await this.appService.registerUser(dto.username, dto.password);
-      return { 
-        success: true,
-        id: user.id, 
-        username: user.username,
-        message: 'User registered successfully'
-      };
-    } catch (error) {
-      throw new HttpException({
-        success: false,
-        message: error.message
-      }, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post('register')
+  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  // async register(@Body() dto: RegisterDto): Promise<any> {
+  //   if (!checkIntent(dto.username + dto.password)) throw new Error('Zeroth violation: Registration blocked.');
+  //   try {
+  //     const user = await this.appService.registerUser(dto.username, dto.password);
+  //     return { 
+  //       success: true,
+  //       id: user.id, 
+  //       username: user.username,
+  //       message: 'User registered successfully'
+  //     };
+  //   } catch (error) {
+  //     throw new HttpException({
+  //       success: false,
+  //       message: error.message
+  //     }, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
-  @Post('login')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  async login(@Body() dto: LoginDto): Promise<any> {
-    if (!checkIntent(dto.username + dto.password)) throw new Error('Zeroth violation: Login blocked.');
-    try {
-      const user = await this.appService.validateUser(dto.username, dto.password);
-      if (!user) {
-        throw new HttpException({
-          success: false,
-          message: 'Invalid credentials'
-        }, HttpStatus.UNAUTHORIZED);
-      }
-      
-      const payload = { sub: user.id, username: user.username };
-      const token = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
-      
-      return { 
-        success: true,
-        access_token: token,
-        user: {
-          id: user.id,
-          username: user.username
-        }
-      };
-    } catch (error) {
-      if (error instanceof HttpException) throw error;
-      throw new HttpException({
-        success: false,
-        message: 'Login failed'
-      }, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+  // @Post('login')
+  // @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  // async login(@Body() dto: LoginDto): Promise<any> {
+  //   if (!checkIntent(dto.username + dto.password)) throw new Error('Zeroth violation: Login blocked.');
+  //   try {
+  //     const user = await this.appService.validateUser(dto.username, dto.password);
+  //     if (!user) {
+  //       throw new HttpException({
+  //         success: false,
+  //         message: 'Invalid credentials'
+  //       }, HttpStatus.UNAUTHORIZED);
+  //     }
+  //     
+  //     const payload = { sub: user.id, username: user.username };
+  //     const token = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
+  //     
+  //     return { 
+  //       success: true,
+  //       access_token: token,
+  //       user: {
+  //         id: user.id,
+  //         username: user.username
+  //       }
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof HttpException) throw error;
+  //     throw new HttpException({
+  //       success: false,
+  //       message: 'Login failed'
+  //     }, HttpStatus.INTERNAL_SERVER_ERROR);
+  //   }
+  // }
 
   @Get('health')
   async healthCheck(): Promise<any> {

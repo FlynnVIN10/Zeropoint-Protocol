@@ -1,4 +1,4 @@
-// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 import { NestFactory } from '@nestjs/core';

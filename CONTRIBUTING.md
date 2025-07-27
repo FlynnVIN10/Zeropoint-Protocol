@@ -1,10 +1,10 @@
 # Contribution & Access Policy
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved.**
 
 ## VIEW-ONLY POLICY
 
-This repository is provided for **VIEW-ONLY** purposes. All contribution and access activities require a signed agreement with Zeropoint Protocol, LLC.
+This repository is provided for **VIEW-ONLY** purposes. All contribution and access activities require a signed agreement with Zeropoint Protocol (C Corp).
 
 ## ⚠️ **PROHIBITED ACTIVITIES**
 
@@ -48,7 +48,7 @@ You may only:
 To obtain development or contribution rights, you must:
 
 ### **Step 1: Contact Legal Department**
-- Email: legal@zeropointprotocol.com
+- Email: legal@zeropointprotocol.ai
 - Subject: "License Agreement Request - Zeropoint Protocol"
 - Include your name, organization, and intended use
 
@@ -73,23 +73,23 @@ To obtain development or contribution rights, you must:
 ## 📞 **CONTACT INFORMATION**
 
 ### **Legal Department**
-- **Email**: legal@zeropointprotocol.com
-- **Website**: https://zeropointprotocol.com/legal
+- **Email**: legal@zeropointprotocol.ai
+- **Website**: https://zeropointprotocol.ai/legal
 - **Phone**: [Legal Department Phone]
 - **Address**: [Legal Department Address]
 
 ### **Business Development**
-- **Email**: business@zeropointprotocol.com
-- **Website**: https://zeropointprotocol.com/business
+- **Email**: business@zeropointprotocol.ai
+- **Website**: https://zeropointprotocol.ai/business
 - **Phone**: [Business Development Phone]
 
 ### **Technical Support**
-- **Email**: support@zeropointprotocol.com
-- **Documentation**: https://zeropointprotocol.com/docs
+- **Email**: support@zeropointprotocol.ai
+- **Documentation**: https://zeropointprotocol.ai/docs
 
 ## 🚨 **ENFORCEMENT**
 
-Zeropoint Protocol, LLC actively monitors for violations and will:
+Zeropoint Protocol (C Corp) actively monitors for violations and will:
 
 ### **Detection Methods**
 - Automated repository monitoring
@@ -106,14 +106,14 @@ Zeropoint Protocol, LLC actively monitors for violations and will:
 
 ### **Reporting Violations**
 To report violations, contact:
-- **Legal**: legal@zeropointprotocol.com
-- **Security**: security@zeropointprotocol.com
-- **Compliance**: compliance@zeropointprotocol.com
+- **Legal**: legal@zeropointprotocol.ai
+- **Security**: security@zeropointprotocol.ai
+- **Compliance**: compliance@zeropointprotocol.ai
 
 ## 📄 **LEGAL FRAMEWORK**
 
 ### **Intellectual Property Rights**
-- All code, documentation, and intellectual property are owned by Zeropoint Protocol, LLC
+- All code, documentation, and intellectual property are owned by Zeropoint Protocol (C Corp)
 - No implied licenses are granted
 - All rights are reserved unless explicitly granted in writing
 
@@ -151,7 +151,7 @@ To report violations, contact:
 
 Before attempting any development activities, ensure you have:
 
-- [ ] Signed license agreement with Zeropoint Protocol, LLC
+- [ ] Signed license agreement with Zeropoint Protocol (C Corp)
 - [ ] Received written approval for development access
 - [ ] Completed security training and onboarding
 - [ ] Signed contributor agreement
@@ -164,13 +164,13 @@ Before attempting any development activities, ensure you have:
 If you're interested in contributing or accessing the codebase:
 
 1. **Review** this policy completely
-2. **Contact** legal@zeropointprotocol.com
+2. **Contact** legal@zeropointprotocol.ai
 3. **Complete** the application process
 4. **Wait** for approval and onboarding
 5. **Begin** authorized development activities
 
 ---
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved.**
 **View-Only Policy: No contribution or access without signed agreement.**
-**Contact legal@zeropointprotocol.com for licensing inquiries.** 
+**Contact legal@zeropointprotocol.ai for licensing inquiries.** 

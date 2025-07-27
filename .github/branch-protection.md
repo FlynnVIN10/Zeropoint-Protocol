@@ -1,6 +1,6 @@
 # Branch Protection Configuration
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.**
 
 ## Required Branch Protection Settings
 
@@ -125,9 +125,9 @@ Configure the following settings in GitHub repository settings:
 ## Monitoring and Reporting
 
 ### Automated Monitoring
-- **Daily compliance reports**: Sent to legal@zeropointprotocol.com
-- **Weekly security reports**: Sent to security@zeropointprotocol.com
-- **Monthly access reviews**: Sent to compliance@zeropointprotocol.com
+- **Daily compliance reports**: Sent to legal@zeropointprotocol.ai
+- **Weekly security reports**: Sent to security@zeropointprotocol.ai
+- **Monthly access reviews**: Sent to compliance@zeropointprotocol.ai
 
 ### Violation Handling
 - **Immediate action**: Block access and notify legal team
@@ -177,6 +177,6 @@ gh api --method PUT /repos/{owner}/{repo}/branches/develop/protection -f require
 
 ---
 
-**© [2025] Zeropoint Protocol, LLC. All Rights Reserved.**
+**© [2025] Zeropoint Protocol (C Corp). All Rights Reserved.**
 **View-Only License: No clone, modify, run or distribute without signed license.**
-**Contact legal@zeropointprotocol.com for licensing inquiries.** 
+**Contact legal@zeropointprotocol.ai for licensing inquiries.** 

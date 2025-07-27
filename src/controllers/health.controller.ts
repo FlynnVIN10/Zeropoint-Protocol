@@ -1,4 +1,4 @@
-// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
 import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express';
@@ -22,10 +22,7 @@ const systemUptime = new Gauge({
   help: 'System uptime in seconds'
 });
 
-const activeConnections = new Gauge({
-  name: 'active_connections',
-  help: 'Number of active connections'
-});
+// activeConnections metric is registered in app.service.ts to avoid duplication
 
 const databaseConnections = new Gauge({
   name: 'database_connections',

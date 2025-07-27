@@ -1,4 +1,4 @@
-// © [2025] Zeropoint Protocol, LLC. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
+// © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -8,9 +8,9 @@ import { checkIntent } from './guards/synthient.guard.js';
 import { CID } from 'multiformats/cid';
 import { HttpService } from '@nestjs/axios';
 import { Counter, Registry, Histogram, Gauge } from 'prom-client';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity.js';
+// import { Repository } from 'typeorm';
+// import { InjectRepository } from '@nestjs/typeorm';
+// import { User } from './entities/user.entity.js';
 import { callPetalsAPI, logTrainingCycle, formatProposal, CodeProposal, PetalsResponse } from './agents/train/petals.bridge.js';
 import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { firstValueFrom } from 'rxjs';
@@ -88,8 +88,8 @@ export class AppService {
 
   constructor(
     private configService: ConfigService,
-    private httpService: HttpService,
-    @InjectRepository(User) private userRepo: Repository<User>
+    private httpService: HttpService
+    // @InjectRepository(User) private userRepo: Repository<User>
   ) {
     this.ready = this.init();
   }
@@ -307,57 +307,57 @@ export class AppService {
     return metricsRegistry.metrics();
   }
 
-  // Enhanced user management with better security
-  async registerUser(username: string, password: string): Promise<User> {
-    const startTime = Date.now();
-    
-    try {
-      if (!checkIntent(username + password)) throw new Error('Zeroth violation: Registration blocked.');
-      
-      // Check if user already exists
-      const existingUser = await this.userRepo.findOneBy({ username });
-      if (existingUser) {
-        throw new Error('Username already exists');
-      }
+  // Enhanced user management with better security (disabled - no database)
+  // async registerUser(username: string, password: string): Promise<User> {
+  //   const startTime = Date.now();
+  //   
+  //   try {
+  //     if (!checkIntent(username + password)) throw new Error('Zeroth violation: Registration blocked.');
+  //     
+  //     // Check if user already exists
+  //     const existingUser = await this.userRepo.findOneBy({ username });
+  //     if (existingUser) {
+  //       throw new Error('Username already exists');
+  //     }
 
-      // Hash password (stub, replace with bcrypt in production)
-      const user = this.userRepo.create({ username, password });
-      const savedUser = await this.userRepo.save(user);
-      
-      const duration = (Date.now() - startTime) / 1000;
-      apiRequestDuration.observe({ method: 'POST', endpoint: 'register' }, duration);
-      apiRequestCounter.inc({ method: 'POST', endpoint: 'register', status: 200 });
+  //     // Hash password (stub, replace with bcrypt in production)
+  //     const user = this.userRepo.create({ username, password });
+  //     const savedUser = await this.userRepo.save(user);
+  //     
+  //     const duration = (Date.now() - startTime) / 1000;
+  //     apiRequestDuration.observe({ method: 'POST', endpoint: 'register' }, duration);
+  //     apiRequestCounter.inc({ method: 'POST', endpoint: 'register', status: 200 });
 
-      return savedUser;
-    } catch (error) {
-      const duration = (Date.now() - startTime) / 1000;
-      apiErrorRate.inc({ method: 'POST', endpoint: 'register', error_type: 'registration_failed' });
-      throw error;
-    }
-  }
+  //     return savedUser;
+  //   } catch (error) {
+  //     const duration = (Date.now() - startTime) / 1000;
+  //     apiErrorRate.inc({ method: 'POST', endpoint: 'register', error_type: 'registration_failed' });
+  //     throw error;
+  //   }
+  // }
 
-  async validateUser(username: string, password: string): Promise<User | null> {
-    const startTime = Date.now();
-    
-    try {
-      if (!checkIntent(username + password)) throw new Error('Zeroth violation: Login blocked.');
-      
-      const user = await this.userRepo.findOneBy({ username });
-      if (user && user.password === password) {
-        const duration = (Date.now() - startTime) / 1000;
-        apiRequestDuration.observe({ method: 'POST', endpoint: 'login' }, duration);
-        apiRequestCounter.inc({ method: 'POST', endpoint: 'login', status: 200 });
-        return user;
-      }
-      
-      apiRequestCounter.inc({ method: 'POST', endpoint: 'login', status: 401 });
-      return null;
-    } catch (error) {
-      const duration = (Date.now() - startTime) / 1000;
-      apiErrorRate.inc({ method: 'POST', endpoint: 'login', error_type: 'validation_failed' });
-      throw error;
-    }
-  }
+  // async validateUser(username: string, password: string): Promise<User | null> {
+  //   const startTime = Date.now();
+  //   
+  //   try {
+  //     if (!checkIntent(username + password)) throw new Error('Zeroth violation: Login blocked.');
+  //     
+  //     const user = await this.userRepo.findOneBy({ username });
+  //     if (user && user.password === password) {
+  //       const duration = (Date.now() - startTime) / 1000;
+  //       apiRequestDuration.observe({ method: 'POST', endpoint: 'login' }, duration);
+  //       apiRequestCounter.inc({ method: 'POST', endpoint: 'login', status: 200 });
+  //       return user;
+  //     }
+  //     
+  //     apiRequestCounter.inc({ method: 'POST', endpoint: 'login', status: 401 });
+  //     return null;
+  //   } catch (error) {
+  //     const duration = (Date.now() - startTime) / 1000;
+  //     apiErrorRate.inc({ method: 'POST', endpoint: 'login', error_type: 'validation_failed' });
+  //     throw error;
+  //   }
+  // }
 
   // Enhanced Petals integration
   async proposeWithPetals(proposal: CodeProposal): Promise<PetalsResponse> {

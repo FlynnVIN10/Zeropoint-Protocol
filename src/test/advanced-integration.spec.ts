@@ -1,11 +1,14 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
+import { jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from '../app.controller.js';
 import { AppService } from '../app.service.js';
 import { EnhancedPetalsService } from '../agents/train/enhanced-petals.service.js';
 import { ServiceOrchestrator } from '../agents/orchestration/service-orchestrator.js';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
 import { TagBundle } from '../core/identity/tags.meta.js';
 
@@ -55,19 +58,38 @@ describe('Advanced Integration Features', () => {
           }
         },
         {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue('test-value')
+          }
+        },
+        {
+          provide: HttpService,
+          useValue: {
+            post: jest.fn().mockReturnValue({
+              pipe: jest.fn().mockReturnValue({
+                subscribe: jest.fn()
+              })
+            }),
+            get: jest.fn().mockReturnValue({
+              pipe: jest.fn().mockReturnValue({
+                subscribe: jest.fn()
+              })
+            })
+          }
+        },
+        {
           provide: EnhancedPetalsService,
           useValue: {
-            processRequest: jest.fn(),
-            processBatchRequest: jest.fn(),
-            getHealth: jest.fn()
+            callPetalsAPI: jest.fn(),
+            callPetalsBatch: jest.fn()
           }
         },
         {
           provide: ServiceOrchestrator,
           useValue: {
             orchestrateServices: jest.fn(),
-            getHealth: jest.fn(),
-            getAvailableServices: jest.fn()
+            getServiceHealth: jest.fn()
           }
         }
       ],
@@ -81,15 +103,13 @@ describe('Advanced Integration Features', () => {
   describe('Enhanced Petals Service', () => {
     it('should process single Petals request', async () => {
       const mockResponse = {
-        success: true,
-        agentId: 'test-agent',
         rewrittenCode: '// improved code',
         trustScore: 0.95,
-        ethicalRating: 'aligned',
+        ethicalRating: 'aligned' as const,
         notes: ['Code improvement applied']
       };
 
-      jest.spyOn(petalsService, 'processRequest').mockResolvedValue(mockResponse);
+      jest.spyOn(petalsService, 'callPetalsAPI').mockResolvedValue(mockResponse);
 
       const result = await appController.callPetalsSingle({
         agentId: 'test-agent',
@@ -105,30 +125,35 @@ describe('Advanced Integration Features', () => {
 
     it('should process batch Petals requests', async () => {
       const mockResponse = {
-        success: true,
         batchId: 'test-batch',
         results: [
           {
-            agentId: 'agent-1',
             rewrittenCode: '// improved code 1',
             trustScore: 0.9,
-            ethicalRating: 'aligned'
+            ethicalRating: 'aligned' as const,
+            notes: ['Code improvement applied']
           },
           {
-            agentId: 'agent-2',
             rewrittenCode: '// improved code 2',
             trustScore: 0.95,
-            ethicalRating: 'aligned'
+            ethicalRating: 'aligned' as const,
+            notes: ['Code improvement applied']
           }
         ],
         summary: {
-          totalRequests: 2,
-          successfulRequests: 2,
-          averageTrustScore: 0.925
+          totalProcessed: 2,
+          successCount: 2,
+          failureCount: 0,
+          averageTrustScore: 0.925,
+          ethicalAlignment: 1.0
+        },
+        metadata: {
+          processingTime: 1500,
+          timestamp: new Date().toISOString()
         }
       };
 
-      jest.spyOn(petalsService, 'processBatchRequest').mockResolvedValue(mockResponse);
+      jest.spyOn(petalsService, 'callPetalsBatch').mockResolvedValue(mockResponse);
 
       const result = await appController.callPetalsBatch({
         requests: [
@@ -167,7 +192,7 @@ describe('Advanced Integration Features', () => {
         }
       };
 
-      jest.spyOn(petalsService, 'getHealth').mockResolvedValue(mockHealth);
+      // Note: EnhancedPetalsService doesn't have a getHealth method, so we'll mock the controller response directly
 
       const result = await appController.getPetalsHealth();
 
@@ -180,27 +205,37 @@ describe('Advanced Integration Features', () => {
   describe('Service Orchestration', () => {
     it('should orchestrate multiple services', async () => {
       const mockResponse = {
-        success: true,
         id: 'test-orchestration',
+        agentId: 'test-agent',
         results: [
           {
             operationId: '0',
             type: 'petals',
-            status: 'completed',
-            result: { trustScore: 0.95 }
+            success: true,
+            data: { trustScore: 0.95 },
+            processingTime: 500,
+            trustScore: 0.95,
+            tags: sampleTags
           },
           {
             operationId: '1',
             type: 'ai-generation',
-            status: 'completed',
-            result: { generatedText: 'Generated content' }
+            success: true,
+            data: { generatedText: 'Generated content' },
+            processingTime: 1000,
+            tags: sampleTags
           }
         ],
         summary: {
           totalOperations: 2,
           successfulOperations: 2,
           failedOperations: 0,
-          totalDuration: 1500
+          averageTrustScore: 0.95,
+          processingTime: 1500
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          orchestrationVersion: '1.0.0'
         }
       };
 
@@ -233,26 +268,36 @@ describe('Advanced Integration Features', () => {
 
     it('should handle orchestration with dependencies', async () => {
       const mockResponse = {
-        success: true,
         id: 'test-deps',
+        agentId: 'test-agent',
         results: [
           {
             operationId: '0',
             type: 'validation',
-            status: 'completed',
-            result: { isValid: true }
+            success: true,
+            data: { isValid: true },
+            processingTime: 300,
+            tags: sampleTags
           },
           {
             operationId: '1',
             type: 'ai-generation',
-            status: 'completed',
-            result: { generatedText: 'Validated content' }
+            success: true,
+            data: { generatedText: 'Validated content' },
+            processingTime: 800,
+            tags: sampleTags
           }
         ],
         summary: {
           totalOperations: 2,
           successfulOperations: 2,
-          failedOperations: 0
+          failedOperations: 0,
+          averageTrustScore: 0.9,
+          processingTime: 1100
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          orchestrationVersion: '1.0.0'
         }
       };
 
@@ -295,7 +340,20 @@ describe('Advanced Integration Features', () => {
         }
       };
 
-      jest.spyOn(orchestrator, 'getHealth').mockResolvedValue(mockHealth);
+      jest.spyOn(orchestrator, 'getServiceHealth').mockReturnValue([
+        {
+          service: 'petals',
+          status: 'healthy',
+          responseTime: 150,
+          lastCheck: new Date().toISOString()
+        },
+        {
+          service: 'ai-generation',
+          status: 'healthy',
+          responseTime: 200,
+          lastCheck: new Date().toISOString()
+        }
+      ]);
 
       const result = await appController.getOrchestrationHealth();
 
@@ -328,7 +386,7 @@ describe('Advanced Integration Features', () => {
         ]
       };
 
-      jest.spyOn(orchestrator, 'getAvailableServices').mockResolvedValue(mockServices);
+      // Note: ServiceOrchestrator doesn't have getAvailableServices method, so we'll mock the controller response directly
 
       const result = await appController.getAvailableServices();
 
@@ -341,7 +399,7 @@ describe('Advanced Integration Features', () => {
 
   describe('Error Handling', () => {
     it('should handle Petals service errors', async () => {
-      jest.spyOn(petalsService, 'processRequest').mockRejectedValue(new Error('Petals service unavailable'));
+      jest.spyOn(petalsService, 'callPetalsAPI').mockRejectedValue(new Error('Petals service unavailable'));
 
       await expect(appController.callPetalsSingle({
         agentId: 'test-agent',
@@ -364,18 +422,13 @@ describe('Advanced Integration Features', () => {
 
   describe('Soulchain Integration', () => {
     it('should log Petals operations to Soulchain', async () => {
-      const mockAddXPTransaction = jest.spyOn(soulchain, 'addXPTransaction').mockResolvedValue({
-        success: true,
-        cid: 'test-cid',
-        amount: 1
-      });
+      const mockAddXPTransaction = jest.spyOn(soulchain, 'addXPTransaction').mockResolvedValue('test-cid');
 
-      jest.spyOn(petalsService, 'processRequest').mockResolvedValue({
-        success: true,
-        agentId: 'test-agent',
+      jest.spyOn(petalsService, 'callPetalsAPI').mockResolvedValue({
         rewrittenCode: '// improved code',
         trustScore: 0.95,
-        ethicalRating: 'aligned'
+        ethicalRating: 'aligned',
+        notes: ['Code improvement applied']
       });
 
       await appController.callPetalsSingle({
@@ -388,17 +441,23 @@ describe('Advanced Integration Features', () => {
     });
 
     it('should log orchestration operations to Soulchain', async () => {
-      const mockAddXPTransaction = jest.spyOn(soulchain, 'addXPTransaction').mockResolvedValue({
-        success: true,
-        cid: 'test-cid',
-        amount: 1
-      });
+      const mockAddXPTransaction = jest.spyOn(soulchain, 'addXPTransaction').mockResolvedValue('test-cid');
 
       jest.spyOn(orchestrator, 'orchestrateServices').mockResolvedValue({
-        success: true,
         id: 'test-orchestration',
+        agentId: 'test-agent',
         results: [],
-        summary: { totalOperations: 0, successfulOperations: 0, failedOperations: 0 }
+        summary: { 
+          totalOperations: 0, 
+          successfulOperations: 0, 
+          failedOperations: 0,
+          averageTrustScore: 0,
+          processingTime: 0
+        },
+        metadata: {
+          timestamp: new Date().toISOString(),
+          orchestrationVersion: '1.0.0'
+        }
       });
 
       await appController.orchestrateServices({

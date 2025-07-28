@@ -1,11 +1,14 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
+import { jest } from '@jest/globals';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AppController } from '../app.controller.js';
 import { AppService } from '../app.service.js';
 import { EnhancedPetalsService } from '../agents/train/enhanced-petals.service.js';
 import { ServiceOrchestrator } from '../agents/orchestration/service-orchestrator.js';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { HttpService } from '@nestjs/axios';
 import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
 
 describe('Advanced AI Features', () => {
@@ -25,10 +28,31 @@ describe('Advanced AI Features', () => {
           }
         },
         {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn().mockReturnValue('test-value')
+          }
+        },
+        {
+          provide: HttpService,
+          useValue: {
+            post: jest.fn().mockReturnValue({
+              pipe: jest.fn().mockReturnValue({
+                subscribe: jest.fn()
+              })
+            }),
+            get: jest.fn().mockReturnValue({
+              pipe: jest.fn().mockReturnValue({
+                subscribe: jest.fn()
+              })
+            })
+          }
+        },
+        {
           provide: EnhancedPetalsService,
           useValue: {
-            processRequest: jest.fn(),
-            processBatchRequest: jest.fn()
+            callPetalsAPI: jest.fn(),
+            callPetalsBatch: jest.fn()
           }
         },
         {
@@ -247,11 +271,7 @@ describe('Advanced AI Features', () => {
 
   describe('Soulchain Integration', () => {
     it('should log operations to Soulchain', async () => {
-      const mockAddXPTransaction = jest.spyOn(soulchain, 'addXPTransaction').mockResolvedValue({
-        success: true,
-        cid: 'test-cid',
-        amount: 1
-      });
+      const mockAddXPTransaction = jest.spyOn(soulchain, 'addXPTransaction').mockResolvedValue('test-cid');
 
       await appController.textSummarization({
         text: 'Test text for summarization',

@@ -5,18 +5,18 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-// import { AuthController } from './controllers/auth.controller.js';
-// import { AuthService } from './services/auth.service.js';
+import { AuthController } from './controllers/auth.controller.js';
+import { AuthService } from './services/auth.service.js';
 import { HealthController } from './controllers/health.controller.js';
-// import { AgentStateController } from './controllers/agent-state.controller.js';
-// import { AgentStateService } from './services/agent-state.service.js';
+import { AgentStateController } from './controllers/agent-state.controller.js';
+import { AgentStateService } from './services/agent-state.service.js';
 import { HttpModule } from '@nestjs/axios';
-// import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
-// import { User } from './entities/user.entity.js';
-// import { Session } from './entities/session.entity.js';
-// import { AuditLog } from './entities/audit-log.entity.js';
-// import { AgentState } from './entities/agent-state.entity.js';
+import { User } from './entities/user.entity.js';
+import { Session } from './entities/session.entity.js';
+import { AuditLog } from './entities/audit-log.entity.js';
+import { AgentState } from './entities/agent-state.entity.js';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
@@ -28,14 +28,11 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
     ConfigModule.forRoot({ isGlobal: true }),
     HttpModule,
     // TypeOrmModule.forRoot({
-    //   type: 'postgres',
-    //   host: process.env.DB_HOST,
-    //   port: parseInt(process.env.DB_PORT || '5432', 10),
-    //   username: process.env.DB_USER,
-    //   password: process.env.DB_PASS,
-    //   database: process.env.DB_NAME,
+    //   type: 'sqlite',
+    //   database: ':memory:',
     //   autoLoadEntities: true,
     //   synchronize: true,
+    //   logging: process.env.NODE_ENV === 'development',
     // }),
     // TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
     PassportModule.register({ defaultStrategy: 'jwt' }),

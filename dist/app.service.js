@@ -7,9 +7,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 var AppService_1;
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -19,9 +16,6 @@ import { checkIntent } from './guards/synthient.guard.js';
 import { CID } from 'multiformats/cid';
 import { HttpService } from '@nestjs/axios';
 import { Counter, Registry, Histogram, Gauge } from 'prom-client';
-import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './entities/user.entity.js';
 import { callPetalsAPI, logTrainingCycle, formatProposal } from './agents/train/petals.bridge.js';
 import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { firstValueFrom } from 'rxjs';
@@ -62,10 +56,9 @@ metricsRegistry.registerMetric(activeConnections);
 metricsRegistry.registerMetric(uploadCounter);
 metricsRegistry.registerMetric(downloadCounter);
 let AppService = AppService_1 = class AppService {
-    constructor(configService, httpService, userRepo) {
+    constructor(configService, httpService) {
         this.configService = configService;
         this.httpService = httpService;
-        this.userRepo = userRepo;
         this.logger = new Logger(AppService_1.name);
         this.ready = this.init();
     }
@@ -76,16 +69,16 @@ let AppService = AppService_1 = class AppService {
     }
     async callPythonBackend(endpoint, data, rationale) {
         const startTime = Date.now();
-        const nullvanaUrl = this.configService.get('NULLVANA_SERVICE_URL');
-        if (!nullvanaUrl) {
-            throw new Error('NULLVANA_SERVICE_URL not configured');
+        const zeropointUrl = this.configService.get('ZEROPOINT_SERVICE_URL');
+        if (!zeropointUrl) {
+            throw new Error('ZEROPOINT_SERVICE_URL not configured');
         }
         if (!checkIntent(rationale)) {
             throw new Error('Zeroth violation: Python backend call blocked.');
         }
         try {
             this.logger.log(`Calling Python backend: ${endpoint}`);
-            const response = await firstValueFrom(this.httpService.post(`${nullvanaUrl}/v1/${endpoint}`, data, {
+            const response = await firstValueFrom(this.httpService.post(`${zeropointUrl}/v1/${endpoint}`, data, {
                 timeout: 30000,
                 headers: {
                     'Content-Type': 'application/json',
@@ -245,49 +238,6 @@ let AppService = AppService_1 = class AppService {
     async getMetrics() {
         return metricsRegistry.metrics();
     }
-    async registerUser(username, password) {
-        const startTime = Date.now();
-        try {
-            if (!checkIntent(username + password))
-                throw new Error('Zeroth violation: Registration blocked.');
-            const existingUser = await this.userRepo.findOneBy({ username });
-            if (existingUser) {
-                throw new Error('Username already exists');
-            }
-            const user = this.userRepo.create({ username, password });
-            const savedUser = await this.userRepo.save(user);
-            const duration = (Date.now() - startTime) / 1000;
-            apiRequestDuration.observe({ method: 'POST', endpoint: 'register' }, duration);
-            apiRequestCounter.inc({ method: 'POST', endpoint: 'register', status: 200 });
-            return savedUser;
-        }
-        catch (error) {
-            const duration = (Date.now() - startTime) / 1000;
-            apiErrorRate.inc({ method: 'POST', endpoint: 'register', error_type: 'registration_failed' });
-            throw error;
-        }
-    }
-    async validateUser(username, password) {
-        const startTime = Date.now();
-        try {
-            if (!checkIntent(username + password))
-                throw new Error('Zeroth violation: Login blocked.');
-            const user = await this.userRepo.findOneBy({ username });
-            if (user && user.password === password) {
-                const duration = (Date.now() - startTime) / 1000;
-                apiRequestDuration.observe({ method: 'POST', endpoint: 'login' }, duration);
-                apiRequestCounter.inc({ method: 'POST', endpoint: 'login', status: 200 });
-                return user;
-            }
-            apiRequestCounter.inc({ method: 'POST', endpoint: 'login', status: 401 });
-            return null;
-        }
-        catch (error) {
-            const duration = (Date.now() - startTime) / 1000;
-            apiErrorRate.inc({ method: 'POST', endpoint: 'login', error_type: 'validation_failed' });
-            throw error;
-        }
-    }
     async proposeWithPetals(proposal) {
         const startTime = Date.now();
         try {
@@ -335,10 +285,10 @@ let AppService = AppService_1 = class AppService {
     }
     async checkPythonBackendHealth() {
         try {
-            const nullvanaUrl = this.configService.get('NULLVANA_SERVICE_URL');
-            if (!nullvanaUrl)
+            const zeropointUrl = this.configService.get('ZEROPOINT_SERVICE_URL');
+            if (!zeropointUrl)
                 return 'not_configured';
-            await firstValueFrom(this.httpService.get(`${nullvanaUrl}/health`, { timeout: 5000 }));
+            await firstValueFrom(this.httpService.get(`${zeropointUrl}/health`, { timeout: 5000 }));
             return 'healthy';
         }
         catch (error) {
@@ -348,10 +298,8 @@ let AppService = AppService_1 = class AppService {
 };
 AppService = AppService_1 = __decorate([
     Injectable(),
-    __param(2, InjectRepository(User)),
     __metadata("design:paramtypes", [ConfigService,
-        HttpService,
-        Repository])
+        HttpService])
 ], AppService);
 export { AppService };
 //# sourceMappingURL=app.service.js.map

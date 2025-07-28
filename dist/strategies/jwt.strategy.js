@@ -7,27 +7,100 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
+var JwtStrategy_1;
+import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ConfigService } from '@nestjs/config';
 import { checkIntent } from '../guards/synthient.guard.js';
-let JwtStrategy = class JwtStrategy extends PassportStrategy(Strategy) {
-    constructor() {
+import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
+let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends PassportStrategy(Strategy) {
+    constructor(configService) {
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: process.env.JWT_SECRET,
+            secretOrKey: configService.get('JWT_SECRET'),
+            algorithms: ['HS256'],
+            issuer: 'zeropoint-protocol',
+            audience: 'zeropoint-api'
         });
+        this.configService = configService;
+        this.logger = new Logger(JwtStrategy_1.name);
     }
     async validate(payload) {
-        if (!checkIntent('jwt-validate'))
-            throw new Error('Zeroth violation: JWT validation blocked.');
-        return { userId: payload.sub, username: payload.username };
+        try {
+            if (!checkIntent(`jwt-validate:${payload.username}:${payload.sub}`)) {
+                await this.logAuthEvent(payload, 'jwt_validation_failed', 'Zeroth violation: JWT validation blocked');
+                throw new UnauthorizedException('Zeroth violation: JWT validation blocked.');
+            }
+            if (!payload.sub || !payload.username || !payload.email || !payload.roles) {
+                await this.logAuthEvent(payload, 'jwt_validation_failed', 'Invalid JWT payload structure');
+                throw new UnauthorizedException('Invalid JWT payload structure');
+            }
+            const now = Math.floor(Date.now() / 1000);
+            if (payload.exp && payload.exp < now) {
+                await this.logAuthEvent(payload, 'jwt_validation_failed', 'JWT token expired');
+                throw new UnauthorizedException('JWT token expired');
+            }
+            await this.logAuthEvent(payload, 'jwt_validation_success', 'JWT validation successful');
+            return {
+                userId: payload.sub,
+                username: payload.username,
+                email: payload.email,
+                roles: payload.roles
+            };
+        }
+        catch (error) {
+            this.logger.error(`JWT validation error: ${error.message}`, error.stack);
+            await this.logAuthEvent(payload, 'jwt_validation_error', error.message);
+            throw error;
+        }
+    }
+    async logAuthEvent(payload, action, reason) {
+        try {
+            await soulchain.addXPTransaction({
+                agentId: payload.sub,
+                amount: action.includes('success') ? 1 : -5,
+                rationale: `JWT Auth: ${action} - ${reason}`,
+                timestamp: new Date().toISOString(),
+                previousCid: null,
+                tags: [
+                    {
+                        type: '#who',
+                        name: payload.username,
+                        did: `did:zeropoint:${payload.sub}`,
+                        handle: `@${payload.username}`
+                    },
+                    {
+                        type: '#intent',
+                        purpose: '#jwt-authentication',
+                        validation: 'good-heart'
+                    },
+                    {
+                        type: '#thread',
+                        taskId: action,
+                        lineage: ['auth', 'jwt'],
+                        swarmLink: 'auth-swarm'
+                    },
+                    {
+                        type: '#layer',
+                        level: '#live'
+                    },
+                    {
+                        type: '#domain',
+                        field: 'security'
+                    }
+                ]
+            });
+        }
+        catch (error) {
+            this.logger.error(`Failed to log auth event to Soulchain: ${error.message}`);
+        }
     }
 };
-JwtStrategy = __decorate([
+JwtStrategy = JwtStrategy_1 = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [ConfigService])
 ], JwtStrategy);
 export { JwtStrategy };
 //# sourceMappingURL=jwt.strategy.js.map

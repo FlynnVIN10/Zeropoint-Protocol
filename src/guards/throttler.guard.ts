@@ -35,6 +35,11 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
   }
 
   protected getClientIp(req: Record<string, any>): string {
+    // Handle undefined request
+    if (!req || !req.headers) {
+      return 'unknown';
+    }
+    
     // Check for forwarded headers (when behind proxy)
     const forwardedFor = req.headers['x-forwarded-for'];
     if (forwardedFor) {
@@ -55,12 +60,18 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
     requestProps: any,
   ): Promise<boolean> {
     const startTime = Date.now();
-    const request = requestProps.request;
-    const response = requestProps.response;
+    const request = requestProps?.request;
+    const response = requestProps?.response;
+    
+    // Handle undefined request
+    if (!request) {
+      console.warn('Throttler: Request object is undefined');
+      return true; // Allow request on error
+    }
     
     const ip = this.getClientIp(request);
-    const endpoint = request.url;
-    const method = request.method;
+    const endpoint = request.url || 'unknown';
+    const method = request.method || 'GET';
     
     try {
       const result = await super.handleRequest(requestProps);

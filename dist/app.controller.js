@@ -121,56 +121,6 @@ let AppController = class AppController {
             throw new Error('Zeroth violation: generate blocked.');
         return this.appService.generateText(text);
     }
-    async register(dto) {
-        if (!checkIntent(dto.username + dto.password))
-            throw new Error('Zeroth violation: Registration blocked.');
-        try {
-            const user = await this.appService.registerUser(dto.username, dto.password);
-            return {
-                success: true,
-                id: user.id,
-                username: user.username,
-                message: 'User registered successfully'
-            };
-        }
-        catch (error) {
-            throw new HttpException({
-                success: false,
-                message: error.message
-            }, HttpStatus.BAD_REQUEST);
-        }
-    }
-    async login(dto) {
-        if (!checkIntent(dto.username + dto.password))
-            throw new Error('Zeroth violation: Login blocked.');
-        try {
-            const user = await this.appService.validateUser(dto.username, dto.password);
-            if (!user) {
-                throw new HttpException({
-                    success: false,
-                    message: 'Invalid credentials'
-                }, HttpStatus.UNAUTHORIZED);
-            }
-            const payload = { sub: user.id, username: user.username };
-            const token = this.jwtService.sign(payload, { secret: process.env.JWT_SECRET });
-            return {
-                success: true,
-                access_token: token,
-                user: {
-                    id: user.id,
-                    username: user.username
-                }
-            };
-        }
-        catch (error) {
-            if (error instanceof HttpException)
-                throw error;
-            throw new HttpException({
-                success: false,
-                message: 'Login failed'
-            }, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
     async healthCheck() {
         if (!checkIntent('health-check'))
             throw new Error('Zeroth violation: Health check blocked.');
@@ -352,22 +302,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "generateLegacy", null);
 __decorate([
-    Post('register'),
-    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
-    __param(0, Body()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [RegisterDto]),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "register", null);
-__decorate([
-    Post('login'),
-    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
-    __param(0, Body()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [LoginDto]),
-    __metadata("design:returntype", Promise)
-], AppController.prototype, "login", null);
-__decorate([
     Get('health'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -419,7 +353,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "proposeWithPetals", null);
 AppController = __decorate([
-    Controller('v1'),
+    Controller(),
     __metadata("design:paramtypes", [AppService, JwtService])
 ], AppController);
 export { AppController };

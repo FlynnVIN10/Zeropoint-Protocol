@@ -15,5 +15,5 @@ export declare class User {
     updatedAt: Date;
     hashPassword(): Promise<void>;
     validatePassword(password: string): Promise<boolean>;
-    toJSON(): Omit<this, "password" | "hashPassword" | "validatePassword" | "toJSON">;
+    toJSON(): Omit<this, "toJSON" | "password" | "hashPassword" | "validatePassword">;
 }

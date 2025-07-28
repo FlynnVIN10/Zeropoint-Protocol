@@ -57,7 +57,7 @@ class GenerateCodeDto {
   language?: string;
 }
 
-@Controller('v1')
+@Controller()
 export class AppController implements OnApplicationShutdown {
   constructor(private readonly appService: AppService, private readonly jwtService: JwtService) {}
 

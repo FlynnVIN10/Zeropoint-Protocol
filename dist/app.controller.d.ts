@@ -1,14 +1,6 @@
 import { OnApplicationShutdown } from '@nestjs/common';
 import { AppService } from './app.service.js';
 import { JwtService } from '@nestjs/jwt';
-declare class RegisterDto {
-    username: string;
-    password: string;
-}
-declare class LoginDto {
-    username: string;
-    password: string;
-}
 declare class GenerateTextDto {
     text: string;
     options?: any;
@@ -33,8 +25,6 @@ export declare class AppController implements OnApplicationShutdown {
     generateImage(dto: GenerateImageDto): Promise<any>;
     generateCode(dto: GenerateCodeDto): Promise<any>;
     generateLegacy(text: string): Promise<any>;
-    register(dto: RegisterDto): Promise<any>;
-    login(dto: LoginDto): Promise<any>;
     healthCheck(): Promise<any>;
     uploadFile(file: any, rationale: string): Promise<any>;
     downloadFile(cid: string, rationale: string, res: any): Promise<void>;

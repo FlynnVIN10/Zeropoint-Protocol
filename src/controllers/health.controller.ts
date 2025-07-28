@@ -2,11 +2,6 @@
 
 import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity.js';
-import { Session } from '../entities/session.entity.js';
-import { AuditLog } from '../entities/audit-log.entity.js';
 import { ConfigService } from '@nestjs/config';
 import { Gauge, Counter } from 'prom-client';
 
@@ -29,15 +24,9 @@ const databaseConnections = new Gauge({
   help: 'Number of active database connections'
 });
 
-@Controller('v1/health')
+@Controller('health')
 export class HealthController {
   constructor(
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
-    @InjectRepository(Session)
-    private sessionRepository: Repository<Session>,
-    @InjectRepository(AuditLog)
-    private auditLogRepository: Repository<AuditLog>,
     private configService: ConfigService
   ) {
     // Initialize uptime gauge
@@ -174,23 +163,20 @@ export class HealthController {
     try {
       const startTime = Date.now();
       
-      // Test basic query
-      const userCount = await this.userRepository.count();
-      const sessionCount = await this.sessionRepository.count();
-      const auditCount = await this.auditLogRepository.count();
-      
+      // Database is currently disabled for testing
       const duration = Date.now() - startTime;
       
       // Update database connection metrics
-      databaseConnections.set(1);
+      databaseConnections.set(0);
       
       return {
-        status: 'healthy',
+        status: 'disabled',
         duration: `${duration}ms`,
+        message: 'Database temporarily disabled for testing',
         stats: {
-          users: userCount,
-          sessions: sessionCount,
-          auditLogs: auditCount
+          users: 0,
+          sessions: 0,
+          auditLogs: 0
         }
       };
     } catch (error) {
@@ -309,19 +295,12 @@ export class HealthController {
 
   private async getDatabaseStats(): Promise<any> {
     try {
-      const userCount = await this.userRepository.count();
-      const activeSessions = await this.sessionRepository.count({ where: { isActive: true } });
-      const recentAuditLogs = await this.auditLogRepository.count({
-        where: {
-          createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // Last 24 hours
-        }
-      });
-
       return {
-        totalUsers: userCount,
-        activeSessions,
-        recentAuditLogs,
-        status: 'connected'
+        totalUsers: 0,
+        activeSessions: 0,
+        recentAuditLogs: 0,
+        status: 'disabled',
+        message: 'Database temporarily disabled for testing'
       };
     } catch (error) {
       return {

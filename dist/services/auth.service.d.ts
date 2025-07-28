@@ -11,6 +11,7 @@ export declare class AuthService {
     private auditLogRepository;
     private jwtService;
     private configService;
+    private readonly logger;
     constructor(userRepository: Repository<User>, sessionRepository: Repository<Session>, auditLogRepository: Repository<AuditLog>, jwtService: JwtService, configService: ConfigService);
     register(registerDto: RegisterDto, ipAddress: string, userAgent: string): Promise<any>;
     login(loginDto: LoginDto, ipAddress: string, userAgent: string): Promise<any>;
@@ -24,5 +25,6 @@ export declare class AuthService {
     private generateTokens;
     private createSession;
     private logAuditEvent;
+    private logSoulchainEvent;
     cleanupExpiredSessions(): Promise<void>;
 }

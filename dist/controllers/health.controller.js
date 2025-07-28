@@ -11,11 +11,6 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity.js';
-import { Session } from '../entities/session.entity.js';
-import { AuditLog } from '../entities/audit-log.entity.js';
 import { ConfigService } from '@nestjs/config';
 import { Gauge, Counter } from 'prom-client';
 const healthCheckCounter = new Counter({
@@ -27,19 +22,12 @@ const systemUptime = new Gauge({
     name: 'system_uptime_seconds',
     help: 'System uptime in seconds'
 });
-const activeConnections = new Gauge({
-    name: 'active_connections',
-    help: 'Number of active connections'
-});
 const databaseConnections = new Gauge({
     name: 'database_connections',
     help: 'Number of active database connections'
 });
 let HealthController = class HealthController {
-    constructor(userRepository, sessionRepository, auditLogRepository, configService) {
-        this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
-        this.auditLogRepository = auditLogRepository;
+    constructor(configService) {
         this.configService = configService;
         systemUptime.set(process.uptime());
         setInterval(() => {
@@ -153,18 +141,16 @@ let HealthController = class HealthController {
     async checkDatabase() {
         try {
             const startTime = Date.now();
-            const userCount = await this.userRepository.count();
-            const sessionCount = await this.sessionRepository.count();
-            const auditCount = await this.auditLogRepository.count();
             const duration = Date.now() - startTime;
-            databaseConnections.set(1);
+            databaseConnections.set(0);
             return {
-                status: 'healthy',
+                status: 'disabled',
                 duration: `${duration}ms`,
+                message: 'Database temporarily disabled for testing',
                 stats: {
-                    users: userCount,
-                    sessions: sessionCount,
-                    auditLogs: auditCount
+                    users: 0,
+                    sessions: 0,
+                    auditLogs: 0
                 }
             };
         }
@@ -264,18 +250,12 @@ let HealthController = class HealthController {
     }
     async getDatabaseStats() {
         try {
-            const userCount = await this.userRepository.count();
-            const activeSessions = await this.sessionRepository.count({ where: { isActive: true } });
-            const recentAuditLogs = await this.auditLogRepository.count({
-                where: {
-                    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000)
-                }
-            });
             return {
-                totalUsers: userCount,
-                activeSessions,
-                recentAuditLogs,
-                status: 'connected'
+                totalUsers: 0,
+                activeSessions: 0,
+                recentAuditLogs: 0,
+                status: 'disabled',
+                message: 'Database temporarily disabled for testing'
             };
         }
         catch (error) {
@@ -348,14 +328,8 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], HealthController.prototype, "getLiveness", null);
 HealthController = __decorate([
-    Controller('v1/health'),
-    __param(0, InjectRepository(User)),
-    __param(1, InjectRepository(Session)),
-    __param(2, InjectRepository(AuditLog)),
-    __metadata("design:paramtypes", [Repository,
-        Repository,
-        Repository,
-        ConfigService])
+    Controller('health'),
+    __metadata("design:paramtypes", [ConfigService])
 ], HealthController);
 export { HealthController };
 //# sourceMappingURL=health.controller.js.map

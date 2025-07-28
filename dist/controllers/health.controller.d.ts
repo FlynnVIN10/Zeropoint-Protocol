@@ -1,15 +1,8 @@
 import { Response } from 'express';
-import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity.js';
-import { Session } from '../entities/session.entity.js';
-import { AuditLog } from '../entities/audit-log.entity.js';
 import { ConfigService } from '@nestjs/config';
 export declare class HealthController {
-    private userRepository;
-    private sessionRepository;
-    private auditLogRepository;
     private configService;
-    constructor(userRepository: Repository<User>, sessionRepository: Repository<Session>, auditLogRepository: Repository<AuditLog>, configService: ConfigService);
+    constructor(configService: ConfigService);
     getHealth(res: Response): Promise<void>;
     getDetailedHealth(res: Response): Promise<void>;
     getReadiness(res: Response): Promise<void>;

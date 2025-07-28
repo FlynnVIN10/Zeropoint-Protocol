@@ -3,10 +3,10 @@ import { AppModule } from './app.module.js';
 import { IntrospectCore } from './agents/introspect/introspect.core.js';
 import { WonderCraftEngine } from './agents/simulation/wondercraft.engine.js';
 import { TrainLoop } from './agents/train/train.loop.js';
-import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { AllExceptionsFilter } from './filters/http-exception.filter.js';
 import { ValidationPipe } from './pipes/validation.pipe.js';
 import { LoggingInterceptor } from './interceptors/logging.interceptor.js';
+import { winstonConfig } from './config/winston.config.js';
 import helmet from 'helmet';
 import cors from 'cors';
 async function runAgentLifecycle(agentIds) {
@@ -26,39 +26,53 @@ async function runAgentLifecycle(agentIds) {
         simulation.levelUp(agent, outcome);
         const load = Math.random();
         const perf = await train.monitorPerformance(agentId, async () => {
-            return await train.autoScale(agentId, load);
+            return { latency: Math.random() * 100, throughput: Math.random() * 1000 };
         });
-        console.log(`[Lifecycle] Agent ${agentId} metrics:`, perf.metrics, 'Scaling action:', perf.result);
-        await soulchain.addXPTransaction({
-            agentId,
-            amount: 20,
-            rationale: 'Completed full lifecycle integration',
-            timestamp: new Date().toISOString(),
-            previousCid: null,
-            tags: undefined,
-        });
+        if (load > 0.8) {
+            await train.autoScale(agentId, load);
+        }
+        const agentMeta = {
+            name: agentId,
+            did: `did:zeropoint:${agentId}`,
+            handle: `@${agentId}`,
+            intent: 'ethical-alignment',
+            context: {
+                taskId: 'training-cycle',
+                lineage: [],
+                swarmLink: '',
+                layer: '#training',
+                domain: 'ai-ethics'
+            }
+        };
+        const flaggedFunctions = await train.reflect(agentId);
+        if (flaggedFunctions.length > 0) {
+            const proposal = await train.proposeRewrite(agentMeta, flaggedFunctions[0]);
+            const response = await train.sendToPetals(proposal);
+            await train.applyIfAllowed(response);
+        }
+        console.log(`Agent ${agentId} completed lifecycle with ${perf.metrics.runtime}ms runtime`);
     }
 }
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    app.useGlobalFilters(new AllExceptionsFilter());
-    app.useGlobalPipes(new ValidationPipe());
-    app.useGlobalInterceptors(new LoggingInterceptor());
+    const app = await NestFactory.create(AppModule, {
+        logger: winstonConfig
+    });
     app.use(helmet());
-    app.use(cors());
+    app.use(cors({
+        origin: process.env.CORS_ORIGIN || '*',
+        credentials: true
+    }));
+    app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalFilters(new AllExceptionsFilter());
+    app.useGlobalInterceptors(new LoggingInterceptor());
     app.setGlobalPrefix('v1');
-    await app.listen(3000);
-    const agentIds = ['agent1', 'agent2', 'agent3'];
-    try {
-        await runAgentLifecycle(agentIds);
-        console.log('System Integration: Full agent lifecycle completed.');
-    }
-    catch (err) {
-        console.error('Integration error:', err);
-    }
+    const port = process.env.PORT || 3000;
+    await app.listen(port);
+    console.log(`🚀 Zeropoint Protocol running on port ${port}`);
+    console.log(`📊 Metrics available at /v1/metrics`);
+    console.log(`🏥 Health check at /v1/health`);
+    const demoAgentIds = ['agent-alpha', 'agent-beta', 'agent-gamma'];
+    await runAgentLifecycle(demoAgentIds);
 }
-bootstrap().catch(err => {
-    console.error(err);
-    process.exit(1);
-});
+bootstrap();
 //# sourceMappingURL=main.js.map

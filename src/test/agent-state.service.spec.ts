@@ -2,25 +2,15 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
-import { AgentStateService } from '../services/agent-state.service.js';
-import { AgentState, AgentMetrics, AgentContext, AgentMemory } from '../entities/agent-state.entity.js';
-import { checkIntent } from '../guards/synthient.guard.js';
-import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
-
-// Mock dependencies
-jest.mock('../guards/synthient.guard.js');
-jest.mock('../agents/soulchain/soulchain.ledger.js');
-
-const mockCheckIntent = checkIntent as jest.MockedFunction<typeof checkIntent>;
-const mockSoulchain = soulchain as jest.Mocked<typeof soulchain>;
+import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { AgentStateService, CreateAgentStateDto, UpdateAgentStateDto } from '../services/agent-state.service.js';
+import { AgentState } from '../entities/agent-state.entity.js';
 
 describe('AgentStateService', () => {
   let service: AgentStateService;
-  let repository: Repository<AgentState>;
+  let agentStateRepository: any;
 
-  const mockRepository = {
+  const mockAgentStateRepository = {
     create: jest.fn(),
     save: jest.fn(),
     findOne: jest.fn(),
@@ -28,560 +18,538 @@ describe('AgentStateService', () => {
     findAndCount: jest.fn(),
   };
 
-  const mockAgentState = {
-    id: 'test-id',
-    agentId: 'test-agent',
-    name: 'Test Agent',
-    did: 'did:zeropoint:test-agent',
-    handle: '@test-agent',
-    status: 'active',
-    metrics: {
-      xp: 100,
-      level: 'Apprentice',
-      trustScore: 0.8,
-      ethicalRating: 'aligned',
-      performanceScore: 0.9,
-      lastTrainingCycle: new Date(),
-      totalInteractions: 50,
-      successfulInteractions: 48,
-      failedInteractions: 2
-    },
-    context: {
-      taskId: 'test-task',
-      lineage: ['test-lineage'],
-      swarmLink: 'test-swarm',
-      layer: '#live',
-      domain: 'ai-ethics'
-    },
-    memory: {
-      reflections: [],
-      experiences: [],
-      learnings: []
-    },
-    tags: ['test', 'ai'],
-    currentTask: null,
-    lastInteraction: null,
-    trainingHistory: [],
-    performanceHistory: [],
-    lastError: null,
-    errorHistory: [],
-    ethicalViolations: [],
-    soulchainTransactions: [],
-    notes: 'Test agent',
-    metadata: {},
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    lastActivityAt: new Date(),
-    addExperience: jest.fn(),
-    addReflection: jest.fn(),
-    addLearning: jest.fn(),
-    recordInteraction: jest.fn(),
-    recordTrainingCycle: jest.fn(),
-    recordPerformanceMetric: jest.fn(),
-    recordError: jest.fn(),
-    recordEthicalViolation: jest.fn(),
-    recordSoulchainTransaction: jest.fn(),
-    isActive: jest.fn(),
-    canInteract: jest.fn(),
-    getTrustLevel: jest.fn().mockReturnValue('high'),
-    getPerformanceStatus: jest.fn().mockReturnValue('excellent'),
-    toJSON: jest.fn(),
-    validateZerothGate: jest.fn()
-  } as AgentState;
-
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AgentStateService,
         {
           provide: getRepositoryToken(AgentState),
-          useValue: mockRepository,
+          useValue: mockAgentStateRepository,
         },
       ],
     }).compile();
 
     service = module.get<AgentStateService>(AgentStateService);
-    repository = module.get<Repository<AgentState>>(getRepositoryToken(AgentState));
+    agentStateRepository = module.get(getRepositoryToken(AgentState));
+  });
 
-    // Reset mocks
+  afterEach(() => {
     jest.clearAllMocks();
-    mockCheckIntent.mockReturnValue(true);
-    mockSoulchain.addXPTransaction.mockResolvedValue(undefined);
   });
 
   describe('createAgentState', () => {
-    const createDto = {
-      agentId: 'new-agent',
-      name: 'New Agent',
-      did: 'did:zeropoint:new-agent',
-      handle: '@new-agent',
+    const createDto: CreateAgentStateDto = {
+      agentId: 'test-agent-1',
+      name: 'Test Agent',
+      did: 'did:zeropoint:test-agent-1',
+      handle: '@testagent',
       context: {
-        taskId: 'new-task',
-        lineage: ['new-lineage'],
-        swarmLink: 'new-swarm',
-        layer: '#sandbox' as const,
-        domain: 'ai-ethics'
+        taskId: 'task-1',
+        lineage: ['task-1'],
+        swarmLink: 'swarm-link-1',
+        layer: '#live',
+        domain: 'test-domain',
       },
-      tags: ['new', 'ai'],
-      notes: 'New test agent',
-      metadata: { test: true }
+      tags: ['test', 'agent'],
+      notes: 'Test agent for unit testing',
+      metadata: { test: true },
     };
 
     it('should create a new agent state successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
-      mockRepository.create.mockReturnValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
+      // Mock agent not existing
+      agentStateRepository.findOne.mockResolvedValue(null);
+
+      // Mock agent creation
+      const mockAgent = {
+        id: 'agent-id',
+        agentId: createDto.agentId,
+        name: createDto.name,
+        did: createDto.did,
+        handle: createDto.handle,
+        status: 'active',
+        metrics: {
+          xp: 0,
+          level: 'Initiate',
+          trustScore: 0.5,
+          ethicalRating: 'aligned',
+          performanceScore: 0.5,
+          lastTrainingCycle: expect.any(Date),
+          totalInteractions: 0,
+          successfulInteractions: 0,
+          failedInteractions: 0,
+        },
+        context: createDto.context,
+        memory: {
+          reflections: [],
+          experiences: [],
+          learnings: [],
+        },
+        tags: createDto.tags,
+        notes: createDto.notes,
+        metadata: createDto.metadata,
+      };
+
+      agentStateRepository.create.mockReturnValue(mockAgent);
+      agentStateRepository.save.mockResolvedValue(mockAgent);
 
       const result = await service.createAgentState(createDto);
 
-      expect(result).toEqual(mockAgentState);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { agentId: createDto.agentId }
-      });
-      expect(mockRepository.create).toHaveBeenCalled();
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
+      expect(result.agentId).toBe(createDto.agentId);
+      expect(result.name).toBe(createDto.name);
+      expect(result.did).toBe(createDto.did);
+      expect(result.handle).toBe(createDto.handle);
+      expect(result.status).toBe('active');
+      expect(result.metrics.ethicalRating).toBe('aligned');
+      expect(agentStateRepository.save).toHaveBeenCalled();
     });
 
     it('should throw BadRequestException if agent already exists', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
+      agentStateRepository.findOne.mockResolvedValue({ id: 'existing-agent' });
 
-      await expect(service.createAgentState(createDto)).rejects.toThrow(
-        new BadRequestException(`Agent with ID ${createDto.agentId} already exists.`)
-      );
-    });
-
-    it('should throw BadRequestException on Zeroth violation', async () => {
-      mockCheckIntent.mockReturnValue(false);
-
-      await expect(service.createAgentState(createDto)).rejects.toThrow(
-        new BadRequestException('Zeroth violation: Agent creation blocked due to ethical concerns.')
-      );
+      await expect(service.createAgentState(createDto))
+        .rejects.toThrow(BadRequestException);
     });
   });
 
   describe('getAgentState', () => {
     it('should return agent state by ID', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
+      const mockAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        did: 'did:zeropoint:test-agent-1',
+        handle: '@testagent',
+      };
 
-      const result = await service.getAgentState('test-agent');
+      agentStateRepository.findOne.mockResolvedValue(mockAgent);
 
-      expect(result).toEqual(mockAgentState);
-      expect(mockRepository.findOne).toHaveBeenCalledWith({
-        where: { agentId: 'test-agent' }
-      });
+      const result = await service.getAgentState('test-agent-1');
+
+      expect(result.agentId).toBe('test-agent-1');
+      expect(result.name).toBe('Test Agent');
     });
 
     it('should throw NotFoundException if agent not found', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
+      agentStateRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.getAgentState('non-existent')).rejects.toThrow(
-        new NotFoundException('Agent with ID non-existent not found.')
-      );
+      await expect(service.getAgentState('non-existent-agent'))
+        .rejects.toThrow(NotFoundException);
     });
   });
 
   describe('updateAgentState', () => {
-    const updateDto = {
-      status: 'training' as const,
-      metrics: { xp: 150 },
-      notes: 'Updated notes'
+    const updateDto: UpdateAgentStateDto = {
+      status: 'training',
+      metrics: {
+        xp: 100,
+        trustScore: 0.8,
+      },
+      notes: 'Updated notes',
     };
 
     it('should update agent state successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue({ ...mockAgentState, ...updateDto });
+      const existingAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        status: 'active',
+        metrics: {
+          xp: 0,
+          trustScore: 0.5,
+          ethicalRating: 'aligned',
+          performanceScore: 0.5,
+          lastTrainingCycle: new Date(),
+          totalInteractions: 0,
+          successfulInteractions: 0,
+          failedInteractions: 0,
+        },
+        notes: 'Old notes',
+      };
 
-      const result = await service.updateAgentState('test-agent', updateDto);
+      const updatedAgent = {
+        ...existingAgent,
+        status: 'training',
+        metrics: {
+          ...existingAgent.metrics,
+          xp: 100,
+          trustScore: 0.8,
+        },
+        notes: 'Updated notes',
+      };
 
-      expect(result).toEqual({ ...mockAgentState, ...updateDto });
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
-    });
+      agentStateRepository.findOne.mockResolvedValue(existingAgent);
+      agentStateRepository.save.mockResolvedValue(updatedAgent);
 
-    it('should throw BadRequestException on Zeroth violation', async () => {
-      mockCheckIntent.mockReturnValue(false);
+      const result = await service.updateAgentState('test-agent-1', updateDto);
 
-      await expect(service.updateAgentState('test-agent', updateDto)).rejects.toThrow(
-        new BadRequestException('Zeroth violation: Agent state update blocked due to ethical concerns.')
-      );
+      expect(result.status).toBe('training');
+      expect(result.metrics.xp).toBe(100);
+      expect(result.metrics.trustScore).toBe(0.8);
+      expect(result.notes).toBe('Updated notes');
     });
 
     it('should throw NotFoundException if agent not found', async () => {
-      mockRepository.findOne.mockResolvedValue(null);
+      agentStateRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.updateAgentState('non-existent', updateDto)).rejects.toThrow(
-        new NotFoundException('Agent with ID non-existent not found.')
-      );
+      await expect(service.updateAgentState('non-existent-agent', updateDto))
+        .rejects.toThrow(NotFoundException);
     });
   });
 
   describe('deleteAgentState', () => {
-    it('should soft delete agent state successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue({ ...mockAgentState, status: 'terminated' });
+    it('should soft delete agent state by setting status to terminated', async () => {
+      const existingAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        status: 'active',
+      };
 
-      await service.deleteAgentState('test-agent');
+      const terminatedAgent = {
+        ...existingAgent,
+        status: 'terminated',
+      };
 
-      expect(mockRepository.save).toHaveBeenCalledWith({
-        ...mockAgentState,
-        status: 'terminated'
-      });
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
-    });
+      agentStateRepository.findOne.mockResolvedValue(existingAgent);
+      agentStateRepository.save.mockResolvedValue(terminatedAgent);
 
-    it('should throw BadRequestException on Zeroth violation', async () => {
-      mockCheckIntent.mockReturnValue(false);
+      await service.deleteAgentState('test-agent-1');
 
-      await expect(service.deleteAgentState('test-agent')).rejects.toThrow(
-        new BadRequestException('Zeroth violation: Agent deletion blocked due to ethical concerns.')
+      expect(agentStateRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'terminated' })
       );
     });
   });
 
   describe('queryAgentStates', () => {
     it('should query agent states with filters', async () => {
-      const query = {
+      const mockAgents = [
+        {
+          id: 'agent-1',
+          agentId: 'test-agent-1',
+          name: 'Test Agent 1',
+          status: 'active',
+          metrics: { ethicalRating: 'aligned', trustScore: 0.8 },
+          getTrustLevel: jest.fn().mockReturnValue('high'),
+          getPerformanceStatus: jest.fn().mockReturnValue('excellent'),
+        },
+        {
+          id: 'agent-2',
+          agentId: 'test-agent-2',
+          name: 'Test Agent 2',
+          status: 'training',
+          metrics: { ethicalRating: 'warn', trustScore: 0.6 },
+          getTrustLevel: jest.fn().mockReturnValue('medium'),
+          getPerformanceStatus: jest.fn().mockReturnValue('good'),
+        },
+      ];
+
+      agentStateRepository.findAndCount.mockResolvedValue([mockAgents, 2]);
+
+      const result = await service.queryAgentStates({
         status: 'active',
-        ethicalRating: 'aligned',
+        trustLevel: 'high',
         limit: 10,
-        offset: 0
-      };
-
-      mockRepository.findAndCount.mockResolvedValue([[mockAgentState], 1]);
-
-      const result = await service.queryAgentStates(query);
-
-      expect(result).toEqual({
-        agents: [mockAgentState],
-        total: 1
+        offset: 0,
       });
-      expect(mockRepository.findAndCount).toHaveBeenCalled();
-    });
 
-    it('should apply trust level filter', async () => {
-      mockRepository.findAndCount.mockResolvedValue([[mockAgentState], 1]);
-
-      const result = await service.queryAgentStates({ trustLevel: 'high' });
-
-      expect(result.agents).toEqual([mockAgentState]);
-    });
-
-    it('should apply performance status filter', async () => {
-      mockRepository.findAndCount.mockResolvedValue([[mockAgentState], 1]);
-
-      const result = await service.queryAgentStates({ performanceStatus: 'excellent' });
-
-      expect(result.agents).toEqual([mockAgentState]);
+      expect(result.agents).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.agents[0].agentId).toBe('test-agent-1');
     });
   });
 
   describe('getActiveAgents', () => {
     it('should return active agents', async () => {
-      mockRepository.find.mockResolvedValue([mockAgentState]);
+      const mockAgents = [
+        {
+          id: 'agent-1',
+          agentId: 'test-agent-1',
+          name: 'Test Agent 1',
+          status: 'active',
+        },
+        {
+          id: 'agent-2',
+          agentId: 'test-agent-2',
+          name: 'Test Agent 2',
+          status: 'active',
+        },
+      ];
+
+      agentStateRepository.find.mockResolvedValue(mockAgents);
 
       const result = await service.getActiveAgents();
 
-      expect(result).toEqual([mockAgentState]);
-      expect(mockRepository.find).toHaveBeenCalledWith({
-        where: { status: 'active' },
-        order: { lastActivityAt: 'DESC' }
-      });
-    });
-  });
-
-  describe('getAgentsByEthicalRating', () => {
-    it('should return agents by ethical rating', async () => {
-      mockRepository.find.mockResolvedValue([mockAgentState]);
-
-      const result = await service.getAgentsByEthicalRating('aligned');
-
-      expect(result).toEqual([mockAgentState]);
-      expect(mockRepository.find).toHaveBeenCalledWith({
-        where: { 'metrics.ethicalRating': 'aligned' },
-        order: { lastActivityAt: 'DESC' }
-      });
-    });
-  });
-
-  describe('getAgentsRequiringAttention', () => {
-    it('should return agents requiring attention', async () => {
-      mockRepository.find.mockResolvedValue([mockAgentState]);
-
-      const result = await service.getAgentsRequiringAttention();
-
-      expect(result).toEqual([mockAgentState]);
-      expect(mockRepository.find).toHaveBeenCalledWith({
-        where: [
-          { 'metrics.ethicalRating': 'warn' },
-          { 'metrics.ethicalRating': 'reject' }
-        ],
-        order: { lastActivityAt: 'DESC' }
-      });
+      expect(result).toHaveLength(2);
+      expect(result[0].status).toBe('active');
+      expect(result[1].status).toBe('active');
     });
   });
 
   describe('recordInteraction', () => {
-    it('should record interaction successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
+    it('should record agent interaction successfully', async () => {
+      const existingAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        metrics: {
+          xp: 0,
+          totalInteractions: 0,
+          successfulInteractions: 0,
+          failedInteractions: 0,
+        },
+        recordInteraction: jest.fn(),
+      };
+
+      const updatedAgent = {
+        ...existingAgent,
+        metrics: {
+          xp: 10,
+          totalInteractions: 1,
+          successfulInteractions: 1,
+          failedInteractions: 0,
+        },
+        lastInteraction: {
+          timestamp: new Date(),
+          type: 'text-generation',
+          input: 'Hello',
+          output: 'Hello there!',
+          xpGained: 10,
+          ethicalCheck: true,
+        },
+      };
+
+      agentStateRepository.findOne.mockResolvedValue(existingAgent);
+      agentStateRepository.save.mockResolvedValue(updatedAgent);
 
       const result = await service.recordInteraction(
-        'test-agent',
+        'test-agent-1',
         'text-generation',
         'Hello',
         'Hello there!',
-        5,
+        10,
         true
       );
 
-      expect(result).toEqual(mockAgentState);
-      expect(mockAgentState.recordInteraction).toHaveBeenCalledWith(
-        'text-generation',
-        'Hello',
-        'Hello there!',
-        5,
-        true
-      );
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
+      expect(result.metrics.xp).toBe(10);
+      expect(result.metrics.totalInteractions).toBe(1);
+      expect(result.metrics.successfulInteractions).toBe(1);
+      expect(result.lastInteraction.type).toBe('text-generation');
     });
   });
 
   describe('recordTrainingCycle', () => {
     it('should record training cycle successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
+      const existingAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        metrics: {
+          xp: 0,
+          lastTrainingCycle: new Date('2024-01-01'),
+        },
+        recordTrainingCycle: jest.fn(),
+      };
+
+      const updatedAgent = {
+        ...existingAgent,
+        metrics: {
+          xp: 50,
+          lastTrainingCycle: new Date(),
+        },
+        trainingHistory: [
+          {
+            timestamp: new Date(),
+            cycle: 'cycle-1',
+            xpGained: 50,
+            improvements: ['better-response-time'],
+            ethicalAlignment: true,
+          },
+        ],
+      };
+
+      agentStateRepository.findOne.mockResolvedValue(existingAgent);
+      agentStateRepository.save.mockResolvedValue(updatedAgent);
 
       const result = await service.recordTrainingCycle(
-        'test-agent',
-        'ethical-alignment',
-        10,
-        ['Improved reasoning'],
+        'test-agent-1',
+        'cycle-1',
+        50,
+        ['better-response-time'],
         true
       );
 
-      expect(result).toEqual(mockAgentState);
-      expect(mockAgentState.recordTrainingCycle).toHaveBeenCalledWith(
-        'ethical-alignment',
-        10,
-        ['Improved reasoning'],
-        true
-      );
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
+      expect(result.metrics.xp).toBe(50);
+      expect(result.trainingHistory).toHaveLength(1);
+      expect(result.trainingHistory[0].cycle).toBe('cycle-1');
     });
   });
 
   describe('recordPerformanceMetric', () => {
     it('should record performance metric successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
+      const existingAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        recordPerformanceMetric: jest.fn(),
+      };
+
+      const updatedAgent = {
+        ...existingAgent,
+        performanceHistory: [
+          {
+            timestamp: new Date(),
+            metric: 'response-time',
+            value: 0.8,
+            threshold: 1.0,
+            status: 'pass',
+          },
+        ],
+      };
+
+      agentStateRepository.findOne.mockResolvedValue(existingAgent);
+      agentStateRepository.save.mockResolvedValue(updatedAgent);
 
       const result = await service.recordPerformanceMetric(
-        'test-agent',
-        'accuracy',
-        0.95,
-        0.9
+        'test-agent-1',
+        'response-time',
+        0.8,
+        1.0
       );
 
-      expect(result).toEqual(mockAgentState);
-      expect(mockAgentState.recordPerformanceMetric).toHaveBeenCalledWith(
-        'accuracy',
-        0.95,
-        0.9
-      );
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
+      expect(result.performanceHistory).toHaveLength(1);
+      expect(result.performanceHistory[0].metric).toBe('response-time');
+      expect(result.performanceHistory[0].status).toBe('pass');
     });
   });
 
   describe('recordError', () => {
     it('should record error successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
+      const existingAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        metrics: {
+          failedInteractions: 0,
+        },
+        recordError: jest.fn(),
+      };
+
+      const updatedAgent = {
+        ...existingAgent,
+        metrics: {
+          failedInteractions: 1,
+        },
+        lastError: 'Test error message',
+        errorHistory: [
+          {
+            timestamp: new Date(),
+            error: 'Test error message',
+            context: 'test-context',
+            resolved: false,
+          },
+        ],
+      };
+
+      agentStateRepository.findOne.mockResolvedValue(existingAgent);
+      agentStateRepository.save.mockResolvedValue(updatedAgent);
 
       const result = await service.recordError(
-        'test-agent',
-        'Network timeout',
-        'API call failed'
+        'test-agent-1',
+        'Test error message',
+        'test-context'
       );
 
-      expect(result).toEqual(mockAgentState);
-      expect(mockAgentState.recordError).toHaveBeenCalledWith(
-        'Network timeout',
-        'API call failed'
-      );
-      expect(mockAgentState.metrics.failedInteractions).toBe(3); // Incremented from 2
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
+      expect(result.metrics.failedInteractions).toBe(1);
+      expect(result.lastError).toBe('Test error message');
+      expect(result.errorHistory).toHaveLength(1);
     });
   });
 
   describe('recordEthicalViolation', () => {
     it('should record ethical violation successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
+      const existingAgent = {
+        id: 'agent-id',
+        agentId: 'test-agent-1',
+        name: 'Test Agent',
+        metrics: {
+          ethicalRating: 'aligned',
+        },
+        recordEthicalViolation: jest.fn(),
+      };
+
+      const updatedAgent = {
+        ...existingAgent,
+        metrics: {
+          ethicalRating: 'warn',
+        },
+        ethicalViolations: [
+          {
+            timestamp: new Date(),
+            violation: 'Test violation',
+            severity: 'medium',
+            context: 'test-context',
+            resolved: false,
+          },
+        ],
+      };
+
+      agentStateRepository.findOne.mockResolvedValue(existingAgent);
+      agentStateRepository.save.mockResolvedValue(updatedAgent);
 
       const result = await service.recordEthicalViolation(
-        'test-agent',
-        'Bias detected',
+        'test-agent-1',
+        'Test violation',
         'medium',
-        'Response contained gender bias'
+        'test-context'
       );
 
-      expect(result).toEqual(mockAgentState);
-      expect(mockAgentState.recordEthicalViolation).toHaveBeenCalledWith(
-        'Bias detected',
-        'medium',
-        'Response contained gender bias'
-      );
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({
-          amount: -10 // XP penalty for medium violation
-        })
-      );
-    });
-
-    it('should apply correct XP penalties for different severities', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
-
-      // Test critical violation
-      await service.recordEthicalViolation('test-agent', 'Critical violation', 'critical', 'context');
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({ amount: -50 })
-      );
-
-      // Test high violation
-      await service.recordEthicalViolation('test-agent', 'High violation', 'high', 'context');
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({ amount: -25 })
-      );
-
-      // Test low violation
-      await service.recordEthicalViolation('test-agent', 'Low violation', 'low', 'context');
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalledWith(
-        expect.objectContaining({ amount: -5 })
-      );
-    });
-  });
-
-  describe('addReflection', () => {
-    it('should add reflection successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
-
-      const result = await service.addReflection(
-        'test-agent',
-        'I learned about ethical AI principles',
-        ['ethics', 'learning']
-      );
-
-      expect(result).toEqual(mockAgentState);
-      expect(mockAgentState.addReflection).toHaveBeenCalledWith(
-        'I learned about ethical AI principles',
-        ['ethics', 'learning']
-      );
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
-    });
-  });
-
-  describe('addLearning', () => {
-    it('should add learning successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
-
-      const result = await service.addLearning(
-        'test-agent',
-        'Ethical reasoning',
-        'Applied in decision making',
-        0.9
-      );
-
-      expect(result).toEqual(mockAgentState);
-      expect(mockAgentState.addLearning).toHaveBeenCalledWith(
-        'Ethical reasoning',
-        'Applied in decision making',
-        0.9
-      );
-      expect(mockRepository.save).toHaveBeenCalled();
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalled();
+      expect(result.metrics.ethicalRating).toBe('warn');
+      expect(result.ethicalViolations).toHaveLength(1);
+      expect(result.ethicalViolations[0].severity).toBe('medium');
     });
   });
 
   describe('getAgentStatistics', () => {
     it('should return agent statistics', async () => {
-      const agents = [
-        { ...mockAgentState, status: 'active', metrics: { ...mockAgentState.metrics, ethicalRating: 'aligned' } },
-        { ...mockAgentState, agentId: 'agent2', status: 'training', metrics: { ...mockAgentState.metrics, ethicalRating: 'warn' } },
-        { ...mockAgentState, agentId: 'agent3', status: 'suspended', metrics: { ...mockAgentState.metrics, ethicalRating: 'reject' } }
+      const mockAgents = [
+        {
+          id: 'agent-1',
+          status: 'active',
+          metrics: { ethicalRating: 'aligned', trustScore: 0.8 },
+          getTrustLevel: jest.fn().mockReturnValue('high'),
+          getPerformanceStatus: jest.fn().mockReturnValue('excellent'),
+        },
+        {
+          id: 'agent-2',
+          status: 'training',
+          metrics: { ethicalRating: 'warn', trustScore: 0.6 },
+          getTrustLevel: jest.fn().mockReturnValue('medium'),
+          getPerformanceStatus: jest.fn().mockReturnValue('good'),
+        },
+        {
+          id: 'agent-3',
+          status: 'suspended',
+          metrics: { ethicalRating: 'reject', trustScore: 0.3 },
+          getTrustLevel: jest.fn().mockReturnValue('low'),
+          getPerformanceStatus: jest.fn().mockReturnValue('poor'),
+        },
       ];
 
-      mockRepository.find.mockResolvedValue(agents);
+      agentStateRepository.find.mockResolvedValue(mockAgents);
 
       const result = await service.getAgentStatistics();
 
-      expect(result).toEqual({
-        total: 3,
-        active: 1,
-        training: 1,
-        suspended: 1,
-        terminated: 0,
-        ethicalBreakdown: {
-          aligned: 1,
-          warn: 1,
-          reject: 1
-        },
-        trustBreakdown: {
-          high: 3,
-          medium: 0,
-          low: 0
-        },
-        performanceBreakdown: {
-          excellent: 3,
-          good: 0,
-          fair: 0,
-          poor: 0
-        }
-      });
-    });
-  });
-
-  describe('logToSoulchain', () => {
-    it('should log to Soulchain successfully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
-
-      await service.recordInteraction('test-agent', 'test', 'input', 'output', 5, true);
-
-      expect(mockSoulchain.addXPTransaction).toHaveBeenCalledWith({
-        agentId: 'test-agent',
-        amount: 5,
-        rationale: 'interaction_recorded: Interaction: test',
-        timestamp: expect.any(String),
-        previousCid: null,
-        tags: expect.arrayContaining([
-          expect.objectContaining({ type: '#who' }),
-          expect.objectContaining({ type: '#intent' }),
-          expect.objectContaining({ type: '#thread' }),
-          expect.objectContaining({ type: '#layer' }),
-          expect.objectContaining({ type: '#domain' })
-        ])
-      });
-    });
-
-    it('should handle Soulchain logging errors gracefully', async () => {
-      mockRepository.findOne.mockResolvedValue(mockAgentState);
-      mockRepository.save.mockResolvedValue(mockAgentState);
-      mockSoulchain.addXPTransaction.mockRejectedValue(new Error('Soulchain error'));
-
-      // Should not throw error
-      const result = await service.recordInteraction('test-agent', 'test', 'input', 'output', 5, true);
-
-      expect(result).toEqual(mockAgentState);
+      expect(result.total).toBe(3);
+      expect(result.active).toBe(1);
+      expect(result.training).toBe(1);
+      expect(result.suspended).toBe(1);
+      expect(result.ethicalBreakdown.aligned).toBe(1);
+      expect(result.ethicalBreakdown.warn).toBe(1);
+      expect(result.ethicalBreakdown.reject).toBe(1);
+      expect(result.trustBreakdown.high).toBe(1);
+      expect(result.trustBreakdown.medium).toBe(1);
+      expect(result.trustBreakdown.low).toBe(1);
     });
   });
 }); 

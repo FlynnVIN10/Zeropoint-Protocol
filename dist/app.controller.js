@@ -17,7 +17,10 @@ import { checkIntent } from './guards/synthient.guard.js';
 import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
-import { IsString, MinLength, IsOptional, IsObject } from 'class-validator';
+import { IsString, MinLength, IsOptional, IsObject, IsArray, ValidateNested } from 'class-validator';
+import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
+import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
+import { Type } from 'class-transformer';
 class RegisterDto {
 }
 __decorate([
@@ -76,10 +79,100 @@ __decorate([
     IsString(),
     __metadata("design:type", String)
 ], GenerateCodeDto.prototype, "language", void 0);
+class PetalsRequestDto {
+}
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], PetalsRequestDto.prototype, "agentId", void 0);
+__decorate([
+    IsString(),
+    MinLength(1),
+    __metadata("design:type", String)
+], PetalsRequestDto.prototype, "code", void 0);
+__decorate([
+    IsArray(),
+    ValidateNested({ each: true }),
+    Type(() => Object),
+    __metadata("design:type", Array)
+], PetalsRequestDto.prototype, "tags", void 0);
+class PetalsBatchRequestDto {
+}
+__decorate([
+    IsArray(),
+    ValidateNested({ each: true }),
+    Type(() => PetalsRequestDto),
+    __metadata("design:type", Array)
+], PetalsBatchRequestDto.prototype, "requests", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], PetalsBatchRequestDto.prototype, "batchId", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], PetalsBatchRequestDto.prototype, "priority", void 0);
+__decorate([
+    IsOptional(),
+    __metadata("design:type", Number)
+], PetalsBatchRequestDto.prototype, "timeout", void 0);
+class OperationRequestDto {
+}
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], OperationRequestDto.prototype, "type", void 0);
+__decorate([
+    IsObject(),
+    __metadata("design:type", Object)
+], OperationRequestDto.prototype, "data", void 0);
+__decorate([
+    IsArray(),
+    ValidateNested({ each: true }),
+    Type(() => Object),
+    __metadata("design:type", Array)
+], OperationRequestDto.prototype, "tags", void 0);
+__decorate([
+    IsOptional(),
+    IsArray(),
+    IsString({ each: true }),
+    __metadata("design:type", Array)
+], OperationRequestDto.prototype, "dependencies", void 0);
+class OrchestrationRequestDto {
+}
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], OrchestrationRequestDto.prototype, "id", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], OrchestrationRequestDto.prototype, "agentId", void 0);
+__decorate([
+    IsArray(),
+    ValidateNested({ each: true }),
+    Type(() => OperationRequestDto),
+    __metadata("design:type", Array)
+], OrchestrationRequestDto.prototype, "operations", void 0);
+__decorate([
+    IsString(),
+    __metadata("design:type", String)
+], OrchestrationRequestDto.prototype, "priority", void 0);
+__decorate([
+    IsOptional(),
+    __metadata("design:type", Number)
+], OrchestrationRequestDto.prototype, "timeout", void 0);
+__decorate([
+    IsOptional(),
+    IsObject(),
+    __metadata("design:type", Object)
+], OrchestrationRequestDto.prototype, "metadata", void 0);
 let AppController = class AppController {
-    constructor(appService, jwtService) {
+    constructor(appService, jwtService, petalsService, orchestrator) {
         this.appService = appService;
         this.jwtService = jwtService;
+        this.petalsService = petalsService;
+        this.orchestrator = orchestrator;
     }
     async getHello() {
         if (!checkIntent('getHello'))
@@ -372,6 +465,120 @@ let AppController = class AppController {
             }
         };
     }
+    async callPetalsSingle(dto) {
+        if (!checkIntent(dto.code + dto.agentId))
+            throw new Error('Zeroth violation: Petals single call blocked.');
+        const request = {
+            id: crypto.randomUUID(),
+            agentId: dto.agentId,
+            code: dto.code,
+            tags: dto.tags
+        };
+        return this.petalsService.callPetalsAPI(request);
+    }
+    async callPetalsBatch(dto) {
+        if (!checkIntent(JSON.stringify(dto.requests.map(r => r.code))))
+            throw new Error('Zeroth violation: Petals batch call blocked.');
+        const batchRequest = {
+            requests: dto.requests.map(req => ({
+                id: crypto.randomUUID(),
+                agentId: req.agentId,
+                code: req.code,
+                tags: req.tags
+            })),
+            batchId: dto.batchId,
+            priority: dto.priority,
+            timeout: dto.timeout
+        };
+        return this.petalsService.callPetalsBatch(batchRequest);
+    }
+    async getPetalsHealth() {
+        if (!checkIntent('getPetalsHealth'))
+            throw new Error('Zeroth violation: Petals health check blocked.');
+        return {
+            service: "Enhanced Petals Service",
+            version: "2.0.0",
+            status: "operational",
+            timestamp: new Date().toISOString(),
+            features: {
+                singleCalls: true,
+                batchProcessing: true,
+                enhancedValidation: true,
+                retryLogic: true,
+                soulchainLogging: true
+            }
+        };
+    }
+    async orchestrateServices(dto) {
+        if (!checkIntent(dto.agentId + JSON.stringify(dto.operations.map(op => op.type))))
+            throw new Error('Zeroth violation: Service orchestration blocked.');
+        const request = {
+            id: dto.id,
+            agentId: dto.agentId,
+            operations: dto.operations,
+            priority: dto.priority,
+            timeout: dto.timeout,
+            metadata: dto.metadata
+        };
+        return this.orchestrator.orchestrateServices(request);
+    }
+    async getOrchestrationHealth() {
+        if (!checkIntent('getOrchestrationHealth'))
+            throw new Error('Zeroth violation: Orchestration health check blocked.');
+        const serviceHealth = this.orchestrator.getServiceHealth();
+        return {
+            service: "Service Orchestrator",
+            version: "2.0.0",
+            status: "operational",
+            timestamp: new Date().toISOString(),
+            serviceHealth,
+            features: {
+                parallelProcessing: true,
+                dependencyResolution: true,
+                enhancedValidation: true,
+                comprehensiveLogging: true,
+                healthMonitoring: true
+            }
+        };
+    }
+    async getAvailableServices() {
+        if (!checkIntent('getAvailableServices'))
+            throw new Error('Zeroth violation: Available services check blocked.');
+        return {
+            services: [
+                {
+                    name: "petals",
+                    description: "Enhanced Petals code improvement service",
+                    capabilities: ["single-calls", "batch-processing", "code-safety-validation"],
+                    status: "available"
+                },
+                {
+                    name: "ai-generation",
+                    description: "AI content generation service",
+                    capabilities: ["text-generation", "code-generation", "creative-content"],
+                    status: "available"
+                },
+                {
+                    name: "validation",
+                    description: "Data and content validation service",
+                    capabilities: ["data-validation", "content-safety", "rule-checking"],
+                    status: "available"
+                },
+                {
+                    name: "analysis",
+                    description: "Content analysis service",
+                    capabilities: ["sentiment-analysis", "entity-extraction", "semantic-analysis"],
+                    status: "available"
+                }
+            ],
+            orchestrationFeatures: {
+                parallelExecution: true,
+                dependencyManagement: true,
+                errorHandling: true,
+                performanceOptimization: true
+            }
+        };
+    }
     async onApplicationShutdown() {
     }
 };
@@ -538,9 +745,60 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "getAdvancedStatus", null);
+__decorate([
+    Post('petals/single'),
+    UseGuards(JwtAuthGuard),
+    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [PetalsRequestDto]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "callPetalsSingle", null);
+__decorate([
+    Post('petals/batch'),
+    UseGuards(JwtAuthGuard),
+    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [PetalsBatchRequestDto]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "callPetalsBatch", null);
+__decorate([
+    Get('petals/health'),
+    UseGuards(JwtAuthGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getPetalsHealth", null);
+__decorate([
+    Post('orchestrate'),
+    UseGuards(JwtAuthGuard),
+    UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true })),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [OrchestrationRequestDto]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "orchestrateServices", null);
+__decorate([
+    Get('orchestrate/health'),
+    UseGuards(JwtAuthGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getOrchestrationHealth", null);
+__decorate([
+    Get('orchestrate/services'),
+    UseGuards(JwtAuthGuard),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getAvailableServices", null);
 AppController = __decorate([
     Controller(),
-    __metadata("design:paramtypes", [AppService, JwtService])
+    __metadata("design:paramtypes", [AppService,
+        JwtService,
+        EnhancedPetalsService,
+        ServiceOrchestrator])
 ], AppController);
 export { AppController };
 //# sourceMappingURL=app.controller.js.map

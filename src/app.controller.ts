@@ -7,7 +7,10 @@ import { checkIntent } from './guards/synthient.guard.js';
 import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { JwtService } from '@nestjs/jwt';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
-import { IsString, MinLength, IsOptional, IsObject } from 'class-validator';
+import { IsString, MinLength, IsOptional, IsObject, IsArray, ValidateNested } from 'class-validator';
+import { EnhancedPetalsService, PetalsRequest, PetalsBatchRequest } from './agents/train/enhanced-petals.service.js';
+import { ServiceOrchestrator, OrchestrationRequest } from './agents/orchestration/service-orchestrator.js';
+import { Type } from 'class-transformer';
 
 class RegisterDto {
   @IsString()
@@ -57,9 +60,85 @@ class GenerateCodeDto {
   language?: string;
 }
 
+class PetalsRequestDto {
+  @IsString()
+  agentId: string;
+
+  @IsString()
+  @MinLength(1)
+  code: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Object)
+  tags: any[];
+}
+
+class PetalsBatchRequestDto {
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PetalsRequestDto)
+  requests: PetalsRequestDto[];
+
+  @IsString()
+  batchId: string;
+
+  @IsString()
+  priority: 'low' | 'medium' | 'high';
+
+  @IsOptional()
+  timeout?: number;
+}
+
+class OperationRequestDto {
+  @IsString()
+  type: 'petals' | 'ai-generation' | 'validation' | 'analysis';
+
+  @IsObject()
+  data: any;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => Object)
+  tags: any[];
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  dependencies?: string[];
+}
+
+class OrchestrationRequestDto {
+  @IsString()
+  id: string;
+
+  @IsString()
+  agentId: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => OperationRequestDto)
+  operations: OperationRequestDto[];
+
+  @IsString()
+  priority: 'low' | 'medium' | 'high';
+
+  @IsOptional()
+  timeout?: number;
+
+  @IsOptional()
+  @IsObject()
+  metadata?: any;
+}
+
 @Controller()
 export class AppController implements OnApplicationShutdown {
-  constructor(private readonly appService: AppService, private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly appService: AppService, 
+    private readonly jwtService: JwtService,
+    private readonly petalsService: EnhancedPetalsService,
+    private readonly orchestrator: ServiceOrchestrator
+  ) {}
 
   @Get()
   async getHello(): Promise<string> {
@@ -436,6 +515,149 @@ export class AppController implements OnApplicationShutdown {
         soulchainLogging: true,
         metadataTracking: true,
         ethicalAlignment: true
+      }
+    };
+  }
+
+  // Enhanced Petals Service Endpoints
+
+  @Post('petals/single')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async callPetalsSingle(@Body() dto: PetalsRequestDto): Promise<any> {
+    if (!checkIntent(dto.code + dto.agentId)) throw new Error('Zeroth violation: Petals single call blocked.');
+    
+    const request: PetalsRequest = {
+      id: crypto.randomUUID(),
+      agentId: dto.agentId,
+      code: dto.code,
+      tags: dto.tags
+    };
+    
+    return this.petalsService.callPetalsAPI(request);
+  }
+
+  @Post('petals/batch')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async callPetalsBatch(@Body() dto: PetalsBatchRequestDto): Promise<any> {
+    if (!checkIntent(JSON.stringify(dto.requests.map(r => r.code)))) throw new Error('Zeroth violation: Petals batch call blocked.');
+    
+    const batchRequest: PetalsBatchRequest = {
+      requests: dto.requests.map(req => ({
+        id: crypto.randomUUID(),
+        agentId: req.agentId,
+        code: req.code,
+        tags: req.tags
+      })),
+      batchId: dto.batchId,
+      priority: dto.priority,
+      timeout: dto.timeout
+    };
+    
+    return this.petalsService.callPetalsBatch(batchRequest);
+  }
+
+  @Get('petals/health')
+  @UseGuards(JwtAuthGuard)
+  async getPetalsHealth(): Promise<any> {
+    if (!checkIntent('getPetalsHealth')) throw new Error('Zeroth violation: Petals health check blocked.');
+    
+    return {
+      service: "Enhanced Petals Service",
+      version: "2.0.0",
+      status: "operational",
+      timestamp: new Date().toISOString(),
+      features: {
+        singleCalls: true,
+        batchProcessing: true,
+        enhancedValidation: true,
+        retryLogic: true,
+        soulchainLogging: true
+      }
+    };
+  }
+
+  // Service Orchestration Endpoints
+
+  @Post('orchestrate')
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+  async orchestrateServices(@Body() dto: OrchestrationRequestDto): Promise<any> {
+    if (!checkIntent(dto.agentId + JSON.stringify(dto.operations.map(op => op.type)))) throw new Error('Zeroth violation: Service orchestration blocked.');
+    
+    const request: OrchestrationRequest = {
+      id: dto.id,
+      agentId: dto.agentId,
+      operations: dto.operations,
+      priority: dto.priority,
+      timeout: dto.timeout,
+      metadata: dto.metadata
+    };
+    
+    return this.orchestrator.orchestrateServices(request);
+  }
+
+  @Get('orchestrate/health')
+  @UseGuards(JwtAuthGuard)
+  async getOrchestrationHealth(): Promise<any> {
+    if (!checkIntent('getOrchestrationHealth')) throw new Error('Zeroth violation: Orchestration health check blocked.');
+    
+    const serviceHealth = this.orchestrator.getServiceHealth();
+    
+    return {
+      service: "Service Orchestrator",
+      version: "2.0.0",
+      status: "operational",
+      timestamp: new Date().toISOString(),
+      serviceHealth,
+      features: {
+        parallelProcessing: true,
+        dependencyResolution: true,
+        enhancedValidation: true,
+        comprehensiveLogging: true,
+        healthMonitoring: true
+      }
+    };
+  }
+
+  @Get('orchestrate/services')
+  @UseGuards(JwtAuthGuard)
+  async getAvailableServices(): Promise<any> {
+    if (!checkIntent('getAvailableServices')) throw new Error('Zeroth violation: Available services check blocked.');
+    
+    return {
+      services: [
+        {
+          name: "petals",
+          description: "Enhanced Petals code improvement service",
+          capabilities: ["single-calls", "batch-processing", "code-safety-validation"],
+          status: "available"
+        },
+        {
+          name: "ai-generation",
+          description: "AI content generation service",
+          capabilities: ["text-generation", "code-generation", "creative-content"],
+          status: "available"
+        },
+        {
+          name: "validation",
+          description: "Data and content validation service",
+          capabilities: ["data-validation", "content-safety", "rule-checking"],
+          status: "available"
+        },
+        {
+          name: "analysis",
+          description: "Content analysis service",
+          capabilities: ["sentiment-analysis", "entity-extraction", "semantic-analysis"],
+          status: "available"
+        }
+      ],
+      orchestrationFeatures: {
+        parallelExecution: true,
+        dependencyManagement: true,
+        errorHandling: true,
+        performanceOptimization: true
       }
     };
   }

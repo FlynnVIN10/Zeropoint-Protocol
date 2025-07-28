@@ -1,6 +1,8 @@
 import { OnApplicationShutdown } from '@nestjs/common';
 import { AppService } from './app.service.js';
 import { JwtService } from '@nestjs/jwt';
+import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
+import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
 declare class GenerateTextDto {
     text: string;
     options?: any;
@@ -13,10 +15,37 @@ declare class GenerateCodeDto {
     prompt: string;
     language?: string;
 }
+declare class PetalsRequestDto {
+    agentId: string;
+    code: string;
+    tags: any[];
+}
+declare class PetalsBatchRequestDto {
+    requests: PetalsRequestDto[];
+    batchId: string;
+    priority: 'low' | 'medium' | 'high';
+    timeout?: number;
+}
+declare class OperationRequestDto {
+    type: 'petals' | 'ai-generation' | 'validation' | 'analysis';
+    data: any;
+    tags: any[];
+    dependencies?: string[];
+}
+declare class OrchestrationRequestDto {
+    id: string;
+    agentId: string;
+    operations: OperationRequestDto[];
+    priority: 'low' | 'medium' | 'high';
+    timeout?: number;
+    metadata?: any;
+}
 export declare class AppController implements OnApplicationShutdown {
     private readonly appService;
     private readonly jwtService;
-    constructor(appService: AppService, jwtService: JwtService);
+    private readonly petalsService;
+    private readonly orchestrator;
+    constructor(appService: AppService, jwtService: JwtService, petalsService: EnhancedPetalsService, orchestrator: ServiceOrchestrator);
     getHello(): Promise<string>;
     getMetrics(res: any): Promise<void>;
     getLedgerMetrics(res: any): Promise<void>;
@@ -75,6 +104,12 @@ export declare class AppController implements OnApplicationShutdown {
         sourceLanguage?: string;
     }): Promise<any>;
     getAdvancedStatus(): Promise<any>;
+    callPetalsSingle(dto: PetalsRequestDto): Promise<any>;
+    callPetalsBatch(dto: PetalsBatchRequestDto): Promise<any>;
+    getPetalsHealth(): Promise<any>;
+    orchestrateServices(dto: OrchestrationRequestDto): Promise<any>;
+    getOrchestrationHealth(): Promise<any>;
+    getAvailableServices(): Promise<any>;
     onApplicationShutdown(): Promise<void>;
 }
 export {};

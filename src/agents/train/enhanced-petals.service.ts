@@ -1,23 +1,14 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-// src/agents/train/petals.bridge.ts
+// src/agents/train/enhanced-petals.service.ts
 
-import { TagBundle } from '../../core/identity/tags.meta.js';
-import { v4 as uuidv4 } from 'uuid';
-import { checkIntent } from '../../guards/synthient.guard.js';
-import { soulchain } from '../soulchain/soulchain.ledger.js';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from '@nestjs/common';
-
-export interface CodeProposal {
-  agentId: string;
-  functionName: string;
-  originalCode: string;
-  proposedCode: string;
-  rationale: string;
-  tags: TagBundle;
-}
+import { TagBundle } from '../../core/identity/tags.meta.js';
+import { checkIntent } from '../../guards/synthient.guard.js';
+import { soulchain } from '../soulchain/soulchain.ledger.js';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface PetalsRequest {
   id: string;
@@ -33,7 +24,7 @@ export interface PetalsRequest {
 
 export interface PetalsResponse {
   rewrittenCode: string;
-  trustScore: number;                   // 0–1
+  trustScore: number;
   ethicalRating: 'aligned' | 'warn' | 'reject';
   notes?: string[];
   metadata?: {
@@ -75,11 +66,9 @@ export interface PetalsServiceConfig {
   enableParallel: boolean;
 }
 
-/**
- * Enhanced Petals Client with async orchestration
- */
-export class EnhancedPetalsClient {
-  private readonly logger = new Logger(EnhancedPetalsClient.name);
+@Injectable()
+export class EnhancedPetalsService {
+  private readonly logger = new Logger(EnhancedPetalsService.name);
   private config: PetalsServiceConfig;
 
   constructor(
@@ -107,7 +96,7 @@ export class EnhancedPetalsClient {
       return false;
     }
 
-    // Additional ethical checks
+    // Additional ethical checks in parallel
     const ethicalChecks = await Promise.all([
       this.checkCodeSafety(request.code),
       this.checkAgentPermissions(request.agentId),
@@ -125,7 +114,7 @@ export class EnhancedPetalsClient {
   }
 
   /**
-   * Check code safety using multiple validators
+   * Check code safety using multiple validators in parallel
    */
   private async checkCodeSafety(code: string): Promise<boolean> {
     const safetyChecks = await Promise.all([
@@ -555,61 +544,4 @@ export class EnhancedPetalsClient {
       ]
     });
   }
-}
-
-// Legacy functions for backward compatibility
-export function formatProposal(proposal: CodeProposal): PetalsRequest {
-  return {
-    id: uuidv4(),
-    agentId: proposal.agentId,
-    code: proposal.proposedCode,
-    tags: proposal.tags
-  };
-}
-
-export async function callPetalsAPI(request: PetalsRequest): Promise<PetalsResponse> {
-  // Create enhanced client instance
-  const client = new EnhancedPetalsClient(
-    new HttpService(),
-    new ConfigService()
-  );
-  
-  return client.callPetalsAPI(request);
-}
-
-export async function logTrainingCycle(agentId: string, summary: PetalsResponse): Promise<void> {
-  await soulchain.addXPTransaction({
-    agentId,
-    amount: 1,
-    rationale: `Training cycle logged: ${summary.trustScore} trust score`,
-    timestamp: new Date().toISOString(),
-    previousCid: null,
-    tags: [
-      {
-        type: '#who',
-        name: agentId,
-        did: `did:zeropoint:${agentId}`,
-        handle: `@${agentId}`
-      },
-      {
-        type: '#intent',
-        purpose: '#training-log',
-        validation: 'good-heart'
-      },
-      {
-        type: '#thread',
-        taskId: 'training-cycle',
-        lineage: ['training', 'log'],
-        swarmLink: 'training-swarm'
-      },
-      {
-        type: '#layer',
-        level: '#live'
-      },
-      {
-        type: '#domain',
-        field: '#training'
-      }
-    ]
-  });
-}
+} 

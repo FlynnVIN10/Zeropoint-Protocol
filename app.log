@@ -2,83 +2,85 @@
 > Zeropoint@0.0.1 start:core
 > nest start
 
-(node:11740) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(node:13264) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
 (Use `node --trace-deprecation ...` to show where the warning was created)
-2025-07-28 11:52:54 [[32minfo[39m]: Starting Nest application... {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"NestFactory"}
-2025-07-28 11:52:54 [[32minfo[39m]: PassportModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: ConfigHostModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: HttpModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: ThrottlerModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: ConfigModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: ConfigModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: JwtModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: AppModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
-2025-07-28 11:52:54 [[32minfo[39m]: AppController {/v1}: {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RoutesResolver"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/metrics, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/ledger-metrics, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/protected, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/generate-text, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/generate-image, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/generate-code, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/generate, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/health, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/ipfs/upload, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/ipfs/download/:cid, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/ipfs/list/:cid, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/soulchain/persist, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/status, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/petals/propose, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/advanced/summarize, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/advanced/context-prompt, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/advanced/semantic-search, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/advanced/sentiment, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/advanced/entities, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/advanced/translate, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/advanced/status, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: HealthController {/v1/health}: {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RoutesResolver"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/health, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/health/detailed, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/health/ready, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Mapped {/v1/health/live, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
-2025-07-28 11:52:54 [[32minfo[39m]: Nest application successfully started {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"NestApplication"}
+2025-07-28 12:07:02 [[32minfo[39m]: Starting Nest application... {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"NestFactory"}
+2025-07-28 12:07:02 [[32minfo[39m]: PassportModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: ConfigHostModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: HttpModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: ThrottlerModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: ConfigModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: ConfigModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: JwtModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: AppModule dependencies initialized {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"InstanceLoader"}
+2025-07-28 12:07:02 [[32minfo[39m]: AppController {/v1}: {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RoutesResolver"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/metrics, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/ledger-metrics, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/protected, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/generate-text, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/generate-image, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/generate-code, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/generate, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/health, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/ipfs/upload, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/ipfs/download/:cid, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/ipfs/list/:cid, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/soulchain/persist, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/status, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/petals/propose, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/advanced/summarize, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/advanced/context-prompt, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/advanced/semantic-search, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/advanced/sentiment, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/advanced/entities, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/advanced/translate, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/advanced/status, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/petals/single, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/petals/batch, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/petals/health, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/orchestrate, POST} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/orchestrate/health, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/orchestrate/services, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: HealthController {/v1/health}: {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RoutesResolver"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/health, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/health/detailed, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/health/ready, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Mapped {/v1/health/live, GET} route {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"RouterExplorer"}
+2025-07-28 12:07:02 [[32minfo[39m]: Nest application successfully started {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"NestApplication"}
 🚀 Zeropoint Protocol running on port 3000
 📊 Metrics available at /v1/metrics
 🏥 Health check at /v1/health
 #ascension: Agent agent-alpha levels up to Initiate with delta 0
-[PetalsCycle] Agent=agent-alpha {
-  rewrittenCode: '// improved code for outdatedFn',
-  trustScore: 0.9,
-  ethicalRating: 'aligned',
-  notes: [ 'Stub: auto-approved (replace with real Petals call)' ]
-}
 Applying rewrite: // improved code for outdatedFn
-Agent agent-alpha completed lifecycle with 0.149691ms runtime
+Agent agent-alpha completed lifecycle with 0.105319ms runtime
 #ascension: Agent agent-beta levels up to Initiate with delta 0
-[PetalsCycle] Agent=agent-beta {
-  rewrittenCode: '// improved code for outdatedFn',
-  trustScore: 0.9,
-  ethicalRating: 'aligned',
-  notes: [ 'Stub: auto-approved (replace with real Petals call)' ]
-}
 Applying rewrite: // improved code for outdatedFn
-Agent agent-beta completed lifecycle with 0.043567ms runtime
+Agent agent-beta completed lifecycle with 0.035794ms runtime
 #ascension: Agent agent-gamma levels up to Initiate with delta 0
-[PetalsCycle] Agent=agent-gamma {
-  rewrittenCode: '// improved code for outdatedFn',
-  trustScore: 0.9,
-  ethicalRating: 'aligned',
-  notes: [ 'Stub: auto-approved (replace with real Petals call)' ]
-}
 Applying rewrite: // improved code for outdatedFn
-Agent agent-gamma completed lifecycle with 0.058004ms runtime
-2025-07-28 11:52:55 [[32minfo[39m]: AppService initialized with IPFS and metrics {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"AppService"}
+Agent agent-gamma completed lifecycle with 0.048199ms runtime
+2025-07-28 12:07:03 [[32minfo[39m]: AppService initialized with IPFS and metrics {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"AppService"}
 Throttler: Request object is undefined
-2025-07-28 11:52:59 [[32minfo[39m]: Incoming request: GET /v1/advanced/status {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753721579313_2jmf9tz82","timestamp":"2025-07-28T16:52:59.313Z","method":"GET","url":"/v1/advanced/status","ip":"::1","userAgent":"curl/8.7.1","headers":{"host":"localhost:3000","user-agent":"curl/8.7.1","accept":"*/*"},"query":{},"params":{}}}
-2025-07-28 11:52:59 [[32minfo[39m]: Response sent: GET /v1/advanced/status - 200 {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753721579313_2jmf9tz82","timestamp":"2025-07-28T16:52:59.316Z","method":"GET","url":"/v1/advanced/status","statusCode":200,"duration":"0.003s","responseSize":540}}
+2025-07-28 12:07:26 [[32minfo[39m]: Incoming request: GET /v1/health {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753722446203_p9oqhrdvx","timestamp":"2025-07-28T17:07:26.203Z","method":"GET","url":"/v1/health","ip":"::1","userAgent":"curl/8.7.1","headers":{"host":"localhost:3000","user-agent":"curl/8.7.1","accept":"*/*"},"query":{},"params":{}}}
+2025-07-28 12:07:26 [[32minfo[39m]: Response sent: GET /v1/health - 200 {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753722446203_p9oqhrdvx","timestamp":"2025-07-28T17:07:26.207Z","method":"GET","url":"/v1/health","statusCode":200,"duration":"0.004s","responseSize":197}}
 Throttler: Request object is undefined
-2025-07-28 11:53:10 [[32minfo[39m]: Incoming request: GET /v1/health {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753721590195_8ai37cnci","timestamp":"2025-07-28T16:53:10.195Z","method":"GET","url":"/v1/health","ip":"::1","userAgent":"curl/8.7.1","headers":{"host":"localhost:3000","user-agent":"curl/8.7.1","accept":"*/*"},"query":{},"params":{}}}
-2025-07-28 11:53:10 [[32minfo[39m]: Response sent: GET /v1/health - 200 {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753721590195_8ai37cnci","timestamp":"2025-07-28T16:53:10.196Z","method":"GET","url":"/v1/health","statusCode":200,"duration":"0.001s","responseSize":196}}
+2025-07-28 12:07:31 [[31merror[39m]: JWT Auth Guard error: Missing or invalid Authorization header {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"JwtAuthGuard"}
+UnauthorizedException: Missing or invalid Authorization header
+    at JwtAuthGuard.canActivate (/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/src/guards/jwt-auth.guard.ts:38:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async GuardsConsumer.tryActivate (/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/guards/guards-consumer.js:22:17)
+    at async canActivateFn (/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/router/router-execution-context.js:135:33)
+    at async /Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/router/router-execution-context.js:42:31
+    at async /Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2025-07-28 12:07:31 [[33mwarn[39m]: Client error occurred {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"timestamp":"2025-07-28T17:07:31.213Z","method":"GET","url":"/v1/orchestrate/health","status":401,"userAgent":"curl/8.7.1","ip":"::1","errorType":"HTTP_EXCEPTION","message":"Missing or invalid Authorization header"}}
 Throttler: Request object is undefined
-2025-07-28 11:53:32 [[32minfo[39m]: Incoming request: GET /v1/ {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753721612721_hde35ywe0","timestamp":"2025-07-28T16:53:32.721Z","method":"GET","url":"/v1/","ip":"::1","userAgent":"curl/8.7.1","headers":{"host":"localhost:3000","user-agent":"curl/8.7.1","accept":"*/*"},"query":{},"params":{}}}
-2025-07-28 11:53:32 [[32minfo[39m]: Response sent: GET /v1/ - 200 {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"requestId":"req_1753721612721_hde35ywe0","timestamp":"2025-07-28T16:53:32.722Z","method":"GET","url":"/v1/","statusCode":200,"duration":"0.001s","responseSize":37}}
+2025-07-28 12:07:37 [[31merror[39m]: JWT Auth Guard error: Missing or invalid Authorization header {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":"JwtAuthGuard"}
+UnauthorizedException: Missing or invalid Authorization header
+    at JwtAuthGuard.canActivate (/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/src/guards/jwt-auth.guard.ts:38:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async GuardsConsumer.tryActivate (/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/guards/guards-consumer.js:22:17)
+    at async canActivateFn (/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/router/router-execution-context.js:135:33)
+    at async /Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/router/router-execution-context.js:42:31
+    at async /Users/Flynn/Documents/GitHub/Zeropoint-Protocol/node_modules/@nestjs/core/router/router-proxy.js:9:17
+2025-07-28 12:07:37 [[33mwarn[39m]: Client error occurred {"service":"zeropoint-api","version":"0.0.1","environment":"development","context":{"timestamp":"2025-07-28T17:07:37.072Z","method":"GET","url":"/v1/petals/health","status":401,"userAgent":"curl/8.7.1","ip":"::1","errorType":"HTTP_EXCEPTION","message":"Missing or invalid Authorization header"}}

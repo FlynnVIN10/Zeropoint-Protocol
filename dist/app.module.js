@@ -17,6 +17,8 @@ import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CustomThrottlerGuard } from './guards/throttler.guard.js';
+import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
+import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -40,6 +42,8 @@ AppModule = __decorate([
             AppService,
             JwtStrategy,
             JwtAuthGuard,
+            EnhancedPetalsService,
+            ServiceOrchestrator,
             {
                 provide: APP_GUARD,
                 useClass: CustomThrottlerGuard,

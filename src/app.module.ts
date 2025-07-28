@@ -1,7 +1,7 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
@@ -36,9 +36,13 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
     // }),
     // TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({ 
-      secret: process.env.JWT_SECRET, 
-      signOptions: { expiresIn: '15m' } 
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '15m' }
+      }),
+      inject: [ConfigService],
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
   ],

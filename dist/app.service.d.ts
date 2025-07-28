@@ -29,5 +29,26 @@ export declare class AppService {
     proposeWithPetals(proposal: CodeProposal): Promise<PetalsResponse>;
     healthCheck(): Promise<any>;
     private checkPythonBackendHealth;
+    textSummarization(text: string, options?: {
+        maxLength?: number;
+        style?: string;
+    }): Promise<any>;
+    contextPrompting(prompt: string, context: string, options?: {
+        temperature?: number;
+        maxTokens?: number;
+    }): Promise<any>;
+    semanticSearch(query: string, documents: string[], options?: {
+        topK?: number;
+        threshold?: number;
+    }): Promise<any>;
+    sentimentAnalysis(text: string, options?: {
+        detailed?: boolean;
+        language?: string;
+    }): Promise<any>;
+    entityExtraction(text: string, options?: {
+        entities?: string[];
+        confidence?: number;
+    }): Promise<any>;
+    languageTranslation(text: string, targetLanguage: string, sourceLanguage?: string): Promise<any>;
 }
 export {};

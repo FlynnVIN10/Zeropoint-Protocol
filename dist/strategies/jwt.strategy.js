@@ -16,10 +16,14 @@ import { checkIntent } from '../guards/synthient.guard.js';
 import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
 let JwtStrategy = JwtStrategy_1 = class JwtStrategy extends PassportStrategy(Strategy) {
     constructor(configService) {
+        const secret = configService.get('JWT_SECRET');
+        if (!secret) {
+            throw new Error('JWT_SECRET is not configured');
+        }
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
             ignoreExpiration: false,
-            secretOrKey: configService.get('JWT_SECRET'),
+            secretOrKey: secret,
             algorithms: ['HS256'],
             issuer: 'zeropoint-protocol',
             audience: 'zeropoint-api'

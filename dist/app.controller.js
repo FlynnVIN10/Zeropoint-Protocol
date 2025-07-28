@@ -240,6 +240,138 @@ let AppController = class AppController {
             }, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    async textSummarization(body) {
+        if (!checkIntent('text-summarization'))
+            throw new Error('Zeroth violation: Text summarization blocked.');
+        try {
+            const result = await this.appService.textSummarization(body.text, body.options);
+            return {
+                success: true,
+                result,
+                message: 'Text summarization completed successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async contextPrompting(body) {
+        if (!checkIntent('context-prompting'))
+            throw new Error('Zeroth violation: Context prompting blocked.');
+        try {
+            const result = await this.appService.contextPrompting(body.prompt, body.context, body.options);
+            return {
+                success: true,
+                result,
+                message: 'Context-aware prompting completed successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async semanticSearch(body) {
+        if (!checkIntent('semantic-search'))
+            throw new Error('Zeroth violation: Semantic search blocked.');
+        try {
+            const result = await this.appService.semanticSearch(body.query, body.documents, body.options);
+            return {
+                success: true,
+                result,
+                message: 'Semantic search completed successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async sentimentAnalysis(body) {
+        if (!checkIntent('sentiment-analysis'))
+            throw new Error('Zeroth violation: Sentiment analysis blocked.');
+        try {
+            const result = await this.appService.sentimentAnalysis(body.text, body.options);
+            return {
+                success: true,
+                result,
+                message: 'Sentiment analysis completed successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async entityExtraction(body) {
+        if (!checkIntent('entity-extraction'))
+            throw new Error('Zeroth violation: Entity extraction blocked.');
+        try {
+            const result = await this.appService.entityExtraction(body.text, body.options);
+            return {
+                success: true,
+                result,
+                message: 'Entity extraction completed successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async languageTranslation(body) {
+        if (!checkIntent('language-translation'))
+            throw new Error('Zeroth violation: Language translation blocked.');
+        try {
+            const result = await this.appService.languageTranslation(body.text, body.targetLanguage, body.sourceLanguage);
+            return {
+                success: true,
+                result,
+                message: 'Language translation completed successfully'
+            };
+        }
+        catch (error) {
+            throw new HttpException({
+                success: false,
+                message: error.message
+            }, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getAdvancedStatus() {
+        if (!checkIntent('get-advanced-status'))
+            throw new Error('Zeroth violation: Advanced status check blocked.');
+        return {
+            service: 'Zeropoint Protocol Advanced AI Gateway',
+            version: '1.0.0',
+            status: 'operational',
+            timestamp: new Date().toISOString(),
+            advancedEndpoints: {
+                summarization: '/v1/advanced/summarize',
+                contextPrompting: '/v1/advanced/context-prompt',
+                semanticSearch: '/v1/advanced/semantic-search',
+                sentimentAnalysis: '/v1/advanced/sentiment',
+                entityExtraction: '/v1/advanced/entities',
+                languageTranslation: '/v1/advanced/translate'
+            },
+            features: {
+                zerothGateValidation: true,
+                soulchainLogging: true,
+                metadataTracking: true,
+                ethicalAlignment: true
+            }
+        };
+    }
     async onApplicationShutdown() {
     }
 };
@@ -352,6 +484,60 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AppController.prototype, "proposeWithPetals", null);
+__decorate([
+    Post('advanced/summarize'),
+    UseGuards(JwtAuthGuard),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "textSummarization", null);
+__decorate([
+    Post('advanced/context-prompt'),
+    UseGuards(JwtAuthGuard),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "contextPrompting", null);
+__decorate([
+    Post('advanced/semantic-search'),
+    UseGuards(JwtAuthGuard),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "semanticSearch", null);
+__decorate([
+    Post('advanced/sentiment'),
+    UseGuards(JwtAuthGuard),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "sentimentAnalysis", null);
+__decorate([
+    Post('advanced/entities'),
+    UseGuards(JwtAuthGuard),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "entityExtraction", null);
+__decorate([
+    Post('advanced/translate'),
+    UseGuards(JwtAuthGuard),
+    __param(0, Body()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "languageTranslation", null);
+__decorate([
+    Get('advanced/status'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AppController.prototype, "getAdvancedStatus", null);
 AppController = __decorate([
     Controller(),
     __metadata("design:paramtypes", [AppService, JwtService])

@@ -5,7 +5,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
@@ -25,9 +25,13 @@ AppModule = __decorate([
             ConfigModule.forRoot({ isGlobal: true }),
             HttpModule,
             PassportModule.register({ defaultStrategy: 'jwt' }),
-            JwtModule.register({
-                secret: process.env.JWT_SECRET,
-                signOptions: { expiresIn: '15m' }
+            JwtModule.registerAsync({
+                imports: [ConfigModule],
+                useFactory: async (configService) => ({
+                    secret: configService.get('JWT_SECRET'),
+                    signOptions: { expiresIn: configService.get('JWT_EXPIRES_IN') || '15m' }
+                }),
+                inject: [ConfigService],
             }),
             ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
         ],

@@ -32,6 +32,49 @@ export declare class AppController implements OnApplicationShutdown {
     persistSoulchain(): Promise<any>;
     getStatus(): Promise<any>;
     proposeWithPetals(proposal: any): Promise<any>;
+    textSummarization(body: {
+        text: string;
+        options?: {
+            maxLength?: number;
+            style?: string;
+        };
+    }): Promise<any>;
+    contextPrompting(body: {
+        prompt: string;
+        context: string;
+        options?: {
+            temperature?: number;
+            maxTokens?: number;
+        };
+    }): Promise<any>;
+    semanticSearch(body: {
+        query: string;
+        documents: string[];
+        options?: {
+            topK?: number;
+            threshold?: number;
+        };
+    }): Promise<any>;
+    sentimentAnalysis(body: {
+        text: string;
+        options?: {
+            detailed?: boolean;
+            language?: string;
+        };
+    }): Promise<any>;
+    entityExtraction(body: {
+        text: string;
+        options?: {
+            entities?: string[];
+            confidence?: number;
+        };
+    }): Promise<any>;
+    languageTranslation(body: {
+        text: string;
+        targetLanguage: string;
+        sourceLanguage?: string;
+    }): Promise<any>;
+    getAdvancedStatus(): Promise<any>;
     onApplicationShutdown(): Promise<void>;
 }
 export {};

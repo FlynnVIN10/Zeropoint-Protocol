@@ -295,6 +295,438 @@ let AppService = AppService_1 = class AppService {
             return 'unhealthy';
         }
     }
+    async textSummarization(text, options) {
+        var _a;
+        const startTime = Date.now();
+        try {
+            if (!checkIntent('textSummarization')) {
+                throw new Error('Zeroth violation: textSummarization blocked.');
+            }
+            const summary = await this.callPythonBackend('/ai/summarize', {
+                text,
+                maxLength: (options === null || options === void 0 ? void 0 : options.maxLength) || 150,
+                style: (options === null || options === void 0 ? void 0 : options.style) || 'concise'
+            }, 'Text summarization request');
+            await soulchain.addXPTransaction({
+                agentId: 'app-service',
+                amount: 5,
+                rationale: `Text summarization: ${text.length} chars input, ${((_a = summary.summary) === null || _a === void 0 ? void 0 : _a.length) || 0} chars output, style: ${(options === null || options === void 0 ? void 0 : options.style) || 'concise'}`,
+                timestamp: new Date().toISOString(),
+                previousCid: null,
+                tags: [
+                    {
+                        type: '#who',
+                        name: 'app-service',
+                        did: 'did:zeropoint:app-service',
+                        handle: '@app-service'
+                    },
+                    {
+                        type: '#intent',
+                        purpose: '#ai-operation',
+                        validation: 'good-heart'
+                    },
+                    {
+                        type: '#thread',
+                        taskId: 'text_summarization',
+                        lineage: ['ai', 'nlp'],
+                        swarmLink: 'text-summarization-swarm'
+                    },
+                    {
+                        type: '#layer',
+                        level: '#live'
+                    },
+                    {
+                        type: '#domain',
+                        field: '#ai'
+                    }
+                ]
+            });
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/summarize',
+                status: 200,
+                duration,
+                requestBody: { text, options },
+                responseBody: summary
+            });
+            return summary;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/summarize',
+                status: 500,
+                duration,
+                requestBody: { text, options },
+                error: error.message
+            });
+            throw error;
+        }
+    }
+    async contextPrompting(prompt, context, options) {
+        var _a;
+        const startTime = Date.now();
+        try {
+            if (!checkIntent('contextPrompting')) {
+                throw new Error('Zeroth violation: contextPrompting blocked.');
+            }
+            const response = await this.callPythonBackend('/ai/context-prompt', {
+                prompt,
+                context,
+                temperature: (options === null || options === void 0 ? void 0 : options.temperature) || 0.7,
+                maxTokens: (options === null || options === void 0 ? void 0 : options.maxTokens) || 1000
+            }, 'Context-aware prompting request');
+            await soulchain.addXPTransaction({
+                agentId: 'app-service',
+                amount: 8,
+                rationale: `Context prompting: ${prompt.length} chars prompt, ${context.length} chars context, ${((_a = response.response) === null || _a === void 0 ? void 0 : _a.length) || 0} chars response`,
+                timestamp: new Date().toISOString(),
+                previousCid: null,
+                tags: [
+                    {
+                        type: '#who',
+                        name: 'app-service',
+                        did: 'did:zeropoint:app-service',
+                        handle: '@app-service'
+                    },
+                    {
+                        type: '#intent',
+                        purpose: '#ai-operation',
+                        validation: 'good-heart'
+                    },
+                    {
+                        type: '#thread',
+                        taskId: 'context_prompting',
+                        lineage: ['ai', 'nlp'],
+                        swarmLink: 'context-prompting-swarm'
+                    },
+                    {
+                        type: '#layer',
+                        level: '#live'
+                    },
+                    {
+                        type: '#domain',
+                        field: '#ai'
+                    }
+                ]
+            });
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/context-prompt',
+                status: 200,
+                duration,
+                requestBody: { prompt, context, options },
+                responseBody: response
+            });
+            return response;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/context-prompt',
+                status: 500,
+                duration,
+                requestBody: { prompt, context, options },
+                error: error.message
+            });
+            throw error;
+        }
+    }
+    async semanticSearch(query, documents, options) {
+        var _a;
+        const startTime = Date.now();
+        try {
+            if (!checkIntent('semanticSearch')) {
+                throw new Error('Zeroth violation: semanticSearch blocked.');
+            }
+            const results = await this.callPythonBackend('/ai/semantic-search', {
+                query,
+                documents,
+                topK: (options === null || options === void 0 ? void 0 : options.topK) || 5,
+                threshold: (options === null || options === void 0 ? void 0 : options.threshold) || 0.7
+            }, 'Semantic search request');
+            await soulchain.addXPTransaction({
+                agentId: 'app-service',
+                amount: 6,
+                rationale: `Semantic search: ${query.length} chars query, ${documents.length} documents, ${((_a = results.matches) === null || _a === void 0 ? void 0 : _a.length) || 0} results`,
+                timestamp: new Date().toISOString(),
+                previousCid: null,
+                tags: [
+                    {
+                        type: '#who',
+                        name: 'app-service',
+                        did: 'did:zeropoint:app-service',
+                        handle: '@app-service'
+                    },
+                    {
+                        type: '#intent',
+                        purpose: '#ai-operation',
+                        validation: 'good-heart'
+                    },
+                    {
+                        type: '#thread',
+                        taskId: 'semantic_search',
+                        lineage: ['ai', 'search'],
+                        swarmLink: 'semantic-search-swarm'
+                    },
+                    {
+                        type: '#layer',
+                        level: '#live'
+                    },
+                    {
+                        type: '#domain',
+                        field: '#ai'
+                    }
+                ]
+            });
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/semantic-search',
+                status: 200,
+                duration,
+                requestBody: { query, documents, options },
+                responseBody: results
+            });
+            return results;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/semantic-search',
+                status: 500,
+                duration,
+                requestBody: { query, documents, options },
+                error: error.message
+            });
+            throw error;
+        }
+    }
+    async sentimentAnalysis(text, options) {
+        const startTime = Date.now();
+        try {
+            if (!checkIntent('sentimentAnalysis')) {
+                throw new Error('Zeroth violation: sentimentAnalysis blocked.');
+            }
+            const analysis = await this.callPythonBackend('/ai/sentiment', {
+                text,
+                detailed: (options === null || options === void 0 ? void 0 : options.detailed) || false,
+                language: (options === null || options === void 0 ? void 0 : options.language) || 'auto'
+            }, 'Sentiment analysis request');
+            await soulchain.addXPTransaction({
+                agentId: 'app-service',
+                amount: 4,
+                rationale: `Sentiment analysis: ${text.length} chars text, sentiment: ${analysis.sentiment}, confidence: ${analysis.confidence}`,
+                timestamp: new Date().toISOString(),
+                previousCid: null,
+                tags: [
+                    {
+                        type: '#who',
+                        name: 'app-service',
+                        did: 'did:zeropoint:app-service',
+                        handle: '@app-service'
+                    },
+                    {
+                        type: '#intent',
+                        purpose: '#ai-operation',
+                        validation: 'good-heart'
+                    },
+                    {
+                        type: '#thread',
+                        taskId: 'sentiment_analysis',
+                        lineage: ['ai', 'nlp'],
+                        swarmLink: 'sentiment-analysis-swarm'
+                    },
+                    {
+                        type: '#layer',
+                        level: '#live'
+                    },
+                    {
+                        type: '#domain',
+                        field: '#ai'
+                    }
+                ]
+            });
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/sentiment',
+                status: 200,
+                duration,
+                requestBody: { text, options },
+                responseBody: analysis
+            });
+            return analysis;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/sentiment',
+                status: 500,
+                duration,
+                requestBody: { text, options },
+                error: error.message
+            });
+            throw error;
+        }
+    }
+    async entityExtraction(text, options) {
+        var _a;
+        const startTime = Date.now();
+        try {
+            if (!checkIntent('entityExtraction')) {
+                throw new Error('Zeroth violation: entityExtraction blocked.');
+            }
+            const extraction = await this.callPythonBackend('/ai/entities', {
+                text,
+                entities: (options === null || options === void 0 ? void 0 : options.entities) || ['PERSON', 'ORG', 'LOC', 'DATE'],
+                confidence: (options === null || options === void 0 ? void 0 : options.confidence) || 0.8
+            }, 'Entity extraction request');
+            await soulchain.addXPTransaction({
+                agentId: 'app-service',
+                amount: 7,
+                rationale: `Entity extraction: ${text.length} chars text, ${((_a = extraction.entities) === null || _a === void 0 ? void 0 : _a.length) || 0} entities found`,
+                timestamp: new Date().toISOString(),
+                previousCid: null,
+                tags: [
+                    {
+                        type: '#who',
+                        name: 'app-service',
+                        did: 'did:zeropoint:app-service',
+                        handle: '@app-service'
+                    },
+                    {
+                        type: '#intent',
+                        purpose: '#ai-operation',
+                        validation: 'good-heart'
+                    },
+                    {
+                        type: '#thread',
+                        taskId: 'entity_extraction',
+                        lineage: ['ai', 'nlp'],
+                        swarmLink: 'entity-extraction-swarm'
+                    },
+                    {
+                        type: '#layer',
+                        level: '#live'
+                    },
+                    {
+                        type: '#domain',
+                        field: '#ai'
+                    }
+                ]
+            });
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/entities',
+                status: 200,
+                duration,
+                requestBody: { text, options },
+                responseBody: extraction
+            });
+            return extraction;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/entities',
+                status: 500,
+                duration,
+                requestBody: { text, options },
+                error: error.message
+            });
+            throw error;
+        }
+    }
+    async languageTranslation(text, targetLanguage, sourceLanguage) {
+        const startTime = Date.now();
+        try {
+            if (!checkIntent('languageTranslation')) {
+                throw new Error('Zeroth violation: languageTranslation blocked.');
+            }
+            const translation = await this.callPythonBackend('/ai/translate', {
+                text,
+                targetLanguage,
+                sourceLanguage: sourceLanguage || 'auto'
+            }, 'Language translation request');
+            await soulchain.addXPTransaction({
+                agentId: 'app-service',
+                amount: 5,
+                rationale: `Language translation: ${text.length} chars from ${translation.detectedLanguage || sourceLanguage || 'auto'} to ${targetLanguage}`,
+                timestamp: new Date().toISOString(),
+                previousCid: null,
+                tags: [
+                    {
+                        type: '#who',
+                        name: 'app-service',
+                        did: 'did:zeropoint:app-service',
+                        handle: '@app-service'
+                    },
+                    {
+                        type: '#intent',
+                        purpose: '#ai-operation',
+                        validation: 'good-heart'
+                    },
+                    {
+                        type: '#thread',
+                        taskId: 'language_translation',
+                        lineage: ['ai', 'nlp'],
+                        swarmLink: 'language-translation-swarm'
+                    },
+                    {
+                        type: '#layer',
+                        level: '#live'
+                    },
+                    {
+                        type: '#domain',
+                        field: '#ai'
+                    }
+                ]
+            });
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/translate',
+                status: 200,
+                duration,
+                requestBody: { text, targetLanguage, sourceLanguage },
+                responseBody: translation
+            });
+            return translation;
+        }
+        catch (error) {
+            const duration = Date.now() - startTime;
+            await this.logAPICall({
+                timestamp: new Date().toISOString(),
+                method: 'POST',
+                endpoint: '/v1/advanced/translate',
+                status: 500,
+                duration,
+                requestBody: { text, targetLanguage, sourceLanguage },
+                error: error.message
+            });
+            throw error;
+        }
+    }
 };
 AppService = AppService_1 = __decorate([
     Injectable(),

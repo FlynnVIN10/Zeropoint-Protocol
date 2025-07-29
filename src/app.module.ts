@@ -29,14 +29,26 @@ import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     HttpModule,
-    // TypeOrmModule.forRoot({
-    //   type: 'sqlite',
-    //   database: ':memory:',
-    //   autoLoadEntities: true,
-    //   synchronize: true,
-    //   logging: process.env.NODE_ENV === 'development',
-    // }),
-    // TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST', 'localhost'),
+        port: configService.get<number>('DB_PORT', 5432),
+        username: configService.get<string>('DB_USERNAME', 'postgres'),
+        password: configService.get<string>('DB_PASSWORD', 'password'),
+        database: configService.get<string>('DB_DATABASE', 'zeropoint_protocol'),
+        entities: [User, Session, AuditLog, AgentState],
+        synchronize: configService.get<boolean>('DB_SYNC', false), // Disable in production
+        logging: configService.get<boolean>('DB_LOGGING', false),
+        ssl: configService.get<boolean>('DB_SSL', false) ? { rejectUnauthorized: false } : false,
+        migrations: ['migrations/*.sql'],
+        migrationsRun: false, // Manual migration control
+        autoLoadEntities: true,
+      }),
+      inject: [ConfigService],
+    }),
+    TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -48,11 +60,11 @@ import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator
     }),
     ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
   ],
-  controllers: [AppController, HealthController],
+  controllers: [AppController, HealthController, AuthController, AgentStateController],
   providers: [
     AppService, 
-    // AuthService, 
-    // AgentStateService,
+    AuthService, 
+    AgentStateService,
     JwtStrategy, 
     JwtAuthGuard,
     EnhancedPetalsService,

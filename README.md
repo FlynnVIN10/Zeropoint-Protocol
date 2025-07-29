@@ -1,239 +1,75 @@
-# Zeropoint Protocol AI
+# Zeropoint Protocol Corporate Website
 
-[![License: Proprietary](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE.md)
-[![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![Node.js](https://img.shields.io/badge/Node.js-20+-green.svg)](https://nodejs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-blue.svg)](https://www.typescriptlang.org/)
+This is the corporate website for Zeropoint Protocol, built with Docusaurus.
 
-> **Zeroth Principle**: Only with good intent and a good heart does the system function.
+## Deployment
 
-## 🌟 Overview
+This website is deployed on **Cloudflare Pages** at https://zeropointprotocol.ai
 
-Zeropoint Protocol AI is an advanced AI system that combines distributed machine learning, ethical AI governance, and decentralized identity management. The system features a dual-architecture with a Python backend for AI model inference and a NestJS API gateway for orchestration and security.
+### Deployment Configuration
+- **Platform**: Cloudflare Pages
+- **Framework**: Docusaurus
+- **Build Command**: `npm install && npm run build`
+- **Output Directory**: `build`
+- **Environment**: Production
 
-## 🏗️ Architecture
-
-### Core Components
-
-- **🤖 AI Backend (Python)**: Distributed text and image generation using Petals and Stable Diffusion
-- **🌐 API Gateway (NestJS)**: RESTful API with JWT authentication and rate limiting
-- **🔗 IPFS Integration**: Decentralized file storage and content addressing
-- **⚡ Soulchain**: Ethical AI governance and intent validation
-- **📊 Monitoring**: Prometheus metrics and health checks
-
-### Technology Stack
-
-```
-Frontend/API Gateway:
-├── NestJS (TypeScript)
-├── JWT Authentication
-├── Rate Limiting
-├── Prometheus Metrics
-└── Helia IPFS Client
-
-AI Backend:
-├── Python 3.12+
-├── Petals (Distributed BLOOM)
-├── Stable Diffusion
-├── Sanic Web Framework
-└── IPFS Integration
-
-Infrastructure:
-├── Docker & Docker Compose
-├── PostgreSQL Database
-├── Redis Cache
-├── IPFS Node
-└── Prometheus Monitoring
-```
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- Python 3.12+
-- Node.js 20+
-- Docker (optional, for full deployment)
-- Git
-
-### Local Development Setup
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/FlynnVIN10/zeropointprotocol.ai.git
-   cd zeropointprotocol.ai
-   ```
-
-2. **Start Python AI Backend**
-   ```bash
-   cd Zeropoint
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   python app_simple.py
-   ```
-   The AI service will be available at `http://localhost:8000`
-
-3. **Start NestJS API Gateway**
-   ```bash
-   cd ..
-   npm install
-   export JWT_SECRET="your-secret-key"
-   export JWT_EXPIRES_IN="24h"
-   export NODE_ENV="development"
-   npm run start
-   ```
-   The API gateway will be available at `http://localhost:3000`
-
-### Docker Deployment
+## Development
 
 ```bash
-# Start all services
-docker-compose up -d
+# Install dependencies
+npm install
 
-# View logs
-docker-compose logs -f
+# Start development server
+npm start
 
-# Stop services
-docker-compose down
+# Build for production
+npm run build
+
+# Serve production build locally
+npm run serve
 ```
 
-## 📡 API Endpoints
+## Status Synchronization
 
-### Health & Status
-- `GET /v1/health` - Service health check
-- `GET /v1/status` - System status and metrics
-- `GET /v1/metrics` - Prometheus metrics
+The website automatically syncs deployment status from the main project repository via the `scripts/sync-status.js` script, which runs before each build.
 
-### AI Generation
-- `POST /v1/generate/text` - Text generation with BLOOM
-- `POST /v1/generate/image` - Image generation with Stable Diffusion
-- `POST /v1/generate/code` - Code generation
+## Pages
 
-### IPFS Operations
-- `POST /v1/ipfs/upload` - Upload files to IPFS
-- `GET /v1/ipfs/download/:cid` - Download files from IPFS
-- `GET /v1/ipfs/list/:cid` - List IPFS directory contents
+- **Home**: Overview and mission statement
+- **Technology**: AI features and capabilities
+- **Use Cases**: Value propositions and applications
+- **Status**: Current system status and deployment progress
+- **Legal**: Company information and licensing
+- **Contact**: Contact information and support
 
-### Authentication (when database is enabled)
-- `POST /v1/register` - User registration
-- `POST /v1/login` - User authentication
+## Build Process
 
-## 🔧 Configuration
+The website automatically:
+1. Syncs status from the main project's `DEPLOYMENT_STATUS.md`
+2. Builds the static site with Docusaurus
+3. Deploys to Cloudflare Pages
 
-### Environment Variables
+## Custom Domain
 
-```bash
-# JWT Configuration
-JWT_SECRET=your-secret-key
-JWT_EXPIRES_IN=24h
+The website is accessible at:
+- **Primary**: https://zeropointprotocol.ai
+- **www**: https://www.zeropointprotocol.ai
 
-# Database (PostgreSQL)
-DATABASE_HOST=localhost
-DATABASE_PORT=5432
-DATABASE_USERNAME=zeropoint
-DATABASE_PASSWORD=zeropoint_password
-DATABASE_NAME=zeropoint_protocol
+SSL/TLS is configured with Full (strict) encryption and Always Use HTTPS enabled.
 
-# Service URLs
-ZEROPOINT_SERVICE_URL=http://localhost:8000
-IPFS_GATEWAY_URL=http://localhost:5001
+## Repository Structure
 
-# Application
-NODE_ENV=development
-PORT=3000
-LOG_LEVEL=info
+```
+zeropointprotocol/
+├── src/
+│   ├── pages/           # Main website pages
+│   └── theme/           # Docusaurus theme customization
+├── docs/                # Documentation pages
+├── static/              # Static assets
+├── scripts/             # Build scripts
+└── docusaurus.config.js # Docusaurus configuration
 ```
 
-## 🧪 Testing
+## Contributing
 
-### Python Backend Tests
-```bash
-cd Zeropoint
-python -m pytest test_zeropoint_service.py
-```
-
-### NestJS API Tests
-```bash
-npm run test
-npm run test:e2e
-```
-
-## 📊 Monitoring
-
-### Health Checks
-- **API Gateway**: `http://localhost:3000/v1/health`
-- **AI Backend**: `http://localhost:8000/health`
-- **Database**: Automatic connection monitoring
-- **IPFS**: Node connectivity checks
-
-### Metrics
-- **Prometheus**: `http://localhost:9090`
-- **API Metrics**: Request counts, latency, error rates
-- **AI Metrics**: Model loading status, inference times
-- **System Metrics**: CPU, memory, disk usage
-
-## 🔒 Security Features
-
-### Zeroth Gate Ethical Validation
-- Intent validation for all AI operations
-- Ethical compliance checking
-- Malicious request blocking
-
-### Authentication & Authorization
-- JWT-based authentication
-- Role-based access control
-- Rate limiting and throttling
-
-### Data Protection
-- IPFS content addressing
-- Encrypted storage
-- Audit logging
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-- Follow TypeScript/ESLint rules
-- Write comprehensive tests
-- Update documentation
-- Ensure ethical AI compliance
-
-## 🏢 Corporate Information
-
-**Zeropoint Protocol, Inc.**  
-A Texas C Corporation  
-Principal Office: Austin, TX  
-Domain: zeropointprotocol.ai  
-Contact: legal@zeropointprotocol.ai
-
-## 📑 License & Access
-**© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. Domain: zeropointprotocol.ai, Contact: legal@zeropointprotocol.ai**
-
-### **View-Only License: Browse on GitHub Only**
-
-
-
-**All other uses require signed license agreement.**
-This project is licensed under a proprietary view-only license - see the [LICENSE](LICENSE.md) file for details. No clone, modify, run or distribute without signed agreement.
-
-## 🙏 Acknowledgments
-
-- **Petals Team**: Distributed BLOOM implementation
-- **Hugging Face**: Transformers and Diffusers libraries
-- **IPFS**: Decentralized file storage
-- **NestJS**: Modern Node.js framework
-
-## 📞 Support
-
-- **Website**: [https://zeropointprotocol.ai](https://zeropointprotocol.ai)
-- **Legal Inquiries**: legal@zeropointprotocol.ai
-- **Documentation**: [https://zeropointprotocol.ai/docs](https://zeropointprotocol.ai/docs)
-
----
-
-**Remember**: Only with good intent and a good heart does the system function. 🌟
+This website is part of the Zeropoint Protocol project. For contribution guidelines, see the main project repository.

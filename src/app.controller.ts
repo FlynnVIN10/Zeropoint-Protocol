@@ -662,6 +662,131 @@ export class AppController implements OnApplicationShutdown {
     };
   }
 
+  // Consensus Operations Endpoints
+
+  @Post('/v1/consensus/bridge')
+  async bridgeConsensus(@Body() consensusData: any): Promise<any> {
+    if (!checkIntent('consensusBridge')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: Consensus bridge blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    try {
+      const result = await this.appService.bridgeConsensus(
+        consensusData.sourceChain,
+        consensusData.targetChain,
+        consensusData
+      );
+      return {
+        status: 'success',
+        data: result,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Consensus bridge failed',
+        error: error.message
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post('/v1/consensus/stake')
+  async validateTokenStake(@Body() stake: any): Promise<any> {
+    if (!checkIntent('tokenStakeValidation')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: Token stake validation blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    try {
+      const result = await this.appService.validateTokenStake(stake);
+      return {
+        status: 'success',
+        data: result,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Token stake validation failed',
+        error: error.message
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Post('/v1/consensus/intent')
+  async processConsensusIntent(@Body() intent: any): Promise<any> {
+    if (!checkIntent('consensusIntentProcessing')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: Consensus intent processing blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    try {
+      const result = await this.appService.processConsensusIntent(intent);
+      return {
+        status: 'success',
+        data: result,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Consensus intent processing failed',
+        error: error.message
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('/v1/consensus/visualizer')
+  async getConsensusVisualizer(@Res() res: any): Promise<void> {
+    if (!checkIntent('consensusVisualization')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: Consensus visualization blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    // Send initial visualization data
+    const sendVisualizationData = () => {
+      const data = {
+        type: 'consensus-visualization',
+        timestamp: new Date().toISOString(),
+        agents: [
+          { id: 'agent1', position: { x: 0, y: 0, z: 0 }, status: 'active', voice: 'proposal' },
+          { id: 'agent2', position: { x: 1, y: 1, z: 0 }, status: 'passive', voice: 'abstain' },
+          { id: 'agent3', position: { x: -1, y: -1, z: 0 }, status: 'active', voice: 'opposition' }
+        ],
+        daoState: { position: { x: 0, y: 0, z: 0 }, status: 'processing' },
+        consensus: { quorum: 0.6, current: 0.4, threshold: 0.5 }
+      };
+
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+    // Send initial data
+    sendVisualizationData();
+
+    // Update every 2 seconds
+    const interval = setInterval(() => {
+      sendVisualizationData();
+    }, 2000);
+
+    // Clean up on client disconnect
+    res.on('close', () => {
+      clearInterval(interval);
+    });
+  }
+
   async onApplicationShutdown() {
     // Cleanup logic here
   }

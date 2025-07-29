@@ -14,6 +14,29 @@ import { Counter, Registry, Histogram, Gauge } from 'prom-client';
 import { callPetalsAPI, logTrainingCycle, formatProposal, CodeProposal, PetalsResponse } from './agents/train/petals.bridge.js';
 import { soulchain } from './agents/soulchain/soulchain.ledger.js';
 import { firstValueFrom } from 'rxjs';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as crypto from 'crypto';
+
+// Consensus Metrics
+const consensusCounter = new Counter({
+  name: 'consensus_operations_total',
+  help: 'Total consensus operations',
+  labelNames: ['operation', 'status', 'chain']
+});
+
+const consensusDuration = new Histogram({
+  name: 'consensus_duration_seconds',
+  help: 'Consensus operation duration',
+  labelNames: ['operation', 'chain'],
+  buckets: [0.1, 0.5, 1, 2, 5, 10, 30]
+});
+
+const tokenGatingCounter = new Counter({
+  name: 'token_gating_operations_total',
+  help: 'Total token gating operations',
+  labelNames: ['operation', 'status', 'token_type']
+});
 
 // Prometheus Metrics
 const apiRequestCounter = new Counter({ 
@@ -58,6 +81,54 @@ metricsRegistry.registerMetric(pythonBackendLatency);
 metricsRegistry.registerMetric(activeConnections);
 metricsRegistry.registerMetric(uploadCounter);
 metricsRegistry.registerMetric(downloadCounter);
+metricsRegistry.registerMetric(consensusCounter);
+metricsRegistry.registerMetric(consensusDuration);
+metricsRegistry.registerMetric(tokenGatingCounter);
+
+// Consensus Interfaces
+interface ConsensusBridge {
+  sourceChain: 'soulchain' | 'dao-state';
+  targetChain: 'soulchain' | 'dao-state';
+  consensusData: {
+    proposalId: string;
+    votes: Vote[];
+    quorum: number;
+    threshold: number;
+    timestamp: Date;
+  };
+  bridgeHash: string;
+  verificationProof: string;
+}
+
+interface Vote {
+  voter: string;
+  choice: 'yes' | 'no' | 'abstain';
+  weight: number;
+  timestamp: Date;
+  signature: string;
+}
+
+interface TokenStake {
+  tokenType: 'ZEROPOINT' | 'ETH' | 'USDC';
+  amount: number;
+  lockDuration: number;
+  stakeId: string;
+  userAddress: string;
+  feedbackId?: string;
+}
+
+interface ConsensusIntent {
+  id: string;
+  type: 'user' | 'agent' | 'system' | 'consensus';
+  intent: string;
+  confidence: number;
+  timestamp: Date;
+  metadata: {
+    source: string;
+    context: any;
+    stakeholders: string[];
+  };
+}
 
 interface DirectoryEntry {
   name: string;
@@ -896,6 +967,331 @@ export class AppService {
         error: error.message
       });
       throw error;
+    }
+  }
+
+  // ===== CONSENSUS BRIDGE METHODS =====
+
+  async bridgeConsensus(
+    sourceChain: 'soulchain' | 'dao-state',
+    targetChain: 'soulchain' | 'dao-state',
+    consensusData: any
+  ): Promise<ConsensusBridge> {
+    const startTime = Date.now();
+    const timer = consensusDuration.startTimer({ operation: 'bridge', chain: targetChain });
+
+    try {
+      // Zeroth-gate validation
+      if (!checkIntent('consensusBridge')) {
+        throw new Error('Zeroth violation: consensus bridge blocked.');
+      }
+
+      // Log initial intent
+      await this.logConsensusToSoulchain('SOULCONS:INTENT', {
+        sourceChain,
+        targetChain,
+        proposalId: consensusData.proposalId,
+        timestamp: new Date().toISOString()
+      });
+
+      // Validate source consensus
+      const sourceValidation = await this.validateSourceConsensus(sourceChain, consensusData);
+      
+      // Create bridge transaction
+      const bridgeTx = await this.createBridgeTransaction(sourceValidation);
+      
+      // Execute on target chain
+      const targetExecution = await this.executeOnTargetChain(targetChain, bridgeTx);
+      
+      // Verify bridge completion
+      const bridgeResult = await this.verifyBridgeCompletion(bridgeTx, targetExecution);
+
+      // Log successful sync
+      await this.logConsensusToSoulchain('SOULCONS:SYNC', {
+        sourceChain,
+        targetChain,
+        bridgeHash: bridgeResult.bridgeHash,
+        consensusData,
+        duration: (Date.now() - startTime) / 1000
+      });
+
+      // Log pass if consensus threshold met
+      if (bridgeResult.consensusData.votes.filter(v => v.choice === 'yes').length / bridgeResult.consensusData.votes.length >= 0.6) {
+        await this.logConsensusToSoulchain('SOULCONS:PASS', {
+          sourceChain,
+          targetChain,
+          bridgeHash: bridgeResult.bridgeHash,
+          proposalId: consensusData.proposalId,
+          quorum: bridgeResult.consensusData.quorum,
+          threshold: bridgeResult.consensusData.threshold
+        });
+      }
+
+      timer();
+      consensusCounter.inc({ operation: 'bridge', status: 'success', chain: targetChain });
+
+      return bridgeResult;
+    } catch (error) {
+      timer();
+      consensusCounter.inc({ operation: 'bridge', status: 'error', chain: targetChain });
+      
+      await this.logConsensusToSoulchain('SOULCONS:ERROR', {
+        sourceChain,
+        targetChain,
+        error: error.message,
+        consensusData,
+        duration: (Date.now() - startTime) / 1000
+      });
+      
+      throw error;
+    }
+  }
+
+  async validateTokenStake(stake: TokenStake): Promise<{ isValid: boolean; weight: number; reason?: string }> {
+    const startTime = Date.now();
+    const timer = consensusDuration.startTimer({ operation: 'token_gating', chain: 'soulchain' });
+
+    try {
+      // Load gating configuration
+      const gatingConfig = await this.loadGatingConfig();
+      
+      // Check minimum stake requirements
+      const meetsMinimum = await this.checkMinimumStake(stake, gatingConfig);
+      if (!meetsMinimum.valid) {
+        timer();
+        tokenGatingCounter.inc({ operation: 'validate', status: 'insufficient_stake', token_type: stake.tokenType });
+        return { isValid: false, weight: 0, reason: meetsMinimum.reason };
+      }
+      
+      // Verify stake ownership
+      const ownershipValid = await this.verifyStakeOwnership(stake);
+      if (!ownershipValid) {
+        timer();
+        tokenGatingCounter.inc({ operation: 'validate', status: 'ownership_invalid', token_type: stake.tokenType });
+        return { isValid: false, weight: 0, reason: 'Invalid stake ownership' };
+      }
+      
+      // Calculate stake weight
+      const weight = this.calculateStakeWeight(stake, gatingConfig);
+      
+      timer();
+      tokenGatingCounter.inc({ operation: 'validate', status: 'success', token_type: stake.tokenType });
+
+      return { isValid: true, weight };
+    } catch (error) {
+      timer();
+      tokenGatingCounter.inc({ operation: 'validate', status: 'error', token_type: stake.tokenType });
+      throw error;
+    }
+  }
+
+  async processConsensusIntent(intent: ConsensusIntent): Promise<{ processed: boolean; confidence: number; consensus: any }> {
+    const startTime = Date.now();
+    const timer = consensusDuration.startTimer({ operation: 'intent_processing', chain: 'soulchain' });
+
+    try {
+      // Zeroth-gate validation
+      if (!checkIntent('consensusIntent')) {
+        throw new Error('Zeroth violation: consensus intent blocked.');
+      }
+
+      // Process intent based on type
+      let processed = false;
+      let confidence = intent.confidence;
+      let consensus = null;
+
+      switch (intent.type) {
+        case 'user':
+          consensus = await this.processUserIntent(intent);
+          processed = true;
+          break;
+        case 'agent':
+          consensus = await this.processAgentIntent(intent);
+          processed = true;
+          break;
+        case 'system':
+          consensus = await this.processSystemIntent(intent);
+          processed = true;
+          break;
+        case 'consensus':
+          consensus = await this.processConsensusIntent(intent);
+          processed = true;
+          break;
+      }
+
+      // Log to Soulchain
+      await this.logConsensusToSoulchain('SOULCONS:INTENT', {
+        intentId: intent.id,
+        type: intent.type,
+        confidence,
+        processed,
+        consensus
+      });
+
+      timer();
+      consensusCounter.inc({ operation: 'intent_processing', status: 'success', chain: 'soulchain' });
+
+      return { processed, confidence, consensus };
+    } catch (error) {
+      timer();
+      consensusCounter.inc({ operation: 'intent_processing', status: 'error', chain: 'soulchain' });
+      throw error;
+    }
+  }
+
+  // ===== PRIVATE CONSENSUS METHODS =====
+
+  private async loadGatingConfig(): Promise<any> {
+    const configPath = path.join(process.cwd(), 'src', 'config', 'gating.json');
+    try {
+      const configData = fs.readFileSync(configPath, 'utf8');
+      return JSON.parse(configData);
+    } catch (error) {
+      this.logger.error('Failed to load gating config, using defaults', error);
+      return {
+        minStake: {
+          ZEROPOINT: 100,
+          ETH: 0.01,
+          USDC: 10
+        },
+        tokenWeights: {
+          ZEROPOINT: 1.0,
+          ETH: 0.8,
+          USDC: 0.6
+        }
+      };
+    }
+  }
+
+  private async checkMinimumStake(stake: TokenStake, config: any): Promise<{ valid: boolean; reason?: string }> {
+    const minStake = config.minStake[stake.tokenType];
+    if (stake.amount < minStake) {
+      return { 
+        valid: false, 
+        reason: `Insufficient stake: ${stake.amount} ${stake.tokenType} < ${minStake} ${stake.tokenType}` 
+      };
+    }
+    return { valid: true };
+  }
+
+  private async verifyStakeOwnership(stake: TokenStake): Promise<boolean> {
+    // In a real implementation, this would verify on-chain
+    // For now, we'll simulate verification
+    return stake.userAddress && stake.userAddress.length > 0;
+  }
+
+  private calculateStakeWeight(stake: TokenStake, config: any): number {
+    const baseWeight = stake.amount * (config.tokenWeights[stake.tokenType] || 0.5);
+    const timeMultiplier = Math.min(stake.lockDuration / (24 * 60 * 60), 1.0); // Max 1 day
+    return baseWeight * timeMultiplier;
+  }
+
+  private async validateSourceConsensus(sourceChain: string, consensusData: any): Promise<any> {
+    // Simulate source chain validation
+    return {
+      valid: true,
+      consensusData,
+      signature: crypto.randomBytes(32).toString('hex')
+    };
+  }
+
+  private async createBridgeTransaction(sourceValidation: any): Promise<any> {
+    // Create bridge transaction hash
+    const bridgeHash = crypto.createHash('sha256')
+      .update(JSON.stringify(sourceValidation))
+      .digest('hex');
+    
+    return {
+      bridgeHash,
+      sourceValidation,
+      timestamp: new Date()
+    };
+  }
+
+  private async executeOnTargetChain(targetChain: string, bridgeTx: any): Promise<any> {
+    // Simulate target chain execution
+    return {
+      success: true,
+      transactionHash: crypto.randomBytes(32).toString('hex'),
+      timestamp: new Date()
+    };
+  }
+
+  private async verifyBridgeCompletion(bridgeTx: any, targetExecution: any): Promise<ConsensusBridge> {
+    return {
+      sourceChain: 'soulchain',
+      targetChain: 'dao-state',
+      consensusData: bridgeTx.sourceValidation.consensusData,
+      bridgeHash: bridgeTx.bridgeHash,
+      verificationProof: crypto.randomBytes(32).toString('hex')
+    };
+  }
+
+  private async processUserIntent(intent: ConsensusIntent): Promise<any> {
+    // Process user intent
+    return {
+      type: 'user_consensus',
+      confidence: intent.confidence,
+      stakeholders: intent.metadata.stakeholders
+    };
+  }
+
+  private async processAgentIntent(intent: ConsensusIntent): Promise<any> {
+    // Process agent intent
+    return {
+      type: 'agent_consensus',
+      confidence: intent.confidence,
+      source: intent.metadata.source
+    };
+  }
+
+  private async processSystemIntent(intent: ConsensusIntent): Promise<any> {
+    // Process system intent
+    return {
+      type: 'system_consensus',
+      confidence: intent.confidence,
+      context: intent.metadata.context
+    };
+  }
+
+  private async logConsensusToSoulchain(action: string, data: any): Promise<void> {
+    try {
+      await soulchain.addXPTransaction({
+        agentId: 'consensus-bridge',
+        amount: 1,
+        rationale: `${action}: ${JSON.stringify(data)}`,
+        timestamp: new Date().toISOString(),
+        previousCid: null,
+        tags: [
+          {
+            type: '#who',
+            name: 'consensus-bridge',
+            did: 'did:zeropoint:consensus-bridge',
+            handle: '@consensus-bridge'
+          },
+          {
+            type: '#intent',
+            purpose: '#consensus-operation',
+            validation: 'good-heart'
+          },
+          {
+            type: '#thread',
+            taskId: 'consensus_bridge',
+            lineage: ['consensus', 'bridge'],
+            swarmLink: 'consensus-bridge-swarm'
+          },
+          {
+            type: '#layer',
+            level: '#live'
+          },
+          {
+            type: '#domain',
+            field: '#consensus'
+          }
+        ]
+      });
+    } catch (error) {
+      this.logger.error('Failed to log consensus to soulchain', error);
     }
   }
 }

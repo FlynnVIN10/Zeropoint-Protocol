@@ -1,0 +1,39 @@
+{
+  "minStake": {
+    "ZEROPOINT": 100,
+    "ETH": 0.01,
+    "USDC": 10
+  },
+  "tokenWeights": {
+    "ZEROPOINT": 1.0,
+    "ETH": 0.8,
+    "USDC": 0.6
+  },
+  "lockDurations": {
+    "min": 3600,
+    "max": 86400,
+    "default": 7200
+  },
+  "rateLimiting": {
+    "maxStakesPerHour": 10,
+    "maxStakesPerDay": 100,
+    "cooldownPeriod": 300
+  },
+  "validation": {
+    "requireOwnership": true,
+    "requireMinimumAge": false,
+    "minimumAge": 0,
+    "blacklistedAddresses": []
+  },
+  "consensus": {
+    "quorumThreshold": 0.6,
+    "participationThreshold": 0.3,
+    "timeoutSeconds": 30,
+    "maxRetries": 3
+  },
+  "logging": {
+    "logAllStakes": true,
+    "logFailedValidations": true,
+    "logConsensusEvents": true
+  }
+} 

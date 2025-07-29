@@ -2,7 +2,7 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuthController } from './controllers/auth.controller.js';
@@ -24,6 +24,8 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CustomThrottlerGuard } from './guards/throttler.guard.js';
 import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
 import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
+import { SecurityLoggingInterceptor } from './interceptors/security-logging.interceptor.js';
+import { KeyRotationService } from './services/key-rotation.service.js';
 
 @Module({
   imports: [
@@ -54,11 +56,41 @@ import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '15m' }
+        signOptions: { 
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '15m',
+          issuer: 'zeropoint-protocol',
+          audience: 'zeropoint-api'
+        },
+        verifyOptions: {
+          issuer: 'zeropoint-protocol',
+          audience: 'zeropoint-api'
+        }
       }),
       inject: [ConfigService],
     }),
-    ThrottlerModule.forRoot([{ ttl: 60000, limit: 20 }]),
+    // Enhanced throttling with different limits for different endpoints
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000,
+        limit: 20,
+      },
+      {
+        name: 'auth',
+        ttl: 60000,
+        limit: 5, // Stricter for auth endpoints
+      },
+      {
+        name: 'api',
+        ttl: 60000,
+        limit: 100, // Higher for general API
+      },
+      {
+        name: 'strict',
+        ttl: 60000,
+        limit: 3, // Very strict for sensitive operations
+      }
+    ]),
   ],
   controllers: [AppController, HealthController, AuthController, AgentStateController],
   providers: [
@@ -69,9 +101,14 @@ import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator
     JwtAuthGuard,
     EnhancedPetalsService,
     ServiceOrchestrator,
+    KeyRotationService,
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: SecurityLoggingInterceptor,
     },
   ],
 })

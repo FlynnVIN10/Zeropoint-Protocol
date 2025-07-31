@@ -1,0 +1,83 @@
+{
+  "scaling": {
+    "maxAgents": 100,
+    "maxConcurrency": 25,
+    "maxRequestsPerSec": 50,
+    "autoScaling": {
+      "enabled": true,
+      "minInstances": 1,
+      "maxInstances": 10,
+      "scaleUpThreshold": 0.8,
+      "scaleDownThreshold": 0.3,
+      "cooldownPeriod": 300
+    },
+    "trafficHeuristics": {
+      "timeWindow": 300,
+      "requestPatterns": {
+        "peakHours": [9, 10, 11, 14, 15, 16],
+        "weekendMultiplier": 0.7,
+        "holidayMultiplier": 0.5
+      },
+      "loadBalancing": {
+        "algorithm": "round_robin",
+        "healthCheckInterval": 30,
+        "failoverThreshold": 3
+      }
+    },
+    "resourceLimits": {
+      "cpu": {
+        "maxUsage": 0.8,
+        "warningThreshold": 0.6
+      },
+      "memory": {
+        "maxUsage": 0.85,
+        "warningThreshold": 0.7
+      },
+      "disk": {
+        "maxUsage": 0.9,
+        "warningThreshold": 0.8
+      }
+    },
+    "monitoring": {
+      "metrics": {
+        "responseTime": {
+          "p95": 1000,
+          "p99": 2000
+        },
+        "errorRate": {
+          "max": 0.05,
+          "warning": 0.02
+        },
+        "throughput": {
+          "min": 10,
+          "target": 50
+        }
+      },
+      "alerts": {
+        "enabled": true,
+        "channels": ["soulchain", "email", "slack"],
+        "severity": {
+          "critical": ["service_down", "high_error_rate"],
+          "warning": ["high_latency", "resource_usage"],
+          "info": ["scaling_event", "performance_optimization"]
+        }
+      }
+    },
+    "soulchain": {
+      "logging": {
+        "enabled": true,
+        "events": [
+          "SOULSCALE:PREDICT",
+          "SOULSCALE:EXPAND",
+          "SOULSCALE:CONTRACT",
+          "SOULSCALE:ALERT"
+        ],
+        "metadata": {
+          "includeMetrics": true,
+          "includeTraffic": true,
+          "includeResources": true
+        }
+      }
+    }
+  }
+} 

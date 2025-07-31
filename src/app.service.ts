@@ -498,164 +498,7 @@ export class AppService {
     }
   }
 
-  // Advanced AI Methods
 
-  async textSummarization(text: string, options?: { maxLength?: number; style?: string }): Promise<any> {
-    const startTime = Date.now();
-    
-    try {
-      // Zeroth-gate validation
-      if (!checkIntent('textSummarization')) {
-        throw new Error('Zeroth violation: textSummarization blocked.');
-      }
-
-      const summary = await this.callPythonBackend('/ai/summarize', {
-        text,
-        maxLength: options?.maxLength || 150,
-        style: options?.style || 'concise'
-      }, 'Text summarization request');
-
-      // Log to Soulchain with metadata
-      await soulchain.addXPTransaction({
-        agentId: 'app-service',
-        amount: 5,
-        rationale: `Text summarization: ${text.length} chars input, ${summary.summary?.length || 0} chars output, style: ${options?.style || 'concise'}`,
-        timestamp: new Date().toISOString(),
-        previousCid: null,
-        tags: [
-          {
-            type: '#who',
-            name: 'app-service',
-            did: 'did:zeropoint:app-service',
-            handle: '@app-service'
-          },
-          {
-            type: '#intent',
-            purpose: '#ai-operation',
-            validation: 'good-heart'
-          },
-          {
-            type: '#thread',
-            taskId: 'text_summarization',
-            lineage: ['ai', 'nlp'],
-            swarmLink: 'text-summarization-swarm'
-          },
-          {
-            type: '#layer',
-            level: '#live'
-          },
-          {
-            type: '#domain',
-            field: '#ai'
-          }
-        ]
-      });
-
-      const duration = Date.now() - startTime;
-      await this.logAPICall({
-        timestamp: new Date().toISOString(),
-        method: 'POST',
-        endpoint: '/v1/advanced/summarize',
-        status: 200,
-        duration,
-        requestBody: { text, options },
-        responseBody: summary
-      });
-
-      return summary;
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      await this.logAPICall({
-        timestamp: new Date().toISOString(),
-        method: 'POST',
-        endpoint: '/v1/advanced/summarize',
-        status: 500,
-        duration,
-        requestBody: { text, options },
-        error: error.message
-      });
-      throw error;
-    }
-  }
-
-  async contextPrompting(prompt: string, context: string, options?: { temperature?: number; maxTokens?: number }): Promise<any> {
-    const startTime = Date.now();
-    
-    try {
-      // Zeroth-gate validation
-      if (!checkIntent('contextPrompting')) {
-        throw new Error('Zeroth violation: contextPrompting blocked.');
-      }
-
-      const response = await this.callPythonBackend('/ai/context-prompt', {
-        prompt,
-        context,
-        temperature: options?.temperature || 0.7,
-        maxTokens: options?.maxTokens || 1000
-      }, 'Context-aware prompting request');
-
-      // Log to Soulchain with metadata
-      await soulchain.addXPTransaction({
-        agentId: 'app-service',
-        amount: 8,
-        rationale: `Context prompting: ${prompt.length} chars prompt, ${context.length} chars context, ${response.response?.length || 0} chars response`,
-        timestamp: new Date().toISOString(),
-        previousCid: null,
-        tags: [
-          {
-            type: '#who',
-            name: 'app-service',
-            did: 'did:zeropoint:app-service',
-            handle: '@app-service'
-          },
-          {
-            type: '#intent',
-            purpose: '#ai-operation',
-            validation: 'good-heart'
-          },
-          {
-            type: '#thread',
-            taskId: 'context_prompting',
-            lineage: ['ai', 'nlp'],
-            swarmLink: 'context-prompting-swarm'
-          },
-          {
-            type: '#layer',
-            level: '#live'
-          },
-          {
-            type: '#domain',
-            field: '#ai'
-          }
-        ]
-      });
-
-      const duration = Date.now() - startTime;
-      await this.logAPICall({
-        timestamp: new Date().toISOString(),
-        method: 'POST',
-        endpoint: '/v1/advanced/context-prompt',
-        status: 200,
-        duration,
-        requestBody: { prompt, context, options },
-        responseBody: response
-      });
-
-      return response;
-    } catch (error) {
-      const duration = Date.now() - startTime;
-      await this.logAPICall({
-        timestamp: new Date().toISOString(),
-        method: 'POST',
-        endpoint: '/v1/advanced/context-prompt',
-        status: 500,
-        duration,
-        requestBody: { prompt, context, options },
-        error: error.message
-      });
-      throw error;
-    }
-  }
 
   async semanticSearch(query: string, documents: string[], options?: { topK?: number; threshold?: number }): Promise<any> {
     const startTime = Date.now();
@@ -1255,6 +1098,18 @@ export class AppService {
   }
 
   async logConsensusToSoulchain(action: string, data: any): Promise<void> {
+    const timestamp = new Date().toISOString();
+    const logEntry = {
+      timestamp,
+      action,
+      data,
+      metadata: {
+        service: 'zeropoint-api',
+        version: '0.0.1',
+        environment: 'development'
+      }
+    };
+
     try {
       await soulchain.addXPTransaction({
         agentId: 'consensus-bridge',
@@ -1262,36 +1117,190 @@ export class AppService {
         rationale: `${action}: ${JSON.stringify(data)}`,
         timestamp: new Date().toISOString(),
         previousCid: null,
-        tags: [
-          {
-            type: '#who',
-            name: 'consensus-bridge',
-            did: 'did:zeropoint:consensus-bridge',
-            handle: '@consensus-bridge'
-          },
-          {
-            type: '#intent',
-            purpose: '#consensus-operation',
-            validation: 'good-heart'
-          },
-          {
-            type: '#thread',
-            taskId: 'consensus_bridge',
-            lineage: ['consensus', 'bridge'],
-            swarmLink: 'consensus-bridge-swarm'
-          },
-          {
-            type: '#layer',
-            level: '#live'
-          },
-          {
-            type: '#domain',
-            field: '#consensus'
-          }
-        ]
+        tags: []
       });
+      this.logger.log(`SOULCONS:${action} - ${JSON.stringify(data).substring(0, 100)}...`);
     } catch (error) {
-      this.logger.error('Failed to log consensus to soulchain', error);
+      this.logger.error(`Failed to log consensus to Soulchain: ${error.message}`);
+    }
+  }
+
+  // Advanced AI Reasoning Methods
+  async textSummarization(text: string, options?: { maxLength?: number; style?: string }): Promise<any> {
+    const startTime = Date.now();
+    
+    try {
+      // Zeroth-gate validation
+      const intentCheck = checkIntent(`text_summarization:${text.substring(0, 100)}`);
+      if (!intentCheck) {
+        await this.logConsensusToSoulchain('ZEROTH_GATE_BLOCKED', {
+          operation: 'text_summarization',
+          reason: 'Ethical validation failed',
+          text: text.substring(0, 100)
+        });
+        throw new Error('Zeroth-gate blocked: Ethical validation failed');
+      }
+
+      // Thought logging
+      await this.logAdvancedThought('text_summarization', {
+        input: text.substring(0, 200),
+        options,
+        reasoning: 'Processing text summarization request with ethical validation'
+      });
+
+      const result = await this.callPythonBackend('/v1/advanced/summarize', {
+        text,
+        max_length: options?.maxLength || 150,
+        style: options?.style || 'concise'
+      }, 'Advanced text summarization with ethical validation');
+
+      const duration = Date.now() - startTime;
+      await this.logConsensusToSoulchain('ADVANCED_SUMMARIZATION', {
+        input_length: text.length,
+        output_length: result.summary?.length || 0,
+        duration,
+        style: options?.style
+      });
+
+      return {
+        summary: result.summary,
+        key_points: result.key_points,
+        confidence: result.confidence,
+        metadata: {
+          processing_time: duration,
+          ethical_validation: 'passed',
+          soulchain_logged: true
+        }
+      };
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      await this.logConsensusToSoulchain('ADVANCED_SUMMARIZATION_ERROR', {
+        error: error.message,
+        duration,
+        input_length: text.length
+      });
+      throw error;
+    }
+  }
+
+  async contextPrompting(prompt: string, context: string, options?: { temperature?: number; maxTokens?: number }): Promise<any> {
+    const startTime = Date.now();
+    
+    try {
+      // Zeroth-gate validation
+      const intentCheck = checkIntent(`context_prompting:${prompt.substring(0, 100)}`);
+      if (!intentCheck) {
+        await this.logConsensusToSoulchain('ZEROTH_GATE_BLOCKED', {
+          operation: 'context_prompting',
+          reason: 'Ethical validation failed',
+          prompt: prompt.substring(0, 100)
+        });
+        throw new Error('Zeroth-gate blocked: Ethical validation failed');
+      }
+
+      // Thought logging
+      await this.logAdvancedThought('context_prompting', {
+        prompt: prompt.substring(0, 200),
+        context: context.substring(0, 200),
+        options,
+        reasoning: 'Processing context-aware prompting with ethical validation'
+      });
+
+      const result = await this.callPythonBackend('/v1/advanced/context-prompt', {
+        prompt,
+        context,
+        temperature: options?.temperature || 0.7,
+        max_tokens: options?.maxTokens || 500
+      }, 'Advanced context prompting with ethical validation');
+
+      const duration = Date.now() - startTime;
+      await this.logConsensusToSoulchain('ADVANCED_CONTEXT_PROMPT', {
+        prompt_length: prompt.length,
+        context_length: context.length,
+        response_length: result.response?.length || 0,
+        duration,
+        temperature: options?.temperature
+      });
+
+      return {
+        response: result.response,
+        context_used: result.context_used,
+        confidence: result.confidence,
+        metadata: {
+          processing_time: duration,
+          ethical_validation: 'passed',
+          soulchain_logged: true
+        }
+      };
+    } catch (error) {
+      const duration = Date.now() - startTime;
+      await this.logConsensusToSoulchain('ADVANCED_CONTEXT_PROMPT_ERROR', {
+        error: error.message,
+        duration,
+        prompt_length: prompt.length
+      });
+      throw error;
+    }
+  }
+
+  // Advanced Thought Logging
+  private async logAdvancedThought(operation: string, data: any): Promise<void> {
+    const timestamp = new Date().toISOString();
+    const thoughtEntry = {
+      timestamp,
+      operation,
+      data,
+      metadata: {
+        service: 'zeropoint-api',
+        version: '0.0.1',
+        environment: 'development',
+        thought_type: 'advanced_ai_reasoning'
+      }
+    };
+
+    try {
+      await soulchain.addXPTransaction({
+        agentId: 'advanced-ai',
+        amount: 2,
+        rationale: `${operation}: ${JSON.stringify(data.reasoning)}`,
+        timestamp: new Date().toISOString(),
+        previousCid: null,
+        tags: []
+      });
+      this.logger.log(`SOULTHOUGHT:${operation.toUpperCase()} - ${JSON.stringify(data.reasoning).substring(0, 100)}...`);
+    } catch (error) {
+      this.logger.error(`Failed to log advanced thought: ${error.message}`);
+    }
+  }
+
+  // Scaling Configuration
+  async loadScalingConfig(): Promise<any> {
+    try {
+      const configPath = path.join(process.cwd(), 'src', 'config', 'scaling.json');
+      const configData = await fs.promises.readFile(configPath, 'utf8');
+      const config = JSON.parse(configData);
+      
+      await this.logConsensusToSoulchain('SCALING_CONFIG_LOADED', {
+        timestamp: new Date().toISOString(),
+        maxAgents: config.scaling.maxAgents,
+        maxConcurrency: config.scaling.maxConcurrency,
+        autoScalingEnabled: config.scaling.autoScaling.enabled
+      });
+
+      return config.scaling;
+    } catch (error) {
+      this.logger.error(`Failed to load scaling config: ${error.message}`);
+      // Return default config if file not found
+      return {
+        maxAgents: 100,
+        maxConcurrency: 25,
+        maxRequestsPerSec: 50,
+        autoScaling: {
+          enabled: true,
+          minInstances: 1,
+          maxInstances: 10
+        }
+      };
     }
   }
 }

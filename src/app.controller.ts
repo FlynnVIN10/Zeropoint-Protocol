@@ -11,6 +11,7 @@ import { IsString, MinLength, IsOptional, IsObject, IsArray, ValidateNested } fr
 import { EnhancedPetalsService, PetalsRequest, PetalsBatchRequest } from './agents/train/enhanced-petals.service.js';
 import { ServiceOrchestrator, OrchestrationRequest } from './agents/orchestration/service-orchestrator.js';
 import { Type } from 'class-transformer';
+import * as crypto from 'crypto';
 
 class RegisterDto {
   @IsString()
@@ -664,7 +665,7 @@ export class AppController implements OnApplicationShutdown {
 
   // Consensus Operations Endpoints
 
-  @Post('/v1/consensus/bridge')
+  @Post('/consensus/bridge')
   async bridgeConsensus(@Body() consensusData: any): Promise<any> {
     if (!checkIntent('consensusBridge')) {
       throw new HttpException({
@@ -693,7 +694,7 @@ export class AppController implements OnApplicationShutdown {
     }
   }
 
-  @Post('/v1/consensus/stake')
+  @Post('/consensus/stake')
   async validateTokenStake(@Body() stake: any): Promise<any> {
     if (!checkIntent('tokenStakeValidation')) {
       throw new HttpException({
@@ -718,7 +719,7 @@ export class AppController implements OnApplicationShutdown {
     }
   }
 
-  @Post('/v1/consensus/intent')
+  @Post('/consensus/intent')
   async processConsensusIntent(@Body() intent: any): Promise<any> {
     if (!checkIntent('consensusIntentProcessing')) {
       throw new HttpException({
@@ -743,7 +744,7 @@ export class AppController implements OnApplicationShutdown {
     }
   }
 
-  @Get('/v1/consensus/visualizer')
+  @Get('/consensus/visualizer')
   async getConsensusVisualizer(@Res() res: any): Promise<void> {
     if (!checkIntent('consensusVisualization')) {
       throw new HttpException({
@@ -785,6 +786,187 @@ export class AppController implements OnApplicationShutdown {
     res.on('close', () => {
       clearInterval(interval);
     });
+  }
+
+  // ===== UI ENDPOINTS =====
+  
+  @Post('/ui/submit')
+  async submitPrompt(@Body() body: { prompt: string; context?: string }): Promise<any> {
+    if (!checkIntent('uiPromptSubmission')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: UI prompt submission blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    try {
+      // Log to Soulchain
+      await this.appService.logConsensusToSoulchain('SOULCONS:UI_ACCESS', {
+        action: 'prompt_submission',
+        prompt: body.prompt,
+        context: body.context,
+        timestamp: new Date().toISOString()
+      });
+
+      // Process the prompt through consensus intent
+      const intent = {
+        id: crypto.randomUUID(),
+        type: 'user' as const,
+        intent: body.prompt,
+        confidence: 0.8,
+        timestamp: new Date(),
+        metadata: {
+          source: 'ui',
+          context: body.context || '',
+          stakeholders: ['user']
+        }
+      };
+
+      const result = await this.appService.processConsensusIntent(intent);
+      
+      return {
+        status: 'success',
+        data: result,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      throw new HttpException({
+        status: 'error',
+        message: 'UI prompt submission failed',
+        error: error.message
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('/ui/stream')
+  async streamUIOutput(@Res() res: any): Promise<void> {
+    if (!checkIntent('uiStreaming')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: UI streaming blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    // Send initial stream data
+    const sendStreamData = () => {
+      const data = {
+        type: 'ui-stream',
+        timestamp: new Date().toISOString(),
+        content: 'Real-time UI stream data',
+        status: 'active'
+      };
+
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+    // Send initial data
+    sendStreamData();
+
+    // Update every 1 second
+    const interval = setInterval(() => {
+      sendStreamData();
+    }, 1000);
+
+    // Clean up on client disconnect
+    res.on('close', () => {
+      clearInterval(interval);
+    });
+  }
+
+  @Get('/ui/status')
+  async getUIStatus(): Promise<any> {
+    if (!checkIntent('uiStatusCheck')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: UI status check blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    try {
+      const health = await this.appService.healthCheck();
+      const uptime = process.uptime();
+      
+      return {
+        status: 'success',
+        data: {
+          health,
+          uptime,
+          timestamp: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      throw new HttpException({
+        status: 'error',
+        message: 'UI status check failed',
+        error: error.message
+      }, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  @Get('/ui/agents')
+  async getAgentStats(): Promise<any> {
+    if (!checkIntent('uiAgentStats')) {
+      throw new HttpException({
+        status: 'error',
+        message: 'Zeroth violation: UI agent stats blocked'
+      }, HttpStatus.FORBIDDEN);
+    }
+
+    try {
+      // Mock agent stats - in production this would come from the agent state service
+      const agentStats = [
+        {
+          id: 'agent-alpha',
+          name: 'Alpha Agent',
+          status: 'active',
+          xp: 1250,
+          level: 'Initiate',
+          trustScore: 0.85,
+          ethicalRating: 'aligned',
+          lastActivity: new Date().toISOString()
+        },
+        {
+          id: 'agent-beta',
+          name: 'Beta Agent',
+          status: 'active',
+          xp: 980,
+          level: 'Initiate',
+          trustScore: 0.72,
+          ethicalRating: 'aligned',
+          lastActivity: new Date().toISOString()
+        },
+        {
+          id: 'agent-gamma',
+          name: 'Gamma Agent',
+          status: 'active',
+          xp: 1100,
+          level: 'Initiate',
+          trustScore: 0.78,
+          ethicalRating: 'aligned',
+          lastActivity: new Date().toISOString()
+        }
+      ];
+
+      return {
+        status: 'success',
+        data: {
+          agents: agentStats,
+          totalAgents: agentStats.length,
+          activeAgents: agentStats.filter(a => a.status === 'active').length,
+          timestamp: new Date().toISOString()
+        }
+      };
+    } catch (error) {
+      throw new HttpException({
+        status: 'error',
+        message: 'UI agent stats failed',
+        error: error.message
+      }, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async onApplicationShutdown() {

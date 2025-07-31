@@ -1254,7 +1254,7 @@ export class AppService {
     };
   }
 
-  private async logConsensusToSoulchain(action: string, data: any): Promise<void> {
+  async logConsensusToSoulchain(action: string, data: any): Promise<void> {
     try {
       await soulchain.addXPTransaction({
         agentId: 'consensus-bridge',

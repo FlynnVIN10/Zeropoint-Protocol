@@ -1282,12 +1282,12 @@ export class AppService {
       
       await this.logConsensusToSoulchain('SCALING_CONFIG_LOADED', {
         timestamp: new Date().toISOString(),
-        maxAgents: config.scaling.maxAgents,
-        maxConcurrency: config.scaling.maxConcurrency,
-        autoScalingEnabled: config.scaling.autoScaling.enabled
+        maxAgents: config.maxAgents,
+        maxConcurrency: config.maxConcurrency,
+        autoScalingEnabled: config.autoScaling.enabled
       });
 
-      return config.scaling;
+      return config;
     } catch (error) {
       this.logger.error(`Failed to load scaling config: ${error.message}`);
       // Return default config if file not found
@@ -1297,10 +1297,89 @@ export class AppService {
         maxRequestsPerSec: 50,
         autoScaling: {
           enabled: true,
-          minInstances: 1,
-          maxInstances: 10
+          minNodes: 1,
+          maxNodes: 10
         }
       };
+    }
+  }
+
+  // Production Scaling - Phase 10
+  async predictScaling(timeWindow?: number, trafficPattern?: any): Promise<any> {
+    if (!checkIntent('scaling-prediction')) {
+      throw new Error('Zeroth violation: Scaling prediction blocked.');
+    }
+
+    try {
+      const config = await this.loadScalingConfig();
+      const window = timeWindow || 300; // 5 minutes default
+      
+      // Simulate traffic heuristics
+      const currentLoad = Math.random() * 100;
+      const predictedLoad = currentLoad * (1 + Math.random() * 0.3);
+      
+      const scalingDecision = {
+        currentLoad,
+        predictedLoad,
+        shouldScale: predictedLoad > config.scalingThresholds.cpu,
+        recommendedNodes: Math.ceil(predictedLoad / 20),
+        confidence: Math.random() * 0.3 + 0.7
+      };
+
+      // Log to Soulchain
+      await this.logConsensusToSoulchain('SOULSCALE:PREDICT', {
+        timestamp: new Date().toISOString(),
+        timeWindow: window,
+        trafficPattern,
+        scalingDecision,
+        config: config
+      });
+
+      return {
+        success: true,
+        prediction: scalingDecision,
+        timeWindow: window,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      this.logger.error('Scaling prediction failed', error);
+      throw error;
+    }
+  }
+
+  async expandScaling(nodes?: number, reason?: string): Promise<any> {
+    if (!checkIntent('scaling-expansion')) {
+      throw new Error('Zeroth violation: Scaling expansion blocked.');
+    }
+
+    try {
+      const config = await this.loadScalingConfig();
+      const nodeCount = nodes || 1;
+      
+      // Simulate node addition
+      const expansionResult = {
+        nodesAdded: nodeCount,
+        totalNodes: Math.min(config.autoScaling.maxNodes, nodeCount + 1),
+        estimatedCost: nodeCount * 0.05, // $0.05 per node per hour
+        estimatedPerformance: Math.min(100, (nodeCount + 1) * 15),
+        reason: reason || 'Load increase detected'
+      };
+
+      // Log to Soulchain
+      await this.logConsensusToSoulchain('SOULSCALE:EXPAND', {
+        timestamp: new Date().toISOString(),
+        expansionResult,
+        config: config
+      });
+
+      return {
+        success: true,
+        expansion: expansionResult,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      this.logger.error('Scaling expansion failed', error);
+      throw error;
     }
   }
 }

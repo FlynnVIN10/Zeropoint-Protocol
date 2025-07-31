@@ -37,9 +37,9 @@ import { KeyRotationService } from './services/key-rotation.service.js';
         type: 'postgres',
         host: configService.get<string>('DB_HOST', 'localhost'),
         port: configService.get<number>('DB_PORT', 5432),
-        username: configService.get<string>('DB_USERNAME', 'postgres'),
-        password: configService.get<string>('DB_PASSWORD', 'password'),
-        database: configService.get<string>('DB_DATABASE', 'zeropoint_protocol'),
+        username: configService.get<string>('DB_USER', 'zeropoint'),
+        password: configService.get<string>('DB_PASS', 'zeropointpass'),
+        database: configService.get<string>('DB_NAME', 'zeropointdb'),
         entities: [User, Session, AuditLog, AgentState],
         synchronize: configService.get<boolean>('DB_SYNC', false), // Disable in production
         logging: configService.get<boolean>('DB_LOGGING', false),
@@ -98,10 +98,13 @@ import { KeyRotationService } from './services/key-rotation.service.js';
     AuthService, 
     AgentStateService,
     JwtStrategy, 
-    JwtAuthGuard,
     EnhancedPetalsService,
     ServiceOrchestrator,
     KeyRotationService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,
@@ -109,6 +112,29 @@ import { KeyRotationService } from './services/key-rotation.service.js';
     {
       provide: APP_INTERCEPTOR,
       useClass: SecurityLoggingInterceptor,
+    },
+    {
+      provide: 'ENABLE_SCALING',
+      useFactory: (configService: ConfigService) => configService.get<boolean>('ENABLE_SCALING', true),
+      inject: [ConfigService],
+    },
+    {
+      provide: 'SCALING_CONFIG',
+      useFactory: async () => {
+        try {
+          const fs = await import('fs/promises');
+          const path = await import('path');
+          const configPath = path.join(process.cwd(), 'src', 'config', 'scaling.json');
+          const configData = await fs.readFile(configPath, 'utf8');
+          return JSON.parse(configData);
+        } catch (error) {
+          return {
+            maxAgents: 100,
+            maxConcurrency: 25,
+            maxRequestsPerSec: 50
+          };
+        }
+      },
     },
   ],
 })

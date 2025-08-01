@@ -68,7 +68,7 @@ describe('Consensus Timeout Tests - Extreme Load Scenarios', () => {
               endpoint: '/v1/consensus/status'
             }))
             .catch(error => ({
-              success: false,
+          success: false,
               statusCode: error.status || 0,
               error: error.message,
               endpoint: '/v1/consensus/status'
@@ -93,7 +93,7 @@ describe('Consensus Timeout Tests - Extreme Load Scenarios', () => {
               endpoint: '/v1/advanced/status'
             }))
             .catch(error => ({
-              success: false,
+          success: false,
               statusCode: error.status || 0,
               error: error.message,
               endpoint: '/v1/advanced/status'

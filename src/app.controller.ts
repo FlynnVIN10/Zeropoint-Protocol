@@ -1202,4 +1202,27 @@ export class AppController implements OnApplicationShutdown {
       }, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  // Phase 9: Advanced AI Integration - Soulchain Telemetry
+  @Post('/soulchain/telemetry')
+  @Public()
+  async receiveSoulchainTelemetry(@Body() telemetry: any): Promise<any> {
+    try {
+      const optimizedThreshold = await this.appService.optimizeConsensus(telemetry);
+      const health = await this.appService.analyzeConsensusHealth(telemetry);
+      
+      return {
+        status: 'received',
+        timestamp: Date.now(),
+        optimizedThreshold,
+        health
+      };
+    } catch (error) {
+      this.logger.error('Failed to process Soulchain telemetry:', error);
+      throw new HttpException({
+        success: false,
+        message: error.message
+      }, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

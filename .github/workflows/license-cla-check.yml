@@ -1,0 +1,23 @@
+name: License and CLA Check
+on: [pull_request]
+jobs:
+  check-license-cla:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Verify LICENSE.md and CLA.md
+        run: |
+          if ! grep -q "Proprietary License" LICENSE.md; then
+            echo "Invalid or missing LICENSE.md"
+            exit 1
+          fi
+          if ! grep -q "Contributor License Agreement" CLA.md; then
+            echo "Invalid or missing CLA.md"
+            exit 1
+          fi
+      - name: Verify Contributor
+        run: |
+          if ! grep -q "${{ github.actor }}" contributors.txt; then
+            echo "Contributor not listed in contributors.txt"
+            exit 1
+          fi 

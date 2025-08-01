@@ -48,7 +48,6 @@ export interface AgentMemory {
 @Entity('agent_states')
 @Index(['agentId'], { unique: true })
 @Index(['status'])
-@Index(['ethicalRating'])
 @Index(['lastActivityAt'])
 export class AgentState {
   @PrimaryGeneratedColumn('uuid')

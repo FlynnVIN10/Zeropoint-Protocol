@@ -1,0 +1,10 @@
+[
+  {
+    "id": "c108de89-f849-4e62-9d6f-86637240a7aa",
+    "oldKeyId": "244a05db-5d5c-420a-b6d9-0d6015161f7a",
+    "newKeyId": "89fad24f-be5c-415f-9dd0-3f6a2ae68d95",
+    "timestamp": "2025-07-29T17:31:49.187Z",
+    "reason": "test_rotation",
+    "soulchainHash": "5234f40fd3133db490b8e91dd9b132df0280a751f043d5bfac62abe2111007e5"
+  }
+]

@@ -19,22 +19,22 @@ export class User {
   @Column({ length: 255 })
   password: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ name: 'first_name', length: 100, nullable: true })
   firstName: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ name: 'last_name', length: 100, nullable: true })
   lastName: string;
 
-  @Column({ default: true })
+  @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @Column({ default: false })
+  @Column({ name: 'is_verified', default: false })
   isVerified: boolean;
 
-  @Column({ nullable: true })
+  @Column({ name: 'last_login_at', nullable: true })
   lastLoginAt: Date;
 
-  @Column({ nullable: true })
+  @Column({ name: 'email_verified_at', nullable: true })
   emailVerifiedAt: Date;
 
   @Column({ type: 'jsonb', nullable: true })
@@ -43,10 +43,10 @@ export class User {
   @Column({ type: 'text', array: true, default: [] })
   roles: string[];
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 
   @BeforeInsert()

@@ -1,0 +1,537 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+.heroBanner {
+  padding: 4rem 0;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1A1A1A 0%, #333333 100%);
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.heroBanner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23333" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+  z-index: 1;
+}
+
+.heroBanner .container {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.heroContent {
+  max-width: 600px;
+}
+
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, #00C4FF, #BF00FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px #00C4FF;
+  line-height: 1.1;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 2rem;
+  color: #F5F5F0;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.heroDescription {
+  margin-bottom: 3rem;
+}
+
+.heroDescription p {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  color: #F5F5F0;
+  opacity: 0.8;
+}
+
+.progressBadge {
+  display: inline-block;
+  background: linear-gradient(45deg, #00C4FF, #BF00FF);
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  margin-top: 1rem;
+  box-shadow: 0 0 20px rgba(0, 196, 255, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.badgeText {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #1A1A1A;
+}
+
+.badgeSubtext {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: #1A1A1A;
+  opacity: 0.8;
+}
+
+.buttons {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.heroButton {
+  display: inline-block;
+  padding: 1.5rem 3rem;
+  background: transparent;
+  border: 2px solid #00C4FF;
+  color: #00C4FF;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.heroButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 196, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.heroButton:hover::before {
+  left: 100%;
+}
+
+.heroButton:hover {
+  background: #00C4FF;
+  color: #1A1A1A;
+  box-shadow: 0 0 30px #00C4FF;
+  transform: translateY(-2px);
+}
+
+.heroButtonSecondary {
+  border-color: #BF00FF;
+  color: #BF00FF;
+}
+
+.heroButtonSecondary:hover {
+  background: #BF00FF;
+  color: #1A1A1A;
+  box-shadow: 0 0 30px #BF00FF;
+}
+
+.heroButtonTertiary {
+  border-color: #00FF88;
+  color: #00FF88;
+}
+
+.heroButtonTertiary:hover {
+  background: #00FF88;
+  color: #1A1A1A;
+  box-shadow: 0 0 30px #00FF88;
+}
+
+.heroImage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.glitchArt {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  backdrop-filter: blur(20px);
+  overflow: hidden;
+}
+
+.cityscape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  padding: 0 2rem;
+}
+
+.building {
+  width: 60px;
+  background: linear-gradient(to top, #333333, #1A1A1A);
+  border: 1px solid #00C4FF;
+  position: relative;
+  animation: float 3s ease-in-out infinite;
+}
+
+.building:nth-child(1) { height: 200px; animation-delay: 0s; }
+.building:nth-child(2) { height: 280px; animation-delay: 0.5s; }
+.building:nth-child(3) { height: 150px; animation-delay: 1s; }
+.building:nth-child(4) { height: 320px; animation-delay: 1.5s; }
+.building:nth-child(5) { height: 180px; animation-delay: 2s; }
+
+.building::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  animation: glow 2s infinite;
+}
+
+.dataStream {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  padding: 2rem;
+}
+
+.dataLine {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #00C4FF, transparent);
+  animation: dataFlow 2s linear infinite;
+  opacity: 0.7;
+}
+
+.dataLine:nth-child(1) { animation-delay: 0s; }
+.dataLine:nth-child(2) { animation-delay: 0.7s; }
+.dataLine:nth-child(3) { animation-delay: 1.4s; }
+
+.mainContent {
+  background: #1A1A1A;
+}
+
+.featuresSection {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #1A1A1A 0%, #333333 100%);
+}
+
+.progressSection {
+  padding: 6rem 0;
+  background: #1A1A1A;
+}
+
+.progressGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.progressCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.progressCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.progressCard:hover::before {
+  transform: scaleX(1);
+}
+
+.progressCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.progressCard h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.progressCard p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #F5F5F0;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.statusComplete {
+  display: inline-block;
+  background: linear-gradient(45deg, #00FF88, #00C4FF);
+  color: #1A1A1A;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 4rem;
+  color: #F5F5F0;
+  border-bottom: 2px solid #00C4FF;
+  padding-bottom: 1rem;
+}
+
+.statsSection {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #333333 0%, #1A1A1A 100%);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.statCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.statCard:hover::before {
+  transform: scaleX(1);
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.statCard h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.statCard p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #F5F5F0;
+  opacity: 0.8;
+}
+
+.technologySection {
+  padding: 6rem 0;
+  background: #1A1A1A;
+}
+
+.techGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.techCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.techCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.techCard:hover::before {
+  transform: scaleX(1);
+}
+
+.techCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.techCard h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.techCard p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #F5F5F0;
+  opacity: 0.8;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px #00C4FF;
+  }
+  50% {
+    box-shadow: 0 0 40px #00C4FF, 0 0 60px #00C4FF;
+  }
+}
+
+@keyframes dataFlow {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 196, 255, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(0, 196, 255, 0.5);
+  }
+}
+
+@media (max-width: 768px) {
+  .heroBanner .container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.2rem;
+  }
+  
+  .buttons {
+    flex-direction: column;
+  }
+  
+  .heroButton {
+    padding: 1rem 2rem;
+    font-size: 0.9rem;
+  }
+  
+  .glitchArt {
+    height: 300px;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+  }
+  
+  .statsGrid,
+  .progressGrid,
+  .techGrid {
+    grid-template-columns: 1fr;
+  }
+}

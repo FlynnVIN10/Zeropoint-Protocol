@@ -12,11 +12,11 @@ export class AuditLog {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ name: 'user_id', type: 'uuid', nullable: true })
   userId: string;
 
   @ManyToOne(() => User, { nullable: true })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
   @Column({ length: 100 })
@@ -25,13 +25,13 @@ export class AuditLog {
   @Column({ length: 100, nullable: true })
   resource: string;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ name: 'resource_id', type: 'uuid', nullable: true })
   resourceId: string;
 
-  @Column({ length: 45, nullable: true })
+  @Column({ name: 'ip_address', length: 45, nullable: true })
   ipAddress: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ name: 'user_agent', length: 500, nullable: true })
   userAgent: string;
 
   @Column({ type: 'jsonb', nullable: true })
@@ -43,10 +43,10 @@ export class AuditLog {
   @Column({ length: 50, default: 'success' })
   status: 'success' | 'failure' | 'pending';
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ name: 'error_message', type: 'text', nullable: true })
   errorMessage: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   static createLoginLog(userId: string, ipAddress: string, userAgent: string, success: boolean): Partial<AuditLog> {

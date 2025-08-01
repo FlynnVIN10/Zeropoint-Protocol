@@ -1,0 +1,331 @@
+name: Visual Regression Testing
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Daily at 2 AM UTC
+  workflow_dispatch:     # Manual trigger
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'static/**'
+      - 'docusaurus.config.js'
+      - 'package.json'
+
+jobs:
+  visual-regression:
+    name: Visual Regression Testing
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for comparison
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          CI: true
+
+      - name: Setup Percy
+        uses: percy/setup-action@v1
+        with:
+          version: latest
+
+      - name: Run visual regression tests
+        uses: percy/exec-action@v0.3.1
+        with:
+          custom-command: npm run test:visual
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          PERCY_BRANCH: ${{ github.ref_name }}
+          PERCY_PULL_REQUEST: ${{ github.event.number }}
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-test-results
+          path: |
+            test-results/
+            screenshots/
+            percy-reports/
+
+  lighthouse-audit:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    needs: visual-regression
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          CI: true
+
+      - name: Start local server
+        run: |
+          npm run serve &
+          sleep 10
+        env:
+          PORT: 3000
+
+      - name: Run Lighthouse audit
+        run: |
+          npx lighthouse http://localhost:3000 \
+            --output=json \
+            --output-path=./lighthouse-report.json \
+            --chrome-flags="--headless --no-sandbox --disable-gpu" \
+            --only-categories=performance,accessibility,best-practices,seo
+
+      - name: Parse Lighthouse results
+        run: |
+          node -e "
+            const fs = require('fs');
+            const report = JSON.parse(fs.readFileSync('./lighthouse-report.json', 'utf8'));
+            const scores = {
+              performance: Math.round(report.categories.performance.score * 100),
+              accessibility: Math.round(report.categories.accessibility.score * 100),
+              bestPractices: Math.round(report.categories['best-practices'].score * 100),
+              seo: Math.round(report.categories.seo.score * 100)
+            };
+            
+            console.log('Lighthouse Scores:', JSON.stringify(scores, null, 2));
+            
+            // Check if scores meet thresholds
+            const thresholds = { performance: 90, accessibility: 95, bestPractices: 90, seo: 90 };
+            const failures = Object.entries(scores).filter(([key, score]) => score < thresholds[key]);
+            
+            if (failures.length > 0) {
+              console.error('Lighthouse thresholds not met:', failures);
+              process.exit(1);
+            }
+            
+            console.log('All Lighthouse thresholds met!');
+          "
+
+      - name: Upload Lighthouse report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-report
+          path: lighthouse-report.json
+
+  cross-browser-testing:
+    name: Cross-Browser Testing
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox, safari, edge]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          CI: true
+
+      - name: Start local server
+        run: |
+          npm run serve &
+          sleep 10
+        env:
+          PORT: 3000
+
+      - name: Run browser tests
+        run: |
+          npx playwright install ${{ matrix.browser }}
+          npx playwright test --browser=${{ matrix.browser }} --reporter=json
+        env:
+          TEST_URL: http://localhost:3000
+
+      - name: Upload browser test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: browser-test-results-${{ matrix.browser }}
+          path: test-results/
+
+  feedback-form-testing:
+    name: Feedback Form Testing
+    runs-on: ubuntu-latest
+    needs: [visual-regression, lighthouse-audit]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: production
+          CI: true
+
+      - name: Start local server
+        run: |
+          npm run serve &
+          sleep 10
+        env:
+          PORT: 3000
+
+      - name: Run feedback form tests
+        run: |
+          node test/feedback-injection.js
+        env:
+          TEST_URL: http://localhost:3000
+
+      - name: Upload feedback test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: feedback-test-results
+          path: feedback-test-results/
+
+  regression-summary:
+    name: Regression Test Summary
+    runs-on: ubuntu-latest
+    needs: [visual-regression, lighthouse-audit, cross-browser-testing, feedback-form-testing]
+    if: always()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Generate test summary
+        run: |
+          echo "# Visual Regression Test Summary" > test-summary.md
+          echo "Date: $(date)" >> test-summary.md
+          echo "Branch: ${{ github.ref_name }}" >> test-summary.md
+          echo "Commit: ${{ github.sha }}" >> test-summary.md
+          echo "" >> test-summary.md
+          
+          echo "## Test Results" >> test-summary.md
+          echo "- Visual Regression: ${{ needs.visual-regression.result }}" >> test-summary.md
+          echo "- Lighthouse Audit: ${{ needs.lighthouse-audit.result }}" >> test-summary.md
+          echo "- Cross-Browser Testing: ${{ needs.cross-browser-testing.result }}" >> test-summary.md
+          echo "- Feedback Form Testing: ${{ needs.feedback-form-testing.result }}" >> test-summary.md
+          echo "" >> test-summary.md
+          
+          echo "## Percy Build" >> test-summary.md
+          if [ -f "artifacts/percy-reports/build-url.txt" ]; then
+            echo "Build URL: $(cat artifacts/percy-reports/build-url.txt)" >> test-summary.md
+          fi
+          
+          echo "## Lighthouse Scores" >> test-summary.md
+          if [ -f "artifacts/lighthouse-report/lighthouse-report.json" ]; then
+            node -e "
+              const fs = require('fs');
+              const report = JSON.parse(fs.readFileSync('artifacts/lighthouse-report/lighthouse-report.json', 'utf8'));
+              const scores = {
+                performance: Math.round(report.categories.performance.score * 100),
+                accessibility: Math.round(report.categories.accessibility.score * 100),
+                bestPractices: Math.round(report.categories['best-practices'].score * 100),
+                seo: Math.round(report.categories.seo.score * 100)
+              };
+              console.log('Performance:', scores.performance);
+              console.log('Accessibility:', scores.accessibility);
+              console.log('Best Practices:', scores.bestPractices);
+              console.log('SEO:', scores.seo);
+            " >> test-summary.md
+          fi
+
+      - name: Upload test summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-summary
+          path: test-summary.md
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('test-summary.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  notify-on-failure:
+    name: Notify on Test Failure
+    runs-on: ubuntu-latest
+    needs: [visual-regression, lighthouse-audit, cross-browser-testing, feedback-form-testing]
+    if: failure()
+    
+    steps:
+      - name: Send failure notification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const failedJobs = ['${{ needs.visual-regression.result }}', '${{ needs.lighthouse-audit.result }}', '${{ needs.cross-browser-testing.result }}', '${{ needs.feedback-form-testing.result }}'];
+            const failedJobNames = [];
+            
+            if (needs.visual-regression.result === 'failure') failedJobNames.push('Visual Regression');
+            if (needs.lighthouse-audit.result === 'failure') failedJobNames.push('Lighthouse Audit');
+            if (needs.cross-browser-testing.result === 'failure') failedJobNames.push('Cross-Browser Testing');
+            if (needs.feedback-form-testing.result === 'failure') failedJobNames.push('Feedback Form Testing');
+            
+            const message = `🚨 Visual Regression Tests Failed
+            
+            Failed Jobs: ${failedJobNames.join(', ')}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Workflow: ${{ github.workflow }}
+            
+            Please check the test results and fix any issues.`;
+            
+            // Send to Slack or other notification service
+            console.log(message);

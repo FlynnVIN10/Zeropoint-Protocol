@@ -63,11 +63,12 @@ export class SecurityMiddleware implements NestMiddleware {
         url: req.url,
       });
 
-      return res.status(429).json({
+      res.status(429).json({
         error: 'Too many failed attempts',
         message: 'IP address temporarily locked',
         retryAfter: Math.ceil((ipAttempt.lockExpiry.getTime() - now.getTime()) / 1000),
       });
+      return;
     }
 
     // Check rate limiting
@@ -82,11 +83,12 @@ export class SecurityMiddleware implements NestMiddleware {
         method: req.method,
       });
 
-      return res.status(429).json({
+      res.status(429).json({
         error: 'Rate limit exceeded',
         message: 'Too many requests from this IP',
         retryAfter: 60,
       });
+      return;
     }
 
     // Track failed attempts for sensitive endpoints
@@ -286,9 +288,14 @@ export class SecurityMiddleware implements NestMiddleware {
     try {
       if (fs.existsSync(this.attemptsFile)) {
         const data = JSON.parse(fs.readFileSync(this.attemptsFile, 'utf8'));
-        this.ipAttempts = new Map(Object.entries(data).map(([ip, attempt]) => [
+        this.ipAttempts = new Map(Object.entries(data).map(([ip, attemptData]) => [
           ip,
-          { ...attempt, firstAttempt: new Date(attempt.firstAttempt), lastAttempt: new Date(attempt.lastAttempt), lockExpiry: attempt.lockExpiry ? new Date(attempt.lockExpiry) : undefined }
+          { 
+            ...(attemptData as any), 
+            firstAttempt: new Date((attemptData as any).firstAttempt), 
+            lastAttempt: new Date((attemptData as any).lastAttempt), 
+            lockExpiry: (attemptData as any).lockExpiry ? new Date((attemptData as any).lockExpiry) : undefined 
+          }
         ]));
       }
     } catch (error) {

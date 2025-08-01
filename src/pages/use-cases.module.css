@@ -1,0 +1,411 @@
+.mainContent {
+  background: #1A1A1A;
+  min-height: 100vh;
+}
+
+.heroSection {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #1A1A1A 0%, #333333 100%);
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, #00C4FF, #BF00FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  color: #F5F5F0;
+  opacity: 0.8;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.sectionTitle {
+  text-align: center;
+  font-size: 3rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 4rem;
+  color: #F5F5F0;
+  border-bottom: 2px solid #00C4FF;
+  padding-bottom: 1rem;
+}
+
+.industriesSection {
+  padding: 6rem 0;
+  background: #1A1A1A;
+}
+
+.industriesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.industryCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.industryCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.industryCard:hover::before {
+  transform: scaleX(1);
+}
+
+.industryCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.industryCard h3 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.industryCard p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #F5F5F0;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+.useCaseList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.useCase {
+  background: rgba(0, 196, 255, 0.05);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+.useCase h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #BF00FF;
+  margin-bottom: 0.5rem;
+}
+
+.useCase p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #F5F5F0;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.featuresSection {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #333333 0%, #1A1A1A 100%);
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.featureCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.featureCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover::before {
+  transform: scaleX(1);
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.featureCard h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.featureCard p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #F5F5F0;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.featureCard ul {
+  list-style: none;
+  padding: 0;
+}
+
+.featureCard li {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #F5F5F0;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.featureCard li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: #00C4FF;
+  font-weight: bold;
+}
+
+.benefitsSection {
+  padding: 6rem 0;
+  background: #1A1A1A;
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.benefitCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.benefitCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.benefitCard:hover::before {
+  transform: scaleX(1);
+}
+
+.benefitCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.benefitCard h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.benefitCard p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #F5F5F0;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+}
+
+.benefitMetric {
+  background: rgba(0, 196, 255, 0.1);
+  border: 1px solid rgba(0, 196, 255, 0.3);
+  padding: 1.5rem;
+  border-radius: 10px;
+}
+
+.benefitMetric span {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #00C4FF;
+  margin-bottom: 0.5rem;
+}
+
+.benefitMetric p {
+  font-size: 1rem;
+  color: #F5F5F0;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.implementationSection {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #333333 0%, #1A1A1A 100%);
+}
+
+.roadmapGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.roadmapStep {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.roadmapStep::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.roadmapStep:hover::before {
+  transform: scaleX(1);
+}
+
+.roadmapStep:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.stepNumber {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(45deg, #00C4FF, #BF00FF);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1A1A1A;
+  margin: 0 auto 1.5rem;
+}
+
+.roadmapStep h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.roadmapStep p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #F5F5F0;
+  opacity: 0.8;
+  margin-bottom: 1rem;
+}
+
+.duration {
+  display: inline-block;
+  background: rgba(0, 196, 255, 0.1);
+  border: 1px solid rgba(0, 196, 255, 0.3);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  color: #00C4FF;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.2rem;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+  }
+  
+  .industriesGrid,
+  .featuresGrid,
+  .benefitsGrid,
+  .roadmapGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .industryCard,
+  .featureCard,
+  .benefitCard,
+  .roadmapStep {
+    padding: 2rem;
+  }
+} 

@@ -31,26 +31,26 @@ import { KeyRotationService } from './services/key-rotation.service.js';
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     HttpModule,
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DB_HOST', 'localhost'),
-        port: configService.get<number>('DB_PORT', 5432),
-        username: configService.get<string>('DB_USER', 'zeropoint'),
-        password: configService.get<string>('DB_PASS', 'zeropointpass'),
-        database: configService.get<string>('DB_NAME', 'zeropointdb'),
-        entities: [User, Session, AuditLog, AgentState],
-        synchronize: configService.get<boolean>('DB_SYNC', false), // Disable in production
-        logging: configService.get<boolean>('DB_LOGGING', false),
-        ssl: configService.get<boolean>('DB_SSL', false) ? { rejectUnauthorized: false } : false,
-        migrations: ['migrations/*.sql'],
-        migrationsRun: false, // Manual migration control
-        autoLoadEntities: true,
-      }),
-      inject: [ConfigService],
-    }),
-    TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   useFactory: async (configService: ConfigService) => ({
+    //     type: 'postgres',
+    //     host: configService.get<string>('DATABASE_HOST', 'localhost'),
+    //     port: configService.get<number>('DATABASE_PORT', 5432),
+    //     username: configService.get<string>('DATABASE_USERNAME', 'zeropoint'),
+    //     password: configService.get<string>('DATABASE_PASSWORD', 'zeropointpass'),
+    //     database: configService.get<string>('DATABASE_NAME', 'zeropointdb'),
+    //     entities: [User, Session, AuditLog, AgentState],
+    //     synchronize: configService.get<boolean>('DB_SYNC', false), // Disable in production
+    //     logging: configService.get<boolean>('DB_LOGGING', false),
+    //     ssl: configService.get<boolean>('DB_SSL', false) ? { rejectUnauthorized: false } : false,
+    //     migrations: ['migrations/*.sql'],
+    //     migrationsRun: false, // Manual migration control
+    //     autoLoadEntities: true,
+    //   }),
+    //   inject: [ConfigService],
+    // }),
+    // TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -92,19 +92,19 @@ import { KeyRotationService } from './services/key-rotation.service.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, AuthController, AgentStateController],
+  controllers: [AppController, HealthController], // AuthController, AgentStateController],
   providers: [
     AppService, 
-    AuthService, 
-    AgentStateService,
+    // AuthService, 
+    // AgentStateService,
     JwtStrategy, 
     EnhancedPetalsService,
     ServiceOrchestrator,
     KeyRotationService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: JwtAuthGuard,
+    // },
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,

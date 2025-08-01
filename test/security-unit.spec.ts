@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { KeyRotationService } from '../src/services/key-rotation.service.js';
 import { SecurityMiddleware } from '../src/middleware/security.middleware.js';
 import { SecurityLoggingInterceptor } from '../src/interceptors/security-logging.interceptor.js';
-import { KeyRotationGuard } from '../src/guards/key-rotation.ts';
+import { KeyRotationGuard } from '../src/guards/key-rotation.js';
 
 describe('Security Unit Tests', () => {
   let module: TestingModule;
@@ -263,12 +263,16 @@ describe('Security Unit Tests', () => {
 
     it('should generate soulchain hash correctly', () => {
       const event = {
+        id: 'test-id-123',
         action: 'TEST_ACTION',
         timestamp: new Date('2025-01-01T00:00:00Z'),
         ip: '192.168.1.1',
+        userAgent: 'test-user-agent',
         method: 'GET',
         url: '/test',
         statusCode: 200,
+        metadata: { test: 'data' },
+        soulchainHash: '',
       };
 
       const hash = securityInterceptor['generateSoulchainHash'](event);

@@ -14,29 +14,29 @@ export class Session {
   @Column({ length: 255, unique: true })
   token: string;
 
-  @Column({ type: 'uuid' })
+  @Column({ name: 'user_id', type: 'uuid' })
   userId: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'userId' })
+  @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ length: 45, nullable: true })
+  @Column({ name: 'ip_address', length: 45, nullable: true })
   ipAddress: string;
 
-  @Column({ length: 500, nullable: true })
+  @Column({ name: 'user_agent', length: 500, nullable: true })
   userAgent: string;
 
-  @Column({ default: true })
+  @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @Column({ type: 'timestamp' })
+  @Column({ name: 'expires_at', type: 'timestamp' })
   expiresAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @Column({ name: 'last_used_at', type: 'timestamp', nullable: true })
   lastUsedAt: Date;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   isExpired(): boolean {

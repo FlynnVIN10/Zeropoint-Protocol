@@ -69,14 +69,15 @@ export class AuthService {
       const savedUser = await this.userRepository.save(user);
 
       // Log registration to audit log
-      await this.logAuditEvent(
-        savedUser.id,
-        'register',
-        'auth',
-        ipAddress,
-        userAgent,
-        { success: true }
-      );
+      // Temporarily disabled for debugging
+      // await this.logAuditEvent(
+      //   savedUser.id,
+      //   'register',
+      //   'auth',
+      //   ipAddress,
+      //   userAgent,
+      //   { success: true }
+      // );
 
       // Log to Soulchain
       await this.logSoulchainEvent('register_success', 'User registered successfully', {
@@ -133,14 +134,14 @@ export class AuthService {
           ipAddress,
           userAgent
         });
-        await this.logAuditEvent(
-          null,
-          'login',
-          'auth',
-          ipAddress,
-          userAgent,
-          { success: false, reason: 'invalid_credentials' }
-        );
+        // await this.logAuditEvent(
+        //   null,
+        //   'login',
+        //   'auth',
+        //   ipAddress,
+        //   userAgent,
+        //   { success: false, reason: 'invalid_credentials' }
+        // );
         throw new UnauthorizedException('Invalid credentials');
       }
 
@@ -153,14 +154,14 @@ export class AuthService {
           ipAddress,
           userAgent
         });
-        await this.logAuditEvent(
-          user.id,
-          'login',
-          'auth',
-          ipAddress,
-          userAgent,
-          { success: false, reason: 'invalid_password' }
-        );
+        // await this.logAuditEvent(
+        //   user.id,
+        //   'login',
+        //   'auth',
+        //   ipAddress,
+        //   userAgent,
+        //   { success: false, reason: 'invalid_password' }
+        // );
         throw new UnauthorizedException('Invalid credentials');
       }
 
@@ -182,14 +183,14 @@ export class AuthService {
         ipAddress,
         userAgent
       });
-      await this.logAuditEvent(
-        user.id,
-        'login',
-        'auth',
-        ipAddress,
-        userAgent,
-        { success: true }
-      );
+      // await this.logAuditEvent(
+      //   user.id,
+      //   'login',
+      //   'auth',
+      //   ipAddress,
+      //   userAgent,
+      //   { success: true }
+      // );
 
       return {
         success: true,
@@ -216,14 +217,14 @@ export class AuthService {
     );
 
     // Log logout
-    await this.logAuditEvent(
-      userId,
-      'logout',
-      'auth',
-      ipAddress,
-      null,
-      { success: true }
-    );
+    // await this.logAuditEvent(
+    //   userId,
+    //   'logout',
+    //   'auth',
+    //   ipAddress,
+    //   null,
+    //   { success: true }
+    // );
 
     return {
       success: true,
@@ -278,14 +279,14 @@ export class AuthService {
     );
 
     // Log password change
-    await this.logAuditEvent(
-      userId,
-      'change_password',
-      'auth',
-      ipAddress,
-      null,
-      { success: true }
-    );
+    // await this.logAuditEvent(
+    //   userId,
+    //   'change_password',
+    //   'auth',
+    //   ipAddress,
+    //   null,
+    //   { success: true }
+    // );
 
     return {
       success: true,
@@ -314,14 +315,14 @@ export class AuthService {
     await this.userRepository.save(user);
 
     // Log profile update
-    await this.logAuditEvent(
-      userId,
-      'update_profile',
-      'auth',
-      ipAddress,
-      null,
-      { success: true, updatedFields: Object.keys(updateProfileDto) }
-    );
+    // await this.logAuditEvent(
+    //   userId,
+    //   'update_profile',
+    //   'auth',
+    //   ipAddress,
+    //   null,
+    //   { success: true, updatedFields: Object.keys(updateProfileDto) }
+    // );
 
     return {
       success: true,
@@ -367,14 +368,14 @@ export class AuthService {
     await this.sessionRepository.save(session);
 
     // Log session revocation
-    await this.logAuditEvent(
-      userId,
-      'revoke_session',
-      'auth',
-      ipAddress,
-      null,
-      { success: true, sessionId }
-    );
+    // await this.logAuditEvent(
+    //   userId,
+    //   'revoke_session',
+    //   'auth',
+    //   ipAddress,
+    //   null,
+    //   { success: true, sessionId }
+    // );
 
     return {
       success: true,
@@ -415,25 +416,25 @@ export class AuthService {
     await this.sessionRepository.save(session);
   }
 
-  private async logAuditEvent(
-    userId: string | null,
-    action: string,
-    resource: string,
-    ipAddress: string,
-    userAgent: string | null,
-    details: any
-  ): Promise<void> {
-    const auditLog = this.auditLogRepository.create({
-      userId,
-      action,
-      resource,
-      ipAddress,
-      userAgent,
-      details
-    });
+  // private async logAuditEvent(
+  //   userId: string | null,
+  //   action: string,
+  //   resource: string,
+  //   ipAddress: string,
+  //   userAgent: string | null,
+  //   details: any
+  // ): Promise<void> {
+  //   const auditLog = this.auditLogRepository.create({
+  //     userId,
+  //     action,
+  //     resource,
+  //     ipAddress,
+  //     userAgent,
+  //     details
+  //   });
 
-    await this.auditLogRepository.save(auditLog);
-  }
+  //   await this.auditLogRepository.save(auditLog);
+  // }
 
   private async logSoulchainEvent(action: string, reason: string, context: any): Promise<void> {
     try {

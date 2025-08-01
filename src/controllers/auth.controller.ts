@@ -13,6 +13,7 @@ import {
   HttpStatus, 
   HttpException 
 } from '@nestjs/common';
+import { Public } from '../decorators/public.decorator.js';
 import { AuthService } from '../services/auth.service.js';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
 import { 
@@ -24,11 +25,12 @@ import {
 } from '../dto/auth.dto.js';
 import { checkIntent } from '../guards/synthient.guard.js';
 
-@Controller('v1/auth')
+@Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @Public()
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async register(@Body() registerDto: RegisterDto, @Req() req: any): Promise<any> {
     if (!checkIntent(registerDto.username + registerDto.email)) {
@@ -49,6 +51,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @Public()
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async login(@Body() loginDto: LoginDto, @Req() req: any): Promise<any> {
     if (!checkIntent(loginDto.username + loginDto.password)) {
@@ -87,6 +90,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @Public()
   @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto, @Req() req: any): Promise<any> {
     if (!checkIntent('refresh-token')) {

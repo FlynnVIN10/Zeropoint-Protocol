@@ -1,0 +1,359 @@
+.mainContent {
+  background: #1A1A1A;
+  min-height: 100vh;
+}
+
+.heroSection {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #1A1A1A 0%, #333333 100%);
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, #00C4FF, #BF00FF);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  color: #F5F5F0;
+  opacity: 0.8;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.sectionTitle {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin-bottom: 3rem;
+  color: #F5F5F0;
+  border-bottom: 2px solid #00C4FF;
+  padding-bottom: 1rem;
+}
+
+.contactSection {
+  padding: 6rem 0;
+  background: #1A1A1A;
+}
+
+.contactGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  margin-top: 3rem;
+}
+
+.contactMethods {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.contactMethod {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.contactMethod::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.contactMethod:hover::before {
+  transform: scaleX(1);
+}
+
+.contactMethod:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.contactMethod h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  color: #00C4FF;
+}
+
+.contactMethod p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #F5F5F0;
+  opacity: 0.7;
+  margin-bottom: 1rem;
+}
+
+.contactLink {
+  color: #BF00FF;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.contactLink:hover {
+  color: #00C4FF;
+  text-decoration: underline;
+}
+
+.companyDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.companyDetail {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.companyDetail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.companyDetail:hover::before {
+  transform: scaleX(1);
+}
+
+.companyDetail:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.companyDetail h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  color: #00C4FF;
+}
+
+.companyDetail p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #F5F5F0;
+  opacity: 0.7;
+  margin-bottom: 0.5rem;
+}
+
+.supportSection {
+  padding: 6rem 0;
+  background: linear-gradient(135deg, #333333 0%, #1A1A1A 100%);
+}
+
+.supportGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.supportCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.supportCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.supportCard:hover::before {
+  transform: scaleX(1);
+}
+
+.supportCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.supportCard h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.supportCard p {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #F5F5F0;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+.supportLink {
+  display: inline-block;
+  background: linear-gradient(45deg, #00C4FF, #BF00FF);
+  color: #1A1A1A;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.supportLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 196, 255, 0.3);
+}
+
+.responseSection {
+  padding: 6rem 0;
+  background: #1A1A1A;
+}
+
+.responseGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.responseCard {
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 196, 255, 0.2);
+  padding: 2.5rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+.responseCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #00C4FF, #BF00FF);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.responseCard:hover::before {
+  transform: scaleX(1);
+}
+
+.responseCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+.responseCard h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1rem;
+  color: #00C4FF;
+}
+
+.responseCard p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #F5F5F0;
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+}
+
+.responseTime {
+  display: inline-block;
+  background: rgba(0, 255, 136, 0.1);
+  border: 1px solid rgba(0, 255, 136, 0.3);
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  color: #00FF88;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .heroSubtitle {
+    font-size: 1.2rem;
+  }
+  
+  .sectionTitle {
+    font-size: 2rem;
+  }
+  
+  .contactGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+  
+  .supportGrid,
+  .responseGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .contactMethod,
+  .companyDetail,
+  .supportCard,
+  .responseCard {
+    padding: 2rem;
+  }
+} 

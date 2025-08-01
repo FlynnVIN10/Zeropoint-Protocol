@@ -39,11 +39,17 @@ describe('Advanced AI Integration - Phase 9', () => {
           useValue: {
             post: jest.fn().mockReturnValue({
               toPromise: jest.fn().mockResolvedValue({ data: { success: true } }),
-              subscribe: jest.fn()
+              subscribe: jest.fn().mockReturnValue({
+                unsubscribe: jest.fn()
+              }),
+              pipe: jest.fn().mockReturnThis()
             }),
             get: jest.fn().mockReturnValue({
               toPromise: jest.fn().mockResolvedValue({ data: { success: true } }),
-              subscribe: jest.fn()
+              subscribe: jest.fn().mockReturnValue({
+                unsubscribe: jest.fn()
+              }),
+              pipe: jest.fn().mockReturnThis()
             }),
           },
         },

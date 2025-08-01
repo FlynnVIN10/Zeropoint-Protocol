@@ -1,0 +1,387 @@
+/**
+ * Custom CSS for Zeropoint Protocol - Futuristic Balenciaga Style
+ * Color Palette:
+ * - Deep Black: #1A1A1A
+ * - Anthracite: #333333
+ * - Off-White: #F5F5F0
+ * - Electric Blue: #00C4FF
+ * - Neon Purple: #BF00FF
+ */
+
+:root {
+  --deep-black: #1A1A1A;
+  --anthracite: #333333;
+  --off-white: #F5F5F0;
+  --electric-blue: #00C4FF;
+  --neon-purple: #BF00FF;
+  --glass-bg: rgba(26, 26, 26, 0.8);
+  --glass-border: rgba(0, 196, 255, 0.2);
+}
+
+/* Global Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--deep-black);
+  color: var(--off-white);
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  color: var(--off-white);
+}
+
+h1 {
+  font-size: 3.5rem;
+  line-height: 1.2;
+  text-shadow: 0 0 20px var(--electric-blue);
+}
+
+h2 {
+  font-size: 2.5rem;
+  border-left: 4px solid var(--electric-blue);
+  padding-left: 1rem;
+}
+
+h3 {
+  font-size: 1.8rem;
+  color: var(--electric-blue);
+}
+
+p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+  color: var(--off-white);
+}
+
+/* Navigation */
+.navbar {
+  background: transparent !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 1rem 0;
+}
+
+.navbar__brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--electric-blue) !important;
+}
+
+.navbar__item {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 1rem;
+  transition: all 0.3s ease;
+}
+
+.navbar__item:hover {
+  color: var(--electric-blue) !important;
+  text-shadow: 0 0 10px var(--electric-blue);
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(135deg, var(--deep-black) 0%, var(--anthracite) 100%);
+  padding: 8rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23333" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+  opacity: 0.3;
+}
+
+.hero__title {
+  font-size: 4rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, var(--electric-blue), var(--neon-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 30px var(--electric-blue);
+}
+
+.hero__subtitle {
+  font-size: 1.5rem;
+  font-weight: 300;
+  margin-bottom: 3rem;
+  color: var(--off-white);
+  opacity: 0.9;
+}
+
+/* Buttons */
+.button {
+  display: inline-block;
+  padding: 1.5rem 3rem;
+  background: transparent;
+  border: 2px solid var(--electric-blue);
+  color: var(--electric-blue);
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 196, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.button:hover::before {
+  left: 100%;
+}
+
+.button:hover {
+  background: var(--electric-blue);
+  color: var(--deep-black);
+  box-shadow: 0 0 30px var(--electric-blue);
+  transform: translateY(-2px);
+}
+
+/* Cards */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--electric-blue), var(--neon-purple));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+/* Form Elements */
+input, textarea, select {
+  background: var(--anthracite);
+  border: 1px solid var(--glass-border);
+  color: var(--off-white);
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border-radius: 0;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--electric-blue);
+  box-shadow: 0 0 20px rgba(0, 196, 255, 0.3);
+  background: var(--deep-black);
+}
+
+/* Code Blocks */
+pre {
+  background: var(--deep-black);
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  padding: 1.5rem;
+  overflow-x: auto;
+  position: relative;
+}
+
+pre::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--electric-blue), var(--neon-purple));
+}
+
+code {
+  background: var(--anthracite);
+  color: var(--electric-blue);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0;
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+}
+
+/* Footer */
+.footer {
+  background: var(--deep-black);
+  border-top: 1px solid var(--glass-border);
+  padding: 3rem 0;
+  text-align: center;
+}
+
+.footer__copyright {
+  color: var(--off-white);
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px var(--electric-blue);
+  }
+  50% {
+    box-shadow: 0 0 40px var(--electric-blue), 0 0 60px var(--electric-blue);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Apply animations */
+.hero, .card {
+  animation: fadeIn 1s ease-out;
+}
+
+.button:hover {
+  animation: glow 2s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2.5rem;
+  }
+  
+  h2 {
+    font-size: 2rem;
+  }
+  
+  .hero {
+    padding: 4rem 0;
+  }
+  
+  .hero__title {
+    font-size: 2.5rem;
+  }
+  
+  .button {
+    padding: 1rem 2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Glassmorphism Effects */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+}
+
+/* Neon Effects */
+.neon-text {
+  text-shadow: 0 0 10px var(--electric-blue), 0 0 20px var(--electric-blue);
+}
+
+.neon-border {
+  border: 1px solid var(--electric-blue);
+  box-shadow: 0 0 10px var(--electric-blue);
+}
+
+/* Loading Animation */
+.loading {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--glass-border);
+  border-radius: 50%;
+  border-top-color: var(--electric-blue);
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--deep-black);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--electric-blue);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-purple);
+}

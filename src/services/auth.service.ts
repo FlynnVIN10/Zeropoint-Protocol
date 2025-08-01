@@ -312,10 +312,12 @@ export class AuthService {
   async getActiveSessions(userId: string): Promise<any> {
     return this.circuitBreaker.execute('auth_get_sessions', async () => {
       try {
-        const sessions = await this.sessionRepository.find({
-          where: { userId, expiresAt: { $gt: new Date() } },
-          order: { createdAt: 'DESC' }
-        });
+        const sessions = await this.sessionRepository
+          .createQueryBuilder('session')
+          .where('session.userId = :userId', { userId })
+          .andWhere('session.expiresAt > :now', { now: new Date() })
+          .orderBy('session.createdAt', 'DESC')
+          .getMany();
 
         return {
           success: true,

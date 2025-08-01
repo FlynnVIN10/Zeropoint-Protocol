@@ -9,6 +9,8 @@ import { AuthService } from '../services/auth.service.js';
 import { ConfigService } from '@nestjs/config';
 import { checkIntent } from '../guards/synthient.guard.js';
 import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
+import { RedisCacheService } from '../services/redis-cache.service.js';
+import { CircuitBreakerService } from '../services/circuit-breaker.service.js';
 
 // Mock dependencies
 jest.mock('../guards/synthient.guard.js');
@@ -98,6 +100,21 @@ describe('JWT Authentication System', () => {
         {
           provide: JwtService,
           useValue: mockJwtService,
+        },
+        {
+          provide: RedisCacheService,
+          useValue: {
+            get: jest.fn().mockResolvedValue(null),
+            set: jest.fn().mockResolvedValue(undefined),
+            delete: jest.fn().mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: CircuitBreakerService,
+          useValue: {
+            execute: jest.fn().mockImplementation((key, fn) => fn()),
+            getCircuitStats: jest.fn().mockResolvedValue({}),
+          },
         },
       ],
     }).compile();

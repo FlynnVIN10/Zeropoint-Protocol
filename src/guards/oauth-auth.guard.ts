@@ -1,9 +1,9 @@
 import { Injectable, Logger, UnauthorizedException, ExecutionContext } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Reflector } from '@nestjs/core';
-import { OAuthService, OAuthUser } from '../services/oauth.service';
-import { checkIntent } from './synthient.guard';
-import { soulchain } from '../agents/soulchain/soulchain.ledger';
+import { OAuthService, OAuthUser } from '../services/oauth.service.js';
+import { checkIntent } from './synthient.guard.js';
+import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
 
 @Injectable()
 export class OAuthAuthGuard extends AuthGuard('jwt') {

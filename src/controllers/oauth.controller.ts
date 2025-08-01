@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Query, Res, HttpStatus, Logger } from '@nestjs/common';
 import { Response } from 'express';
-import { OAuthService } from '../services/oauth.service';
-import { Public } from '../decorators/public.decorator';
+import { OAuthService } from '../services/oauth.service.js';
+import { Public } from '../decorators/public.decorator.js';
 
 @Controller('oauth')
 export class OAuthController {

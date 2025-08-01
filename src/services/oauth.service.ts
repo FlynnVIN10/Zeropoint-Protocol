@@ -1,8 +1,8 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { RedisCacheService } from './redis-cache.service';
-import { CircuitBreakerService } from './circuit-breaker.service';
+// import { RedisCacheService } from './redis-cache.service';
+// import { CircuitBreakerService } from './circuit-breaker.service';
 
 export interface OAuthToken {
   access_token: string;
@@ -28,12 +28,12 @@ export class OAuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
-    private readonly redisCache: RedisCacheService,
-    private readonly circuitBreaker: CircuitBreakerService,
+    // private readonly redisCache: RedisCacheService,
+    // private readonly circuitBreaker: CircuitBreakerService,
   ) {}
 
   async authenticateWithOAuth(provider: string, code: string, redirectUri: string): Promise<OAuthToken> {
-    return this.circuitBreaker.execute(`oauth_${provider}`, async () => {
+    // return this.circuitBreaker.execute(`oauth_${provider}`, async () => {
       try {
         // Simulate OAuth 2.0 flow for development
         // In production, this would integrate with actual OAuth providers
@@ -46,7 +46,7 @@ export class OAuthService {
         };
 
         // Cache the token
-        await this.cacheToken(mockToken.access_token, mockToken, null);
+        // await this.cacheToken(mockToken.access_token, mockToken, null);
         
         this.logger.log(`OAuth authentication successful for provider: ${provider}`);
         return mockToken;
@@ -54,17 +54,17 @@ export class OAuthService {
         this.logger.error(`OAuth authentication failed for provider ${provider}: ${error.message}`);
         throw new UnauthorizedException('OAuth authentication failed');
       }
-    });
+    // });
   }
 
   async validateToken(token: string): Promise<OAuthUser | null> {
-    return this.circuitBreaker.execute('oauth_validate', async () => {
+    // return this.circuitBreaker.execute('oauth_validate', async () => {
       try {
         // Check cache first
-        const cached = await this.getCachedToken(token);
-        if (cached && cached.expiresAt > new Date()) {
-          return cached.user;
-        }
+        // const cached = await this.getCachedToken(token);
+        // if (cached && cached.expiresAt > new Date()) {
+        //   return cached.user;
+        // }
 
         // Validate JWT token
         const payload = await this.jwtService.verifyAsync(token);
@@ -81,18 +81,18 @@ export class OAuthService {
         };
 
         // Cache the validated user
-        await this.cacheUser(token, user);
+        // await this.cacheUser(token, user);
         
         return user;
       } catch (error) {
         this.logger.error(`Token validation failed: ${error.message}`);
         return null;
       }
-    });
+    // });
   }
 
   async refreshToken(refreshToken: string): Promise<OAuthToken> {
-    return this.circuitBreaker.execute('oauth_refresh', async () => {
+    // return this.circuitBreaker.execute('oauth_refresh', async () => {
       try {
         // Validate refresh token
         const payload = await this.jwtService.verifyAsync(refreshToken);
@@ -110,28 +110,28 @@ export class OAuthService {
         };
 
         // Cache the new token
-        await this.cacheToken(newToken.access_token, newToken, null);
+        // await this.cacheToken(newToken.access_token, newToken, null);
         
         return newToken;
       } catch (error) {
         this.logger.error(`Token refresh failed: ${error.message}`);
         throw new UnauthorizedException('Token refresh failed');
       }
-    });
+    // });
   }
 
   async revokeToken(token: string): Promise<void> {
-    return this.circuitBreaker.execute('oauth_revoke', async () => {
+    // return this.circuitBreaker.execute('oauth_revoke', async () => {
       try {
         // Remove from cache
-        await this.redisCache.delete(`oauth_token:${token}`);
+        // await this.redisCache.delete(`oauth_token:${token}`);
         this.tokenCache.delete(token);
         
         this.logger.log(`Token revoked: ${token}`);
       } catch (error) {
         this.logger.error(`Token revocation failed: ${error.message}`);
       }
-    });
+    // });
   }
 
   private async generateAccessToken(): Promise<string> {
@@ -166,11 +166,11 @@ export class OAuthService {
     this.tokenCache.set(token, { token: oauthToken, user, expiresAt });
     
     // Cache in Redis
-    await this.redisCache.set(`oauth_token:${token}`, {
-      token: oauthToken,
-      user,
-      expiresAt: expiresAt.toISOString()
-    }, { ttl: oauthToken.expires_in });
+    // await this.redisCache.set(`oauth_token:${token}`, {
+    //   token: oauthToken,
+    //   user,
+    //   expiresAt: expiresAt.toISOString()
+    // }, { ttl: oauthToken.expires_in });
   }
 
   private async getCachedToken(token: string): Promise<{ token: OAuthToken; user: OAuthUser; expiresAt: Date } | null> {
@@ -181,31 +181,31 @@ export class OAuthService {
     }
 
     // Check Redis cache
-    const redisCached = await this.redisCache.get(`oauth_token:${token}`);
-    if (redisCached && typeof redisCached === 'string') {
-      const parsed = JSON.parse(redisCached);
-      const expiresAt = new Date(parsed.expiresAt);
-      if (expiresAt > new Date()) {
-        return {
-          token: parsed.token,
-          user: parsed.user,
-          expiresAt
-        };
-      }
-    }
+    // const redisCached = await this.redisCache.get(`oauth_token:${token}`);
+    // if (redisCached && typeof redisCached === 'string') {
+    //   const parsed = JSON.parse(redisCached);
+    //   const expiresAt = new Date(parsed.expiresAt);
+    //   if (expiresAt > new Date()) {
+    //   return {
+    //     token: parsed.token,
+    //     user: parsed.user,
+    //     expiresAt
+    //   };
+    // }
+    // }
 
     return null;
   }
 
   private async cacheUser(token: string, user: OAuthUser): Promise<void> {
-    await this.redisCache.set(`oauth_user:${token}`, user, { ttl: 3600 });
+    // await this.redisCache.set(`oauth_user:${token}`, user, { ttl: 3600 });
   }
 
   async getHealthStatus(): Promise<{ status: string; cacheSize: number; circuitBreakerStatus: any }> {
     return {
       status: 'healthy',
       cacheSize: this.tokenCache.size,
-      circuitBreakerStatus: await this.circuitBreaker.getAllCircuitStats()
+      circuitBreakerStatus: {} // await this.circuitBreaker.getAllCircuitStats()
     };
   }
 } 

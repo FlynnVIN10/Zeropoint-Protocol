@@ -6,5 +6,13 @@
     "timestamp": "2025-07-29T17:31:49.187Z",
     "reason": "test_rotation",
     "soulchainHash": "5234f40fd3133db490b8e91dd9b132df0280a751f043d5bfac62abe2111007e5"
+  },
+  {
+    "id": "ad58e12d-dcb2-4c0e-bdd4-771c623712a0",
+    "oldKeyId": "d695b099-4958-404c-9b48-645c112be245",
+    "newKeyId": "0fa661f5-8cb5-4e1e-89e7-2a19e9367c92",
+    "timestamp": "2025-08-01T06:20:04.798Z",
+    "reason": "test_rotation",
+    "soulchainHash": "2a385fc88f38edfa4bf154eba14f9d5fe18e079c829da9b6dbdcc77f254c1a3e"
   }
 ]

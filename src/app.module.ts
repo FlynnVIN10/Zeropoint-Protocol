@@ -101,10 +101,10 @@ import { KeyRotationService } from './services/key-rotation.service.js';
     EnhancedPetalsService,
     ServiceOrchestrator,
     KeyRotationService,
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: JwtAuthGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,

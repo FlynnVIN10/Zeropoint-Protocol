@@ -265,10 +265,7 @@ describe('Consensus Timeout Tests', () => {
       jest.spyOn(appService, 'validateConsensusIntent').mockImplementation(() => {
         callCount++;
         if (callCount === 1) {
-          return new Promise(resolve => setTimeout(() => resolve({
-            success: false,
-            error: 'Timeout on first attempt'
-          }), 1000));
+          return Promise.reject(new Error('Timeout on first attempt'));
         }
         return Promise.resolve({
           success: true,
@@ -286,7 +283,8 @@ describe('Consensus Timeout Tests', () => {
       });
 
       expect(callCount).toBe(1); // Only one call in this test
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
+      expect(result.data.retryable).toBe(true);
     });
 
     it('should handle network timeouts gracefully', async () => {
@@ -306,6 +304,7 @@ describe('Consensus Timeout Tests', () => {
 
       expect(result.success).toBe(false);
       expect(result.data.error).toContain('Network timeout');
+      expect(result.data.retryable).toBe(true);
     });
   });
 }); 

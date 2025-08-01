@@ -1,4 +1,4 @@
-import { SoulchainTelemetry } from '../visualizer/ue5-bridge';
+import { SoulchainTelemetry } from '../types/soulchain';
 
 export interface SoulchainResponse {
   status: string;

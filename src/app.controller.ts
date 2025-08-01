@@ -424,9 +424,10 @@ export class AppController implements OnApplicationShutdown {
   async textSummarization(@Body() body: { text: string; options?: { maxLength?: number; style?: string } }): Promise<any> {
     if (!checkIntent('text-summarization')) throw new Error('Zeroth violation: Text summarization blocked.');
     
-    // Phase 10: Optimized mock implementation for load testing
-    const mockSummary = body.text.length > 50 ? 
-      body.text.substring(0, Math.min(body.text.length / 3, body.options?.maxLength || 100)) + '...' : 
+    // Phase 10: Ultra-optimized mock implementation for high concurrency
+    const maxLength = body.options?.maxLength || 100;
+    const mockSummary = body.text.length > maxLength ? 
+      body.text.substring(0, maxLength) + '...' : 
       body.text;
     
     return {
@@ -493,23 +494,19 @@ export class AppController implements OnApplicationShutdown {
   async sentimentAnalysis(@Body() body: { text: string; options?: { detailed?: boolean; language?: string } }): Promise<any> {
     if (!checkIntent('sentiment-analysis')) throw new Error('Zeroth violation: Sentiment analysis blocked.');
     
-    // Phase 10: Mock implementation for load testing
-    const positiveWords = ['good', 'great', 'excellent', 'amazing', 'wonderful', 'love', 'happy', 'positive'];
-    const negativeWords = ['bad', 'terrible', 'awful', 'hate', 'sad', 'negative', 'disappointing'];
-    
-    const text = body.text.toLowerCase();
-    const positiveCount = positiveWords.filter(word => text.includes(word)).length;
-    const negativeCount = negativeWords.filter(word => text.includes(word)).length;
+    // Phase 10: Ultra-optimized mock implementation for high concurrency
+    const hasPositive = /good|great|excellent|amazing|wonderful|love|happy|positive/i.test(body.text);
+    const hasNegative = /bad|terrible|awful|hate|sad|negative|disappointing/i.test(body.text);
     
     let sentiment = 'neutral';
     let score = 0.5;
     
-    if (positiveCount > negativeCount) {
+    if (hasPositive && !hasNegative) {
       sentiment = 'positive';
-      score = 0.7 + (positiveCount * 0.1);
-    } else if (negativeCount > positiveCount) {
+      score = 0.8;
+    } else if (hasNegative && !hasPositive) {
       sentiment = 'negative';
-      score = 0.3 - (negativeCount * 0.1);
+      score = 0.2;
     }
     
     const result = {
@@ -520,8 +517,8 @@ export class AppController implements OnApplicationShutdown {
     
     if (body.options?.detailed) {
       result['details'] = {
-        positiveWords: positiveWords.filter(word => text.includes(word)),
-        negativeWords: negativeWords.filter(word => text.includes(word)),
+        positiveWords: hasPositive ? ['detected'] : [],
+        negativeWords: hasNegative ? ['detected'] : [],
         confidence: 0.85
       };
     }

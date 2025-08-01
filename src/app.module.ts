@@ -26,6 +26,7 @@ import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js
 import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
 import { SecurityLoggingInterceptor } from './interceptors/security-logging.interceptor.js';
 import { KeyRotationService } from './services/key-rotation.service.js';
+import { PerformanceOptimizerService } from './services/performance-optimizer.service';
 
 @Module({
   imports: [
@@ -101,6 +102,7 @@ import { KeyRotationService } from './services/key-rotation.service.js';
     EnhancedPetalsService,
     ServiceOrchestrator,
     KeyRotationService,
+    PerformanceOptimizerService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

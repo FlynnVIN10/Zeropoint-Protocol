@@ -1,27 +1,19 @@
-export interface SoulchainTelemetry {
-  consensus: {
-    entropy: number;
-    participants: number;
-    activeVoices: number;
-    passiveStances: number;
-    consensusRatio: number;
-  };
-  agents: Array<{
-    id: string;
-    intent: string;
-    state: string;
-    stake: number;
-  }>;
-  timestamp: string;
-}
+// © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
+
+import { SoulchainTelemetry } from '../types/soulchain';
 
 export interface Synthiant {
   id: string;
-  position: { x: number; y: number; z: number };
   intent: string;
-  state: 'active' | 'passive' | 'neutral';
+  state: string;
   stake: number;
-  connections: string[]; // IDs of connected agents
+  position?: Vector3;
+}
+
+export interface Vector3 {
+  x: number;
+  y: number;
+  z: number;
 }
 
 export interface UE5VisualizerBridge {
@@ -29,48 +21,23 @@ export interface UE5VisualizerBridge {
   renderAgents(agents: Synthiant[]): void;
   updateTelemetry(data: SoulchainTelemetry): void;
   exportAsWebXR(): Promise<Blob>;
-  setTimeFlow(direction: 'forward' | 'backward' | 'pause'): void;
-  captureSnapshot(): Promise<string>;
-  loadSnapshot(snapshotId: string): Promise<void>;
+  updateConsensusTrails(trails: Vector3[]): void;
 }
 
-// Stub implementation for development/testing
 export const ue5Bridge: UE5VisualizerBridge = {
-  initialize: async () => { 
+  initialize: async () => {
     console.log('UE5 Visualizer: Init stub');
-    return Promise.resolve();
   },
-  
-  renderAgents: (agents: Synthiant[]) => { 
-    console.log('UE5 Visualizer: Render stub', agents.length, 'agents');
+  renderAgents: (agents) => {
+    console.log('UE5 Visualizer: Render stub', agents);
   },
-  
-  updateTelemetry: (data: SoulchainTelemetry) => { 
-    console.log('UE5 Visualizer: Telemetry stub', {
-      participants: data.consensus.participants,
-      entropy: data.consensus.entropy,
-      consensusRatio: data.consensus.consensusRatio
-    });
+  updateTelemetry: (data) => {
+    console.log('UE5 Visualizer: Telemetry stub', data);
   },
-  
-  exportAsWebXR: async () => {
-    console.log('UE5 Visualizer: WebXR export stub');
-    return new Blob(['UE5 WebXR export placeholder'], { type: 'application/octet-stream' });
+  exportAsWebXR: async () => new Blob(),
+  updateConsensusTrails: (trails) => {
+    console.log('UE5 Visualizer: Trails stub', trails);
   },
-  
-  setTimeFlow: (direction: 'forward' | 'backward' | 'pause') => {
-    console.log('UE5 Visualizer: Time flow stub', direction);
-  },
-  
-  captureSnapshot: async () => {
-    console.log('UE5 Visualizer: Snapshot capture stub');
-    return Promise.resolve('snapshot_' + Date.now());
-  },
-  
-  loadSnapshot: async (snapshotId: string) => {
-    console.log('UE5 Visualizer: Snapshot load stub', snapshotId);
-    return Promise.resolve();
-  }
 };
 
 // Factory function for creating UE5 bridge instances

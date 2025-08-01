@@ -20,6 +20,7 @@ import { AgentState } from './entities/agent-state.entity.js';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
+import { OAuthAuthGuard } from './guards/oauth-auth.guard.js';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CustomThrottlerGuard } from './guards/throttler.guard.js';
 import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
@@ -31,7 +32,8 @@ import { PerformanceOptimizerService } from './services/performance-optimizer.se
 import { RedisCacheService } from './services/redis-cache.service.js';
 import { ConnectionPoolService } from './services/connection-pool.service.js';
 import { CircuitBreakerService } from './services/circuit-breaker.service.js';
-import { AuthService } from './services/auth.service.js';
+import { OAuthService } from './services/oauth.service.js';
+import { OAuthController } from './controllers/oauth.controller.js';
 
 @Module({
   imports: [
@@ -98,7 +100,7 @@ import { AuthService } from './services/auth.service.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController], // AuthController, AgentStateController],
+  controllers: [AppController, HealthController, OAuthController], // AuthController, AgentStateController],
   providers: [
     AppService, 
     // AuthService, 
@@ -113,9 +115,10 @@ import { AuthService } from './services/auth.service.js';
     ConnectionPoolService,
     CircuitBreakerService,
     AuthService,
+    OAuthService,
     {
       provide: APP_GUARD,
-      useClass: JwtAuthGuard,
+      useClass: OAuthAuthGuard,
     },
     {
       provide: APP_GUARD,

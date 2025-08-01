@@ -1,320 +1,341 @@
-# Phase 8: Consensus Visualizer Design
-
-**© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.**
+# Phase 8: Consensus Visualizer Mockup
 
 ## Overview
+The consensus visualizer provides real-time visualization of consensus operations using React Three Fiber with radial displays, neon hover effects, and Server-Sent Events (SSE) for live updates.
 
-The Phase 8 Consensus Visualizer is a real-time 3D visualization system that displays consensus operations between Soulchain and DAOstate systems using React Three Fiber. The visualizer provides an immersive, interactive experience for monitoring token-gated consensus operations with neon hover effects and real-time streaming.
+## Design Specifications
 
-## Architecture
+### Visual Components
 
-### Core Components
+#### 1. Radial Consensus Wheel
+- **Layout**: Circular arrangement of participant nodes
+- **Radius**: 300px base radius, scalable based on participant count
+- **Node Size**: 20px diameter for each participant
+- **Spacing**: Dynamic spacing based on participant count
 
-1. **Radial Consensus Wheel**: 3D circular arrangement of agent nodes
-2. **DAO State Center**: Central hub representing the DAO governance system
-3. **Agent Nodes**: Orbiting nodes representing individual agents
-4. **Consensus Bridges**: Visual connections between Soulchain and DAOstate
-5. **Real-time Streaming**: Server-Sent Events (SSE) for live updates
+#### 2. Participant Nodes
+- **Active Voice**: Neon cyan glow (#00FFFF) with pulsing animation
+- **Passive Stance**: Subtle gray glow (#666666) with fade effect
+- **Hover State**: Bright white glow (#FFFFFF) with scale animation
+- **Stake Indicator**: Ring around node showing stake amount (0-1000 ZEROPOINT)
 
-### Technology Stack
+#### 3. Consensus Flow Lines
+- **Connection Lines**: Thin neon lines connecting active participants
+- **Flow Direction**: Animated particles flowing from active to passive nodes
+- **Intensity**: Line brightness based on consensus strength
 
-- **Frontend**: React Three Fiber (R3F)
-- **3D Graphics**: Three.js
-- **Real-time Updates**: Server-Sent Events (SSE)
-- **Styling**: CSS-in-JS with neon effects
-- **State Management**: React hooks with Zustand
+### React Three Fiber Implementation
 
-## Visual Design
+```jsx
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, Text } from '@react-three/drei';
+import { useState, useEffect } from 'react';
 
-### Color Scheme
+const ConsensusVisualizer = () => {
+  const [participants, setParticipants] = useState([]);
+  const [consensusData, setConsensusData] = useState(null);
+
+  useEffect(() => {
+    const eventSource = new EventSource('/v1/consensus/visualization');
+    
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.success) {
+        setConsensusData(data.data);
+        setParticipants(data.data.radialData);
+      }
+    };
+
+    return () => eventSource.close();
+  }, []);
+
+  return (
+    <div style={{ width: '100%', height: '600px' }}>
+      <Canvas camera={{ position: [0, 0, 5] }}>
+        <ambientLight intensity={0.3} />
+        <pointLight position={[10, 10, 10]} />
+        
+        <ConsensusWheel participants={participants} />
+        <ConsensusMetrics data={consensusData} />
+        
+        <OrbitControls enableZoom={true} enablePan={true} />
+      </Canvas>
+    </div>
+  );
+};
+
+const ConsensusWheel = ({ participants }) => {
+  const radius = 3;
+  
+  return (
+    <group>
+      {participants.map((participant, index) => (
+        <ParticipantNode
+          key={participant.id}
+          participant={participant}
+          radius={radius}
+          index={index}
+          total={participants.length}
+        />
+      ))}
+    </group>
+  );
+};
+
+const ParticipantNode = ({ participant, radius, index, total }) => {
+  const angle = (index / total) * 2 * Math.PI;
+  const x = Math.cos(angle) * radius;
+  const z = Math.sin(angle) * radius;
+  
+  const [hovered, setHovered] = useState(false);
+  const [scale, setScale] = useState(1);
+  
+  useFrame(() => {
+    if (hovered) {
+      setScale(1.2);
+    } else {
+      setScale(1);
+    }
+  });
+
+  const glowColor = participant.isActive ? '#00FFFF' : '#666666';
+  const glowIntensity = participant.isActive ? 2 : 0.5;
+
+  return (
+    <group position={[x, 0, z]}>
+      {/* Glow Effect */}
+      <mesh scale={[scale * 1.5, scale * 1.5, scale * 1.5]}>
+        <sphereGeometry args={[0.1, 16, 16]} />
+        <meshBasicMaterial color={glowColor} transparent opacity={0.3} />
+      </mesh>
+      
+      {/* Main Node */}
+      <mesh 
+        scale={[scale, scale, scale]}
+        onPointerOver={() => setHovered(true)}
+        onPointerOut={() => setHovered(false)}
+      >
+        <sphereGeometry args={[0.05, 16, 16]} />
+        <meshStandardMaterial 
+          color={participant.isActive ? '#00FFFF' : '#999999'}
+          emissive={participant.isActive ? '#00FFFF' : '#333333'}
+          emissiveIntensity={glowIntensity}
+        />
+      </mesh>
+      
+      {/* Stake Ring */}
+      <mesh rotation={[Math.PI / 2, 0, 0]}>
+        <ringGeometry args={[0.08, 0.12, 32]} />
+        <meshBasicMaterial 
+          color="#FFD700" 
+          transparent 
+          opacity={participant.stake / 1000}
+        />
+      </mesh>
+      
+      {/* Participant Label */}
+      <Text
+        position={[0, 0.2, 0]}
+        fontSize={0.05}
+        color="white"
+        anchorX="center"
+        anchorY="middle"
+      >
+        {participant.id}
+      </Text>
+    </group>
+  );
+};
+
+const ConsensusMetrics = ({ data }) => {
+  if (!data) return null;
+  
+  return (
+    <group position={[-2, 2, 0]}>
+      <Text
+        position={[0, 0, 0]}
+        fontSize={0.1}
+        color="white"
+        anchorX="left"
+        anchorY="top"
+      >
+        Consensus: {data.consensusRatio}
+      </Text>
+      
+      <Text
+        position={[0, -0.15, 0]}
+        fontSize={0.08}
+        color="cyan"
+        anchorX="left"
+        anchorY="top"
+      >
+        Active: {data.activeVoices}
+      </Text>
+      
+      <Text
+        position={[0, -0.25, 0]}
+        fontSize={0.08}
+        color="gray"
+        anchorX="left"
+        anchorY="top"
+      >
+        Passive: {data.passiveStances}
+      </Text>
+    </group>
+  );
+};
+```
+
+### CSS Styling
 
 ```css
-/* Primary Colors */
---neon-blue: #00f3ff;
---neon-purple: #8a2be2;
---neon-green: #00ff41;
---neon-red: #ff0040;
---deep-black: #0a0a0a;
---matte-gray: #1a1a1a;
-
-/* Status Colors */
---active-voice: #00f3ff;
---passive-stance: #666666;
---consensus-reached: #00ff41;
---consensus-failed: #ff0040;
---abstain: #8a2be2;
-```
-
-### Neon Effects
-
-- **Hover Glows**: 2px blur with 50% opacity
-- **Active Voice**: Pulsing neon blue glow
-- **Passive Stance**: Subtle fade effect
-- **Consensus Bridge**: Flowing particle effects
-
-## Component Structure
-
-### 1. ConsensusWheel Component
-
-```typescript
-interface ConsensusWheelProps {
-  agents: AgentNode[];
-  consensusData: ConsensusData;
-  isStreaming: boolean;
+.consensus-visualizer {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.2);
 }
 
-interface AgentNode {
-  id: string;
-  position: { x: number; y: number; z: number };
-  status: 'active' | 'passive' | 'abstain';
-  voice: 'proposal' | 'opposition' | 'abstain';
-  confidence: number;
-  stake: number;
+.consensus-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.1);
 }
-```
 
-### 2. DAOStateCenter Component
-
-```typescript
-interface DAOStateCenterProps {
-  status: 'processing' | 'consensus' | 'timeout';
-  quorum: number;
-  current: number;
-  threshold: number;
+.consensus-status {
+  display: flex;
+  gap: 20px;
+  align-items: center;
 }
-```
 
-### 3. AgentNode Component
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
 
-```typescript
-interface AgentNodeProps {
-  agent: AgentNode;
-  isHovered: boolean;
-  onHover: (agentId: string) => void;
-  onLeave: () => void;
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+.status-dot.active {
+  background: #00FFFF;
+}
+
+.status-dot.passive {
+  background: #666666;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.consensus-canvas {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.1);
 }
 ```
 
-## Real-time Streaming
+### Animation Specifications
 
-### SSE Endpoint
+#### 1. Neon Glow Effects
+- **Active Nodes**: Pulsing cyan glow with 2-second cycle
+- **Hover Effects**: Bright white glow with 0.3-second transition
+- **Stake Rings**: Golden glow with opacity based on stake amount
 
-```
-GET /v1/consensus/visualizer
-Content-Type: text/event-stream
-Cache-Control: no-cache
-Connection: keep-alive
-```
+#### 2. Particle Flow
+- **Direction**: From active to passive nodes
+- **Speed**: 1 particle per second per connection
+- **Color**: Cyan particles with fade-out effect
+- **Trail**: Subtle glow trail following particle path
 
-### Event Format
+#### 3. Smooth Transitions
+- **Node Movement**: 0.5-second ease-in-out transitions
+- **Scale Changes**: 0.3-second ease-out transitions
+- **Color Changes**: 0.2-second linear transitions
 
-```json
-{
-  "type": "consensus-visualization",
-  "timestamp": "2025-07-30T20:30:00.000Z",
-  "agents": [
-    {
-      "id": "agent-alpha",
-      "position": { "x": 0, "y": 0, "z": 0 },
-      "status": "active",
-      "voice": "proposal",
-      "confidence": 0.85,
-      "stake": 100
-    }
-  ],
-  "daoState": {
-    "position": { "x": 0, "y": 0, "z": 0 },
-    "status": "processing"
-  },
-  "consensus": {
-    "quorum": 0.6,
-    "current": 0.4,
-    "threshold": 0.5
-  }
-}
-```
+### Performance Optimizations
 
-## Interactive Features
+#### 1. Rendering
+- **Frustum Culling**: Only render visible nodes
+- **Level of Detail**: Reduce geometry for distant nodes
+- **Instanced Rendering**: Use instanced meshes for similar objects
 
-### Mouse Controls
+#### 2. Updates
+- **Throttled Updates**: Limit to 60 FPS maximum
+- **Batch Updates**: Group multiple state changes
+- **Memory Management**: Clean up unused geometries
 
-- **Hover**: Neon glow effect on agent nodes
-- **Click**: Detailed agent information panel
-- **Drag**: Rotate the entire consensus wheel
-- **Scroll**: Zoom in/out
+#### 3. Network
+- **SSE Connection**: Maintain single persistent connection
+- **Data Compression**: Minimize payload size
+- **Connection Recovery**: Automatic reconnection on failure
 
-### Keyboard Controls
+### Integration Points
 
-- **Space**: Pause/resume streaming
-- **R**: Reset camera position
-- **F**: Focus on DAO state center
-- **A**: Toggle agent labels
+#### 1. API Endpoints
+- **GET /v1/consensus/visualization**: SSE stream for real-time data
+- **GET /v1/consensus/status**: Current consensus state
+- **POST /v1/consensus/sync**: Trigger consensus synchronization
 
-### Touch Controls
+#### 2. Soulchain Integration
+- **SOULCONS:VISUALIZED**: Log visualization generation
+- **SOULCONS:SYNC**: Log consensus synchronization events
+- **SOULCONS:INTENT**: Log intent validation events
+- **SOULCONS:PASS**: Log consensus pass events
 
-- **Tap**: Select agent node
-- **Pinch**: Zoom in/out
-- **Swipe**: Rotate consensus wheel
+#### 3. Configuration
+- **Update Interval**: 1000ms (configurable)
+- **Max Participants**: 50 (configurable)
+- **Neon Effects**: Enabled by default
+- **SSE Enabled**: True by default
 
-## Performance Optimization
+### Accessibility Features
 
-### Rendering Strategy
+#### 1. Keyboard Navigation
+- **Tab Navigation**: Focusable participant nodes
+- **Arrow Keys**: Navigate between participants
+- **Enter/Space**: Select participant for details
 
-1. **Level of Detail (LOD)**: Reduce polygon count for distant objects
-2. **Frustum Culling**: Only render visible objects
-3. **Instanced Rendering**: Batch similar geometries
-4. **Texture Compression**: Optimize texture sizes
+#### 2. Screen Reader Support
+- **ARIA Labels**: Descriptive labels for all elements
+- **Live Regions**: Announce consensus changes
+- **Status Updates**: Real-time status announcements
 
-### Memory Management
-
-1. **Object Pooling**: Reuse 3D objects
-2. **Texture Caching**: Cache frequently used textures
-3. **Geometry Merging**: Combine similar meshes
-4. **Garbage Collection**: Regular cleanup of unused resources
-
-## Animation System
-
-### Agent Animations
-
-```typescript
-// Orbital motion
-const orbitalSpeed = 0.001;
-const orbitalRadius = 5;
-
-// Hover animation
-const hoverAmplitude = 0.1;
-const hoverFrequency = 2;
-
-// Status transitions
-const transitionDuration = 0.5;
-const easingFunction = 'easeInOutCubic';
-```
-
-### Consensus Bridge Animations
-
-```typescript
-// Particle flow
-const particleCount = 100;
-const particleSpeed = 0.02;
-const particleSize = 0.05;
-
-// Bridge connection
-const connectionWidth = 0.1;
-const connectionColor = '#00f3ff';
-```
-
-## Error Handling
-
-### Network Errors
-
-- **SSE Disconnection**: Automatic reconnection with exponential backoff
-- **Data Parsing Errors**: Graceful fallback to cached data
-- **3D Rendering Errors**: Fallback to 2D visualization
-
-### Performance Errors
-
-- **Frame Rate Drops**: Reduce visual effects
-- **Memory Leaks**: Automatic cleanup and monitoring
-- **GPU Errors**: Fallback to CPU rendering
-
-## Accessibility Features
-
-### Screen Reader Support
-
-- **ARIA Labels**: Descriptive labels for all interactive elements
-- **Keyboard Navigation**: Full keyboard accessibility
-- **High Contrast Mode**: Enhanced visibility options
-
-### Visual Accessibility
-
-- **Color Blind Support**: Alternative color schemes
-- **Motion Reduction**: Respect user motion preferences
+#### 3. Visual Accessibility
+- **High Contrast**: Configurable color schemes
+- **Motion Reduction**: Respect user preferences
 - **Font Scaling**: Support for larger text sizes
 
-## Testing Strategy
+### Future Enhancements
 
-### Unit Tests
+#### 1. Advanced Visualizations
+- **3D Consensus Trees**: Hierarchical consensus structures
+- **Temporal Graphs**: Historical consensus trends
+- **Network Topology**: Participant relationship mapping
 
-```typescript
-describe('ConsensusWheel', () => {
-  it('should render agent nodes correctly', () => {
-    // Test agent node rendering
-  });
+#### 2. Interactive Features
+- **Participant Details**: Click to view detailed information
+- **Consensus History**: Timeline of past decisions
+- **Stake Management**: Visual stake allocation tools
 
-  it('should handle hover interactions', () => {
-    // Test hover effects
-  });
-
-  it('should update consensus data in real-time', () => {
-    // Test SSE integration
-  });
-});
-```
-
-### Integration Tests
-
-```typescript
-describe('Consensus Visualizer Integration', () => {
-  it('should connect to SSE endpoint', () => {
-    // Test SSE connection
-  });
-
-  it('should handle real-time updates', () => {
-    // Test data streaming
-  });
-
-  it('should maintain performance under load', () => {
-    // Test performance benchmarks
-  });
-});
-```
-
-### Visual Regression Tests
-
-- **Screenshot Comparison**: Automated visual testing
-- **Cross-browser Testing**: Ensure consistency across browsers
-- **Mobile Responsiveness**: Test on various screen sizes
-
-## Deployment Considerations
-
-### Build Optimization
-
-1. **Code Splitting**: Lazy load 3D components
-2. **Tree Shaking**: Remove unused dependencies
-3. **Asset Compression**: Optimize textures and models
-4. **CDN Integration**: Serve assets from CDN
-
-### Monitoring
-
-1. **Performance Metrics**: Frame rate, memory usage
-2. **Error Tracking**: 3D rendering errors
-3. **User Analytics**: Interaction patterns
-4. **Real-time Alerts**: System health monitoring
-
-## Future Enhancements
-
-### Planned Features
-
-1. **VR/AR Support**: Immersive visualization
-2. **Multi-chain Support**: Additional blockchain networks
-3. **Advanced Analytics**: Predictive consensus modeling
-4. **Custom Themes**: User-defined visual styles
-
-### Scalability Improvements
-
-1. **WebGL 2.0**: Enhanced graphics capabilities
-2. **Web Workers**: Background processing
-3. **Service Workers**: Offline functionality
-4. **Progressive Web App**: Native app experience
-
-## Conclusion
-
-The Phase 8 Consensus Visualizer represents a significant advancement in blockchain governance visualization. By combining cutting-edge 3D graphics with real-time consensus data, it provides an intuitive and engaging interface for monitoring decentralized decision-making processes.
-
-The system's modular architecture ensures maintainability and extensibility, while its performance optimizations guarantee smooth operation even under high load. The comprehensive testing strategy and accessibility features ensure broad usability across diverse user populations.
-
----
-
-**Document Version**: 1.0  
-**Last Updated**: July 30, 2025  
-**Next Review**: Phase 9 planning 
+#### 3. Analytics Integration
+- **Performance Metrics**: Real-time performance monitoring
+- **Consensus Analytics**: Statistical analysis of decisions
+- **Predictive Models**: AI-powered consensus predictions 

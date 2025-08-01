@@ -1,39 +1,55 @@
 {
-  "minStake": {
-    "ZEROPOINT": 100,
-    "ETH": 0.01,
-    "USDC": 10
-  },
-  "tokenWeights": {
-    "ZEROPOINT": 1.0,
-    "ETH": 0.8,
-    "USDC": 0.6
-  },
-  "lockDurations": {
-    "min": 3600,
-    "max": 86400,
-    "default": 7200
-  },
-  "rateLimiting": {
-    "maxStakesPerHour": 10,
-    "maxStakesPerDay": 100,
-    "cooldownPeriod": 300
-  },
-  "validation": {
-    "requireOwnership": true,
-    "requireMinimumAge": false,
-    "minimumAge": 0,
-    "blacklistedAddresses": []
+  "tokenGating": {
+    "minStake": 100,
+    "consensusThreshold": 0.75,
+    "timeoutSeconds": 30,
+    "retryAttempts": 3,
+    "backoffMultiplier": 1.5
   },
   "consensus": {
-    "quorumThreshold": 0.6,
-    "participationThreshold": 0.3,
-    "timeoutSeconds": 30,
+    "requiredParticipants": 3,
+    "minAgreement": 0.67,
+    "validationTimeout": 25,
+    "syncInterval": 5,
     "maxRetries": 3
   },
+  "daoState": {
+    "syncEnabled": true,
+    "syncInterval": 10,
+    "maxSyncDelay": 15,
+    "consensusRequired": true,
+    "fallbackMode": "local"
+  },
+  "zerothGate": {
+    "enabled": true,
+    "ethicalValidation": true,
+    "intentFiltering": true,
+    "maliciousPatterns": [
+      "harm",
+      "destroy",
+      "exploit",
+      "bypass",
+      "unauthorized"
+    ],
+    "blockedOperations": [
+      "system_override",
+      "privilege_escalation",
+      "data_exfiltration"
+    ]
+  },
   "logging": {
-    "logAllStakes": true,
-    "logFailedValidations": true,
-    "logConsensusEvents": true
+    "consensusEvents": true,
+    "gatingDecisions": true,
+    "syncOperations": true,
+    "zerothViolations": true,
+    "performanceMetrics": true
+  },
+  "visualization": {
+    "enabled": true,
+    "updateInterval": 1000,
+    "maxParticipants": 50,
+    "radialDisplay": true,
+    "neonEffects": true,
+    "sseEnabled": true
   }
 } 

@@ -984,14 +984,45 @@ export class AppService {
 
   // ===== PRIVATE CONSENSUS METHODS =====
 
-  private async loadGatingConfig(): Promise<any> {
+  async loadGatingConfig(): Promise<any> {
     const configPath = path.join(process.cwd(), 'src', 'config', 'gating.json');
     try {
       const configData = fs.readFileSync(configPath, 'utf8');
-      return JSON.parse(configData);
+      const config = JSON.parse(configData);
+      
+      // Transform the config to match the expected structure
+      return {
+        ...config,
+        minStake: {
+          ZEROPOINT: config.tokenGating?.minStake || 100,
+          ETH: 0.01,
+          USDC: 10
+        },
+        tokenWeights: {
+          ZEROPOINT: 1.0,
+          ETH: 0.8,
+          USDC: 0.6
+        }
+      };
     } catch (error) {
       this.logger.error('Failed to load gating config, using defaults', error);
       return {
+        tokenGating: {
+          minStake: 100,
+          consensusThreshold: 0.75,
+          timeoutSeconds: 30
+        },
+        consensus: {
+          requiredParticipants: 3,
+          minAgreement: 0.67,
+          validationTimeout: 25
+        },
+        zerothGate: {
+          enabled: true,
+          ethicalValidation: true,
+          intentFiltering: true,
+          maliciousPatterns: ['harm', 'destroy', 'exploit']
+        },
         minStake: {
           ZEROPOINT: 100,
           ETH: 0.01,
@@ -1380,6 +1411,252 @@ export class AppService {
     } catch (error) {
       this.logger.error('Scaling expansion failed', error);
       throw error;
+    }
+  }
+
+  // Phase 8: Consensus Operations & Interoperability
+  async syncConsensusWithDAOState(proposalId: string, consensusData: any): Promise<any> {
+    const startTime = Date.now();
+    const gatingConfig = await this.loadGatingConfig();
+    
+    try {
+      // Validate consensus data
+      const validation = await this.validateSourceConsensus('soulchain', consensusData);
+      if (!validation.valid) {
+        throw new Error(`Invalid consensus data: ${validation.reason}`);
+      }
+
+      // Bridge consensus to DAO state
+      const bridgeResult = await this.bridgeConsensus('soulchain', 'dao-state', consensusData);
+      
+      // Log sync operation
+      await this.logConsensusToSoulchain('SOULCONS:SYNC', {
+        proposalId,
+        bridgeHash: bridgeResult.bridgeHash,
+        timestamp: new Date(),
+        participants: consensusData.votes?.length || 0
+      });
+
+      const duration = Date.now() - startTime;
+      consensusCounter.inc({ operation: 'sync', status: 'success', chain: 'dao-state' });
+      consensusDuration.observe({ operation: 'sync', chain: 'dao-state' }, duration / 1000);
+
+      return {
+        success: true,
+        operation: 'consensus_sync',
+        proposalId,
+        bridgeHash: bridgeResult.bridgeHash,
+        duration: duration,
+        participants: consensusData.votes?.length || 0
+      };
+    } catch (error) {
+      this.logger.error(`Consensus sync failed: ${error.message}`);
+      consensusCounter.inc({ operation: 'sync', status: 'failed', chain: 'dao-state' });
+      return {
+        success: false,
+        operation: 'consensus_sync',
+        error: error.message,
+        duration: Date.now() - startTime
+      };
+    }
+  }
+
+  async validateConsensusIntent(intent: string, stakeAmount: number): Promise<any> {
+    const startTime = Date.now();
+    const gatingConfig = await this.loadGatingConfig();
+    
+    try {
+      // Validate intent is not empty
+      if (!intent || intent.trim() === '') {
+        throw new Error('Invalid intent: Intent cannot be empty');
+      }
+      
+      // Check minimum stake requirement
+      const stakeValidation = await this.checkMinimumStake({
+        tokenType: 'ZEROPOINT',
+        amount: stakeAmount,
+        lockDuration: 3600,
+        stakeId: crypto.randomUUID(),
+        userAddress: '0x' + crypto.randomBytes(20).toString('hex')
+      }, gatingConfig);
+
+      if (!stakeValidation.valid) {
+        throw new Error(`Insufficient stake: ${stakeValidation.reason}`);
+      }
+
+      // Zeroth-gate validation
+      const zerothValidation = await this.validateZerothGate(intent, gatingConfig);
+      if (!zerothValidation.passed) {
+        await this.logConsensusToSoulchain('SOULCONS:INTENT', {
+          intent,
+          validation: 'failed',
+          reason: zerothValidation.reason,
+          timestamp: new Date()
+        });
+        throw new Error(`Zeroth-gate violation: ${zerothValidation.reason}`);
+      }
+
+      // Log successful intent validation
+      await this.logConsensusToSoulchain('SOULCONS:INTENT', {
+        intent,
+        validation: 'passed',
+        stakeAmount,
+        timestamp: new Date()
+      });
+
+      const duration = Date.now() - startTime;
+      tokenGatingCounter.inc({ operation: 'intent_validation', status: 'success', token_type: 'ZEROPOINT' });
+      consensusDuration.observe({ operation: 'intent_validation', chain: 'soulchain' }, duration / 1000);
+
+      return {
+        success: true,
+        operation: 'intent_validation',
+        intent,
+        stakeAmount,
+        duration: duration,
+        zerothGate: 'passed'
+      };
+    } catch (error) {
+      this.logger.error(`Intent validation failed: ${error.message}`);
+      tokenGatingCounter.inc({ operation: 'intent_validation', status: 'failed', token_type: 'ZEROPOINT' });
+      return {
+        success: false,
+        operation: 'intent_validation',
+        error: error.message,
+        duration: Date.now() - startTime
+      };
+    }
+  }
+
+  async processConsensusPass(proposalId: string, votes: Vote[]): Promise<any> {
+    const startTime = Date.now();
+    
+    try {
+      // Calculate consensus metrics
+      const totalVotes = votes.length;
+      
+      // Handle empty votes array
+      if (totalVotes === 0) {
+        throw new Error('Consensus threshold not met: No votes provided');
+      }
+      
+      const yesVotes = votes.filter(v => v.choice === 'yes').length;
+      const consensusRatio = yesVotes / totalVotes;
+      
+      // Check if consensus threshold is met
+      const gatingConfig = await this.loadGatingConfig();
+      const threshold = gatingConfig.consensus.minAgreement;
+      
+      if (consensusRatio < threshold) {
+        throw new Error(`Consensus threshold not met: ${consensusRatio} < ${threshold}`);
+      }
+
+      // Log consensus pass
+      await this.logConsensusToSoulchain('SOULCONS:PASS', {
+        proposalId,
+        totalVotes,
+        yesVotes,
+        consensusRatio,
+        threshold,
+        timestamp: new Date()
+      });
+
+      const duration = Date.now() - startTime;
+      consensusCounter.inc({ operation: 'pass', status: 'success', chain: 'soulchain' });
+      consensusDuration.observe({ operation: 'pass', chain: 'soulchain' }, duration / 1000);
+
+      return {
+        success: true,
+        operation: 'consensus_pass',
+        proposalId,
+        totalVotes,
+        yesVotes,
+        consensusRatio,
+        threshold,
+        duration: duration
+      };
+    } catch (error) {
+      this.logger.error(`Consensus pass failed: ${error.message}`);
+      consensusCounter.inc({ operation: 'pass', status: 'failed', chain: 'soulchain' });
+      return {
+        success: false,
+        operation: 'consensus_pass',
+        error: error.message,
+        duration: Date.now() - startTime
+      };
+    }
+  }
+
+  private async validateZerothGate(intent: string, config: any): Promise<{ passed: boolean; reason?: string }> {
+    if (!config.zerothGate.enabled) {
+      return { passed: true };
+    }
+
+    const lowerIntent = intent.toLowerCase();
+    
+    // Check for malicious patterns
+    for (const pattern of config.zerothGate.maliciousPatterns) {
+      if (lowerIntent.includes(pattern.toLowerCase())) {
+        return { 
+          passed: false, 
+          reason: `Malicious pattern detected: ${pattern}` 
+        };
+      }
+    }
+
+    // Check for blocked operations
+    for (const operation of config.zerothGate.blockedOperations) {
+      if (lowerIntent.includes(operation.toLowerCase())) {
+        return { 
+          passed: false, 
+          reason: `Blocked operation detected: ${operation}` 
+        };
+      }
+    }
+
+    return { passed: true };
+  }
+
+  async getConsensusVisualizationData(): Promise<any> {
+    try {
+      // Generate mock consensus visualization data
+      const participants = Math.floor(Math.random() * 20) + 5;
+      const activeVoices = Math.floor(participants * 0.7);
+      const passiveStances = participants - activeVoices;
+      
+      const visualizationData = {
+        participants: participants,
+        activeVoices: activeVoices,
+        passiveStances: passiveStances,
+        consensusRatio: (activeVoices / participants).toFixed(2),
+        radialData: Array.from({ length: participants }, (_, i) => ({
+          id: i,
+          position: (i / participants) * 2 * Math.PI,
+          isActive: i < activeVoices,
+          stake: Math.floor(Math.random() * 1000) + 100,
+          intent: i < activeVoices ? 'support' : 'neutral'
+        })),
+        timestamp: new Date(),
+        updateInterval: 1000
+      };
+
+      // Log visualization generation
+      await this.logConsensusToSoulchain('SOULCONS:VISUALIZED', {
+        participants,
+        activeVoices,
+        timestamp: new Date()
+      });
+
+      return {
+        success: true,
+        data: visualizationData
+      };
+    } catch (error) {
+      this.logger.error(`Visualization data generation failed: ${error.message}`);
+      return {
+        success: false,
+        error: error.message
+      };
     }
   }
 }

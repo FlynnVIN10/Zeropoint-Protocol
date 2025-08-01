@@ -3,7 +3,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { IsStrongPassword, IsValidUsername, IsValidDID, IsValidIPFSCID } from '../decorators/validation.decorators.js';
+import { IsStrongPassword, IsValidUsername, IsValidDID, IsValidIPFSCID, IsStrongPasswordConstraint, IsValidUsernameConstraint, IsValidDIDConstraint, IsValidIPFSCIDConstraint } from '../decorators/validation.decorators.js';
 import { IsString, IsEmail } from 'class-validator';
 
 // Test DTOs
@@ -60,8 +60,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
   describe('Custom Validation Decorators', () => {
     describe('IsStrongPassword', () => {
       it('should validate strong passwords', () => {
-        const validator = new IsStrongPassword();
-        const constraint = new validator.constructor();
+        const constraint = new IsStrongPasswordConstraint();
         
         // Valid passwords
         expect(constraint.validate('StrongPass123!', {} as any)).toBe(true);
@@ -77,8 +76,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
       });
 
       it('should provide meaningful error message', () => {
-        const validator = new IsStrongPassword();
-        const constraint = new validator.constructor();
+        const constraint = new IsStrongPasswordConstraint();
         const message = constraint.defaultMessage({} as any);
         expect(message).toContain('Password must be at least 8 characters');
         expect(message).toContain('uppercase letter');
@@ -90,8 +88,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
 
     describe('IsValidUsername', () => {
       it('should validate usernames', () => {
-        const validator = new IsValidUsername();
-        const constraint = new validator.constructor();
+        const constraint = new IsValidUsernameConstraint();
         
         // Valid usernames
         expect(constraint.validate('john_doe', {} as any)).toBe(true);
@@ -109,8 +106,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
       });
 
       it('should provide meaningful error message', () => {
-        const validator = new IsValidUsername();
-        const constraint = new validator.constructor();
+        const constraint = new IsValidUsernameConstraint();
         const message = constraint.defaultMessage({} as any);
         expect(message).toContain('3-30 characters');
         expect(message).toContain('letters, numbers, underscores, and hyphens');
@@ -119,8 +115,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
 
     describe('IsValidDID', () => {
       it('should validate DID format', () => {
-        const validator = new IsValidDID();
-        const constraint = new validator.constructor();
+        const constraint = new IsValidDIDConstraint();
         
         // Valid DIDs
         expect(constraint.validate('did:zeropoint:user123', {} as any)).toBe(true);
@@ -135,8 +130,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
       });
 
       it('should provide meaningful error message', () => {
-        const validator = new IsValidDID();
-        const constraint = new validator.constructor();
+        const constraint = new IsValidDIDConstraint();
         const message = constraint.defaultMessage({} as any);
         expect(message).toContain('did:method:identifier');
       });
@@ -144,8 +138,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
 
     describe('IsValidIPFSCID', () => {
       it('should validate IPFS CID format', () => {
-        const validator = new IsValidIPFSCID();
-        const constraint = new validator.constructor();
+        const constraint = new IsValidIPFSCIDConstraint();
         
         // Valid CIDs
         expect(constraint.validate('QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG', {} as any)).toBe(true);
@@ -158,8 +151,7 @@ describe('Phase 4: Validation, Error Handling & Health Checks', () => {
       });
 
       it('should provide meaningful error message', () => {
-        const validator = new IsValidIPFSCID();
-        const constraint = new validator.constructor();
+        const constraint = new IsValidIPFSCIDConstraint();
         const message = constraint.defaultMessage({} as any);
         expect(message).toContain('Invalid IPFS CID format');
       });

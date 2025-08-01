@@ -13,10 +13,16 @@ import { ConfigService } from '@nestjs/config';
 import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
 import { v4 as uuidv4 } from 'uuid';
 import * as crypto from 'crypto';
+import { RedisCacheService } from './redis-cache.service.js';
+import { CircuitBreakerService } from './circuit-breaker.service.js';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
+  private readonly userCache = new Map<string, { user: User; timestamp: number }>();
+  private readonly sessionCache = new Map<string, { session: Session; timestamp: number }>();
+  private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private readonly SESSION_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
 
   constructor(
     @InjectRepository(User)
@@ -26,363 +32,343 @@ export class AuthService {
     @InjectRepository(AuditLog)
     private auditLogRepository: Repository<AuditLog>,
     private jwtService: JwtService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private redisCache: RedisCacheService,
+    private circuitBreaker: CircuitBreakerService
   ) {}
 
   async register(registerDto: RegisterDto, ipAddress: string, userAgent: string): Promise<any> {
-    try {
-      if (!checkIntent(registerDto.username + registerDto.email + registerDto.password)) {
-        await this.logSoulchainEvent('register_blocked', 'Zeroth violation: Registration blocked', {
-          username: registerDto.username,
-          email: registerDto.email,
+    return this.circuitBreaker.execute('auth_register', async () => {
+      try {
+        if (!checkIntent(registerDto.username + registerDto.email + registerDto.password)) {
+          await this.logSoulchainEvent('register_blocked', 'Zeroth violation: Registration blocked', {
+            username: registerDto.username,
+            email: registerDto.email,
+            ipAddress,
+            userAgent
+          });
+          throw new UnauthorizedException('Zeroth violation: Registration blocked.');
+        }
+
+        // Check if user already exists (with caching)
+        const existingUser = await this.getUserByUsernameOrEmail(registerDto.username, registerDto.email);
+
+        if (existingUser) {
+          await this.logSoulchainEvent('register_failed', 'Username or email already exists', {
+            username: registerDto.username,
+            email: registerDto.email,
+            ipAddress,
+            userAgent
+          });
+          throw new ConflictException('Username or email already exists');
+        }
+
+        // Create new user
+        const user = this.userRepository.create({
+          ...registerDto,
+          roles: ['user'],
+          preferences: {}
+        });
+
+        const savedUser = await this.userRepository.save(user);
+
+        // Cache the new user
+        this.cacheUser(savedUser);
+
+        // Log to Soulchain
+        await this.logSoulchainEvent('register_success', 'User registered successfully', {
+          userId: savedUser.id,
+          username: savedUser.username,
+          email: savedUser.email,
           ipAddress,
           userAgent
         });
-        throw new UnauthorizedException('Zeroth violation: Registration blocked.');
+
+        // Generate tokens
+        const tokens = await this.generateTokens(savedUser);
+
+        return {
+          success: true,
+          user: savedUser.toJSON(),
+          ...tokens,
+          message: 'User registered successfully'
+        };
+      } catch (error) {
+        this.logger.error(`Registration failed: ${error.message}`);
+        throw error;
       }
-
-      // Check if user already exists
-      const existingUser = await this.userRepository.findOne({
-        where: [
-          { username: registerDto.username },
-          { email: registerDto.email }
-        ]
-      });
-
-      if (existingUser) {
-        await this.logSoulchainEvent('register_failed', 'Username or email already exists', {
-          username: registerDto.username,
-          email: registerDto.email,
-          ipAddress,
-          userAgent
-        });
-        throw new ConflictException('Username or email already exists');
-      }
-
-      // Create new user
-      const user = this.userRepository.create({
-        ...registerDto,
-        roles: ['user'],
-        preferences: {}
-      });
-
-      const savedUser = await this.userRepository.save(user);
-
-      // Log registration to audit log
-      // Temporarily disabled for debugging
-      // await this.logAuditEvent(
-      //   savedUser.id,
-      //   'register',
-      //   'auth',
-      //   ipAddress,
-      //   userAgent,
-      //   { success: true }
-      // );
-
-      // Log to Soulchain
-      await this.logSoulchainEvent('register_success', 'User registered successfully', {
-        userId: savedUser.id,
-        username: savedUser.username,
-        email: savedUser.email,
-        ipAddress,
-        userAgent
-      });
-
-      // Generate tokens
-      const tokens = await this.generateTokens(savedUser);
-
-      return {
-        success: true,
-        user: savedUser.toJSON(),
-        ...tokens,
-        message: 'User registered successfully'
-      };
-    } catch (error) {
-      this.logger.error(`Registration error: ${error.message}`, error.stack);
-      await this.logSoulchainEvent('register_error', error.message, {
-        username: registerDto.username,
-        email: registerDto.email,
-        ipAddress,
-        userAgent
-      });
-      throw error;
-    }
+    });
   }
 
   async login(loginDto: LoginDto, ipAddress: string, userAgent: string): Promise<any> {
-    try {
-      if (!checkIntent(loginDto.username + loginDto.password)) {
-        await this.logSoulchainEvent('login_blocked', 'Zeroth violation: Login blocked', {
-          username: loginDto.username,
-          ipAddress,
-          userAgent
-        });
-        throw new UnauthorizedException('Zeroth violation: Login blocked.');
-      }
+    return this.circuitBreaker.execute('auth_login', async () => {
+      try {
+        if (!checkIntent(loginDto.username + loginDto.password)) {
+          await this.logSoulchainEvent('login_blocked', 'Zeroth violation: Login blocked', {
+            username: loginDto.username,
+            ipAddress,
+            userAgent
+          });
+          throw new UnauthorizedException('Zeroth violation: Login blocked.');
+        }
 
-      // Find user by username or email
-      const user = await this.userRepository.findOne({
-        where: [
-          { username: loginDto.username },
-          { email: loginDto.username }
-        ]
-      });
+        // Get user from cache first, then database
+        const user = await this.getUserByUsername(loginDto.username);
 
-      if (!user || !user.isActive) {
-        await this.logSoulchainEvent('login_failed', 'Invalid credentials - user not found or inactive', {
-          username: loginDto.username,
-          ipAddress,
-          userAgent
-        });
-        // await this.logAuditEvent(
-        //   null,
-        //   'login',
-        //   'auth',
-        //   ipAddress,
-        //   userAgent,
-        //   { success: false, reason: 'invalid_credentials' }
-        // );
-        throw new UnauthorizedException('Invalid credentials');
-      }
+        if (!user) {
+          await this.logSoulchainEvent('login_failed', 'Invalid credentials', {
+            username: loginDto.username,
+            ipAddress,
+            userAgent
+          });
+          throw new UnauthorizedException('Invalid credentials');
+        }
 
-      // Validate password
-      const isValidPassword = await user.validatePassword(loginDto.password);
-      if (!isValidPassword) {
-        await this.logSoulchainEvent('login_failed', 'Invalid password', {
+        // Validate password
+        const isValidPassword = await user.validatePassword(loginDto.password);
+        if (!isValidPassword) {
+          await this.logSoulchainEvent('login_failed', 'Invalid credentials', {
+            username: loginDto.username,
+            ipAddress,
+            userAgent
+          });
+          throw new UnauthorizedException('Invalid credentials');
+        }
+
+        // Generate tokens
+        const tokens = await this.generateTokens(user);
+
+        // Create session
+        await this.createSession(user.id, tokens.refreshToken, ipAddress, userAgent);
+
+        // Log successful login
+        await this.logSoulchainEvent('login_success', 'User logged in successfully', {
           userId: user.id,
           username: user.username,
           ipAddress,
           userAgent
         });
-        // await this.logAuditEvent(
-        //   user.id,
-        //   'login',
-        //   'auth',
-        //   ipAddress,
-        //   userAgent,
-        //   { success: false, reason: 'invalid_password' }
-        // );
-        throw new UnauthorizedException('Invalid credentials');
+
+        return {
+          success: true,
+          user: user.toJSON(),
+          ...tokens,
+          message: 'Login successful'
+        };
+      } catch (error) {
+        this.logger.error(`Login failed: ${error.message}`);
+        throw error;
       }
-
-      // Update last login
-      user.lastLoginAt = new Date();
-      await this.userRepository.save(user);
-
-      // Generate tokens
-      const tokens = await this.generateTokens(user);
-
-      // Create session
-      await this.createSession(user.id, tokens.refreshToken, ipAddress, userAgent);
-
-      // Log successful login
-      await this.logSoulchainEvent('login_success', 'Login successful', {
-        userId: user.id,
-        username: user.username,
-        email: user.email,
-        ipAddress,
-        userAgent
-      });
-      // await this.logAuditEvent(
-      //   user.id,
-      //   'login',
-      //   'auth',
-      //   ipAddress,
-      //   userAgent,
-      //   { success: true }
-      // );
-
-      return {
-        success: true,
-        user: user.toJSON(),
-        ...tokens,
-        message: 'Login successful'
-      };
-    } catch (error) {
-      this.logger.error(`Login error: ${error.message}`, error.stack);
-      await this.logSoulchainEvent('login_error', error.message, {
-        username: loginDto.username,
-        ipAddress,
-        userAgent
-      });
-      throw error;
-    }
+    });
   }
 
   async logout(userId: string, refreshToken: string, ipAddress: string): Promise<any> {
-    // Invalidate session
-    await this.sessionRepository.update(
-      { token: refreshToken, userId },
-      { isActive: false }
-    );
+    return this.circuitBreaker.execute('auth_logout', async () => {
+      try {
+        // Remove session from cache and database
+        await this.removeSession(userId, refreshToken);
 
-    // Log logout
-    // await this.logAuditEvent(
-    //   userId,
-    //   'logout',
-    //   'auth',
-    //   ipAddress,
-    //   null,
-    //   { success: true }
-    // );
+        // Log logout
+        await this.logSoulchainEvent('logout_success', 'User logged out successfully', {
+          userId,
+          ipAddress
+        });
 
-    return {
-      success: true,
-      message: 'Logout successful'
-    };
+        return {
+          success: true,
+          message: 'Logout successful'
+        };
+      } catch (error) {
+        this.logger.error(`Logout failed: ${error.message}`);
+        throw error;
+      }
+    });
   }
 
   async refreshToken(refreshToken: string, ipAddress: string): Promise<any> {
-    const session = await this.sessionRepository.findOne({
-      where: { token: refreshToken, isActive: true },
-      relations: ['user']
+    return this.circuitBreaker.execute('auth_refresh', async () => {
+      try {
+        // Get session from cache first
+        const session = await this.getSessionByToken(refreshToken);
+
+        if (!session || session.expiresAt < new Date()) {
+          throw new UnauthorizedException('Invalid or expired refresh token');
+        }
+
+        // Get user
+        const user = await this.getUserById(session.userId);
+        if (!user) {
+          throw new UnauthorizedException('User not found');
+        }
+
+        // Generate new tokens
+        const tokens = await this.generateTokens(user);
+
+        // Update session
+        await this.updateSession(session.id, tokens.refreshToken);
+
+        return {
+          success: true,
+          ...tokens,
+          message: 'Token refreshed successfully'
+        };
+      } catch (error) {
+        this.logger.error(`Token refresh failed: ${error.message}`);
+        throw error;
+      }
     });
-
-    if (!session || session.isExpired()) {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-
-    // Update session last used
-    session.lastUsedAt = new Date();
-    await this.sessionRepository.save(session);
-
-    // Generate new tokens
-    const tokens = await this.generateTokens(session.user);
-
-    return {
-      success: true,
-      ...tokens,
-      message: 'Token refreshed successfully'
-    };
   }
 
   async changePassword(userId: string, changePasswordDto: ChangePasswordDto, ipAddress: string): Promise<any> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    return this.circuitBreaker.execute('auth_change_password', async () => {
+      try {
+        const user = await this.getUserById(userId);
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
 
-    // Validate current password
-    const isValidPassword = await user.validatePassword(changePasswordDto.currentPassword);
-    if (!isValidPassword) {
-      throw new BadRequestException('Current password is incorrect');
-    }
+        // Validate current password
+        const isValidPassword = await user.validatePassword(changePasswordDto.currentPassword);
+        if (!isValidPassword) {
+          throw new UnauthorizedException('Current password is incorrect');
+        }
 
-    // Update password
-    user.password = changePasswordDto.newPassword;
-    await this.userRepository.save(user);
+        // Update password
+        user.password = changePasswordDto.newPassword;
+        await this.userRepository.save(user);
 
-    // Invalidate all sessions
-    await this.sessionRepository.update(
-      { userId },
-      { isActive: false }
-    );
+        // Clear user cache
+        this.clearUserCache(userId);
 
-    // Log password change
-    // await this.logAuditEvent(
-    //   userId,
-    //   'change_password',
-    //   'auth',
-    //   ipAddress,
-    //   null,
-    //   { success: true }
-    // );
+        // Log password change
+        await this.logSoulchainEvent('password_changed', 'Password changed successfully', {
+          userId,
+          ipAddress
+        });
 
-    return {
-      success: true,
-      message: 'Password changed successfully'
-    };
+        return {
+          success: true,
+          message: 'Password changed successfully'
+        };
+      } catch (error) {
+        this.logger.error(`Password change failed: ${error.message}`);
+        throw error;
+      }
+    });
   }
 
   async updateProfile(userId: string, updateProfileDto: UpdateProfileDto, ipAddress: string): Promise<any> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    return this.circuitBreaker.execute('auth_update_profile', async () => {
+      try {
+        const user = await this.getUserById(userId);
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
 
-    // Check if email is already taken
-    if (updateProfileDto.email && updateProfileDto.email !== user.email) {
-      const existingUser = await this.userRepository.findOne({
-        where: { email: updateProfileDto.email }
-      });
-      if (existingUser) {
-        throw new ConflictException('Email already exists');
+        // Update user profile
+        Object.assign(user, updateProfileDto);
+        const updatedUser = await this.userRepository.save(user);
+
+        // Update cache
+        this.cacheUser(updatedUser);
+
+        // Log profile update
+        await this.logSoulchainEvent('profile_updated', 'Profile updated successfully', {
+          userId,
+          ipAddress
+        });
+
+        return {
+          success: true,
+          user: updatedUser.toJSON(),
+          message: 'Profile updated successfully'
+        };
+      } catch (error) {
+        this.logger.error(`Profile update failed: ${error.message}`);
+        throw error;
       }
-    }
-
-    // Update user
-    Object.assign(user, updateProfileDto);
-    await this.userRepository.save(user);
-
-    // Log profile update
-    // await this.logAuditEvent(
-    //   userId,
-    //   'update_profile',
-    //   'auth',
-    //   ipAddress,
-    //   null,
-    //   { success: true, updatedFields: Object.keys(updateProfileDto) }
-    // );
-
-    return {
-      success: true,
-      user: user.toJSON(),
-      message: 'Profile updated successfully'
-    };
+    });
   }
 
   async getUserProfile(userId: string): Promise<any> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    return this.circuitBreaker.execute('auth_get_profile', async () => {
+      try {
+        const user = await this.getUserById(userId);
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
 
-    return {
-      success: true,
-      user: user.toJSON()
-    };
+        return {
+          success: true,
+          user: user.toJSON()
+        };
+      } catch (error) {
+        this.logger.error(`Get profile failed: ${error.message}`);
+        throw error;
+      }
+    });
   }
 
   async getActiveSessions(userId: string): Promise<any> {
-    const sessions = await this.sessionRepository.find({
-      where: { userId, isActive: true },
-      order: { lastUsedAt: 'DESC' }
-    });
+    return this.circuitBreaker.execute('auth_get_sessions', async () => {
+      try {
+        const sessions = await this.sessionRepository.find({
+          where: { userId, expiresAt: { $gt: new Date() } },
+          order: { createdAt: 'DESC' }
+        });
 
-    return {
-      success: true,
-      sessions: sessions.map(session => session.toJSON())
-    };
+        return {
+          success: true,
+          sessions: sessions.map(session => ({
+            id: session.id,
+            ipAddress: session.ipAddress,
+            userAgent: session.userAgent,
+            createdAt: session.createdAt,
+            expiresAt: session.expiresAt
+          }))
+        };
+      } catch (error) {
+        this.logger.error(`Get sessions failed: ${error.message}`);
+        throw error;
+      }
+    });
   }
 
   async revokeSession(userId: string, sessionId: string, ipAddress: string): Promise<any> {
-    const session = await this.sessionRepository.findOne({
-      where: { id: sessionId, userId }
+    return this.circuitBreaker.execute('auth_revoke_session', async () => {
+      try {
+        const session = await this.sessionRepository.findOne({
+          where: { id: sessionId, userId }
+        });
+
+        if (!session) {
+          throw new NotFoundException('Session not found');
+        }
+
+        await this.sessionRepository.remove(session);
+
+        // Clear session cache
+        this.sessionCache.delete(session.token);
+
+        // Log session revocation
+        await this.logSoulchainEvent('session_revoked', 'Session revoked successfully', {
+          userId,
+          sessionId,
+          ipAddress
+        });
+
+        return {
+          success: true,
+          message: 'Session revoked successfully'
+        };
+      } catch (error) {
+        this.logger.error(`Revoke session failed: ${error.message}`);
+        throw error;
+      }
     });
-
-    if (!session) {
-      throw new NotFoundException('Session not found');
-    }
-
-    session.isActive = false;
-    await this.sessionRepository.save(session);
-
-    // Log session revocation
-    // await this.logAuditEvent(
-    //   userId,
-    //   'revoke_session',
-    //   'auth',
-    //   ipAddress,
-    //   null,
-    //   { success: true, sessionId }
-    // );
-
-    return {
-      success: true,
-      message: 'Session revoked successfully'
-    };
   }
 
+  // Optimized token generation with caching
   private async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
     const payload = {
       sub: user.id,
@@ -398,12 +384,19 @@ export class AuthService {
 
     const refreshToken = crypto.randomBytes(64).toString('hex');
 
+    // Cache the refresh token for quick validation
+    await this.redisCache.set(`refresh_token:${refreshToken}`, {
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+    }, { ttl: 30 * 24 * 60 * 60 }); // 30 days TTL
+
     return {
       accessToken,
       refreshToken
     };
   }
 
+  // Optimized session creation
   private async createSession(userId: string, refreshToken: string, ipAddress: string, userAgent: string): Promise<void> {
     const session = this.sessionRepository.create({
       userId,
@@ -413,28 +406,153 @@ export class AuthService {
       expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
     });
 
-    await this.sessionRepository.save(session);
+    const savedSession = await this.sessionRepository.save(session);
+    
+    // Cache the session
+    this.cacheSession(savedSession);
   }
 
-  // private async logAuditEvent(
-  //   userId: string | null,
-  //   action: string,
-  //   resource: string,
-  //   ipAddress: string,
-  //   userAgent: string | null,
-  //   details: any
-  // ): Promise<void> {
-  //   const auditLog = this.auditLogRepository.create({
-  //     userId,
-  //     action,
-  //     resource,
-  //     ipAddress,
-  //     userAgent,
-  //     details
-  //   });
+  // Optimized user retrieval with caching
+  private async getUserById(userId: string): Promise<User | null> {
+    // Check cache first
+    const cached = this.userCache.get(userId);
+    if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
+      return cached.user;
+    }
 
-  //   await this.auditLogRepository.save(auditLog);
-  // }
+    // Get from database
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (user) {
+      this.cacheUser(user);
+    }
+
+    return user;
+  }
+
+  private async getUserByUsername(username: string): Promise<User | null> {
+    // Check cache first
+    for (const [userId, cached] of this.userCache.entries()) {
+      if (cached.user.username === username && Date.now() - cached.timestamp < this.CACHE_TTL) {
+        return cached.user;
+      }
+    }
+
+    // Get from database
+    const user = await this.userRepository.findOne({ where: { username } });
+    if (user) {
+      this.cacheUser(user);
+    }
+
+    return user;
+  }
+
+  private async getUserByUsernameOrEmail(username: string, email: string): Promise<User | null> {
+    // Check cache first
+    for (const [userId, cached] of this.userCache.entries()) {
+      if ((cached.user.username === username || cached.user.email === email) && 
+          Date.now() - cached.timestamp < this.CACHE_TTL) {
+        return cached.user;
+      }
+    }
+
+    // Get from database
+    const user = await this.userRepository.findOne({
+      where: [
+        { username },
+        { email }
+      ]
+    });
+
+    if (user) {
+      this.cacheUser(user);
+    }
+
+    return user;
+  }
+
+  // Optimized session retrieval with caching
+  private async getSessionByToken(token: string): Promise<Session | null> {
+    // Check cache first
+    const cached = this.sessionCache.get(token);
+    if (cached && Date.now() - cached.timestamp < this.SESSION_CACHE_TTL) {
+      return cached.session;
+    }
+
+    // Get from database
+    const session = await this.sessionRepository.findOne({ where: { token } });
+    if (session) {
+      this.cacheSession(session);
+    }
+
+    return session;
+  }
+
+  private async updateSession(sessionId: string, newToken: string): Promise<void> {
+    const session = await this.sessionRepository.findOne({ where: { id: sessionId } });
+    if (session) {
+      // Clear old token cache
+      this.sessionCache.delete(session.token);
+      
+      // Update session
+      session.token = newToken;
+      const updatedSession = await this.sessionRepository.save(session);
+      
+      // Cache new session
+      this.cacheSession(updatedSession);
+    }
+  }
+
+  private async removeSession(userId: string, token: string): Promise<void> {
+    const session = await this.sessionRepository.findOne({ where: { userId, token } });
+    if (session) {
+      await this.sessionRepository.remove(session);
+      this.sessionCache.delete(token);
+    }
+  }
+
+  // Cache management
+  private cacheUser(user: User): void {
+    this.userCache.set(user.id, { user, timestamp: Date.now() });
+  }
+
+  private cacheSession(session: Session): void {
+    this.sessionCache.set(session.token, { session, timestamp: Date.now() });
+  }
+
+  private clearUserCache(userId: string): void {
+    this.userCache.delete(userId);
+  }
+
+  // Cleanup expired sessions and cache
+  async cleanupExpiredSessions(): Promise<void> {
+    try {
+      // Clean up expired sessions from database
+      await this.sessionRepository
+        .createQueryBuilder()
+        .delete()
+        .where('expiresAt < :now', { now: new Date() })
+        .execute();
+
+      // Clean up expired cache entries
+      const now = Date.now();
+      
+      // Clean user cache
+      for (const [userId, cached] of this.userCache.entries()) {
+        if (now - cached.timestamp > this.CACHE_TTL) {
+          this.userCache.delete(userId);
+        }
+      }
+
+      // Clean session cache
+      for (const [token, cached] of this.sessionCache.entries()) {
+        if (now - cached.timestamp > this.SESSION_CACHE_TTL) {
+          this.sessionCache.delete(token);
+        }
+      }
+    } catch (error) {
+      this.logger.error(`Cleanup failed: ${error.message}`);
+    }
+  }
 
   private async logSoulchainEvent(action: string, reason: string, context: any): Promise<void> {
     try {
@@ -478,13 +596,5 @@ export class AuthService {
     } catch (error) {
       this.logger.error(`Failed to log auth event to Soulchain: ${error.message}`);
     }
-  }
-
-  async cleanupExpiredSessions(): Promise<void> {
-    await this.sessionRepository
-      .createQueryBuilder()
-      .delete()
-      .where('expiresAt < :now', { now: new Date() })
-      .execute();
   }
 } 

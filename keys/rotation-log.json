@@ -14,5 +14,29 @@
     "timestamp": "2025-08-01T06:20:04.798Z",
     "reason": "test_rotation",
     "soulchainHash": "2a385fc88f38edfa4bf154eba14f9d5fe18e079c829da9b6dbdcc77f254c1a3e"
+  },
+  {
+    "id": "965c66cb-f200-4119-9faa-8b1c11223290",
+    "oldKeyId": "522e4c4e-1aca-4242-a6b8-acbe7677976f",
+    "newKeyId": "b705b76e-3c39-4878-9b3e-5485081620fd",
+    "timestamp": "2025-08-01T17:11:05.499Z",
+    "reason": "test_rotation",
+    "soulchainHash": "26c7df8bf266cec3ffb319e5f31084404f2e5d59342303ff9fdf03921899ead2"
+  },
+  {
+    "id": "8dae0991-317a-4ad7-b1ca-39ea3e025df6",
+    "oldKeyId": "080e78df-632f-41a8-99fa-0babf5f4cd5f",
+    "newKeyId": "91bb72a3-435c-4cd3-b0d1-4993033e520c",
+    "timestamp": "2025-08-01T17:19:56.316Z",
+    "reason": "test_rotation",
+    "soulchainHash": "4cdf0ce43cad62ace0ace1a033733e0babe58fd0e16ad0f1c2281611c1d1ef1d"
+  },
+  {
+    "id": "113dbd51-2494-409c-a63c-bf22ac51b241",
+    "oldKeyId": "2dd773e7-337f-400d-8ff0-f3574ba0292b",
+    "newKeyId": "c718502f-257e-4c48-a744-ba0ca4971305",
+    "timestamp": "2025-08-01T17:28:04.184Z",
+    "reason": "test_rotation",
+    "soulchainHash": "becbf1695c9b81fec253c75a583f2027784c50379a066c84108fd12697e146cf"
   }
 ]

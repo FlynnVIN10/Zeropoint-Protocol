@@ -25,8 +25,13 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
 import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
 import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
 import { SecurityLoggingInterceptor } from './interceptors/security-logging.interceptor.js';
+import { SecurityMiddleware } from './middleware/security.middleware.js';
 import { KeyRotationService } from './services/key-rotation.service.js';
-import { PerformanceOptimizerService } from './services/performance-optimizer.service';
+import { PerformanceOptimizerService } from './services/performance-optimizer.service.js';
+import { RedisCacheService } from './services/redis-cache.service.js';
+import { ConnectionPoolService } from './services/connection-pool.service.js';
+import { CircuitBreakerService } from './services/circuit-breaker.service.js';
+import { AuthService } from './services/auth.service.js';
 
 @Module({
   imports: [
@@ -101,8 +106,13 @@ import { PerformanceOptimizerService } from './services/performance-optimizer.se
     JwtStrategy, 
     EnhancedPetalsService,
     ServiceOrchestrator,
+    SecurityMiddleware,
     KeyRotationService,
     PerformanceOptimizerService,
+    RedisCacheService,
+    ConnectionPoolService,
+    CircuitBreakerService,
+    AuthService,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

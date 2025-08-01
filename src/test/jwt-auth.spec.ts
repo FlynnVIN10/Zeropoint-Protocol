@@ -2,6 +2,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { JwtStrategy, JwtPayload } from '../strategies/jwt.strategy.js';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
 import { AuthService } from '../services/auth.service.js';
@@ -23,7 +24,12 @@ describe('JWT Authentication System', () => {
   let configService: ConfigService;
 
   const mockConfigService = {
-    get: jest.fn()
+    get: jest.fn((key: string) => {
+      if (key === 'JWT_SECRET') {
+        return 'test-jwt-secret';
+      }
+      return undefined;
+    })
   };
 
   const mockUserRepository = {
@@ -90,7 +96,7 @@ describe('JWT Authentication System', () => {
           useValue: mockAuditLogRepository,
         },
         {
-          provide: 'JwtService',
+          provide: JwtService,
           useValue: mockJwtService,
         },
       ],
@@ -284,19 +290,20 @@ describe('JWT Authentication System', () => {
     });
   });
 
-  describe('AuthService', () => {
-    const registerDto = {
-      username: 'newuser',
-      email: 'newuser@example.com',
-      password: 'password123',
-      firstName: 'New',
-      lastName: 'User'
-    };
+  const registerDto = {
+    username: 'newuser',
+    email: 'newuser@example.com',
+    password: 'password123',
+    firstName: 'New',
+    lastName: 'User'
+  };
 
-    const loginDto = {
-      username: 'testuser',
-      password: 'password123'
-    };
+  const loginDto = {
+    username: 'testuser',
+    password: 'password123'
+  };
+
+  describe('AuthService', () => {
 
     it('should register a new user successfully', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);

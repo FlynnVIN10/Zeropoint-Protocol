@@ -1,75 +1,183 @@
-# Zeropoint Protocol Corporate Website
+# Zeropoint Protocol
 
-This is the corporate website for Zeropoint Protocol, built with Docusaurus.
+A next-generation agentic AI platform with ethical safeguards, multi-agent consensus, and real-time telemetry.
 
-## Deployment
+## Overview
 
-This website is deployed on **Cloudflare Pages** at https://zeropointprotocol.ai
+The Zeropoint Protocol represents a new paradigm in AI safety and ethics. It's not just a technical framework - it's a comprehensive approach to ensuring AI serves humanity safely and beneficially. Our protocol combines Advanced AI Technology, Ethical Safeguards, Human Oversight, Transparency, and Adaptive Learning.
 
-### Deployment Configuration
-- **Platform**: Cloudflare Pages
-- **Framework**: Docusaurus
-- **Build Command**: `npm install && npm run build`
-- **Output Directory**: `build`
-- **Environment**: Production
+## Core Features
 
-## Development
+### 🤖 **Multi-Agent Consensus System**
+- **Synthiant Agents**: Specialized AI agents with ethical constraints
+- **Consensus Validation**: Multi-agent validation before execution
+- **Real-time Monitoring**: Continuous oversight and safety checks
+
+### 🛡️ **Ethical AI Framework**
+- **Zeroth-gate Validation**: Fundamental ethical filter for all operations
+- **Harm Prevention**: Built-in safeguards against harmful outcomes
+- **Transparency**: Full audit trails and explainable AI decisions
+
+### 📊 **Advanced Telemetry & Monitoring**
+- **Soulchain Integration**: Immutable telemetry and consensus logging
+- **Real-time Metrics**: Performance monitoring and health checks
+- **Security Logging**: Comprehensive security event tracking
+
+### 🔧 **Developer Tools**
+- **RESTful API**: Complete API for integration and development
+- **WebSocket Support**: Real-time communication and updates
+- **Authentication**: OAuth 2.0 and JWT-based security
+
+## Quick Start
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL 14+
+- Redis (optional, falls back to in-memory cache)
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/FlynnVIN10/Zeropoint-Protocol.git
+cd Zeropoint-Protocol
+
 # Install dependencies
 npm install
 
-# Start development server
-npm start
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
 
-# Build for production
+# Start the database (if using Docker)
+docker-compose up -d postgres
+
+# Run migrations
+npm run migration:run
+
+# Start the development server
+npm run start:dev
+```
+
+### API Endpoints
+
+#### Health & Status
+- `GET /v1/health` - System health check
+- `GET /v1/health/detailed` - Detailed health information
+- `GET /v1/consensus/status` - Consensus system status
+
+#### AI Operations
+- `POST /v1/ui/submit` - Submit prompts for AI processing
+- `GET /v1/chat/stream` - Real-time chat stream (SSE)
+- `POST /v1/chat/send` - Send chat messages
+
+#### Agent Management
+- `GET /v1/ui/agents` - Get agent statistics
+- `POST /v1/agent-states` - Update agent states
+- `GET /v1/agent-states/active/list` - List active agents
+
+#### Telemetry
+- `POST /v1/soulchain/telemetry` - Submit telemetry data
+- `GET /v1/soulchain/status` - Telemetry system status
+
+## Architecture
+
+### Core Components
+
+```
+src/
+├── controllers/          # API endpoints and request handling
+├── services/            # Business logic and core functionality
+├── guards/              # Authentication and authorization
+├── decorators/          # Custom decorators and metadata
+├── test/                # Test suites and validation
+└── visualizer/          # UE5 integration and visualization
+```
+
+### Key Services
+
+- **AppService**: Core application logic and consensus management
+- **AgentStateService**: Multi-agent state management
+- **ChatController**: Real-time chat functionality
+- **UIController**: Frontend integration endpoints
+- **SecurityMiddleware**: Comprehensive security monitoring
+
+## Development
+
+### Running Tests
+```bash
+# Run all tests
+npm test
+
+# Run specific test suites
+npm run test:unit
+npm run test:integration
+npm run test:e2e
+```
+
+### Code Quality
+```bash
+# Lint code
+npm run lint
+
+# Format code
+npm run format
+
+# Type checking
+npm run type-check
+```
+
+### Building for Production
+```bash
+# Build the application
 npm run build
 
-# Serve production build locally
-npm run serve
+# Start production server
+npm run start:prod
 ```
 
-## Status Synchronization
+## Security
 
-The website automatically syncs deployment status from the main project repository via the `scripts/sync-status.js` script, which runs before each build.
+The Zeropoint Protocol implements multiple layers of security:
 
-## Pages
-
-- **Home**: Overview and mission statement
-- **Technology**: AI features and capabilities
-- **Use Cases**: Value propositions and applications
-- **Status**: Current system status and deployment progress
-- **Legal**: Company information and licensing
-- **Contact**: Contact information and support
-
-## Build Process
-
-The website automatically:
-1. Syncs status from the main project's `DEPLOYMENT_STATUS.md`
-2. Builds the static site with Docusaurus
-3. Deploys to Cloudflare Pages
-
-## Custom Domain
-
-The website is accessible at:
-- **Primary**: https://zeropointprotocol.ai
-- **www**: https://www.zeropointprotocol.ai
-
-SSL/TLS is configured with Full (strict) encryption and Always Use HTTPS enabled.
-
-## Repository Structure
-
-```
-zeropointprotocol/
-├── src/
-│   ├── pages/           # Main website pages
-│   └── theme/           # Docusaurus theme customization
-├── docs/                # Documentation pages
-├── static/              # Static assets
-├── scripts/             # Build scripts
-└── docusaurus.config.js # Docusaurus configuration
-```
+- **OAuth 2.0 Authentication**: Secure user authentication
+- **JWT Tokens**: Stateless session management
+- **Rate Limiting**: Protection against abuse
+- **Input Validation**: Comprehensive request validation
+- **Security Logging**: All security events logged to Soulchain
+- **CORS Protection**: Cross-origin request security
 
 ## Contributing
 
-This website is part of the Zeropoint Protocol project. For contribution guidelines, see the main project repository.
+This project is proprietary software. All contributions require a signed Contributor License Agreement (CLA). See `CLA.md` for details.
+
+### Development Setup
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for new functionality
+5. Ensure all tests pass
+6. Submit a pull request
+
+## License
+
+This project is proprietary software. See `LICENSE.md` for full details.
+
+## Support
+
+For support and questions:
+- **Email**: support@zeropointprotocol.ai
+- **Documentation**: https://zeropointprotocol.ai/docs
+- **Status**: https://zeropointprotocol.ai/status
+
+## Status
+
+Current deployment status and system health are available at:
+- **Dashboard**: https://zeropointprotocol.ai/Dashboard
+- **API Health**: `/v1/health`
+- **Consensus Status**: `/v1/consensus/status`
+
+---
+
+**Zeropoint Protocol** - Advancing AI safety through ethical consensus.

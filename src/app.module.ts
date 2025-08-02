@@ -6,7 +6,7 @@ import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
 import { AuthController } from './controllers/auth.controller.js';
-import { AuthService } from './services/auth.service.js';
+// import { AuthService } from './services/auth.service.js';
 import { HealthController } from './controllers/health.controller.js';
 import { AgentStateController } from './controllers/agent-state.controller.js';
 import { AgentStateService } from './services/agent-state.service.js';
@@ -18,22 +18,21 @@ import { Session } from './entities/session.entity.js';
 import { AuditLog } from './entities/audit-log.entity.js';
 import { AgentState } from './entities/agent-state.entity.js';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './strategies/jwt.strategy.js';
+// import { JwtStrategy } from './strategies/jwt.strategy.js';
 import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
-import { OAuthAuthGuard } from './guards/oauth-auth.guard.js';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CustomThrottlerGuard } from './guards/throttler.guard.js';
 import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
 import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
 import { SecurityLoggingInterceptor } from './interceptors/security-logging.interceptor.js';
-import { SecurityMiddleware } from './middleware/security.middleware.js';
-import { KeyRotationService } from './services/key-rotation.service.js';
-import { PerformanceOptimizerService } from './services/performance-optimizer.service.js';
-import { RedisCacheService } from './services/redis-cache.service.js';
-import { ConnectionPoolService } from './services/connection-pool.service.js';
-import { CircuitBreakerService } from './services/circuit-breaker.service.js';
-import { OAuthService } from './services/oauth.service.js';
-import { OAuthController } from './controllers/oauth.controller.js';
+// import { SecurityMiddleware } from './middleware/security.middleware.js';
+// import { KeyRotationService } from './services/key-rotation.service.js';
+// import { PerformanceOptimizerService } from './services/performance-optimizer.service.js';
+// import { RedisCacheService } from './services/redis-cache.service.js';
+// import { ConnectionPoolService } from './services/connection-pool.service.js';
+// import { CircuitBreakerService } from './services/circuit-breaker.service.js';
+// import { OAuthService } from './services/oauth.service.js';
+// import { OAuthController } from './controllers/oauth.controller.js';
 import { UIController } from './controllers/ui.controller.js';
 import { ChatController } from './controllers/chat.controller.js';
 
@@ -102,22 +101,22 @@ import { ChatController } from './controllers/chat.controller.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, OAuthController, AuthController, AgentStateController, UIController, ChatController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController],
   providers: [
-    AppService, 
-    AuthService, 
+    AppService,
     AgentStateService,
-    JwtStrategy,
+    // JwtStrategy,
     EnhancedPetalsService,
     ServiceOrchestrator,
-    SecurityMiddleware,
-    KeyRotationService,
-    PerformanceOptimizerService,
-    RedisCacheService,
-    ConnectionPoolService,
-    CircuitBreakerService,
-    AuthService,
-    OAuthService,
+    // SecurityMiddleware,
+    // KeyRotationService,
+    // PerformanceOptimizerService,
+    // RedisCacheService,
+    // ConnectionPoolService,
+    // CircuitBreakerService,
+    // AuthService,
+    // OAuthService,
+    // Temporarily commented out for CEO testing of public dashboard
     // {
     //   provide: APP_GUARD,
     //   useClass: OAuthAuthGuard,

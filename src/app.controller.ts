@@ -882,54 +882,7 @@ export class AppController implements OnApplicationShutdown {
   }
 
   // ===== UI ENDPOINTS =====
-  
-  @Post('/ui/submit')
-  async submitPrompt(@Body() body: { prompt: string; context?: string }): Promise<any> {
-    if (!checkIntent('uiPromptSubmission')) {
-      throw new HttpException({
-        status: 'error',
-        message: 'Zeroth violation: UI prompt submission blocked'
-      }, HttpStatus.FORBIDDEN);
-    }
-
-    try {
-      // Log to Soulchain
-      await this.appService.logConsensusToSoulchain('SOULCONS:UI_ACCESS', {
-        action: 'prompt_submission',
-        prompt: body.prompt,
-        context: body.context,
-        timestamp: new Date().toISOString()
-      });
-
-      // Process the prompt through consensus intent
-      const intent = {
-        id: crypto.randomUUID(),
-        type: 'user' as const,
-        intent: body.prompt,
-        confidence: 0.8,
-        timestamp: new Date(),
-        metadata: {
-          source: 'ui',
-          context: body.context || '',
-          stakeholders: ['user']
-        }
-      };
-
-      const result = await this.appService.processConsensusIntent(intent);
-      
-      return {
-        status: 'success',
-        data: result,
-        timestamp: new Date().toISOString()
-      };
-    } catch (error) {
-      throw new HttpException({
-        status: 'error',
-        message: 'UI prompt submission failed',
-        error: error.message
-      }, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // Note: UI endpoints moved to UIController to avoid routing conflicts
 
   @Get('/ui/stream')
   async streamUIOutput(@Res() res: any): Promise<void> {

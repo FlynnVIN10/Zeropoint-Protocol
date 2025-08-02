@@ -35,6 +35,11 @@ import { SecurityLoggingInterceptor } from './interceptors/security-logging.inte
 // import { OAuthController } from './controllers/oauth.controller.js';
 import { UIController } from './controllers/ui.controller.js';
 import { ChatController } from './controllers/chat.controller.js';
+import { PetalsController } from './controllers/petals.controller.js';
+import { PetalsService } from './services/petals.service.js';
+import { SandboxService } from './services/sandbox.service.js';
+import { TelemetryService } from './services/telemetry.service.js';
+import { ConsensusEngineService } from './services/consensus-engine.service.js';
 
 @Module({
   imports: [
@@ -101,13 +106,17 @@ import { ChatController } from './controllers/chat.controller.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController],
   providers: [
     AppService,
     AgentStateService,
     // JwtStrategy,
     EnhancedPetalsService,
     ServiceOrchestrator,
+    PetalsService,
+    SandboxService,
+    TelemetryService,
+    ConsensusEngineService,
     // SecurityMiddleware,
     // KeyRotationService,
     // PerformanceOptimizerService,

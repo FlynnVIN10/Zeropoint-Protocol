@@ -10,11 +10,31 @@ interface ChatMessage {
   context?: any;
 }
 
+export interface ConsensusProposal {
+  id: string;
+  agentId: string;
+  codeDiff: string;
+  description: string;
+  timestamp: number;
+  status: 'pending' | 'sentient_voting' | 'human_voting' | 'approved' | 'vetoed';
+  sentientVotes: Array<{ sentientId: string; vote: boolean; timestamp: number }>;
+  humanDecision?: { decision: 'APPROVE' | 'VETO'; timestamp: number; reason?: string };
+}
+
+export interface VoteRequest {
+  proposalId: string;
+  voterId: string;
+  vote: boolean;
+  role: 'sentient' | 'human';
+}
+
 @Controller('chat')
 export class ChatController {
   private readonly logger = new Logger(ChatController.name);
   private connectedClients: Response[] = [];
   private conversationHistory: Map<string, ChatMessage[]> = new Map();
+  private consensusProposals: Map<string, ConsensusProposal> = new Map();
+  private consensusHistory: any[] = [];
 
   @Get('stream')
   @Public()
@@ -116,6 +136,164 @@ export class ChatController {
         timestamp: new Date().toISOString(),
       };
     }
+  }
+
+  @Post('request-change')
+  @Public()
+  async requestChange(@Body() body: { agentId: string; codeDiff: string; description: string }) {
+    try {
+      this.logger.log(`Received change request from agent ${body.agentId}`);
+      
+      const proposalId = `proposal_${Date.now()}_${body.agentId}`;
+      
+      const proposal: ConsensusProposal = {
+        id: proposalId,
+        agentId: body.agentId,
+        codeDiff: body.codeDiff,
+        description: body.description,
+        timestamp: Date.now(),
+        status: 'pending',
+        sentientVotes: [],
+      };
+
+      this.consensusProposals.set(proposalId, proposal);
+
+      // Broadcast proposal to all connected clients
+      this.broadcastToClients({
+        type: 'proposal_created',
+        data: proposal,
+      });
+
+      // Start sentient voting phase
+      proposal.status = 'sentient_voting';
+
+      return {
+        success: true,
+        proposalId,
+        message: 'Proposal created and sent to sentient consensus',
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      this.logger.error('Error processing change request:', error);
+      return {
+        success: false,
+        error: 'Failed to process change request',
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
+  @Post('vote')
+  @Public()
+  async vote(@Body() body: VoteRequest) {
+    try {
+      this.logger.log(`Received vote from ${body.voterId} (${body.role}) for proposal ${body.proposalId}`);
+      
+      const proposal = this.consensusProposals.get(body.proposalId);
+      if (!proposal) {
+        throw new Error(`Proposal ${body.proposalId} not found`);
+      }
+
+      if (body.role === 'sentient') {
+        if (proposal.status !== 'sentient_voting') {
+          throw new Error('Sentient voting phase is not active');
+        }
+
+        proposal.sentientVotes.push({
+          sentientId: body.voterId,
+          vote: body.vote,
+          timestamp: Date.now(),
+        });
+
+        // Check if quorum is reached (67% of sentients have voted)
+        const totalSentients = 3; // Mock total sentients
+        const approvalVotes = proposal.sentientVotes.filter(v => v.vote).length;
+        const quorumReached = proposal.sentientVotes.length >= Math.ceil(totalSentients * 0.67);
+
+        if (quorumReached) {
+          const approved = approvalVotes >= Math.ceil(totalSentients * 0.67);
+          
+          if (approved) {
+            proposal.status = 'human_voting';
+            this.broadcastToClients({
+              type: 'sentient_approved',
+              data: { proposalId: proposal.id, approvalRate: approvalVotes / proposal.sentientVotes.length },
+            });
+          } else {
+            proposal.status = 'vetoed';
+            proposal.humanDecision = {
+              decision: 'VETO',
+              timestamp: Date.now(),
+              reason: 'Failed to reach 67% approval from sentients',
+            };
+            this.broadcastToClients({
+              type: 'sentient_vetoed',
+              data: { proposalId: proposal.id, approvalRate: approvalVotes / proposal.sentientVotes.length },
+            });
+          }
+        }
+      } else if (body.role === 'human') {
+        if (proposal.status !== 'human_voting') {
+          throw new Error('Human voting phase is not active');
+        }
+
+        proposal.humanDecision = {
+          decision: body.vote ? 'APPROVE' : 'VETO',
+          timestamp: Date.now(),
+        };
+
+        proposal.status = body.vote ? 'approved' : 'vetoed';
+
+        // Add to consensus history
+        this.consensusHistory.push({
+          proposalId: proposal.id,
+          agentId: proposal.agentId,
+          codeDiff: proposal.codeDiff,
+          sentientVotes: proposal.sentientVotes,
+          humanDecision: proposal.humanDecision,
+          finalStatus: proposal.status,
+          timestamp: Date.now(),
+        });
+
+        this.broadcastToClients({
+          type: 'human_decided',
+          data: { proposalId: proposal.id, decision: proposal.humanDecision.decision },
+        });
+      }
+
+      return {
+        success: true,
+        message: 'Vote recorded successfully',
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      this.logger.error('Error processing vote:', error);
+      return {
+        success: false,
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
+  @Get('proposals')
+  @Public()
+  async getProposals() {
+    return {
+      success: true,
+      data: Array.from(this.consensusProposals.values()),
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get('history')
+  @Public()
+  async getConsensusHistory() {
+    return {
+      success: true,
+      data: this.consensusHistory,
+      timestamp: new Date().toISOString(),
+    };
   }
 
   private async processMessage(message: string, sessionId: string): Promise<string> {

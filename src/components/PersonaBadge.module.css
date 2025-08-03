@@ -1,0 +1,379 @@
+/* PersonaBadge Component Styles */
+/* WCAG 2.1 AA Compliant with Dark Mode Support */
+
+.personaBadge {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(26, 26, 26, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.personaBadge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 196, 255, 0.15);
+  border-color: rgba(0, 196, 255, 0.3);
+}
+
+.personaBadge:focus {
+  outline: 2px solid #00C4FF;
+  outline-offset: 2px;
+}
+
+.personaBadge:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Size Variants */
+.sizeSmall {
+  padding: 8px 12px;
+  gap: 8px;
+}
+
+.sizeSmall .avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.sizeSmall .name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sizeSmall .role {
+  font-size: 12px;
+}
+
+.sizeMedium {
+  padding: 12px 16px;
+  gap: 12px;
+}
+
+.sizeMedium .avatar {
+  width: 40px;
+  height: 40px;
+}
+
+.sizeMedium .name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.sizeMedium .role {
+  font-size: 14px;
+}
+
+.sizeLarge {
+  padding: 16px 20px;
+  gap: 16px;
+}
+
+.sizeLarge .avatar {
+  width: 48px;
+  height: 48px;
+}
+
+.sizeLarge .name {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.sizeLarge .role {
+  font-size: 16px;
+}
+
+/* Avatar Container */
+.avatarContainer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transition: border-color 0.3s ease;
+}
+
+.personaBadge:hover .avatar {
+  border-color: rgba(0, 196, 255, 0.5);
+}
+
+.intentIcon {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  background: rgba(26, 26, 26, 0.9);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(5px);
+}
+
+/* Content */
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #F5F5F0;
+  margin: 0 0 4px 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role {
+  font-size: 14px;
+  color: rgba(245, 245, 240, 0.8);
+  margin: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Intent Colors */
+.intentInform {
+  border-left: 4px solid #00C4FF;
+}
+
+.intentInform .intentIcon {
+  background: rgba(0, 196, 255, 0.2);
+  border-color: rgba(0, 196, 255, 0.3);
+}
+
+.intentQuestion {
+  border-left: 4px solid #FFD700;
+}
+
+.intentQuestion .intentIcon {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: rgba(255, 215, 0, 0.3);
+}
+
+.intentAction {
+  border-left: 4px solid #FF6B6B;
+}
+
+.intentAction .intentIcon {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.3);
+}
+
+.intentConsensus {
+  border-left: 4px solid #4ECDC4;
+}
+
+.intentConsensus .intentIcon {
+  background: rgba(78, 205, 196, 0.2);
+  border-color: rgba(78, 205, 196, 0.3);
+}
+
+.intentDefault {
+  border-left: 4px solid rgba(255, 255, 255, 0.3);
+}
+
+.intentDefault .intentIcon {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Metadata */
+.metadata {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.score,
+.confidence {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.scoreLabel,
+.confidenceLabel {
+  color: rgba(245, 245, 240, 0.7);
+  font-weight: 500;
+  min-width: 60px;
+}
+
+.scoreValue,
+.confidenceValue {
+  color: #F5F5F0;
+  font-weight: 600;
+  background: rgba(0, 196, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 196, 255, 0.2);
+}
+
+/* Interaction Indicator */
+.interactionIndicator {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.personaBadge:hover .interactionIndicator {
+  opacity: 1;
+}
+
+.clickHint {
+  font-size: 10px;
+  color: rgba(245, 245, 240, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 4px 8px;
+  border-radius: 6px;
+  backdrop-filter: blur(5px);
+  white-space: nowrap;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .personaBadge {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .name {
+    font-size: 15px;
+  }
+
+  .role {
+    font-size: 13px;
+  }
+
+  .intentIcon {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .personaBadge {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .name {
+    font-size: 14px;
+  }
+
+  .role {
+    font-size: 12px;
+  }
+
+  .metadata {
+    margin-top: 6px;
+  }
+
+  .score,
+  .confidence {
+    font-size: 11px;
+  }
+
+  .scoreLabel,
+  .confidenceLabel {
+    min-width: 50px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .personaBadge {
+    border-width: 2px;
+    background: #1A1A1A;
+  }
+
+  .avatar {
+    border-width: 3px;
+  }
+
+  .intentIcon {
+    border-width: 3px;
+  }
+
+  .scoreValue,
+  .confidenceValue {
+    background: #00C4FF;
+    color: #000000;
+    border-width: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .personaBadge,
+  .avatar,
+  .intentIcon,
+  .interactionIndicator {
+    transition: none;
+  }
+
+  .personaBadge:hover {
+    transform: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .personaBadge {
+    background: white;
+    border: 1px solid #000;
+    color: #000;
+    box-shadow: none;
+  }
+
+  .avatar {
+    border-color: #000;
+  }
+
+  .name {
+    color: #000;
+  }
+
+  .role {
+    color: #333;
+  }
+
+  .intentIcon {
+    background: white;
+    border-color: #000;
+  }
+} 

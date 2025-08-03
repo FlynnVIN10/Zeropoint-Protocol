@@ -1,0 +1,391 @@
+/* RoleBasedDashboard.module.css */
+.roleBasedDashboard {
+  min-height: 100vh;
+  background: var(--ifm-background-color);
+  color: var(--ifm-font-color-base);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: var(--ifm-color-emphasis-100);
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--ifm-font-color-base);
+}
+
+.content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Loading and Error States */
+.loading, .error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.error {
+  color: var(--ifm-color-danger);
+}
+
+/* Role Description */
+.roleDescription {
+  font-size: 1rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 2rem;
+  padding: 1rem;
+  background: var(--ifm-color-emphasis-50);
+  border-radius: 8px;
+  border-left: 4px solid var(--ifm-color-primary);
+}
+
+/* Human Consensus View */
+.humanConsensusView h2,
+.sentientConsensusView h2,
+.agentView h2 {
+  margin-bottom: 1rem;
+  color: var(--ifm-font-color-base);
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.proposalsSection,
+.metricsSection,
+.intentArcSection,
+.voteTalliesSection,
+.agentStats {
+  margin-bottom: 2rem;
+}
+
+.proposalsSection h3,
+.metricsSection h3,
+.intentArcSection h3,
+.voteTalliesSection h3,
+.tasksSection h3 {
+  margin-bottom: 1rem;
+  color: var(--ifm-font-color-base);
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+
+.proposalsGrid,
+.metricsGrid,
+.talliesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.proposalCard,
+.metricCard,
+.tallyCard,
+.statCard {
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.proposalCard:hover,
+.metricCard:hover,
+.tallyCard:hover,
+.statCard:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.proposalCard h4,
+.tallyCard h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--ifm-font-color-base);
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.proposalCard p,
+.tallyCard p {
+  margin: 0 0 1rem 0;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.5;
+}
+
+.voteCounts {
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.voteCounts span,
+.voteCounts div {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.voteButtons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.approveButton,
+.vetoButton {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.approveButton {
+  background: var(--ifm-color-success);
+  color: white;
+}
+
+.approveButton:hover {
+  background: var(--ifm-color-success-dark);
+  transform: translateY(-1px);
+}
+
+.vetoButton {
+  background: var(--ifm-color-danger);
+  color: white;
+}
+
+.vetoButton:hover {
+  background: var(--ifm-color-danger-dark);
+  transform: translateY(-1px);
+}
+
+.approveButton:focus,
+.vetoButton:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* Sentient Consensus View */
+.metricCard h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--ifm-font-color-base);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.metricCard p {
+  margin: 0.25rem 0;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.9rem;
+}
+
+.intentArcSection {
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+
+/* Agent View */
+.agentStats {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+}
+
+.statCard h3 {
+  margin: 0 0 1rem 0;
+  color: var(--ifm-font-color-base);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.statCard p {
+  margin: 0.5rem 0;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.95rem;
+}
+
+.tasksSection h3 {
+  margin: 0 0 1rem 0;
+  color: var(--ifm-font-color-base);
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.tasksList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.taskItem {
+  background: var(--ifm-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.taskItem h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--ifm-font-color-base);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0.5rem 0;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--ifm-color-primary);
+  transition: width 0.3s ease;
+}
+
+.taskItem span {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .proposalCard,
+[data-theme='dark'] .metricCard,
+[data-theme='dark'] .tallyCard,
+[data-theme='dark'] .statCard,
+[data-theme='dark'] .taskItem {
+  background: var(--ifm-background-color);
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+[data-theme='dark'] .header {
+  background: var(--ifm-color-emphasis-200);
+  border-bottom-color: var(--ifm-color-emphasis-400);
+}
+
+[data-theme='dark'] .roleDescription {
+  background: var(--ifm-color-emphasis-200);
+  border-left-color: var(--ifm-color-primary);
+}
+
+[data-theme='dark'] .intentArcSection {
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .proposalCard,
+  .metricCard,
+  .tallyCard,
+  .statCard,
+  .taskItem {
+    border-width: 2px;
+  }
+  
+  .approveButton,
+  .vetoButton {
+    border: 2px solid transparent;
+  }
+  
+  .approveButton:focus,
+  .vetoButton:focus {
+    outline-width: 3px;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .proposalCard,
+  .metricCard,
+  .tallyCard,
+  .statCard,
+  .approveButton,
+  .vetoButton {
+    transition: none;
+  }
+  
+  .progressFill {
+    transition: none;
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 1.3rem;
+  }
+  
+  .content {
+    padding: 1rem;
+  }
+  
+  .proposalsGrid,
+  .metricsGrid,
+  .talliesGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .agentStats {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .voteButtons {
+    flex-direction: column;
+  }
+  
+  .approveButton,
+  .vetoButton {
+    width: 100%;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .roleBasedDashboard * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus indicators for keyboard navigation */
+.proposalCard:focus-within,
+.metricCard:focus-within,
+.tallyCard:focus-within,
+.statCard:focus-within,
+.taskItem:focus-within {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+} 

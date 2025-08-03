@@ -43,6 +43,14 @@ export class User {
   @Column({ type: 'text', array: true, default: [] })
   roles: string[];
 
+  @Column({ 
+    name: 'user_role', 
+    type: 'enum', 
+    enum: ['human-consensus', 'sentient-consensus', 'agent-view'],
+    default: 'human-consensus'
+  })
+  userRole: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

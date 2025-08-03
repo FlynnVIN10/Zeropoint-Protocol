@@ -1,84 +1,84 @@
-# Zeropoint Protocol - Agentic Consensus Platform
+# Zeropoint Protocol
 
-Zeropoint Protocol is an advanced AI system that combines distributed machine learning, ethical AI governance, and decentralized identity management. It is designed to facilitate agentic consensus through a dual-architecture system featuring a Python backend for AI model inference and a NestJS API gateway for orchestration and security. This repository contains the core platform, distinct from the corporate website hosted at [https://github.com/FlynnVIN10/zeropointprotocol.ai](https://github.com/FlynnVIN10/zeropointprotocol.ai).
+A decentralized, consensus-driven AI platform for symbiotic intelligence.
 
-## 🌟 Overview
+## 🚀 **Phase 13.1 Implementation - IN PROGRESS**
 
-**Zeroth Principle**: Only with good intent and a good heart does the system function.
+**Status**: Starting Phase 13.1: Enhanced Conversational UI implementation  
+**Branch**: `feature/phase13-1-conversational-ui`  
+**Timeline**: Days 1-10 (2025-08-03 to 2025-08-13)  
+**Features**: Persona Badge System, Context-Aware Suggestions, Intent Visualization Components  
 
-The platform integrates:
-- Distributed text and image generation using Petals and Stable Diffusion.
-- Ethical AI governance via Zeroth-gate compliance.
-- Decentralized file storage and content addressing with IPFS.
-- Soulchain for intent validation and ethical compliance.
-- Monitoring with Prometheus metrics and health checks.
+### **Current Development Focus**
+- ✅ Feature branch created
+- 🚧 PersonaBadge.tsx component development
+- 🚧 Enhanced ChatBubble.tsx integration
+- 🚧 Backend persona metadata endpoints
+- ⏳ Context-aware suggestion engine
+- ⏳ Intent visualization components
 
-## 🏗️ Architecture
+### **Phase 13.1 Success Criteria**
+- [ ] Persona badges implemented across all chat interfaces
+- [ ] Context-aware suggestions achieve 80% relevance
+- [ ] Intent visualization provides clear user feedback
+- [ ] WCAG 2.1 AA compliance maintained
+- [ ] Telemetry integration for all new features
 
-### Core Components
-- **AI Backend (Python)**: Distributed text and image generation.
-- **API Gateway (NestJS)**: RESTful API with JWT authentication and rate limiting.
-- **IPFS Integration**: Decentralized storage.
-- **Soulchain**: Ethical governance and intent validation.
-- **Monitoring**: Prometheus metrics and health checks.
+---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Python 3.12+
-- Node.js 20+
-- Docker (optional)
+
+- Node.js 18+
+- Docker and Docker Compose
 - Git
 
-### Local Development Setup
+### Installation
+
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/FlynnVIN10/Zeropoint-Protocol.git
-   cd Zeropoint-Protocol
-   ```
-2. Start Python AI Backend:
-   ```bash
-   cd Zeropoint
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   python app_simple.py
-   ```
-   AI service available at `http://localhost:8000`.
-3. Start NestJS API Gateway:
-   ```bash
-   cd ..
-   npm install
-   export JWT_SECRET="your-secret-key"
-   export JWT_EXPIRES_IN="24h"
-   export NODE_ENV="development"
-   npm run start
-   ```
-   API gateway available at `http://localhost:3000`.
+```bash
+git clone https://github.com/FlynnVIN10/zeropointprotocol.ai.git
+cd zeropointprotocol.ai
+```
 
-## 📡 API Endpoints
+2. Install dependencies:
+```bash
+npm install
+```
 
-### Health & Status
-- `GET /v1/health`: Service health check.
-- `GET /v1/status`: System status and metrics.
-- `GET /v1/metrics`: Prometheus metrics.
+3. Start the development server:
+```bash
+npm run start
+```
 
-### AI Generation
-- `POST /v1/generate/text`: Text generation with BLOOM.
-- `POST /v1/generate/image`: Image generation with Stable Diffusion.
-- `POST /v1/generate/code`: Code generation.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🔒 Security Features
-- **Zeroth Gate Ethical Validation**: Intent validation, ethical compliance, and malicious request blocking.
-- **Authentication & Authorization**: JWT-based authentication, role-based access control, rate limiting.
+### Development
 
-## 🤝 Contributing
-- **Policy**: View-only; no PRs/forks/clones without signed agreement. Contact [legal@zeropointprotocol.ai](mailto:legal@zeropointprotocol.ai) for licensing inquiries.
-- **Requirements**: Contributions must pass Zeroth-gate ethical validation and align with the Zeroth Principle.
+- **Dashboard**: `/dashboard` - Real-time system monitoring
+- **Interact**: `/interact` - AI conversation interface
+- **Documentation**: `/docs` - Technical documentation
 
-## 📑 License & Access
-© 2025 Zeropoint Protocol, Inc., a Texas C Corporation. All Rights Reserved.  
-View-Only License: No cloning, modifying, running, or distributing without a signed license. See [LICENSE.md](LICENSE.md).
+### Building for Production
 
-## Relationship to Website
-This repository hosts the core Zeropoint Protocol agentic consensus platform. For the corporate website, visit [https://github.com/FlynnVIN10/zeropointprotocol.ai](https://github.com/FlynnVIN10/zeropointprotocol.ai), which contains the Docusaurus-based static site for public-facing content.
+```bash
+npm run build
+npm run serve
+```
+
+## Architecture
+
+- **Frontend**: React with TypeScript, Docusaurus
+- **Backend**: NestJS with PostgreSQL
+- **Real-time**: Server-Sent Events (SSE)
+- **Styling**: CSS Modules with dark mode support
+- **Accessibility**: WCAG 2.1 AA compliant
+
+## Contributing
+
+Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

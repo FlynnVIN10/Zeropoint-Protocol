@@ -38,12 +38,18 @@ import { ChatController } from './controllers/chat.controller.js';
 import { PetalsController } from './controllers/petals.controller.js';
 import { DashboardController } from './controllers/dashboard.controller.js';
 import { GenerateController } from './controllers/generate.controller.js';
+import { UserRoleController } from './controllers/user-role.controller.js';
+import { ConsensusController } from './controllers/consensus.controller.js';
+import { AgentController } from './controllers/agent.controller.js';
 import { PetalsService } from './services/petals.service.js';
 import { SandboxService } from './services/sandbox.service.js';
 import { TelemetryService } from './services/telemetry.service.js';
 import { ConsensusEngineService } from './services/consensus-engine.service.js';
 import { DashboardService } from './services/dashboard.service.js';
 import { GenerateService } from './services/generate.service.js';
+import { UserRoleService } from './services/user-role.service.js';
+import { ConsensusService } from './services/consensus.service.js';
+import { AgentService } from './services/agent.service.js';
 
 @Module({
   imports: [
@@ -110,7 +116,7 @@ import { GenerateService } from './services/generate.service.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController],
   providers: [
     AppService,
     AgentStateService,
@@ -123,6 +129,9 @@ import { GenerateService } from './services/generate.service.js';
     ConsensusEngineService,
     DashboardService,
     GenerateService,
+    UserRoleService,
+    ConsensusService,
+    AgentService,
     // SecurityMiddleware,
     // KeyRotationService,
     // PerformanceOptimizerService,

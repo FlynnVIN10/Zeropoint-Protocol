@@ -1,0 +1,587 @@
+/* IntentArc Component Styles */
+/* WCAG 2.1 AA Compliant with Dark Mode Support */
+
+.intentArc {
+  position: relative;
+  display: inline-block;
+  background: rgba(26, 26, 26, 0.8);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.intentArc:hover {
+  border-color: rgba(0, 196, 255, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 196, 255, 0.1);
+}
+
+/* Empty State */
+.intentArc.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.emptyState {
+  text-align: center;
+  color: rgba(245, 245, 240, 0.6);
+}
+
+.emptyIcon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* SVG Container */
+.svg {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Background Circle */
+.backgroundCircle {
+  transition: stroke 0.3s ease;
+}
+
+/* Segment Groups */
+.segmentGroup {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.segmentGroup:hover {
+  transform: scale(1.02);
+}
+
+/* Segment Background */
+.segmentBackground {
+  transition: stroke 0.3s ease;
+}
+
+/* Segment Progress */
+.segmentProgress {
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.segmentProgress:hover {
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  stroke-width: calc(var(--stroke-width) + 1);
+}
+
+.segmentProgress.animated {
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+/* Intent Icons */
+.intentIcon {
+  fill: #F5F5F0;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.intentIcon.hovered {
+  fill: #FFFFFF;
+  transform: scale(1.2);
+}
+
+/* Progress Text */
+.progressText {
+  fill: rgba(245, 245, 240, 0.8);
+  font-weight: 500;
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+/* Center Content */
+.centerContent {
+  pointer-events: none;
+}
+
+.centerCircle {
+  fill: rgba(26, 26, 26, 0.9);
+  stroke: rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.centerText {
+  fill: #F5F5F0;
+  font-weight: 700;
+  font-size: inherit;
+}
+
+.centerSubtext {
+  fill: rgba(245, 245, 240, 0.6);
+  font-weight: 500;
+  font-size: inherit;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 12px;
+  color: #F5F5F0;
+}
+
+.legendItem:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(0, 196, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.legendItem:focus {
+  outline: 2px solid #00C4FF;
+  outline-offset: 2px;
+}
+
+.legendItem.hovered {
+  background: rgba(0, 196, 255, 0.1);
+  border-color: rgba(0, 196, 255, 0.4);
+}
+
+.legendColor {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendText {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.legendProgress {
+  color: rgba(245, 245, 240, 0.6);
+  font-weight: 400;
+  margin-left: auto;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  background: rgba(26, 26, 26, 0.95);
+  border: 1px solid rgba(0, 196, 255, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 200px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  animation: tooltipFadeIn 0.2s ease forwards;
+}
+
+@keyframes tooltipFadeIn {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(-100%);
+  }
+}
+
+.tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: rgba(0, 196, 255, 0.3);
+}
+
+.tooltipHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tooltipIcon {
+  font-size: 16px;
+}
+
+.tooltipTitle {
+  color: #F5F5F0;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.tooltipContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tooltipRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.tooltipRow span:first-child {
+  color: rgba(245, 245, 240, 0.7);
+  font-weight: 500;
+}
+
+.tooltipRow span:last-child {
+  color: #F5F5F0;
+  font-weight: 600;
+}
+
+/* Size Variants */
+.intentArc[data-size="small"] {
+  padding: 12px;
+}
+
+.intentArc[data-size="small"] .legend {
+  margin-top: 12px;
+  gap: 8px;
+}
+
+.intentArc[data-size="small"] .legendItem {
+  padding: 6px 8px;
+  font-size: 11px;
+}
+
+.intentArc[data-size="small"] .legendColor {
+  width: 10px;
+  height: 10px;
+}
+
+.intentArc[data-size="large"] {
+  padding: 32px;
+}
+
+.intentArc[data-size="large"] .legend {
+  margin-top: 32px;
+  gap: 16px;
+}
+
+.intentArc[data-size="large"] .legendItem {
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+.intentArc[data-size="large"] .legendColor {
+  width: 16px;
+  height: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .intentArc {
+    padding: 16px;
+  }
+
+  .legend {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .legendItem {
+    justify-content: space-between;
+  }
+
+  .tooltip {
+    min-width: 180px;
+    left: 20px;
+    transform: translateY(-100%);
+  }
+
+  .tooltip::after {
+    left: 20px;
+    transform: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .intentArc {
+    padding: 12px;
+  }
+
+  .legend {
+    margin-top: 16px;
+  }
+
+  .legendItem {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .legendColor {
+    width: 10px;
+    height: 10px;
+  }
+
+  .tooltip {
+    min-width: 160px;
+    left: 10px;
+    padding: 8px;
+  }
+
+  .tooltipHeader {
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+
+  .tooltipTitle {
+    font-size: 13px;
+  }
+
+  .tooltipRow {
+    font-size: 11px;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .intentArc {
+    background: #1A1A1A;
+    border-width: 2px;
+  }
+
+  .centerCircle {
+    fill: #1A1A1A;
+    stroke-width: 2px;
+  }
+
+  .legendItem {
+    background: #1A1A1A;
+    border-width: 2px;
+  }
+
+  .legendItem:hover {
+    background: #00C4FF;
+    color: #000000;
+  }
+
+  .tooltip {
+    background: #1A1A1A;
+    border-width: 2px;
+  }
+
+  .tooltip::after {
+    border-top-color: #00C4FF;
+  }
+
+  .tooltipTitle,
+  .tooltipRow span:last-child {
+    color: #FFFFFF;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .intentArc,
+  .segmentGroup,
+  .segmentProgress,
+  .intentIcon,
+  .legendItem,
+  .centerCircle {
+    transition: none;
+  }
+
+  .segmentProgress.animated {
+    animation: none;
+  }
+
+  .segmentGroup:hover {
+    transform: none;
+  }
+
+  .legendItem:hover {
+    transform: none;
+  }
+
+  .intentIcon.hovered {
+    transform: none;
+  }
+
+  .tooltip {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .intentArc {
+    background: white;
+    border: 1px solid #000;
+    color: #000;
+    box-shadow: none;
+  }
+
+  .centerCircle {
+    fill: white;
+    stroke: #000;
+  }
+
+  .centerText {
+    fill: #000;
+  }
+
+  .centerSubtext {
+    fill: #333;
+  }
+
+  .legendItem {
+    background: white;
+    border: 1px solid #000;
+    color: #000;
+  }
+
+  .legendProgress {
+    color: #333;
+  }
+
+  .tooltip {
+    display: none;
+  }
+}
+
+/* Focus Management */
+.segmentProgress:focus-visible {
+  outline: 2px solid #00C4FF;
+  outline-offset: 2px;
+}
+
+.legendItem:focus-visible {
+  outline: 2px solid #00C4FF;
+  outline-offset: 2px;
+}
+
+/* Screen Reader Support */
+.segmentProgress[aria-label] {
+  position: relative;
+}
+
+.segmentProgress[aria-label]::after {
+  content: attr(aria-label);
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* Keyboard Navigation */
+.segmentProgress:focus {
+  outline: 2px solid #00C4FF;
+  outline-offset: 2px;
+}
+
+.segmentProgress:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Performance Optimizations */
+.svg {
+  will-change: transform;
+}
+
+.segmentProgress {
+  will-change: stroke-dashoffset, opacity;
+}
+
+.tooltip {
+  will-change: opacity, transform;
+}
+
+/* Dark Mode Enhancements */
+@media (prefers-color-scheme: dark) {
+  .intentArc {
+    background: rgba(26, 26, 26, 0.95);
+  }
+
+  .tooltip {
+    background: rgba(26, 26, 26, 0.98);
+  }
+}
+
+/* Light Mode Support */
+@media (prefers-color-scheme: light) {
+  .intentArc {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .centerCircle {
+    fill: rgba(255, 255, 255, 0.9);
+    stroke: rgba(0, 0, 0, 0.1);
+  }
+
+  .centerText {
+    fill: #000000;
+  }
+
+  .centerSubtext {
+    fill: rgba(0, 0, 0, 0.6);
+  }
+
+  .legendItem {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #000000;
+  }
+
+  .legendProgress {
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .tooltip {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: rgba(0, 196, 255, 0.3);
+    color: #000000;
+  }
+
+  .tooltipTitle {
+    color: #000000;
+  }
+
+  .tooltipRow span:first-child {
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  .tooltipRow span:last-child {
+    color: #000000;
+  }
+} 

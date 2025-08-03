@@ -18,18 +18,73 @@
   --glass-border: rgba(0, 196, 255, 0.2);
 }
 
+/* Force Dark Mode - Override Docusaurus Defaults */
+[data-theme='light'] {
+  --ifm-background-color: var(--deep-black) !important;
+  --ifm-background-surface-color: var(--deep-black) !important;
+  --ifm-color-primary: var(--electric-blue) !important;
+  --ifm-color-primary-dark: var(--electric-blue) !important;
+  --ifm-color-primary-darker: var(--electric-blue) !important;
+  --ifm-color-primary-darkest: var(--electric-blue) !important;
+  --ifm-color-primary-light: var(--neon-purple) !important;
+  --ifm-color-primary-lighter: var(--neon-purple) !important;
+  --ifm-color-primary-lightest: var(--neon-purple) !important;
+  --ifm-color-content: var(--off-white) !important;
+  --ifm-color-content-secondary: var(--off-white) !important;
+  --ifm-navbar-background-color: transparent !important;
+  --ifm-footer-background-color: var(--deep-black) !important;
+  --ifm-card-background-color: var(--glass-bg) !important;
+  --ifm-code-background: var(--anthracite) !important;
+  --ifm-code-color: var(--electric-blue) !important;
+}
+
+[data-theme='dark'] {
+  --ifm-background-color: var(--deep-black) !important;
+  --ifm-background-surface-color: var(--deep-black) !important;
+  --ifm-color-primary: var(--electric-blue) !important;
+  --ifm-color-primary-dark: var(--electric-blue) !important;
+  --ifm-color-primary-darker: var(--electric-blue) !important;
+  --ifm-color-primary-darkest: var(--electric-blue) !important;
+  --ifm-color-primary-light: var(--neon-purple) !important;
+  --ifm-color-primary-lighter: var(--neon-purple) !important;
+  --ifm-color-primary-lightest: var(--neon-purple) !important;
+  --ifm-color-content: var(--off-white) !important;
+  --ifm-color-content-secondary: var(--off-white) !important;
+  --ifm-navbar-background-color: transparent !important;
+  --ifm-footer-background-color: var(--deep-black) !important;
+  --ifm-card-background-color: var(--glass-bg) !important;
+  --ifm-code-background: var(--anthracite) !important;
+  --ifm-code-color: var(--electric-blue) !important;
+}
+
 /* Global Styles */
 * {
   box-sizing: border-box;
 }
 
+html {
+  background: var(--deep-black) !important;
+}
+
 body {
-  background: var(--deep-black);
-  color: var(--off-white);
+  background: var(--deep-black) !important;
+  color: var(--off-white) !important;
   font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   line-height: 1.6;
   margin: 0;
   padding: 0;
+}
+
+/* Override Docusaurus Main Container */
+.main-wrapper {
+  background: var(--deep-black) !important;
+  color: var(--off-white) !important;
+}
+
+/* Override Docusaurus Layout */
+.theme-doc-layout {
+  background: var(--deep-black) !important;
+  color: var(--off-white) !important;
 }
 
 /* Typography */
@@ -38,7 +93,7 @@ h1, h2, h3, h4, h5, h6 {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   margin-bottom: 1.5rem;
-  color: var(--off-white);
+  color: var(--off-white) !important;
 }
 
 h1 {
@@ -55,17 +110,17 @@ h2 {
 
 h3 {
   font-size: 1.8rem;
-  color: var(--electric-blue);
+  color: var(--electric-blue) !important;
 }
 
 p {
   font-size: 1.1rem;
   line-height: 1.8;
   margin-bottom: 1.5rem;
-  color: var(--off-white);
+  color: var(--off-white) !important;
 }
 
-/* Navigation */
+/* Navigation Overrides */
 .navbar {
   background: transparent !important;
   backdrop-filter: blur(20px);
@@ -87,11 +142,208 @@ p {
   letter-spacing: 0.1em;
   margin: 0 1rem;
   transition: all 0.3s ease;
+  color: var(--off-white) !important;
 }
 
 .navbar__item:hover {
   color: var(--electric-blue) !important;
   text-shadow: 0 0 10px var(--electric-blue);
+}
+
+/* Override Docusaurus Navbar */
+.navbar__link {
+  color: var(--off-white) !important;
+}
+
+.navbar__link:hover {
+  color: var(--electric-blue) !important;
+}
+
+/* Footer Overrides */
+.footer {
+  background: var(--deep-black) !important;
+  border-top: 1px solid var(--glass-border);
+  padding: 3rem 0;
+  text-align: center;
+  color: var(--off-white) !important;
+}
+
+.footer__copyright {
+  color: var(--off-white) !important;
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.footer__link-item {
+  color: var(--off-white) !important;
+}
+
+.footer__link-item:hover {
+  color: var(--electric-blue) !important;
+}
+
+/* Override Docusaurus Footer */
+.footer__title {
+  color: var(--electric-blue) !important;
+}
+
+/* Cards */
+.card {
+  background: var(--glass-bg) !important;
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: var(--off-white) !important;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--electric-blue), var(--neon-purple));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.card:hover::before {
+  transform: scaleX(1);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+}
+
+/* Override Docusaurus Cards */
+.theme-doc-card {
+  background: var(--glass-bg) !important;
+  color: var(--off-white) !important;
+  border: 1px solid var(--glass-border) !important;
+}
+
+/* Form Elements */
+input, textarea, select {
+  background: var(--anthracite) !important;
+  border: 1px solid var(--glass-border);
+  color: var(--off-white) !important;
+  padding: 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  border-radius: 0;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--electric-blue);
+  box-shadow: 0 0 20px rgba(0, 196, 255, 0.3);
+  background: var(--deep-black) !important;
+}
+
+/* Code Blocks */
+pre {
+  background: var(--deep-black) !important;
+  border: 1px solid var(--glass-border);
+  border-radius: 0;
+  padding: 1.5rem;
+  overflow-x: auto;
+  position: relative;
+  color: var(--off-white) !important;
+}
+
+pre::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--electric-blue), var(--neon-purple));
+}
+
+code {
+  background: var(--anthracite) !important;
+  color: var(--electric-blue) !important;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0;
+  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+}
+
+/* Override Docusaurus Code */
+.theme-code-block {
+  background: var(--deep-black) !important;
+  color: var(--off-white) !important;
+}
+
+/* Buttons */
+.button {
+  display: inline-block;
+  padding: 1.5rem 3rem;
+  background: transparent;
+  border: 2px solid var(--electric-blue);
+  color: var(--electric-blue) !important;
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 196, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.button:hover::before {
+  left: 100%;
+}
+
+.button:hover {
+  background: var(--electric-blue);
+  color: var(--deep-black) !important;
+  box-shadow: 0 0 30px var(--electric-blue);
+  transform: translateY(-2px);
+}
+
+/* Override Docusaurus Buttons */
+.button--primary {
+  background: transparent !important;
+  border: 2px solid var(--electric-blue) !important;
+  color: var(--electric-blue) !important;
+}
+
+.button--primary:hover {
+  background: var(--electric-blue) !important;
+  color: var(--deep-black) !important;
+}
+
+.button--secondary {
+  background: transparent !important;
+  border: 2px solid var(--neon-purple) !important;
+  color: var(--neon-purple) !important;
+}
+
+.button--secondary:hover {
+  background: var(--neon-purple) !important;
+  color: var(--deep-black) !important;
 }
 
 /* Hero Section */
@@ -131,143 +383,73 @@ p {
   font-size: 1.5rem;
   font-weight: 300;
   margin-bottom: 3rem;
-  color: var(--off-white);
+  color: var(--off-white) !important;
   opacity: 0.9;
 }
 
-/* Buttons */
-.button {
-  display: inline-block;
-  padding: 1.5rem 3rem;
-  background: transparent;
-  border: 2px solid var(--electric-blue);
-  color: var(--electric-blue);
-  text-decoration: none;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
+/* Override Docusaurus Sidebar */
+.theme-doc-sidebar {
+  background: var(--deep-black) !important;
+  border-right: 1px solid var(--glass-border) !important;
 }
 
-.button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(0, 196, 255, 0.2), transparent);
-  transition: left 0.5s;
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible {
+  background: var(--deep-black) !important;
+  color: var(--off-white) !important;
 }
 
-.button:hover::before {
-  left: 100%;
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible:hover {
+  background: var(--anthracite) !important;
+  color: var(--electric-blue) !important;
 }
 
-.button:hover {
-  background: var(--electric-blue);
-  color: var(--deep-black);
-  box-shadow: 0 0 30px var(--electric-blue);
-  transform: translateY(-2px);
+.menu__link {
+  color: var(--off-white) !important;
 }
 
-/* Cards */
-.card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 0;
-  padding: 2rem;
-  margin-bottom: 2rem;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
+.menu__link:hover {
+  color: var(--electric-blue) !important;
 }
 
-.card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--electric-blue), var(--neon-purple));
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
+.menu__link--active {
+  color: var(--electric-blue) !important;
+  background: var(--anthracite) !important;
 }
 
-.card:hover::before {
-  transform: scaleX(1);
+/* Override Docusaurus Table of Contents */
+.table-of-contents {
+  background: var(--deep-black) !important;
+  border-left: 1px solid var(--glass-border) !important;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0, 196, 255, 0.2);
+.table-of-contents__link {
+  color: var(--off-white) !important;
 }
 
-/* Form Elements */
-input, textarea, select {
-  background: var(--anthracite);
-  border: 1px solid var(--glass-border);
-  color: var(--off-white);
-  padding: 1rem;
-  font-family: inherit;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  border-radius: 0;
+.table-of-contents__link:hover {
+  color: var(--electric-blue) !important;
 }
 
-input:focus, textarea:focus, select:focus {
-  outline: none;
-  border-color: var(--electric-blue);
-  box-shadow: 0 0 20px rgba(0, 196, 255, 0.3);
-  background: var(--deep-black);
+.table-of-contents__link--active {
+  color: var(--electric-blue) !important;
 }
 
-/* Code Blocks */
-pre {
-  background: var(--deep-black);
-  border: 1px solid var(--glass-border);
-  border-radius: 0;
-  padding: 1.5rem;
-  overflow-x: auto;
-  position: relative;
+/* Override Docusaurus Breadcrumbs */
+.breadcrumbs {
+  background: var(--deep-black) !important;
+  color: var(--off-white) !important;
 }
 
-pre::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, var(--electric-blue), var(--neon-purple));
+.breadcrumbs__item {
+  color: var(--off-white) !important;
 }
 
-code {
-  background: var(--anthracite);
-  color: var(--electric-blue);
-  padding: 0.2rem 0.4rem;
-  border-radius: 0;
-  font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+.breadcrumbs__item:hover {
+  color: var(--electric-blue) !important;
 }
 
-/* Footer */
-.footer {
-  background: var(--deep-black);
-  border-top: 1px solid var(--glass-border);
-  padding: 3rem 0;
-  text-align: center;
-}
-
-.footer__copyright {
-  color: var(--off-white);
-  opacity: 0.7;
-  font-size: 0.9rem;
+.breadcrumbs__item--active {
+  color: var(--electric-blue) !important;
 }
 
 /* Animations */
@@ -384,4 +566,35 @@ code {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--neon-purple);
+}
+
+/* Force all text to be visible */
+* {
+  color: var(--off-white) !important;
+}
+
+/* Override any remaining light theme elements */
+.theme-doc-markdown {
+  color: var(--off-white) !important;
+}
+
+.theme-doc-markdown h1,
+.theme-doc-markdown h2,
+.theme-doc-markdown h3,
+.theme-doc-markdown h4,
+.theme-doc-markdown h5,
+.theme-doc-markdown h6 {
+  color: var(--off-white) !important;
+}
+
+.theme-doc-markdown p {
+  color: var(--off-white) !important;
+}
+
+.theme-doc-markdown a {
+  color: var(--electric-blue) !important;
+}
+
+.theme-doc-markdown a:hover {
+  color: var(--neon-purple) !important;
 }

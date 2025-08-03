@@ -36,10 +36,14 @@ import { SecurityLoggingInterceptor } from './interceptors/security-logging.inte
 import { UIController } from './controllers/ui.controller.js';
 import { ChatController } from './controllers/chat.controller.js';
 import { PetalsController } from './controllers/petals.controller.js';
+import { DashboardController } from './controllers/dashboard.controller.js';
+import { GenerateController } from './controllers/generate.controller.js';
 import { PetalsService } from './services/petals.service.js';
 import { SandboxService } from './services/sandbox.service.js';
 import { TelemetryService } from './services/telemetry.service.js';
 import { ConsensusEngineService } from './services/consensus-engine.service.js';
+import { DashboardService } from './services/dashboard.service.js';
+import { GenerateService } from './services/generate.service.js';
 
 @Module({
   imports: [
@@ -106,7 +110,7 @@ import { ConsensusEngineService } from './services/consensus-engine.service.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController],
   providers: [
     AppService,
     AgentStateService,
@@ -117,6 +121,8 @@ import { ConsensusEngineService } from './services/consensus-engine.service.js';
     SandboxService,
     TelemetryService,
     ConsensusEngineService,
+    DashboardService,
+    GenerateService,
     // SecurityMiddleware,
     // KeyRotationService,
     // PerformanceOptimizerService,

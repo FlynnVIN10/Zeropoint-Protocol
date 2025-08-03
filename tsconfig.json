@@ -19,6 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "bundler",
     "lib": ["es2019", "dom"],
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    "moduleDetection": "force"
   }
 }

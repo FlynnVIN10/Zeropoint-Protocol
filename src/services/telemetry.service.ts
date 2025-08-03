@@ -152,4 +152,12 @@ export class TelemetryService {
 
     this.logger.log(`Cleared old telemetry: ${removedTrainingCount} training events, ${removedConsensusCount} consensus events`);
   }
+
+  async logEvent(event: any): Promise<void> {
+    this.logger.log(`Logging UX event: ${event.event} - ${event.component}`);
+    
+    // Store UX events for analytics
+    // In a real implementation, this would send to analytics service
+    this.logger.log(`UX Telemetry: ${JSON.stringify(event)}`);
+  }
 } 

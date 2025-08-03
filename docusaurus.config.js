@@ -52,6 +52,8 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
         },
         items: [
           {to: '/', label: 'Home', position: 'left'},
+          {to: '/dashboard', label: 'Dashboard', position: 'left'},
+          {to: '/interact', label: 'Interact', position: 'left'},
           {to: '/technology', label: 'Technology', position: 'left'},
           {to: '/status', label: 'Status', position: 'left'},
           {to: '/use-cases', label: 'Use Cases', position: 'left'},

@@ -1,9 +1,9 @@
 /* Dashboard Layout */
 .dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-  color: #ffffff;
-  padding: 2rem;
+  background: var(--zp-black);
+  color: var(--zp-off-white);
+  padding: var(--zp-spacing-xl);
 }
 
 .header {
@@ -53,15 +53,15 @@
 
 /* Pause Toggle Button */
 .pauseToggle {
-  background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(45deg, var(--zp-neon-blue) 0%, var(--zp-neon-purple) 100%);
   border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  color: white;
+  border-radius: var(--zp-radius-md);
+  padding: var(--zp-spacing-sm) var(--zp-spacing-lg);
+  color: var(--zp-off-white);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  transition: var(--zp-transition-normal);
+  box-shadow: var(--zp-shadow-neon-blue);
 }
 
 .pauseToggle:hover {

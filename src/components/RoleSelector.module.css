@@ -2,35 +2,41 @@
 .roleSelector {
   position: relative;
   display: inline-block;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--zp-font-body);
 }
 
 .roleButton {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: var(--ifm-background-color);
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 6px;
-  color: var(--ifm-font-color-base);
-  font-size: 14px;
+  gap: var(--zp-spacing-xs);
+  padding: var(--zp-spacing-sm) var(--zp-spacing-md);
+  background: var(--zp-transparent-black);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--zp-transparent-white);
+  border-radius: var(--zp-radius-md);
+  color: var(--zp-off-white);
+  font-size: var(--zp-font-size-sm);
   font-weight: 500;
+  font-family: var(--zp-font-subheading);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--zp-transition-normal);
   min-width: 160px;
   position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .roleButton:hover {
-  background: var(--ifm-color-emphasis-100);
-  border-color: var(--ifm-color-emphasis-400);
-  transform: translateY(-1px);
+  background: var(--zp-transparent-black);
+  border-color: var(--zp-neon-blue);
+  box-shadow: var(--zp-shadow-neon-blue);
+  transform: scale(1.05);
 }
 
 .roleButton:focus {
-  outline: 2px solid var(--ifm-color-primary);
+  outline: 2px solid var(--zp-neon-blue);
   outline-offset: 2px;
+  box-shadow: var(--zp-shadow-neon-blue);
 }
 
 .roleButton:disabled {
@@ -54,8 +60,8 @@
 
 .dropdownArrow {
   font-size: 10px;
-  transition: transform 0.2s ease;
-  color: var(--ifm-color-emphasis-600);
+  transition: var(--zp-transition-normal);
+  color: var(--zp-neon-blue);
 }
 
 .loadingSpinner {
@@ -75,15 +81,16 @@
   top: 100%;
   left: 0;
   right: 0;
-  background: var(--ifm-background-color);
-  border: 1px solid var(--ifm-color-emphasis-300);
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  margin-top: 4px;
+  background: var(--zp-transparent-black);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--zp-transparent-white);
+  border-radius: var(--zp-radius-lg);
+  box-shadow: var(--zp-shadow-glass);
+  z-index: var(--zp-z-dropdown);
+  margin-top: var(--zp-spacing-xs);
   max-height: 300px;
   overflow-y: auto;
-  animation: slideDown 0.2s ease;
+  animation: slideDown 0.3s ease;
 }
 
 @keyframes slideDown {

@@ -1,21 +1,27 @@
 /**
- * Custom CSS for Zeropoint Protocol - Futuristic Balenciaga Style
+ * Custom CSS for Zeropoint Protocol - Futuristic Dark-Mode Theme
+ * Import the main futuristic theme
+ */
+@import './futuristic-theme.css';
+
+/**
+ * Docusaurus-specific overrides for the futuristic theme
  * Color Palette:
- * - Deep Black: #1A1A1A
- * - Anthracite: #333333
- * - Off-White: #F5F5F0
- * - Electric Blue: #00C4FF
+ * - Deep Black: #000000
+ * - Neon Blue: #00C4FF
  * - Neon Purple: #BF00FF
+ * - Off-White: #F5F5F0
  */
 
 :root {
-  --deep-black: #1A1A1A;
-  --anthracite: #333333;
-  --off-white: #F5F5F0;
-  --electric-blue: #00C4FF;
-  --neon-purple: #BF00FF;
-  --glass-bg: rgba(26, 26, 26, 0.8);
-  --glass-border: rgba(0, 196, 255, 0.2);
+  /* Use the futuristic theme variables */
+  --deep-black: var(--zp-black);
+  --anthracite: var(--zp-dark-gray);
+  --off-white: var(--zp-off-white);
+  --electric-blue: var(--zp-neon-blue);
+  --neon-purple: var(--zp-neon-purple);
+  --glass-bg: var(--zp-transparent-black);
+  --glass-border: var(--zp-transparent-white);
 }
 
 /* Force Dark Mode - Override Docusaurus Defaults */

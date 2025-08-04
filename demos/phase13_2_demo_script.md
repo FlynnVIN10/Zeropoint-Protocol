@@ -1,7 +1,7 @@
 # Phase 13.2 Demo Script - Role-Based Dashboard Views
 
 **Audience**: CEO (Human Consensus)  
-**Duration**: 12 minutes  
+**Duration**: 16 minutes  
 **Environment**: `staging.zeropointprotocol.ai`  
 **Date**: 2025-08-03  
 
@@ -26,10 +26,16 @@ This demo showcases the Phase 13.2 implementation of Role-Based Dashboard Views,
 
 ### 1. Role Selector & Theme Toggling (3 minutes)
 
-#### Opening (30 seconds)
+#### Futuristic UI Introduction (30 seconds)
 - **URL**: Navigate to `staging.zeropointprotocol.ai/dashboard`
+- **Visual Impact**: Show the futuristic dark-mode interface with neon accents
+- **Introduction**: "Welcome to the Zeropoint Protocol's post-singularity interface"
+- **Highlight**: Glassmorphic panels, neon glows, and smooth animations
+
+#### Opening (30 seconds)
 - **Current State**: Show Human Consensus view by default
 - **Introduction**: "Welcome to the Zeropoint Protocol's role-based dashboard system"
+- **Visual Elements**: Point out the animated header with gradient text and glow effects
 
 #### Role Selector Demo (2 minutes)
 ```
@@ -57,6 +63,7 @@ Step 5: Switch to Agent View
 - Change to "Agent View" role
 - Show 🤖 icon and agent-specific interface
 - Demonstrate different UI elements
+- Highlight the smooth transitions and hover effects
 ```
 
 #### Dark Mode Demo (30 seconds)
@@ -70,6 +77,7 @@ Step 2: Accessibility features
 - Show keyboard navigation (Tab through options)
 - Demonstrate ARIA labels and screen reader support
 - Show high contrast mode support
+- Point out the reduced motion support for accessibility
 ```
 
 ### 2. Human Consensus View (4 minutes)
@@ -176,7 +184,40 @@ Step 2: Submit sample request
 - Display confirmation and tracking
 ```
 
-### 5. Access Control Demo (2 minutes)
+### 5. End-to-End Workflow Demo (4 minutes)
+
+#### Mission Planning Workflow (2 minutes)
+```
+Step 1: Navigate to Interact Page
+- Show the chat interface with futuristic styling
+- Demonstrate "build a factory" prompt input
+- Show real-time streaming response with source attribution
+
+Step 2: Mission Decomposition
+- Show how the prompt breaks down into sub-tasks
+- Display agent assignment with persona integration
+- Demonstrate task prioritization and dependencies
+
+Step 3: Consensus Voting Process
+- Show Sentient Consensus voting on sub-tasks
+- Demonstrate Human Consensus override authority
+- Display real-time vote tallies and status updates
+```
+
+#### Agent Execution (2 minutes)
+```
+Step 1: Agent Task Execution
+- Show agents working on assigned tasks
+- Display real-time progress updates
+- Demonstrate XP gains and level progression
+
+Step 2: Mission Completion
+- Show final mission status and results
+- Display performance metrics and analytics
+- Demonstrate the complete workflow from idea to execution
+```
+
+### 6. Access Control Demo (2 minutes)
 
 #### Security Features (1 minute)
 ```

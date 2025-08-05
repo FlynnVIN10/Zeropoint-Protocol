@@ -53,8 +53,7 @@ export class DashboardService {
     this.logger.log(`UX Interaction: ${eventType} - ${component}`);
     
     // Log to telemetry service
-    await this.telemetryService.logEvent({
-      event: 'ux_interaction',
+    await this.telemetryService.logEvent('ux', 'interaction', {
       component: component,
       action: eventType,
       timestamp: Date.now(),

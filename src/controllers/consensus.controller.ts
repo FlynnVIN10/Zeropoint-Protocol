@@ -61,16 +61,12 @@ export class ConsensusController {
       );
 
       // Log telemetry
-      await this.telemetryService.logEvent({
-        event: 'human_vote_submitted',
-        type: 'consensus_vote',
+      await this.telemetryService.logEvent('consensus', 'human_vote_submitted', {
         userId,
+        proposalId: voteDto.proposalId,
+        vote: voteDto.vote,
+        reason: voteDto.reason,
         timestamp: Date.now(),
-        data: {
-          proposalId: voteDto.proposalId,
-          vote: voteDto.vote,
-          reason: voteDto.reason
-        }
       });
 
       return result;
@@ -108,16 +104,12 @@ export class ConsensusController {
       );
 
       // Log telemetry
-      await this.telemetryService.logEvent({
-        event: 'sentient_vote_submitted',
-        type: 'consensus_vote',
+      await this.telemetryService.logEvent('consensus', 'sentient_vote_submitted', {
         userId,
+        proposalId: voteDto.proposalId,
+        vote: voteDto.vote,
+        reason: voteDto.reason,
         timestamp: Date.now(),
-        data: {
-          proposalId: voteDto.proposalId,
-          vote: voteDto.vote,
-          reason: voteDto.reason
-        }
       });
 
       return result;

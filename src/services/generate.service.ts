@@ -9,7 +9,7 @@ import { Pool } from 'pg';
 interface GenerationRequest {
   prompt: string;
   context?: {
-    conversation?: Array<{ role: string; content: string }>;
+    conversation?: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
     timestamp?: string;
     sessionId?: string;
     userAgent?: string;

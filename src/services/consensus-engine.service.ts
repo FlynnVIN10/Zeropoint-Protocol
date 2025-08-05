@@ -1,9 +1,35 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ConsensusProposal, VoteRequest } from '../controllers/chat.controller.js';
 import { TelemetryService } from './telemetry.service.js';
 import { EventEmitter } from 'events';
 import * as fs from 'fs/promises';
 import * as path from 'path';
+
+// Extended interfaces for consensus engine
+export interface VoteRequest {
+  proposalId: string;
+  voterId: string;
+  vote: boolean;
+  role: 'sentient' | 'human';
+  reasoning?: string;
+}
+
+export interface ConsensusProposal {
+  id: string;
+  agentId: string;
+  codeDiff: string;
+  description: string;
+  title?: string;
+  timestamp: number;
+  status: 'pending' | 'sentient_voting' | 'human_voting' | 'approved' | 'vetoed' | 'expired';
+  sentientVotes: Array<{ sentientId: string; vote: boolean; timestamp: number; reasoning?: string }>;
+  humanDecision?: { decision: 'APPROVE' | 'VETO'; timestamp: number; reason?: string; voterId?: string };
+  humanVotingStartTime?: number;
+  sentientVotingStartTime?: number;
+  finalizedAt?: number;
+  vetoedAt?: number;
+  expiredAt?: number;
+  expirationReason?: string;
+}
 
 export interface ConsensusResult {
   proposalId: string;

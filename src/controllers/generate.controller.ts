@@ -4,10 +4,26 @@ import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GenerateService } from '../services/generate.service.js';
 
+// Import the response type
+interface GenerationResponse {
+  text: string;
+  confidence: number;
+  type: string;
+  metadata: {
+    prompt: string;
+    context?: any;
+    timestamp: string;
+    model: string;
+    ragSources?: Array<{ title: string; content: string; relevance: number }>;
+    tokensUsed: number;
+    latency: number;
+  };
+}
+
 interface GenerateTextRequest {
   prompt: string;
   context?: {
-    conversation?: Array<{ role: string; content: string }>;
+    conversation?: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
     timestamp?: string;
     sessionId?: string;
     userAgent?: string;
@@ -23,7 +39,7 @@ export class GenerateController {
   constructor(private readonly generateService: GenerateService) {}
 
   @Post('text')
-  async generateText(@Body() request: GenerateTextRequest) {
+  async generateText(@Body() request: GenerateTextRequest): Promise<GenerationResponse> {
     return this.generateService.generateText(request);
   }
 

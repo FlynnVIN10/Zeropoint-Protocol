@@ -27,16 +27,12 @@ export class AgentController {
       const agentData = await this.agentService.getAgentData(userId);
 
       // Log telemetry
-      await this.telemetryService.logEvent({
-        event: 'agent_data_accessed',
-        type: 'agent_interaction',
+      await this.telemetryService.logEvent('agent', 'data_accessed', {
         userId,
+        agentId: agentData.id,
+        level: agentData.level,
+        status: agentData.status,
         timestamp: Date.now(),
-        data: {
-          agentId: agentData.id,
-          level: agentData.level,
-          status: agentData.status
-        }
       });
 
       return agentData;
@@ -59,17 +55,13 @@ export class AgentController {
       const result = await this.agentService.submitAgentRequest(userId, requestDto);
 
       // Log telemetry
-      await this.telemetryService.logEvent({
-        event: 'agent_request_submitted',
-        type: 'agent_interaction',
+      await this.telemetryService.logEvent('agent', 'request_submitted', {
         userId,
+        requestId: result.requestId,
+        requestType: requestDto.type,
+        priority: requestDto.priority,
+        estimatedImpact: requestDto.estimatedImpact,
         timestamp: Date.now(),
-        data: {
-          requestId: result.requestId,
-          requestType: requestDto.type,
-          priority: requestDto.priority,
-          estimatedImpact: requestDto.estimatedImpact
-        }
       });
 
       return result;
@@ -92,16 +84,12 @@ export class AgentController {
       const requests = await this.agentService.getAgentRequests(userId);
 
       // Log telemetry
-      await this.telemetryService.logEvent({
-        event: 'agent_requests_accessed',
-        type: 'agent_interaction',
+      await this.telemetryService.logEvent('agent', 'requests_accessed', {
         userId,
+        pendingCount: requests.pending.length,
+        approvedCount: requests.approved.length,
+        rejectedCount: requests.rejected.length,
         timestamp: Date.now(),
-        data: {
-          pendingCount: requests.pending.length,
-          approvedCount: requests.approved.length,
-          rejectedCount: requests.rejected.length
-        }
       });
 
       return requests;
@@ -124,16 +112,12 @@ export class AgentController {
       const performance = await this.agentService.getAgentPerformanceMetrics(userId);
 
       // Log telemetry
-      await this.telemetryService.logEvent({
-        event: 'agent_performance_accessed',
-        type: 'agent_interaction',
+      await this.telemetryService.logEvent('agent', 'performance_accessed', {
         userId,
+        efficiency: performance.efficiency,
+        accuracy: performance.accuracy,
+        reliability: performance.reliability,
         timestamp: Date.now(),
-        data: {
-          efficiency: performance.efficiency,
-          accuracy: performance.accuracy,
-          reliability: performance.reliability
-        }
       });
 
       return performance;

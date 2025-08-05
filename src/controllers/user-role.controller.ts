@@ -59,16 +59,12 @@ export class UserRoleController {
       const updatedRole = await this.userRoleService.updateUserRole(userId, role);
 
       // Log telemetry
-      await this.telemetryService.logEvent({
-        event: 'role_update',
-        type: 'user_interaction',
+      await this.telemetryService.logEvent('user', 'role_update', {
         userId,
+        previousRole: req.user.role || 'unknown',
+        newRole: role,
+        source: 'api_endpoint',
         timestamp: Date.now(),
-        data: {
-          previousRole: req.user.role || 'unknown',
-          newRole: role,
-          source: 'api_endpoint'
-        }
       });
 
       return {

@@ -52,14 +52,8 @@ export class TelemetryService {
     this.influxDB = new InfluxDB({ url, token });
     this.writeApi = this.influxDB.getWriteApi(org, bucket, 'ms');
 
-    // Set up error handling for write API
-    this.writeApi.on('error', (error) => {
-      this.logger.error(`InfluxDB write error: ${error.message}`);
-    });
-
-    this.writeApi.on('writeSuccess', (lines) => {
-      this.logger.debug(`Successfully wrote ${lines.length} lines to InfluxDB`);
-    });
+    // Note: InfluxDB WriteApi doesn't have event listeners in this version
+    // Error handling is done through try-catch blocks
   }
 
   async logEvent(category: string, action: string, data: any): Promise<void> {
@@ -380,7 +374,7 @@ export class TelemetryService {
     this.logger.log(`Cleared old telemetry: ${removedTrainingCount} training events, ${removedConsensusCount} consensus events`);
   }
 
-  async logEvent(event: any): Promise<void> {
+  async logUXEvent(event: any): Promise<void> {
     this.logger.log(`Logging UX event: ${event.event} - ${event.component}`);
     
     // Store UX events for analytics

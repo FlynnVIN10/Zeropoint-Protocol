@@ -81,7 +81,8 @@ export class SandboxController {
       });
 
       return () => {
-        stream.destroy();
+        // Clean up stream - ReadableStream doesn't have destroy method
+        // The stream will be garbage collected when no longer referenced
       };
     });
   }

@@ -1,0 +1,24 @@
+{
+  "id": "status",
+  "title": "Project Status",
+  "description": "© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved.",
+  "source": "@site/docs/status.md",
+  "sourceDirName": ".",
+  "slug": "/status",
+  "permalink": "/docs/status",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/status.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Soulchain RPC Endpoint",
+    "permalink": "/docs/soulchain-rpc"
+  },
+  "next": {
+    "title": "Testing & Deployment Validation - Zeropoint Protocol Website",
+    "permalink": "/docs/testing"
+  }
+}

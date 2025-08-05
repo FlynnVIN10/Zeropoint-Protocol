@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, UseGuards, Request, HttpException, HttpStatus } from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { AgentService } from '../services/agent.service';
-import { TelemetryService } from '../services/telemetry.service';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
+import { AgentService } from '../services/agent.service.js';
+import { TelemetryService } from '../services/telemetry.service.js';
 
 interface AgentRequestDto {
   type: 'code-change' | 'training-job' | 'resource-allocation';
@@ -12,7 +12,7 @@ interface AgentRequestDto {
   justification: string;
 }
 
-@Controller('v1/agents')
+@Controller('agents')
 @UseGuards(JwtAuthGuard)
 export class AgentController {
   constructor(
@@ -21,7 +21,7 @@ export class AgentController {
   ) {}
 
   @Get('me')
-  async getAgentData(@Request() req) {
+  async getAgentData(@Request() req): Promise<any> {
     try {
       const userId = req.user.id;
       const agentData = await this.agentService.getAgentData(userId);
@@ -86,7 +86,7 @@ export class AgentController {
   }
 
   @Get('requests')
-  async getAgentRequests(@Request() req) {
+  async getAgentRequests(@Request() req): Promise<any> {
     try {
       const userId = req.user.id;
       const requests = await this.agentService.getAgentRequests(userId);

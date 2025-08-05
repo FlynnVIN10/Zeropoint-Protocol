@@ -47,15 +47,18 @@ export class DashboardService {
   }
 
   async logUXInteraction(interaction: any) {
-    this.logger.log(`UX Interaction: ${interaction.type} - ${interaction.component}`);
+    const eventType = interaction.type || interaction.event || 'unknown';
+    const component = interaction.component || 'unknown';
+    
+    this.logger.log(`UX Interaction: ${eventType} - ${component}`);
     
     // Log to telemetry service
     await this.telemetryService.logEvent({
       event: 'ux_interaction',
-      component: interaction.component,
-      action: interaction.type,
+      component: component,
+      action: eventType,
       timestamp: Date.now(),
-      metadata: interaction.metadata || {}
+      metadata: interaction.metadata || interaction.data || {}
     });
 
     return {

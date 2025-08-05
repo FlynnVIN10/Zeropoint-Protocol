@@ -1,5 +1,6 @@
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+// Theme configuration for code highlighting
+const lightCodeTheme = require('prism-react-renderer').themes.github;
+const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
 // With JSDoc @type annotations, IDEs can provide config autocompletion
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
@@ -67,7 +68,6 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
           },
         ],
         style: 'dark',
-        backgroundColor: 'transparent',
       },
       footer: {
         style: 'dark',

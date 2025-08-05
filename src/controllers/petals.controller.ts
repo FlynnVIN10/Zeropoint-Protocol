@@ -36,7 +36,7 @@ export interface TrainingCycleResult {
   timestamp: number;
 }
 
-@Controller('v1/petals')
+@Controller('petals')
 export class PetalsController {
   constructor(
     private readonly petalsService: PetalsService,

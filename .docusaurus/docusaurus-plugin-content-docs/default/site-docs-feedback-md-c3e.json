@@ -1,0 +1,24 @@
+{
+  "id": "feedback",
+  "title": "User Feedback System - Zeropoint Protocol Website",
+  "description": "Document Version: 1.0",
+  "source": "@site/docs/feedback.md",
+  "sourceDirName": ".",
+  "slug": "/feedback",
+  "permalink": "/docs/feedback",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/feedback.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Error Handling & Logging Protocol - Zeropoint Protocol Website",
+    "permalink": "/docs/errors"
+  },
+  "next": {
+    "title": "Legal Information",
+    "permalink": "/docs/legal"
+  }
+}

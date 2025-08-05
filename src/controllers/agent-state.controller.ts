@@ -21,7 +21,7 @@ import { AgentState } from '../entities/agent-state.entity.js';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
 import { SynthientGuard } from '../guards/synthient.guard.js';
 
-@Controller('v1/agent-states')
+@Controller('agent-states')
 @UseGuards(JwtAuthGuard, SynthientGuard)
 export class AgentStateController {
   constructor(private readonly agentStateService: AgentStateService) {}

@@ -1,0 +1,24 @@
+{
+  "id": "design/screenshots/phase4/README",
+  "title": "Phase 4: Feedback System Screenshots",
+  "description": "This directory contains A/B testing screenshots and visual documentation for the feedback system implementation.",
+  "source": "@site/docs/design/screenshots/phase4/README.md",
+  "sourceDirName": "design/screenshots/phase4",
+  "slug": "/design/screenshots/phase4/",
+  "permalink": "/docs/design/screenshots/phase4/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/design/screenshots/phase4/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Visual Regression Testing Screenshots",
+    "permalink": "/docs/design/screenshots/"
+  },
+  "next": {
+    "title": "Error Handling & Logging Protocol - Zeropoint Protocol Website",
+    "permalink": "/docs/errors"
+  }
+}

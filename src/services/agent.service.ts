@@ -1,8 +1,8 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
-import { UserRoleService, UserRole } from './user-role.service';
+import { User } from '../entities/user.entity.js';
+import { UserRoleService, UserRole } from './user-role.service.js';
 
 interface AgentData {
   id: string;

@@ -1,0 +1,24 @@
+{
+  "id": "phase11-unreal-visualizer",
+  "title": "Phase 11: Unreal Engine 5 Visualizer",
+  "description": "Objectives",
+  "source": "@site/docs/phase11-unreal-visualizer.md",
+  "sourceDirName": ".",
+  "slug": "/phase11-unreal-visualizer",
+  "permalink": "/docs/phase11-unreal-visualizer",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/phase11-unreal-visualizer.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Legal Information",
+    "permalink": "/docs/legal"
+  },
+  "next": {
+    "title": "Phase 13: Web-Native Consensus Chat Hub",
+    "permalink": "/docs/phase13_chat_hub"
+  }
+}

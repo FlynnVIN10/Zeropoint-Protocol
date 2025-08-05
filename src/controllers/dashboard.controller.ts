@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Sse, MessageEvent, Res } from '@nestjs/common';
+import { Controller, Get, Post, Sse, MessageEvent, Res, Body } from '@nestjs/common';
 import { Response } from 'express';
 import { Observable, interval } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DashboardService } from '../services/dashboard.service.js';
 
-@Controller('v1/dashboard')
+@Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
@@ -28,7 +28,7 @@ export class DashboardController {
   }
 
   @Post('telemetry')
-  async logUXInteraction(body: any) {
+  async logUXInteraction(@Body() body: any) {
     return this.dashboardService.logUXInteraction(body);
   }
 } 

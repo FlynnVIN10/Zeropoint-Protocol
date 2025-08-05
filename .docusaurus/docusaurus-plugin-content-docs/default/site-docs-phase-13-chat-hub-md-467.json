@@ -1,0 +1,24 @@
+{
+  "id": "phase13_chat_hub",
+  "title": "Phase 13: Web-Native Consensus Chat Hub",
+  "description": "Overview",
+  "source": "@site/docs/phase13_chat_hub.md",
+  "sourceDirName": ".",
+  "slug": "/phase13_chat_hub",
+  "permalink": "/docs/phase13_chat_hub",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/phase13_chat_hub.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Phase 11: Unreal Engine 5 Visualizer",
+    "permalink": "/docs/phase11-unreal-visualizer"
+  },
+  "next": {
+    "title": "Phase 13: Dual-Layer Consensus Engine",
+    "permalink": "/docs/phase13_consensus_engine"
+  }
+}

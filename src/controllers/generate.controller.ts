@@ -4,7 +4,7 @@ import { Observable, interval } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GenerateService } from '../services/generate.service.js';
 
-@Controller('v1/generate')
+@Controller('generate')
 export class GenerateController {
   constructor(private readonly generateService: GenerateService) {}
 

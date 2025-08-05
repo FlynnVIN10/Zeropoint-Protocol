@@ -1,0 +1,24 @@
+{
+  "id": "design/phase8-visualizer",
+  "title": "Phase 8: Consensus Visualizer Mockup",
+  "description": "Overview",
+  "source": "@site/docs/design/phase8-visualizer.md",
+  "sourceDirName": "design",
+  "slug": "/design/phase8-visualizer",
+  "permalink": "/docs/design/phase8-visualizer",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/design/phase8-visualizer.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "GDPR Compliance Audit - Zeropoint Protocol",
+    "permalink": "/docs/compliance/gdpr-audit"
+  },
+  "next": {
+    "title": "Visual Regression Testing Screenshots",
+    "permalink": "/docs/design/screenshots/"
+  }
+}

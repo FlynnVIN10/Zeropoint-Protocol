@@ -21,5 +21,13 @@
     "lib": ["es2019", "dom"],
     "types": ["node", "jest"],
     "moduleDetection": "force"
-  }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "zeropointprotocol.ai"
+  ]
 }

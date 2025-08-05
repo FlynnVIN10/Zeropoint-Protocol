@@ -1,0 +1,24 @@
+{
+  "id": "phase8_consensus_ops",
+  "title": "Phase 8: Consensus Operations & Interoperability",
+  "description": "Status: ✅ INITIATED",
+  "source": "@site/docs/phase8_consensus_ops.md",
+  "sourceDirName": ".",
+  "slug": "/phase8_consensus_ops",
+  "permalink": "/docs/phase8_consensus_ops",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/phase8_consensus_ops.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Phase 13: Simulation Environments Vision Document",
+    "permalink": "/docs/phase13_simulation_environments"
+  },
+  "next": {
+    "title": "Soulchain RPC Endpoint",
+    "permalink": "/docs/soulchain-rpc"
+  }
+}

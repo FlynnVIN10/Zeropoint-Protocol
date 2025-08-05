@@ -1,0 +1,20 @@
+{
+  "id": "brand",
+  "title": "Zeropoint Protocol - Brand Guidelines",
+  "description": "Overview",
+  "source": "@site/docs/brand.md",
+  "sourceDirName": ".",
+  "slug": "/brand",
+  "permalink": "/docs/brand",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/brand.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "next": {
+    "title": "GDPR Compliance Audit - Zeropoint Protocol",
+    "permalink": "/docs/compliance/gdpr-audit"
+  }
+}

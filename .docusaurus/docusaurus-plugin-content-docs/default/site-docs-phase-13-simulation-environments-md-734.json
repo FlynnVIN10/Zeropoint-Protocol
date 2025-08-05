@@ -1,0 +1,24 @@
+{
+  "id": "phase13_simulation_environments",
+  "title": "Phase 13: Simulation Environments Vision Document",
+  "description": "Date: August 1, 2025",
+  "source": "@site/docs/phase13_simulation_environments.md",
+  "sourceDirName": ".",
+  "slug": "/phase13_simulation_environments",
+  "permalink": "/docs/phase13_simulation_environments",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/phase13_simulation_environments.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Phase 13: Petal-Based Training & WonderCraft Sandboxing",
+    "permalink": "/docs/phase13_petal_training"
+  },
+  "next": {
+    "title": "Phase 8: Consensus Operations & Interoperability",
+    "permalink": "/docs/phase8_consensus_ops"
+  }
+}

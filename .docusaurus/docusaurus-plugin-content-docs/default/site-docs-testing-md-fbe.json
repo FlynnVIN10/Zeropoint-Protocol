@@ -1,0 +1,20 @@
+{
+  "id": "testing",
+  "title": "Testing & Deployment Validation - Zeropoint Protocol Website",
+  "description": "Phase 5: Testing & Deployment Validation",
+  "source": "@site/docs/testing.md",
+  "sourceDirName": ".",
+  "slug": "/testing",
+  "permalink": "/docs/testing",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/testing.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Project Status",
+    "permalink": "/docs/status"
+  }
+}

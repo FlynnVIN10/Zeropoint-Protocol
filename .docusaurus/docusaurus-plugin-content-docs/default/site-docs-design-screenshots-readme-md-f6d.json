@@ -1,0 +1,24 @@
+{
+  "id": "design/screenshots/README",
+  "title": "Visual Regression Testing Screenshots",
+  "description": "This directory contains baseline screenshots for visual regression testing of the Zeropoint Protocol website.",
+  "source": "@site/docs/design/screenshots/README.md",
+  "sourceDirName": "design/screenshots",
+  "slug": "/design/screenshots/",
+  "permalink": "/docs/design/screenshots/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/design/screenshots/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "Phase 8: Consensus Visualizer Mockup",
+    "permalink": "/docs/design/phase8-visualizer"
+  },
+  "next": {
+    "title": "Phase 4: Feedback System Screenshots",
+    "permalink": "/docs/design/screenshots/phase4/"
+  }
+}

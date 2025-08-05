@@ -1,0 +1,24 @@
+{
+  "id": "legal",
+  "title": "Legal Information",
+  "description": "© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved.",
+  "source": "@site/docs/legal.md",
+  "sourceDirName": ".",
+  "slug": "/legal",
+  "permalink": "/docs/legal",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/legal.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "tutorialSidebar",
+  "previous": {
+    "title": "User Feedback System - Zeropoint Protocol Website",
+    "permalink": "/docs/feedback"
+  },
+  "next": {
+    "title": "Phase 13: Dual-Layer Consensus Engine",
+    "permalink": "/docs/phase13_consensus_engine"
+  }
+}

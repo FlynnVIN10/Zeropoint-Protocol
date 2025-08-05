@@ -1,0 +1,83 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/docs",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/docs",
+          "mainDocId": "brand",
+          "docs": [
+            {
+              "id": "brand",
+              "path": "/docs/brand",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "compliance/gdpr-audit",
+              "path": "/docs/compliance/gdpr-audit",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "design/phase8-visualizer",
+              "path": "/docs/design/phase8-visualizer",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "design/screenshots/phase4/README",
+              "path": "/docs/design/screenshots/phase4/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "design/screenshots/README",
+              "path": "/docs/design/screenshots/",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "errors",
+              "path": "/docs/errors",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "feedback",
+              "path": "/docs/feedback",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "legal",
+              "path": "/docs/legal",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "phase13_consensus_engine",
+              "path": "/docs/phase13_consensus_engine",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "phase13_petal_training",
+              "path": "/docs/phase13_petal_training",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "soulchain-rpc",
+              "path": "/docs/soulchain-rpc",
+              "sidebar": "tutorialSidebar"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "tutorialSidebar": {
+              "link": {
+                "path": "/docs/brand",
+                "label": "brand"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, UseGuards, Request, HttpException, HttpStatus } from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { UserRoleService } from '../services/user-role.service';
-import { TelemetryService } from '../services/telemetry.service';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
+import { UserRoleService } from '../services/user-role.service.js';
+import { TelemetryService } from '../services/telemetry.service.js';
 
 interface RoleUpdateDto {
   role: 'human-consensus' | 'sentient-consensus' | 'agent-view';
@@ -12,7 +12,7 @@ interface RoleResponseDto {
   updatedAt: Date;
 }
 
-@Controller('v1/users/me')
+@Controller('users/me')
 @UseGuards(JwtAuthGuard)
 export class UserRoleController {
   constructor(

@@ -1,8 +1,8 @@
 import { Controller, Post, Get, Body, UseGuards, Request, HttpException, HttpStatus } from '@nestjs/common';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { ConsensusService } from '../services/consensus.service';
-import { UserRoleService } from '../services/user-role.service';
-import { TelemetryService } from '../services/telemetry.service';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
+import { ConsensusService } from '../services/consensus.service.js';
+import { UserRoleService } from '../services/user-role.service.js';
+import { TelemetryService } from '../services/telemetry.service.js';
 
 interface VoteDto {
   proposalId: string;
@@ -30,7 +30,7 @@ interface ConsensusMetricsResponse {
   lastUpdated: Date;
 }
 
-@Controller('v1/consensus')
+@Controller('consensus')
 @UseGuards(JwtAuthGuard)
 export class ConsensusController {
   constructor(
@@ -147,7 +147,7 @@ export class ConsensusController {
   }
 
   @Get('proposals')
-  async getProposals(@Request() req) {
+  async getProposals(@Request() req): Promise<any[]> {
     try {
       const userId = req.user.id;
       const userRole = await this.userRoleService.getUserRole(userId);
@@ -163,7 +163,7 @@ export class ConsensusController {
   }
 
   @Get('vote-tallies')
-  async getVoteTallies(@Request() req) {
+  async getVoteTallies(@Request() req): Promise<any[]> {
     try {
       const userId = req.user.id;
       const userRole = await this.userRoleService.getUserRole(userId);

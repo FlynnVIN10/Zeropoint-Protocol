@@ -1,25 +1,48 @@
-import { Controller, Post, Body, Sse, MessageEvent, Res } from '@nestjs/common';
+import { Controller, Post, Body, Sse, MessageEvent, Res, Get } from '@nestjs/common';
 import { Response } from 'express';
-import { Observable, interval } from 'rxjs';
+import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GenerateService } from '../services/generate.service.js';
+
+interface GenerateTextRequest {
+  prompt: string;
+  context?: {
+    conversation?: Array<{ role: string; content: string }>;
+    timestamp?: string;
+    sessionId?: string;
+    userAgent?: string;
+  };
+  stream?: boolean;
+  model?: string;
+  maxTokens?: number;
+  temperature?: number;
+}
 
 @Controller('generate')
 export class GenerateController {
   constructor(private readonly generateService: GenerateService) {}
 
   @Post('text')
-  async generateText(@Body() body: { prompt: string; context?: any }) {
-    return this.generateService.generateText(body.prompt, body.context);
+  async generateText(@Body() request: GenerateTextRequest) {
+    return this.generateService.generateText(request);
   }
 
   @Sse('text/stream')
-  streamText(@Body() body: { prompt: string; context?: any }): Observable<MessageEvent> {
-    return this.generateService.streamText(body.prompt, body.context);
+  streamText(@Body() request: GenerateTextRequest): Observable<MessageEvent> {
+    return this.generateService.streamText(request).pipe(
+      map(token => ({
+        data: JSON.stringify(token),
+      }))
+    );
   }
 
   @Post('image')
   async generateImage(@Body() body: { prompt: string; style?: string }) {
     return this.generateService.generateImage(body.prompt, body.style);
+  }
+
+  @Get('stats')
+  async getGenerationStats() {
+    return this.generateService.getGenerationStats();
   }
 } 

@@ -41,6 +41,8 @@ import { GenerateController } from './controllers/generate.controller.js';
 import { UserRoleController } from './controllers/user-role.controller.js';
 import { ConsensusController } from './controllers/consensus.controller.js';
 import { AgentController } from './controllers/agent.controller.js';
+import { SandboxController } from './controllers/sandbox.controller.js';
+import { RAGController } from './controllers/rag.controller.js';
 import { PetalsService } from './services/petals.service.js';
 import { SandboxService } from './services/sandbox.service.js';
 import { TelemetryService } from './services/telemetry.service.js';
@@ -50,6 +52,7 @@ import { GenerateService } from './services/generate.service.js';
 import { UserRoleService } from './services/user-role.service.js';
 import { ConsensusService } from './services/consensus.service.js';
 import { AgentService } from './services/agent.service.js';
+import { RAGService } from './services/rag.service.js';
 
 @Module({
   imports: [
@@ -116,7 +119,7 @@ import { AgentService } from './services/agent.service.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController],
   providers: [
     AppService,
     AgentStateService,
@@ -132,6 +135,7 @@ import { AgentService } from './services/agent.service.js';
     UserRoleService,
     ConsensusService,
     AgentService,
+    RAGService,
     // SecurityMiddleware,
     // KeyRotationService,
     // PerformanceOptimizerService,

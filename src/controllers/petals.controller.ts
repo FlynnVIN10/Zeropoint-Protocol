@@ -5,7 +5,7 @@ import { TelemetryService } from '../services/telemetry.service.js';
 
 export interface PetalTrainingRequest {
   agentId: string;
-  dataBatch: any[];
+  trainingData?: any[];
   modelType: string;
   trainingParams: {
     learningRate: number;
@@ -21,7 +21,11 @@ export interface SandboxCreateRequest {
     memory: number;
     gpu?: number;
   };
-  trainingConfig: PetalTrainingRequest;
+  image?: string;
+  command?: string[];
+  environment?: Record<string, string>;
+  ports?: number[];
+  volumes?: string[];
 }
 
 export interface TrainingCycleResult {
@@ -31,7 +35,11 @@ export interface TrainingCycleResult {
   metrics: {
     loss: number;
     accuracy: number;
+    precision: number;
+    recall: number;
+    f1Score: number;
     duration: number;
+    nodesUsed: number;
   };
   timestamp: number;
 }
@@ -55,49 +63,40 @@ export class PetalsController {
           memory: 4096,
           gpu: 0,
         },
-        trainingConfig: request,
+        image: 'wondercraft/petals-training:latest',
+        command: ['python', 'train.py'],
+        environment: {
+          MODEL_TYPE: request.modelType,
+          LEARNING_RATE: request.trainingParams.learningRate.toString(),
+          BATCH_SIZE: request.trainingParams.batchSize.toString(),
+          EPOCHS: request.trainingParams.epochs.toString(),
+        },
       });
 
-      // Execute training cycle in sandbox
+      // Execute distributed training cycle
       const trainingResult = await this.petalsService.executeTrainingCycle(
         sandboxId,
         request,
       );
 
-      // Aggregate model deltas
-      const aggregatedDeltas = await this.petalsService.aggregateDeltas(
-        trainingResult.modelDeltas,
-      );
-
-      // Update shared model
-      await this.petalsService.updateSharedModel(aggregatedDeltas);
-
-      // Emit telemetry
-      await this.telemetryService.emitTrainingTelemetry({
-        event: 'training_cycle_completed',
-        cycleId: trainingResult.cycleId,
-        agentId: request.agentId,
-        timestamp: Date.now(),
-        deltas: aggregatedDeltas,
-        metrics: trainingResult.metrics,
-      });
+      // Clean up sandbox
+      await this.sandboxService.destroySandbox(sandboxId);
 
       return {
         status: 'success',
         data: {
           cycleId: trainingResult.cycleId,
           sandboxId,
-          aggregatedDeltas,
+          modelDeltas: trainingResult.modelDeltas,
           metrics: trainingResult.metrics,
         },
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      await this.telemetryService.emitTrainingTelemetry({
-        event: 'training_cycle_failed',
+      await this.telemetryService.logEvent('training', 'cycle_failed', {
         agentId: request.agentId,
-        timestamp: Date.now(),
         error: error.message,
+        timestamp: Date.now(),
       });
 
       throw error;
@@ -120,6 +119,44 @@ export class PetalsController {
     return {
       status: 'success',
       data: model,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Get('network/status')
+  async getNetworkStatus(): Promise<any> {
+    const networkStatus = await this.petalsService.getNetworkStatus();
+    return {
+      status: 'success',
+      data: networkStatus,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Post('network/node')
+  async addNode(@Body() nodeConfig: {
+    id: string;
+    url: string;
+    capabilities: string[];
+    status?: 'available' | 'busy' | 'offline';
+  }): Promise<any> {
+    await this.petalsService.addNode({
+      ...nodeConfig,
+      status: nodeConfig.status || 'available',
+    });
+    return {
+      status: 'success',
+      message: `Node ${nodeConfig.id} added successfully`,
+      timestamp: new Date().toISOString(),
+    };
+  }
+
+  @Post('network/node/:nodeId/remove')
+  async removeNode(@Param('nodeId') nodeId: string): Promise<any> {
+    await this.petalsService.removeNode(nodeId);
+    return {
+      status: 'success',
+      message: `Node ${nodeId} removed successfully`,
       timestamp: new Date().toISOString(),
     };
   }

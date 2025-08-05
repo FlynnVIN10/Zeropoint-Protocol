@@ -1,0 +1,370 @@
+name: API Endpoint CI Testing
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+  pull_request:
+    branches: [main, master]
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  api-endpoint-tests:
+    name: API Endpoint Regression Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: zeropointpass
+          POSTGRES_USER: zeropoint
+          POSTGRES_DB: zeropointdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install test dependencies
+        run: npm install --save-dev jest supertest @types/jest @types/supertest
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: test
+          CI: true
+
+      - name: Wait for services
+        run: |
+          echo "Waiting for PostgreSQL..."
+          while ! nc -z localhost 5432; do sleep 1; done
+          echo "PostgreSQL is ready"
+          
+          echo "Waiting for Redis..."
+          while ! nc -z localhost 6379; do sleep 1; done
+          echo "Redis is ready"
+        env:
+          NODE_ENV: test
+
+      - name: Run API endpoint tests
+        run: npm run test:api
+        env:
+          NODE_ENV: test
+          CI: true
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: zeropoint
+          DB_PASS: zeropointpass
+          DB_NAME: zeropointdb
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-test-results
+          path: |
+            test-results/
+            coverage/
+            api-test-report.json
+
+      - name: Generate test coverage report
+        if: success()
+        run: |
+          echo "# API Endpoint Test Coverage Report" > api-coverage-report.md
+          echo "Date: $(date)" >> api-coverage-report.md
+          echo "Branch: ${{ github.ref_name }}" >> api-coverage-report.md
+          echo "Commit: ${{ github.sha }}" >> api-coverage-report.md
+          echo "" >> api-coverage-report.md
+          
+          if [ -f "coverage/coverage-summary.json" ]; then
+            echo "## Coverage Summary" >> api-coverage-report.md
+            node -e "
+              const fs = require('fs');
+              const coverage = JSON.parse(fs.readFileSync('coverage/coverage-summary.json', 'utf8'));
+              console.log('Total Coverage:', coverage.total.lines.pct + '%');
+              console.log('Statements:', coverage.total.statements.pct + '%');
+              console.log('Branches:', coverage.total.branches.pct + '%');
+              console.log('Functions:', coverage.total.functions.pct + '%');
+              console.log('Lines:', coverage.total.lines.pct + '%');
+            " >> api-coverage-report.md
+          fi
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: api-coverage-report
+          path: api-coverage-report.md
+
+  api-performance-tests:
+    name: API Performance Tests
+    runs-on: ubuntu-latest
+    needs: api-endpoint-tests
+    
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: zeropointpass
+          POSTGRES_USER: zeropoint
+          POSTGRES_DB: zeropointdb
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install performance test dependencies
+        run: npm install --save-dev autocannon
+
+      - name: Build application
+        run: npm run build
+        env:
+          NODE_ENV: test
+          CI: true
+
+      - name: Wait for services
+        run: |
+          echo "Waiting for PostgreSQL..."
+          while ! nc -z localhost 5432; do sleep 1; done
+          echo "PostgreSQL is ready"
+          
+          echo "Waiting for Redis..."
+          while ! nc -z localhost 6379; do sleep 1; done
+          echo "Redis is ready"
+        env:
+          NODE_ENV: test
+
+      - name: Start API server
+        run: |
+          NODE_ENV=test DB_HOST=localhost DB_PORT=5432 DB_USER=zeropoint DB_PASS=zeropointpass DB_NAME=zeropointdb REDIS_HOST=localhost REDIS_PORT=6379 node dist/main.js &
+          echo $! > server.pid
+          sleep 5
+        env:
+          NODE_ENV: test
+
+      - name: Run performance tests
+        run: |
+          # Test /v1/generate/text endpoint
+          echo "Testing /v1/generate/text performance..."
+          npx autocannon -c 10 -d 10 -m POST -H "Content-Type: application/json" -b '{"prompt":"test"}' http://localhost:3000/v1/generate/text > generate-text-performance.json
+          
+          # Test /v1/dashboard/telemetry endpoint
+          echo "Testing /v1/dashboard/telemetry performance..."
+          npx autocannon -c 10 -d 10 -m POST -H "Content-Type: application/json" -b '{"event":"test","data":{}}' http://localhost:3000/v1/dashboard/telemetry > telemetry-performance.json
+          
+          # Test /v1/chat/history endpoint
+          echo "Testing /v1/chat/history performance..."
+          npx autocannon -c 10 -d 10 -m GET http://localhost:3000/v1/chat/history > chat-history-performance.json
+
+      - name: Stop API server
+        run: |
+          if [ -f server.pid ]; then
+            kill $(cat server.pid) || true
+            rm server.pid
+          fi
+
+      - name: Analyze performance results
+        run: |
+          echo "# API Performance Test Results" > performance-report.md
+          echo "Date: $(date)" >> performance-report.md
+          echo "Branch: ${{ github.ref_name }}" >> performance-report.md
+          echo "Commit: ${{ github.sha }}" >> performance-report.md
+          echo "" >> performance-report.md
+          
+          echo "## /v1/generate/text Performance" >> performance-report.md
+          if [ -f "generate-text-performance.json" ]; then
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('generate-text-performance.json', 'utf8'));
+              console.log('Average Response Time:', results.latency.average + 'ms');
+              console.log('95th Percentile:', results.latency.p95 + 'ms');
+              console.log('Requests/sec:', results.requests.average);
+              console.log('Total Requests:', results.requests.total);
+            " >> performance-report.md
+          fi
+          
+          echo "" >> performance-report.md
+          echo "## /v1/dashboard/telemetry Performance" >> performance-report.md
+          if [ -f "telemetry-performance.json" ]; then
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('telemetry-performance.json', 'utf8'));
+              console.log('Average Response Time:', results.latency.average + 'ms');
+              console.log('95th Percentile:', results.latency.p95 + 'ms');
+              console.log('Requests/sec:', results.requests.average);
+              console.log('Total Requests:', results.requests.total);
+            " >> performance-report.md
+          fi
+          
+          echo "" >> performance-report.md
+          echo "## /v1/chat/history Performance" >> performance-report.md
+          if [ -f "chat-history-performance.json" ]; then
+            node -e "
+              const fs = require('fs');
+              const results = JSON.parse(fs.readFileSync('chat-history-performance.json', 'utf8'));
+              console.log('Average Response Time:', results.latency.average + 'ms');
+              console.log('95th Percentile:', results.latency.p95 + 'ms');
+              console.log('Requests/sec:', results.requests.average);
+              console.log('Total Requests:', results.requests.total);
+            " >> performance-report.md
+          fi
+
+      - name: Upload performance results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: api-performance-results
+          path: |
+            performance-report.md
+            *-performance.json
+
+  api-ci-summary:
+    name: API CI Test Summary
+    runs-on: ubuntu-latest
+    needs: [api-endpoint-tests, api-performance-tests]
+    if: always()
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Generate CI summary
+        run: |
+          echo "# API CI Test Summary" > api-ci-summary.md
+          echo "Date: $(date)" >> api-ci-summary.md
+          echo "Branch: ${{ github.ref_name }}" >> api-ci-summary.md
+          echo "Commit: ${{ github.sha }}" >> api-ci-summary.md
+          echo "" >> api-ci-summary.md
+          
+          echo "## Test Results" >> api-ci-summary.md
+          echo "- API Endpoint Tests: ${{ needs.api-endpoint-tests.result }}" >> api-ci-summary.md
+          echo "- API Performance Tests: ${{ needs.api-performance-tests.result }}" >> api-ci-summary.md
+          echo "" >> api-ci-summary.md
+          
+          echo "## Coverage Report" >> api-ci-summary.md
+          if [ -f "artifacts/api-coverage-report/api-coverage-report.md" ]; then
+            cat artifacts/api-coverage-report/api-coverage-report.md >> api-ci-summary.md
+          fi
+          
+          echo "" >> api-ci-summary.md
+          echo "## Performance Report" >> api-ci-summary.md
+          if [ -f "artifacts/api-performance-results/performance-report.md" ]; then
+            cat artifacts/api-performance-results/performance-report.md >> api-ci-summary.md
+          fi
+
+      - name: Upload CI summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-ci-summary
+          path: api-ci-summary.md
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('api-ci-summary.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  notify-api-failure:
+    name: Notify on API Test Failure
+    runs-on: ubuntu-latest
+    needs: [api-endpoint-tests, api-performance-tests]
+    if: failure()
+    
+    steps:
+      - name: Send API failure notification
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const failedJobs = ['${{ needs.api-endpoint-tests.result }}', '${{ needs.api-performance-tests.result }}'];
+            const failedJobNames = [];
+            
+            if (needs.api-endpoint-tests.result === 'failure') failedJobNames.push('API Endpoint Tests');
+            if (needs.api-performance-tests.result === 'failure') failedJobNames.push('API Performance Tests');
+            
+            const message = `🚨 API CI Tests Failed
+            
+            Failed Jobs: ${failedJobNames.join(', ')}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.sha }}
+            Workflow: ${{ github.workflow }}
+            
+            Please check the API test results and fix any endpoint regressions.`;
+            
+            console.log(message); 

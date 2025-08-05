@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Observable, interval, from } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { TelemetryService } from './telemetry.service.js';
@@ -50,13 +51,24 @@ export class GenerateService {
   private ragService: RAGService;
   private dbPool: Pool;
 
-  constructor(private readonly telemetryService: TelemetryService) {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      organization: process.env.OPENAI_ORG_ID,
-    });
+  constructor(
+    private readonly telemetryService: TelemetryService,
+    private readonly configService: ConfigService
+  ) {
+    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
+    
+    if (apiKey) {
+      this.openai = new OpenAI({
+        apiKey: apiKey,
+        organization: process.env.OPENAI_ORG_ID,
+      });
+      this.logger.log('OpenAI client initialized with API key');
+    } else {
+      this.logger.warn('OPENAI_API_KEY not provided, using fallback responses');
+      this.openai = null;
+    }
 
-    this.ragService = new RAGService();
+    this.ragService = new RAGService(this.configService);
     
     this.dbPool = new Pool({
       host: process.env.DB_HOST || 'localhost',
@@ -80,31 +92,42 @@ export class GenerateService {
       });
 
       // Retrieve relevant context using RAG
-      const ragContext = await this.ragService.retrieveContext(request.prompt);
+      const ragSources = await this.ragService.searchContext(request.prompt);
+      const ragContext = { sources: ragSources };
       
       // Build enhanced prompt with RAG context
       const enhancedPrompt = this.buildEnhancedPrompt(request.prompt, ragContext, request.context);
       
-      // Generate response using OpenAI
-      const completion = await this.openai.chat.completions.create({
-        model: request.model || 'gpt-4-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an AI assistant powered by the Zeropoint Protocol, an advanced AI safety framework. Provide helpful, accurate, and ethically-aligned responses. When referencing information, cite your sources clearly.',
-          },
-          ...(request.context?.conversation || []),
-          {
-            role: 'user',
-            content: enhancedPrompt,
-          },
-        ],
-        max_tokens: request.maxTokens || 1000,
-        temperature: request.temperature || 0.7,
-        stream: false,
-      });
+      // Generate response using OpenAI or fallback
+      let response = '';
+      let tokensUsed = 0;
+      
+      if (this.openai) {
+        const completion = await this.openai.chat.completions.create({
+          model: request.model || 'gpt-4-turbo',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an AI assistant powered by the Zeropoint Protocol, an advanced AI safety framework. Provide helpful, accurate, and ethically-aligned responses. When referencing information, cite your sources clearly.',
+            },
+            ...(request.context?.conversation || []),
+            {
+              role: 'user',
+              content: enhancedPrompt,
+            },
+          ],
+          max_tokens: request.maxTokens || 1000,
+          temperature: request.temperature || 0.7,
+          stream: false,
+        });
 
-      const response = completion.choices[0]?.message?.content || '';
+        response = completion.choices[0]?.message?.content || '';
+        tokensUsed = completion.usage?.total_tokens || 0;
+      } else {
+        // Fallback response when OpenAI is not available
+        response = `Hello! I'm an AI assistant powered by the Zeropoint Protocol. I'm here to help you understand our ethical AI framework and answer any questions you might have about AI safety and consensus mechanisms.`;
+        tokensUsed = 50; // Mock token count
+      }
       const latency = Date.now() - startTime;
 
       // Calculate confidence based on response quality
@@ -120,7 +143,7 @@ export class GenerateService {
           timestamp: new Date().toISOString(),
           model: request.model || 'gpt-4-turbo',
           ragSources: ragContext.sources,
-          tokensUsed: completion.usage?.total_tokens || 0,
+          tokensUsed: tokensUsed,
           latency,
         },
       };
@@ -168,7 +191,8 @@ export class GenerateService {
       });
 
       // Retrieve RAG context
-      const ragContext = await this.ragService.retrieveContext(request.prompt);
+              const ragSources = await this.ragService.searchContext(request.prompt);
+        const ragContext = { sources: ragSources };
       const enhancedPrompt = this.buildEnhancedPrompt(request.prompt, ragContext, request.context);
 
       // Create streaming completion

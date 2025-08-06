@@ -294,6 +294,34 @@ export class GenerateService {
         timestamp: startTime,
       });
 
+      if (!this.openai) {
+        // Fallback response when OpenAI is not available
+        const latency = Date.now() - startTime;
+        
+        await this.telemetryService.logEvent('generation', 'image_completed', {
+          prompt,
+          style,
+          latency,
+          timestamp: Date.now(),
+        });
+
+        return {
+          status: 'success',
+          data: {
+            imageUrl: 'https://via.placeholder.com/1024x1024/0066cc/ffffff?text=AI+Generated+Image',
+            prompt,
+            style: style || 'realistic',
+            metadata: {
+              timestamp: new Date().toISOString(),
+              model: 'fallback',
+              latency,
+              note: 'OpenAI API not configured, using placeholder image',
+            },
+          },
+          timestamp: new Date().toISOString(),
+        };
+      }
+
       const response = await this.openai.images.generate({
         model: 'dall-e-3',
         prompt: `${prompt} ${style ? `in ${style} style` : ''}`,
@@ -302,7 +330,11 @@ export class GenerateService {
         quality: 'standard',
       });
 
-      const imageUrl = response.data[0]?.url;
+      if (!response || !response.data || !response.data[0]) {
+        throw new Error('Failed to generate image: Invalid response from OpenAI');
+      }
+
+      const imageUrl = response.data[0].url;
       const latency = Date.now() - startTime;
 
       if (!imageUrl) {
@@ -409,6 +441,113 @@ export class GenerateService {
       return 'error';
     } else {
       return 'general';
+    }
+  }
+
+  async generateCode(prompt: string, language?: string): Promise<any> {
+    const startTime = Date.now();
+    
+    try {
+      // Emit code generation start event
+      await this.telemetryService.logEvent('generation', 'code_started', {
+        prompt,
+        language,
+        timestamp: startTime,
+      });
+
+      if (!this.openai) {
+        // Fallback response when OpenAI is not available
+        const latency = Date.now() - startTime;
+        
+        await this.telemetryService.logEvent('generation', 'code_completed', {
+          prompt,
+          language,
+          latency,
+          timestamp: Date.now(),
+        });
+
+        return {
+          status: 'success',
+          data: {
+            code: `// Fallback code generation - OpenAI API not configured
+// ${prompt}
+function example() {
+  console.log("Hello from Zeropoint Protocol");
+  return "This is a fallback response when OpenAI is not available";
+}`,
+            prompt,
+            language: language || 'JavaScript',
+            metadata: {
+              timestamp: new Date().toISOString(),
+              model: 'fallback',
+              latency,
+              tokensUsed: 0,
+              note: 'OpenAI API not configured, using fallback code',
+            },
+          },
+          timestamp: new Date().toISOString(),
+        };
+      }
+
+      const response = await this.openai.chat.completions.create({
+        model: 'gpt-4-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert software developer. Generate clean, well-documented code in ${language || 'JavaScript'}. Always include comments explaining the logic and provide a brief description of what the code does.`
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        max_tokens: 2000,
+        temperature: 0.3,
+      });
+
+      const code = response.choices[0]?.message?.content;
+      const latency = Date.now() - startTime;
+
+      if (!code) {
+        throw new Error('Failed to generate code');
+      }
+
+      // Emit code generation completion event
+      await this.telemetryService.logEvent('generation', 'code_completed', {
+        prompt,
+        language,
+        latency,
+        timestamp: Date.now(),
+      });
+
+      return {
+        status: 'success',
+        data: {
+          code,
+          prompt,
+          language: language || 'JavaScript',
+          metadata: {
+            timestamp: new Date().toISOString(),
+            model: 'gpt-4-turbo',
+            latency,
+            tokensUsed: response.usage?.total_tokens || 0,
+          },
+        },
+        timestamp: new Date().toISOString(),
+      };
+
+    } catch (error) {
+      this.logger.error(`Code generation failed: ${error.message}`);
+      
+      // Emit code generation failure event
+      await this.telemetryService.logEvent('generation', 'code_failed', {
+        prompt,
+        language,
+        error: error.message,
+        timestamp: Date.now(),
+      });
+
+      throw error;
     }
   }
 

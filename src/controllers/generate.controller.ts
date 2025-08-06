@@ -57,6 +57,11 @@ export class GenerateController {
     return this.generateService.generateImage(body.prompt, body.style);
   }
 
+  @Post('code')
+  async generateCode(@Body() body: { prompt: string; language?: string }) {
+    return this.generateService.generateCode(body.prompt, body.language);
+  }
+
   @Get('stats')
   async getGenerationStats() {
     return this.generateService.getGenerationStats();

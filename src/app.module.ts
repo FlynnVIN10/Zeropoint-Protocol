@@ -49,6 +49,7 @@ import { TelemetryService } from './services/telemetry.service.js';
 import { ConsensusEngineService } from './services/consensus-engine.service.js';
 import { DashboardService } from './services/dashboard.service.js';
 import { GenerateService } from './services/generate.service.js';
+import { MultiLLMService } from './services/multi-llm.service.js';
 import { UserRoleService } from './services/user-role.service.js';
 import { ConsensusService } from './services/consensus.service.js';
 import { AgentService } from './services/agent.service.js';
@@ -132,6 +133,7 @@ import { RAGService } from './services/rag.service.js';
     ConsensusEngineService,
     DashboardService,
     GenerateService,
+    MultiLLMService,
     UserRoleService,
     ConsensusService,
     AgentService,

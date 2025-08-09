@@ -47,7 +47,7 @@ echo "$PROJECT_NAMES"
 # Check for expected project names
 echo "🔍 Checking for expected project names..."
 
-EXPECTED_PROJECTS=("zeropointprotocol-ai" "zeropointprotocol" "zeropointprotocolai")
+EXPECTED_PROJECTS=("zeropointprotocol-ai" "zeropointprotocol" "zeropointprotocolai" "zeropointprotocol.ai")
 
 FOUND_PROJECT=""
 for project in "${EXPECTED_PROJECTS[@]}"; do

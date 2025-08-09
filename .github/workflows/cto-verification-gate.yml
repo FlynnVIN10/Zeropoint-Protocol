@@ -99,6 +99,9 @@ jobs:
           if echo "$PROJECT_NAMES" | grep -q "zeropointprotocol-ai"; then
             echo "✅ Project 'zeropointprotocol-ai' found"
             echo "PROJECT_NAME=zeropointprotocol-ai" >> $GITHUB_ENV
+          elif echo "$PROJECT_NAMES" | grep -q "zeropointprotocol.ai"; then
+            echo "✅ Project 'zeropointprotocol.ai' found"
+            echo "PROJECT_NAME=zeropointprotocol.ai" >> $GITHUB_ENV
           elif echo "$PROJECT_NAMES" | grep -q "zeropointprotocol"; then
             echo "✅ Project 'zeropointprotocol' found"
             echo "PROJECT_NAME=zeropointprotocol" >> $GITHUB_ENV

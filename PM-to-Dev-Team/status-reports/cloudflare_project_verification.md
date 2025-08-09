@@ -23,13 +23,19 @@
 ### **1. Project Name vs Custom Domain** ✅ **UNDERSTOOD**
 **Issue:** Confusion between project name and custom domain
 - ✅ **Custom Domain:** `zeropoint.ai` (can have dots)
-- ✅ **Project Name:** Must be without dots (e.g., `zeropointprotocol-ai`)
-- ✅ **Preview URLs:** `<branch>.<project>.pages.dev` (no dots in project name)
+- ✅ **Project Name:** May be `zeropointprotocol.ai` (with dots) or without dots
+- ✅ **Preview URLs:** `<branch>.<project>.pages.dev` (project name may contain dots)
+- ✅ **Insight:** Project name might actually be `zeropointprotocol.ai`
 
 ### **2. Current Configuration** ⚠️ **NEEDS VERIFICATION**
 **Current Workflow Setting:**
 ```yaml
 projectName: zeropointprotocol-ai
+```
+
+**Potential Correct Project Name:**
+```yaml
+projectName: zeropointprotocol.ai
 ```
 
 **Potential Issues:**
@@ -81,6 +87,7 @@ projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
 
 **Expected Project Names:**
 - `zeropointprotocol-ai`
+- `zeropointprotocol.ai` (potential match)
 - `zeropointprotocol`
 - `zeropointprotocolai`
 

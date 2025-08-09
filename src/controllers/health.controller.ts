@@ -125,14 +125,24 @@ export class HealthController {
         console.warn('Could not get git info:', error.message);
       }
 
-      // Check API health
+      // Check API health with improved logic
       const apiHealth = await this.checkSystemHealth();
+      
+      // CTO Directive: Improved apiHealth logic
+      let apiHealthStatus = 'healthy';
+      if (apiHealth.status === 'unhealthy') {
+        apiHealthStatus = 'down';
+      } else if (apiHealth.checks.database.status === 'disabled') {
+        apiHealthStatus = 'degraded';
+      } else if (apiHealth.checks.database.status === 'unhealthy') {
+        apiHealthStatus = 'down';
+      }
       
       const statusVersion = {
         phase: '13.1', // Current phase as per CTO directive
         commit: commit,
         ciStatus: ciStatus,
-        apiHealth: apiHealth.status,
+        apiHealth: apiHealthStatus,
         releasedAt: new Date().toISOString(),
         version: process.env.npm_package_version || '1.0.0',
         environment: process.env.NODE_ENV || 'development',
@@ -227,10 +237,22 @@ export class HealthController {
       services: await this.checkServices()
     };
 
-    const allHealthy = Object.values(checks).every(check => check.status === 'healthy');
+    // CTO Directive: Improved health logic
+    const criticalServices = [checks.memory, checks.network, checks.services];
+    const allCriticalHealthy = criticalServices.every(check => check.status === 'healthy');
+    const databaseHealthy = checks.database.status === 'healthy';
+    
+    let status = 'healthy';
+    if (!allCriticalHealthy) {
+      status = 'unhealthy';
+    } else if (!databaseHealthy && checks.database.status === 'disabled') {
+      status = 'degraded'; // Database disabled but other services healthy
+    } else if (!databaseHealthy) {
+      status = 'unhealthy'; // Database unhealthy
+    }
     
     return {
-      status: allHealthy ? 'healthy' : 'unhealthy',
+      status: status,
       checks
     };
   }

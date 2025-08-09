@@ -43,6 +43,7 @@ import { ConsensusController } from './controllers/consensus.controller.js';
 import { AgentController } from './controllers/agent.controller.js';
 import { SandboxController } from './controllers/sandbox.controller.js';
 import { RAGController } from './controllers/rag.controller.js';
+import { SSEController } from './controllers/sse.controller.js';
 import { PetalsService } from './services/petals.service.js';
 import { SandboxService } from './services/sandbox.service.js';
 import { TelemetryService } from './services/telemetry.service.js';
@@ -120,7 +121,7 @@ import { RAGService } from './services/rag.service.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController, SSEController],
   providers: [
     AppService,
     AgentStateService,

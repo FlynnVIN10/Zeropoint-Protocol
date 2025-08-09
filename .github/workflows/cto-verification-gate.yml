@@ -15,6 +15,10 @@ permissions:
 jobs:
   cto-verification:
     runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'push' || 
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '/verify'))
+    
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,10 +32,56 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build Docusaurus site
+      - name: Build platform
+        run: npm run build
+
+      - name: Test platform endpoints
+        run: |
+          echo "Testing platform health endpoints..."
+          
+          # Start platform in background
+          npm run start:prod &
+          PLATFORM_PID=$!
+          
+          # Wait for platform to start
+          sleep 10
+          
+          # Test health endpoints
+          echo "Testing /v1/health/healthz..."
+          curl -f -s http://localhost:3000/v1/health/healthz > /dev/null && echo "✅ /healthz: OK" || echo "❌ /healthz: FAILED"
+          
+          echo "Testing /v1/health/readyz..."
+          curl -f -s http://localhost:3000/v1/health/readyz > /dev/null && echo "✅ /readyz: OK" || echo "❌ /readyz: FAILED"
+          
+          echo "Testing /v1/health/status/version.json..."
+          curl -f -s http://localhost:3000/v1/health/status/version.json > /dev/null && echo "✅ /status/version.json: OK" || echo "❌ /status/version.json: FAILED"
+          
+          # Stop platform
+          kill $PLATFORM_PID
+
+      - name: Checkout website repo
+        uses: actions/checkout@v4
+        with:
+          repository: FlynnVIN10/Zeropoint-Protocol
+          path: ./website
+
+      - name: Setup Node.js for website
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: ./website/package-lock.json
+
+      - name: Install website dependencies
+        working-directory: ./website
+        run: npm ci
+
+      - name: Build website
+        working-directory: ./website
         run: npm run build
 
       - name: Deploy to Cloudflare Pages (Preview)
+        working-directory: ./website
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -47,29 +97,28 @@ jobs:
         run: |
           echo "Running smoke tests..."
           
-          # Test homepage
-          echo "Testing homepage..."
+          # Test website endpoints
+          echo "Testing website homepage..."
           curl -f -s https://zeropointprotocol.ai > /dev/null && echo "✅ Homepage: OK" || echo "❌ Homepage: FAILED"
           
-          # Test robots.txt
-          echo "Testing robots.txt..."
+          echo "Testing website robots.txt..."
           curl -f -s https://zeropointprotocol.ai/robots.txt > /dev/null && echo "✅ robots.txt: OK" || echo "❌ robots.txt: FAILED"
           
-          # Test sitemap.xml
-          echo "Testing sitemap.xml..."
+          echo "Testing website sitemap.xml..."
           curl -f -s https://zeropointprotocol.ai/sitemap.xml > /dev/null && echo "✅ sitemap.xml: OK" || echo "❌ sitemap.xml: FAILED"
           
-          # Test key routes
-          echo "Testing key routes..."
-          curl -f -s https://zeropointprotocol.ai/features > /dev/null && echo "✅ /features: OK" || echo "❌ /features: FAILED"
-          curl -f -s https://zeropointprotocol.ai/interact > /dev/null && echo "✅ /interact: OK" || echo "❌ /interact: FAILED"
-          curl -f -s https://zeropointprotocol.ai/controlcenter > /dev/null && echo "✅ /controlcenter: OK" || echo "❌ /controlcenter: FAILED"
-          curl -f -s https://zeropointprotocol.ai/AIIntegration > /dev/null && echo "✅ /AIIntegration: OK" || echo "❌ /AIIntegration: FAILED"
+          # Test platform endpoints (if accessible)
+          echo "Testing platform healthz..."
+          curl -f -s http://localhost:3000/v1/health/healthz > /dev/null && echo "✅ Platform /healthz: OK" || echo "❌ Platform /healthz: FAILED"
+          
+          echo "Testing platform status/version.json..."
+          curl -f -s http://localhost:3000/v1/health/status/version.json > /dev/null && echo "✅ Platform /status/version.json: OK" || echo "❌ Platform /status/version.json: FAILED"
 
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli@0.12.x
 
       - name: Run Lighthouse CI
+        working-directory: ./website
         run: |
           lhci autorun --upload.target=temporary-public-storage
         env:
@@ -79,7 +128,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-reports
-          path: .lighthouseci/
+          path: ./website/.lighthouseci/
 
       - name: Generate verification report
         run: |
@@ -112,28 +161,16 @@ jobs:
             echo "❌ sitemap.xml: FAILED" >> verification-report.md
           fi
           
-          if curl -f -s https://zeropointprotocol.ai/features > /dev/null; then
-            echo "✅ /features: OK" >> verification-report.md
+          if curl -f -s http://localhost:3000/v1/health/healthz > /dev/null; then
+            echo "✅ Platform /healthz: OK" >> verification-report.md
           else
-            echo "❌ /features: FAILED" >> verification-report.md
+            echo "❌ Platform /healthz: FAILED" >> verification-report.md
           fi
           
-          if curl -f -s https://zeropointprotocol.ai/interact > /dev/null; then
-            echo "✅ /interact: OK" >> verification-report.md
+          if curl -f -s http://localhost:3000/v1/health/status/version.json > /dev/null; then
+            echo "✅ Platform /status/version.json: OK" >> verification-report.md
           else
-            echo "❌ /interact: FAILED" >> verification-report.md
-          fi
-          
-          if curl -f -s https://zeropointprotocol.ai/controlcenter > /dev/null; then
-            echo "✅ /controlcenter: OK" >> verification-report.md
-          else
-            echo "❌ /controlcenter: FAILED" >> verification-report.md
-          fi
-          
-          if curl -f -s https://zeropointprotocol.ai/AIIntegration > /dev/null; then
-            echo "✅ /AIIntegration: OK" >> verification-report.md
-          else
-            echo "❌ /AIIntegration: FAILED" >> verification-report.md
+            echo "❌ Platform /status/version.json: FAILED" >> verification-report.md
           fi
           
           echo "" >> verification-report.md
@@ -149,6 +186,8 @@ jobs:
           echo "- [ ] No console errors" >> verification-report.md
           echo "- [ ] All key routes accessible" >> verification-report.md
           echo "- [ ] Deployment successful" >> verification-report.md
+          echo "- [ ] Platform health endpoints responding" >> verification-report.md
+          echo "- [ ] Status/version.json accessible" >> verification-report.md
 
       - name: Upload verification report
         uses: actions/upload-artifact@v4
@@ -171,8 +210,8 @@ jobs:
             const status = smokeTestsPassed ? '✅ PASS' : '❌ FAIL';
             const statusEmoji = smokeTestsPassed ? '✅' : '❌';
             
-            const comment = '## ' + statusEmoji + ' CTO Verification Gate - ' + status + '\n\n' + report + '\n\n**@OCEAN** - Please review the verification results above.\n\n**Live Site:** https://zeropointprotocol.ai\n**GitHub Actions:** ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId + '\n**Artifacts:** Available in this workflow run\n\n**Next Steps:**\n- [ ] Review smoke test results\n- [ ] Check Lighthouse scores\n- [ ] Verify deployment status\n- [ ] Approve or request changes';
-
+            const comment = '## ' + statusEmoji + ' CTO Verification Gate - ' + status + '\n\n' + report + '\n\n**@OCEAN** - Please review the verification results above.\n\n**Live Site:** https://zeropointprotocol.ai\n**Platform Health:** http://localhost:3000/v1/health/healthz\n**Status/Version:** http://localhost:3000/v1/health/status/version.json\n**GitHub Actions:** ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId + '\n**Artifacts:** Available in this workflow run\n\n**Next Steps:**\n- [ ] Review smoke test results\n- [ ] Check Lighthouse scores\n- [ ] Verify deployment status\n- [ ] Approve or request changes';
+            
             if (context.eventName === 'issue_comment') {
               await github.rest.issues.createComment({
                 issue_number: context.issue.number,

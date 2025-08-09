@@ -80,13 +80,44 @@ jobs:
         working-directory: ./website
         run: npm run build
 
+      - name: Verify Cloudflare Project Name
+        run: |
+          echo "Verifying Cloudflare Pages project name..."
+          
+          # Get the list of Pages projects
+          PROJECTS_RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            "https://api.cloudflare.com/client/v4/accounts/${{ secrets.CLOUDFLARE_ACCOUNT_ID }}/pages/projects")
+          
+          echo "API Response: $PROJECTS_RESPONSE"
+          
+          # Extract project names
+          PROJECT_NAMES=$(echo "$PROJECTS_RESPONSE" | jq -r '.result[]?.name // empty')
+          
+          echo "Available project names: $PROJECT_NAMES"
+          
+          # Check if our expected project exists
+          if echo "$PROJECT_NAMES" | grep -q "zeropointprotocol-ai"; then
+            echo "✅ Project 'zeropointprotocol-ai' found"
+            echo "PROJECT_NAME=zeropointprotocol-ai" >> $GITHUB_ENV
+          elif echo "$PROJECT_NAMES" | grep -q "zeropointprotocol"; then
+            echo "✅ Project 'zeropointprotocol' found"
+            echo "PROJECT_NAME=zeropointprotocol" >> $GITHUB_ENV
+          else
+            echo "❌ Expected project not found. Available projects:"
+            echo "$PROJECT_NAMES"
+            echo "PROJECT_NAME=zeropointprotocol-ai" >> $GITHUB_ENV  # fallback
+          fi
+          
+          # Save project info for evidence pack
+          echo "$PROJECTS_RESPONSE" > cloudflare-projects.json
+
       - name: Deploy to Cloudflare Pages (Preview)
         working-directory: ./website
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: zeropointprotocol-ai
+          projectName: ${{ env.PROJECT_NAME }}
           directory: build
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
 
@@ -128,7 +159,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-reports
-          path: ./website/.lighthouseci/
+          path: |
+            ./website/.lighthouseci/
+            cloudflare-projects.json
 
       - name: Generate verification report
         run: |

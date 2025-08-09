@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { Observable, from } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { GenerateService } from '../services/generate.service.js';
-import { MultiLLMService, MultiLLMRequest, LLMProvider } from '../services/multi-llm.service.js';
+// import { MultiLLMService, MultiLLMRequest, LLMProvider } from '../services/multi-llm.service.js';
 
 // Import the response type
 interface GenerationResponse {
@@ -38,8 +38,8 @@ interface GenerateTextRequest {
 @Controller('generate')
 export class GenerateController {
   constructor(
-    private readonly generateService: GenerateService,
-    private readonly multiLLMService: MultiLLMService
+    private readonly generateService: GenerateService
+    // private readonly multiLLMService: MultiLLMService
   ) {}
 
   @Post('text')
@@ -66,35 +66,35 @@ export class GenerateController {
     return this.generateService.generateCode(body.prompt, body.language);
   }
 
-  @Post('multi-llm')
-  async generateWithMultiLLM(@Body() request: MultiLLMRequest) {
-    return this.multiLLMService.generateText(request);
-  }
+  // @Post('multi-llm')
+  // async generateWithMultiLLM(@Body() request: MultiLLMRequest) {
+  //   return this.multiLLMService.generateText(request);
+  // }
 
-  @Get('providers')
-  async getProviderStatus() {
-    return this.multiLLMService.getProviderStatus();
-  }
+  // @Get('providers')
+  // async getProviderStatus() {
+  //   return this.multiLLMService.getProviderStatus();
+  // }
 
-  @Get('providers/costs')
-  async getProviderCosts() {
-    return this.multiLLMService.getProviderCosts();
-  }
+  // @Get('providers/costs')
+  // async getProviderCosts() {
+  //   return this.multiLLMService.getProviderCosts();
+  // }
 
-  @Post('providers/:provider/enable')
-  async enableProvider(
-    @Body() body: { apiKey?: string },
-    @Body('provider') provider: LLMProvider
-  ) {
-    await this.multiLLMService.enableProvider(provider, body.apiKey);
-    return { success: true, message: `Provider ${provider} enabled` };
-  }
+  // @Post('providers/:provider/enable')
+  // async enableProvider(
+  //   @Body() body: { apiKey?: string },
+  //   @Body('provider') provider: LLMProvider
+  // ) {
+  //   await this.multiLLMService.enableProvider(provider, body.apiKey);
+  //   return { success: true, message: `Provider ${provider} enabled` };
+  // }
 
-  @Post('providers/:provider/disable')
-  async disableProvider(@Body('provider') provider: LLMProvider) {
-    await this.multiLLMService.disableProvider(provider);
-    return { success: true, message: `Provider ${provider} disabled` };
-  }
+  // @Post('providers/:provider/disable')
+  // async disableProvider(@Body('provider') provider: LLMProvider) {
+  //   await this.multiLLMService.disableProvider(provider);
+  //   return { success: true, message: `Provider ${provider} disabled` };
+  // }
 
   @Get('stats')
   async getGenerationStats() {

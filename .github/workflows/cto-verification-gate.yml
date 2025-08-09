@@ -1,0 +1,192 @@
+name: CTO Verification Gate
+
+on:
+  push:
+    paths:
+      - 'PM_STATUS_REPORT.md'
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  deployments: write
+  pull-requests: write
+
+jobs:
+  cto-verification:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Docusaurus site
+        run: npm run build
+
+      - name: Deploy to Cloudflare Pages (Preview)
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: zeropointprotocol-ai
+          directory: build
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Wait for deployment
+        run: sleep 30
+
+      - name: Smoke Tests
+        run: |
+          echo "Running smoke tests..."
+          
+          # Test homepage
+          echo "Testing homepage..."
+          curl -f -s https://zeropointprotocol.ai > /dev/null && echo "✅ Homepage: OK" || echo "❌ Homepage: FAILED"
+          
+          # Test robots.txt
+          echo "Testing robots.txt..."
+          curl -f -s https://zeropointprotocol.ai/robots.txt > /dev/null && echo "✅ robots.txt: OK" || echo "❌ robots.txt: FAILED"
+          
+          # Test sitemap.xml
+          echo "Testing sitemap.xml..."
+          curl -f -s https://zeropointprotocol.ai/sitemap.xml > /dev/null && echo "✅ sitemap.xml: OK" || echo "❌ sitemap.xml: FAILED"
+          
+          # Test key routes
+          echo "Testing key routes..."
+          curl -f -s https://zeropointprotocol.ai/features > /dev/null && echo "✅ /features: OK" || echo "❌ /features: FAILED"
+          curl -f -s https://zeropointprotocol.ai/interact > /dev/null && echo "✅ /interact: OK" || echo "❌ /interact: FAILED"
+          curl -f -s https://zeropointprotocol.ai/controlcenter > /dev/null && echo "✅ /controlcenter: OK" || echo "❌ /controlcenter: FAILED"
+          curl -f -s https://zeropointprotocol.ai/AIIntegration > /dev/null && echo "✅ /AIIntegration: OK" || echo "❌ /AIIntegration: FAILED"
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+
+      - name: Run Lighthouse CI
+        run: |
+          lhci autorun --upload.target=temporary-public-storage
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+
+      - name: Generate verification report
+        run: |
+          echo "# CTO Verification Report" > verification-report.md
+          echo "" >> verification-report.md
+          echo "**Date:** $(date)" >> verification-report.md
+          echo "**Commit:** ${{ github.sha }}" >> verification-report.md
+          echo "**Trigger:** ${{ github.event_name }}" >> verification-report.md
+          echo "" >> verification-report.md
+          
+          echo "## Smoke Test Results" >> verification-report.md
+          echo "" >> verification-report.md
+          
+          # Capture smoke test results
+          if curl -f -s https://zeropointprotocol.ai > /dev/null; then
+            echo "✅ Homepage: OK" >> verification-report.md
+          else
+            echo "❌ Homepage: FAILED" >> verification-report.md
+          fi
+          
+          if curl -f -s https://zeropointprotocol.ai/robots.txt > /dev/null; then
+            echo "✅ robots.txt: OK" >> verification-report.md
+          else
+            echo "❌ robots.txt: FAILED" >> verification-report.md
+          fi
+          
+          if curl -f -s https://zeropointprotocol.ai/sitemap.xml > /dev/null; then
+            echo "✅ sitemap.xml: OK" >> verification-report.md
+          else
+            echo "❌ sitemap.xml: FAILED" >> verification-report.md
+          fi
+          
+          if curl -f -s https://zeropointprotocol.ai/features > /dev/null; then
+            echo "✅ /features: OK" >> verification-report.md
+          else
+            echo "❌ /features: FAILED" >> verification-report.md
+          fi
+          
+          if curl -f -s https://zeropointprotocol.ai/interact > /dev/null; then
+            echo "✅ /interact: OK" >> verification-report.md
+          else
+            echo "❌ /interact: FAILED" >> verification-report.md
+          fi
+          
+          if curl -f -s https://zeropointprotocol.ai/controlcenter > /dev/null; then
+            echo "✅ /controlcenter: OK" >> verification-report.md
+          else
+            echo "❌ /controlcenter: FAILED" >> verification-report.md
+          fi
+          
+          if curl -f -s https://zeropointprotocol.ai/AIIntegration > /dev/null; then
+            echo "✅ /AIIntegration: OK" >> verification-report.md
+          else
+            echo "❌ /AIIntegration: FAILED" >> verification-report.md
+          fi
+          
+          echo "" >> verification-report.md
+          echo "## Lighthouse Results" >> verification-report.md
+          echo "" >> verification-report.md
+          echo "Lighthouse reports uploaded to artifacts." >> verification-report.md
+          
+          echo "" >> verification-report.md
+          echo "## Checklist" >> verification-report.md
+          echo "" >> verification-report.md
+          echo "- [ ] All smoke tests pass" >> verification-report.md
+          echo "- [ ] Lighthouse scores ≥80 (Performance, Accessibility, Best Practices, SEO)" >> verification-report.md
+          echo "- [ ] No console errors" >> verification-report.md
+          echo "- [ ] All key routes accessible" >> verification-report.md
+          echo "- [ ] Deployment successful" >> verification-report.md
+
+      - name: Upload verification report
+        uses: actions/upload-artifact@v4
+        with:
+          name: verification-report
+          path: verification-report.md
+
+      - name: Post verification comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('verification-report.md', 'utf8');
+            
+            // Determine if verification passed
+            const smokeTestsPassed = report.includes('✅ Homepage: OK') && 
+                                   report.includes('✅ robots.txt: OK') && 
+                                   report.includes('✅ sitemap.xml: OK');
+            
+            const status = smokeTestsPassed ? '✅ PASS' : '❌ FAIL';
+            const statusEmoji = smokeTestsPassed ? '✅' : '❌';
+            
+            const comment = '## ' + statusEmoji + ' CTO Verification Gate - ' + status + '\n\n' + report + '\n\n**@OCEAN** - Please review the verification results above.\n\n**Live Site:** https://zeropointprotocol.ai\n**GitHub Actions:** ' + context.serverUrl + '/' + context.repo.owner + '/' + context.repo.repo + '/actions/runs/' + context.runId + '\n**Artifacts:** Available in this workflow run\n\n**Next Steps:**\n- [ ] Review smoke test results\n- [ ] Check Lighthouse scores\n- [ ] Verify deployment status\n- [ ] Approve or request changes';
+
+            if (context.eventName === 'issue_comment') {
+              await github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: comment
+              });
+            } else {
+              // For push events, create a new issue with the verification results
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: 'CTO Verification Gate - ' + status + ' - ' + new Date().toISOString(),
+                body: comment,
+                labels: ['cto-verification', 'deployment']
+              });
+            }

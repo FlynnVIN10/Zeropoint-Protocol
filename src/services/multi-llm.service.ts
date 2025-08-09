@@ -1,417 +1,230 @@
+// © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
+
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import OpenAI from 'openai';
-import { TelemetryService } from './telemetry.service.js';
 
-// Provider types
-export type LLMProvider = 'petals' | 'tinygrad' | 'openai' | 'grok4' | 'claude' | 'perplexity';
+export interface LLMModel {
+  id: string;
+  name: string;
+  provider: string;
+  capabilities: string[];
+  maxTokens: number;
+  costPerToken: number;
+  latency: number;
+  availability: number;
+  lastUsed: Date;
+}
 
-// Request interface
-export interface MultiLLMRequest {
+export interface LLMRequest {
   prompt: string;
-  provider: LLMProvider;
-  fallbackProviders?: LLMProvider[];
+  model?: string;
   maxTokens?: number;
   temperature?: number;
-  context?: any;
+  taskType?: string;
+  priority?: 'low' | 'medium' | 'high';
 }
 
-// Response interface
-export interface MultiLLMResponse {
-  text: string;
-  provider: LLMProvider;
-  confidence: number;
-  metadata: {
-    prompt: string;
-    timestamp: string;
-    model: string;
-    tokensUsed: number;
-    latency: number;
-    fallbackUsed?: boolean;
-    cost?: number;
-  };
-}
-
-// Provider configuration
-interface ProviderConfig {
-  enabled: boolean;
-  apiKey?: string;
-  baseUrl?: string;
-  rateLimit?: number;
-  costPerToken?: number;
+export interface LLMResponse {
+  model: string;
+  response: string;
+  tokens: number;
+  latency: number;
+  cost: number;
+  timestamp: Date;
 }
 
 @Injectable()
 export class MultiLLMService {
   private readonly logger = new Logger(MultiLLMService.name);
-  
-  // Provider clients
-  private openai: OpenAI | null = null;
-  private providers: Map<LLMProvider, ProviderConfig> = new Map();
-  
-  // Fallback chain configuration
-  private readonly fallbackChain: LLMProvider[] = [
-    'openai',
-    'claude', 
-    'perplexity',
-    'grok4',
-    'petals',
-    'tinygrad'
-  ];
+  private models: Map<string, LLMModel> = new Map();
+  private requestQueue: LLMRequest[] = [];
+  private isProcessing = false;
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly telemetryService: TelemetryService
-  ) {
-    this.initializeProviders();
+  constructor(private configService: ConfigService) {
+    this.initializeModels();
   }
 
-  private initializeProviders(): void {
-    // Initialize provider configurations
-    this.providers.set('openai', {
-      enabled: !!this.configService.get<string>('OPENAI_API_KEY'),
-      apiKey: this.configService.get<string>('OPENAI_API_KEY'),
-      rateLimit: 1000,
-      costPerToken: 0.00002 // Approximate cost per token
+  private initializeModels() {
+    // Initialize with default models
+    const defaultModels: LLMModel[] = [
+      {
+        id: 'gpt-4',
+        name: 'GPT-4',
+        provider: 'openai',
+        capabilities: ['text-generation', 'code-generation', 'reasoning'],
+        maxTokens: 8192,
+        costPerToken: 0.00003,
+        latency: 2000,
+        availability: 0.99,
+        lastUsed: new Date()
+      },
+      {
+        id: 'gpt-3.5-turbo',
+        name: 'GPT-3.5 Turbo',
+        provider: 'openai',
+        capabilities: ['text-generation', 'code-generation'],
+        maxTokens: 4096,
+        costPerToken: 0.000002,
+        latency: 1000,
+        availability: 0.99,
+        lastUsed: new Date()
+      },
+      {
+        id: 'claude-3',
+        name: 'Claude 3',
+        provider: 'anthropic',
+        capabilities: ['text-generation', 'reasoning', 'analysis'],
+        maxTokens: 100000,
+        costPerToken: 0.000015,
+        latency: 1500,
+        availability: 0.98,
+        lastUsed: new Date()
+      }
+    ];
+
+    defaultModels.forEach(model => {
+      this.models.set(model.id, model);
     });
 
-    this.providers.set('claude', {
-      enabled: !!this.configService.get<string>('CLAUDE_API_KEY'),
-      apiKey: this.configService.get<string>('CLAUDE_API_KEY'),
-      baseUrl: 'https://api.anthropic.com',
-      rateLimit: 500,
-      costPerToken: 0.000015
-    });
+    this.logger.log(`Initialized ${defaultModels.length} LLM models`);
+  }
 
-    this.providers.set('perplexity', {
-      enabled: !!this.configService.get<string>('PERPLEXITY_API_KEY'),
-      apiKey: this.configService.get<string>('PERPLEXITY_API_KEY'),
-      baseUrl: 'https://api.perplexity.ai',
-      rateLimit: 300,
-      costPerToken: 0.00001
-    });
+  async processRequest(request: LLMRequest): Promise<LLMResponse> {
+    this.logger.log(`Processing LLM request: ${request.taskType || 'general'}`);
 
-    this.providers.set('grok4', {
-      enabled: !!this.configService.get<string>('GROK_API_KEY'),
-      apiKey: this.configService.get<string>('GROK_API_KEY'),
-      baseUrl: 'https://api.x.ai',
-      rateLimit: 200,
-      costPerToken: 0.000025
-    });
-
-    this.providers.set('petals', {
-      enabled: true, // Open source, no API key required
-      rateLimit: 100,
-      costPerToken: 0 // Free
-    });
-
-    this.providers.set('tinygrad', {
-      enabled: true, // Open source, no API key required
-      rateLimit: 50,
-      costPerToken: 0 // Free
-    });
-
-    // Initialize OpenAI client if available
-    if (this.providers.get('openai')?.enabled) {
-      this.openai = new OpenAI({
-        apiKey: this.providers.get('openai')?.apiKey,
-        organization: this.configService.get<string>('OPENAI_ORG_ID'),
-      });
+    // Select appropriate model
+    const selectedModel = this.selectModel(request);
+    
+    if (!selectedModel) {
+      throw new Error('No suitable model available for request');
     }
 
-    this.logger.log('Multi-LLM service initialized with providers:', 
-      Array.from(this.providers.entries())
-        .filter(([_, config]) => config.enabled)
-        .map(([provider, _]) => provider)
-    );
-  }
+    // Update model usage
+    selectedModel.lastUsed = new Date();
 
-  async generateText(request: MultiLLMRequest): Promise<MultiLLMResponse> {
+    // Simulate LLM processing
     const startTime = Date.now();
-    this.logger.log(`Generating text with provider: ${request.provider}`);
+    const response = await this.simulateLLMProcessing(request, selectedModel);
+    const latency = Date.now() - startTime;
 
-    try {
-      // Emit generation start event
-      await this.telemetryService.logEvent('multi_llm', 'generation_started', {
-        provider: request.provider,
-        prompt: request.prompt,
-        timestamp: startTime,
-      });
+    // Calculate cost
+    const tokens = Math.ceil(request.prompt.length / 4) + Math.ceil(response.length / 4);
+    const cost = tokens * selectedModel.costPerToken;
 
-      // Try primary provider
-      let response = await this.tryProvider(request.provider, request);
-      
-      // If primary fails, try fallback providers
-      if (!response && request.fallbackProviders) {
-        for (const fallbackProvider of request.fallbackProviders) {
-          this.logger.log(`Trying fallback provider: ${fallbackProvider}`);
-          response = await this.tryProvider(fallbackProvider, request);
-          if (response) {
-            response.metadata.fallbackUsed = true;
-            break;
-          }
-        }
-      }
+    const llmResponse: LLMResponse = {
+      model: selectedModel.id,
+      response,
+      tokens,
+      latency,
+      cost,
+      timestamp: new Date()
+    };
 
-      // If still no response, use default fallback chain
-      if (!response) {
-        for (const fallbackProvider of this.fallbackChain) {
-          if (fallbackProvider !== request.provider && 
-              this.providers.get(fallbackProvider)?.enabled) {
-            this.logger.log(`Trying fallback chain provider: ${fallbackProvider}`);
-            response = await this.tryProvider(fallbackProvider, request);
-            if (response) {
-              response.metadata.fallbackUsed = true;
-              break;
-            }
-          }
-        }
-      }
-
-      if (!response) {
-        throw new Error('All providers failed to generate response');
-      }
-
-      const latency = Date.now() - startTime;
-      response.metadata.latency = latency;
-
-      // Emit generation completion event
-      await this.telemetryService.logEvent('multi_llm', 'generation_completed', {
-        provider: response.provider,
-        prompt: request.prompt,
-        latency,
-        fallbackUsed: response.metadata.fallbackUsed,
-        timestamp: Date.now(),
-      });
-
-      return response;
-
-    } catch (error) {
-      this.logger.error(`Multi-LLM generation failed: ${error.message}`);
-      
-      // Emit generation failure event
-      await this.telemetryService.logEvent('multi_llm', 'generation_failed', {
-        provider: request.provider,
-        prompt: request.prompt,
-        error: error.message,
-        timestamp: Date.now(),
-      });
-
-      throw error;
-    }
+    this.logger.log(`LLM response generated by ${selectedModel.id} in ${latency}ms`);
+    return llmResponse;
   }
 
-  private async tryProvider(provider: LLMProvider, request: MultiLLMRequest): Promise<MultiLLMResponse | null> {
-    const config = this.providers.get(provider);
-    if (!config?.enabled) {
-      this.logger.warn(`Provider ${provider} is not enabled`);
+  private selectModel(request: LLMRequest): LLMModel | null {
+    const availableModels = Array.from(this.models.values())
+      .filter(model => model.availability > 0.95);
+
+    if (availableModels.length === 0) {
       return null;
     }
 
-    try {
-      switch (provider) {
-        case 'openai':
-          return await this.generateWithOpenAI(request);
-        case 'claude':
-          return await this.generateWithClaude(request);
-        case 'perplexity':
-          return await this.generateWithPerplexity(request);
-        case 'grok4':
-          return await this.generateWithGrok(request);
-        case 'petals':
-          return await this.generateWithPetals(request);
-        case 'tinygrad':
-          return await this.generateWithTinyGrad(request);
-        default:
-          this.logger.warn(`Unknown provider: ${provider}`);
-          return null;
+    // If specific model requested, use it if available
+    if (request.model && this.models.has(request.model)) {
+      const requestedModel = this.models.get(request.model)!;
+      if (requestedModel.availability > 0.95) {
+        return requestedModel;
       }
-    } catch (error) {
-      this.logger.error(`Provider ${provider} failed: ${error.message}`);
-      return null;
+    }
+
+    // Select based on task type and capabilities
+    let suitableModels = availableModels;
+
+    if (request.taskType === 'reasoning') {
+      suitableModels = availableModels.filter(model => 
+        model.capabilities.includes('reasoning')
+      );
+    } else if (request.taskType === 'code-generation') {
+      suitableModels = availableModels.filter(model => 
+        model.capabilities.includes('code-generation')
+      );
+    }
+
+    if (suitableModels.length === 0) {
+      suitableModels = availableModels;
+    }
+
+    // Select based on priority and cost
+    if (request.priority === 'high') {
+      // Prefer faster models for high priority
+      return suitableModels.reduce((best, current) => 
+        current.latency < best.latency ? current : best
+      );
+    } else {
+      // Prefer cost-effective models for normal priority
+      return suitableModels.reduce((best, current) => 
+        current.costPerToken < best.costPerToken ? current : best
+      );
     }
   }
 
-  private async generateWithOpenAI(request: MultiLLMRequest): Promise<MultiLLMResponse> {
-    if (!this.openai) {
-      throw new Error('OpenAI client not initialized');
-    }
+  private async simulateLLMProcessing(request: LLMRequest, model: LLMModel): Promise<string> {
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, model.latency));
 
-    const completion = await this.openai.chat.completions.create({
-      model: 'gpt-4-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an AI assistant powered by the Zeropoint Protocol, an advanced AI safety framework. Provide helpful, accurate, and ethically-aligned responses.',
-        },
-        {
-          role: 'user',
-          content: request.prompt,
-        },
-      ],
-      max_tokens: request.maxTokens || 1000,
-      temperature: request.temperature || 0.7,
-    });
-
-    const text = completion.choices[0]?.message?.content || '';
-    const tokensUsed = completion.usage?.total_tokens || 0;
-    const cost = tokensUsed * (this.providers.get('openai')?.costPerToken || 0);
-
-    return {
-      text,
-      provider: 'openai',
-      confidence: 0.9,
-      metadata: {
-        prompt: request.prompt,
-        timestamp: new Date().toISOString(),
-        model: 'gpt-4-turbo',
-        tokensUsed,
-        latency: 0, // Will be set by caller
-        cost,
-      },
-    };
-  }
-
-  private async generateWithClaude(request: MultiLLMRequest): Promise<MultiLLMResponse> {
-    // TODO: Implement Claude API integration
-    // This is a placeholder implementation
-    this.logger.warn('Claude integration not yet implemented');
+    // Generate mock response based on task type
+    let response = '';
     
-    return {
-      text: `[Claude Response Placeholder] ${request.prompt}`,
-      provider: 'claude',
-      confidence: 0.8,
-      metadata: {
-        prompt: request.prompt,
-        timestamp: new Date().toISOString(),
-        model: 'claude-3-sonnet',
-        tokensUsed: 50,
-        latency: 0,
-        cost: 0,
-      },
-    };
-  }
-
-  private async generateWithPerplexity(request: MultiLLMRequest): Promise<MultiLLMResponse> {
-    // TODO: Implement Perplexity API integration
-    this.logger.warn('Perplexity integration not yet implemented');
-    
-    return {
-      text: `[Perplexity Response Placeholder] ${request.prompt}`,
-      provider: 'perplexity',
-      confidence: 0.8,
-      metadata: {
-        prompt: request.prompt,
-        timestamp: new Date().toISOString(),
-        model: 'perplexity-online',
-        tokensUsed: 50,
-        latency: 0,
-        cost: 0,
-      },
-    };
-  }
-
-  private async generateWithGrok(request: MultiLLMRequest): Promise<MultiLLMResponse> {
-    // TODO: Implement Grok API integration
-    this.logger.warn('Grok integration not yet implemented');
-    
-    return {
-      text: `[Grok Response Placeholder] ${request.prompt}`,
-      provider: 'grok4',
-      confidence: 0.8,
-      metadata: {
-        prompt: request.prompt,
-        timestamp: new Date().toISOString(),
-        model: 'grok-beta',
-        tokensUsed: 50,
-        latency: 0,
-        cost: 0,
-      },
-    };
-  }
-
-  private async generateWithPetals(request: MultiLLMRequest): Promise<MultiLLMResponse> {
-    // TODO: Implement Petals integration
-    this.logger.warn('Petals integration not yet implemented');
-    
-    return {
-      text: `[Petals Response Placeholder] ${request.prompt}`,
-      provider: 'petals',
-      confidence: 0.7,
-      metadata: {
-        prompt: request.prompt,
-        timestamp: new Date().toISOString(),
-        model: 'petals-distributed',
-        tokensUsed: 50,
-        latency: 0,
-        cost: 0,
-      },
-    };
-  }
-
-  private async generateWithTinyGrad(request: MultiLLMRequest): Promise<MultiLLMResponse> {
-    // TODO: Implement TinyGrad integration
-    this.logger.warn('TinyGrad integration not yet implemented');
-    
-    return {
-      text: `[TinyGrad Response Placeholder] ${request.prompt}`,
-      provider: 'tinygrad',
-      confidence: 0.7,
-      metadata: {
-        prompt: request.prompt,
-        timestamp: new Date().toISOString(),
-        model: 'tinygrad-local',
-        tokensUsed: 50,
-        latency: 0,
-        cost: 0,
-      },
-    };
-  }
-
-  // Provider management methods
-  async getProviderStatus(): Promise<Record<LLMProvider, boolean>> {
-    const status: Record<LLMProvider, boolean> = {} as any;
-    for (const [provider, config] of this.providers.entries()) {
-      status[provider] = config.enabled;
+    switch (request.taskType) {
+      case 'reasoning':
+        response = `Based on the provided context, I can analyze this systematically. The key considerations are: 1) Logical consistency, 2) Evidence-based reasoning, 3) Alternative perspectives. My analysis suggests...`;
+        break;
+      case 'code-generation':
+        response = `Here's a solution in TypeScript:\n\n\`\`\`typescript\nfunction processRequest(request: LLMRequest): Promise<LLMResponse> {\n  // Implementation here\n  return Promise.resolve({\n    model: '${model.id}',\n    response: 'Generated response',\n    tokens: 100,\n    latency: 1000,\n    cost: 0.001,\n    timestamp: new Date()\n  });\n}\n\`\`\``;
+        break;
+      default:
+        response = `I understand your request: "${request.prompt}". Here's my response based on the available information and context. The key points to consider are...`;
     }
-    return status;
+
+    return response;
   }
 
-  async enableProvider(provider: LLMProvider, apiKey?: string): Promise<void> {
-    const config = this.providers.get(provider);
-    if (config) {
-      config.enabled = true;
-      if (apiKey) {
-        config.apiKey = apiKey;
-      }
-      this.logger.log(`Provider ${provider} enabled`);
+  async getModelStatus(): Promise<LLMModel[]> {
+    return Array.from(this.models.values());
+  }
+
+  async addModel(model: LLMModel): Promise<void> {
+    this.models.set(model.id, model);
+    this.logger.log(`Added new LLM model: ${model.name} (${model.provider})`);
+  }
+
+  async removeModel(modelId: string): Promise<boolean> {
+    const removed = this.models.delete(modelId);
+    if (removed) {
+      this.logger.log(`Removed LLM model: ${modelId}`);
+    }
+    return removed;
+  }
+
+  async updateModelAvailability(modelId: string, availability: number): Promise<void> {
+    const model = this.models.get(modelId);
+    if (model) {
+      model.availability = availability;
+      this.logger.log(`Updated availability for ${modelId}: ${availability}`);
     }
   }
 
-  async disableProvider(provider: LLMProvider): Promise<void> {
-    const config = this.providers.get(provider);
-    if (config) {
-      config.enabled = false;
-      this.logger.log(`Provider ${provider} disabled`);
-    }
-  }
-
-  // Cost tracking
-  async getProviderCosts(): Promise<Record<LLMProvider, number>> {
-    const costs: Record<LLMProvider, number> = {} as any;
-    for (const [provider, config] of this.providers.entries()) {
-      costs[provider] = config.costPerToken || 0;
-    }
-    return costs;
-  }
-
-  // Rate limiting
-  async checkRateLimit(provider: LLMProvider): Promise<boolean> {
-    const config = this.providers.get(provider);
-    if (!config?.enabled) {
-      return false;
-    }
-    // TODO: Implement actual rate limiting logic
-    return true;
+  getMetrics() {
+    const models = Array.from(this.models.values());
+    return {
+      totalModels: models.length,
+      availableModels: models.filter(m => m.availability > 0.95).length,
+      averageLatency: models.reduce((sum, m) => sum + m.latency, 0) / models.length,
+      averageCost: models.reduce((sum, m) => sum + m.costPerToken, 0) / models.length,
+      lastUpdated: new Date()
+    };
   }
 } 

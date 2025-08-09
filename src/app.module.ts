@@ -55,6 +55,7 @@ import { UserRoleService } from './services/user-role.service.js';
 import { ConsensusService } from './services/consensus.service.js';
 import { AgentService } from './services/agent.service.js';
 import { RAGService } from './services/rag.service.js';
+import { MultiLLMService } from './services/multi-llm.service.js';
 
 @Module({
   imports: [
@@ -139,6 +140,7 @@ import { RAGService } from './services/rag.service.js';
     ConsensusService,
     AgentService,
     RAGService,
+    MultiLLMService,
     // SecurityMiddleware,
     // KeyRotationService,
     // PerformanceOptimizerService,

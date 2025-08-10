@@ -22,6 +22,7 @@
 
 ### Quick Rollback (Emergency)
 ```bash
+```bash
 # 1. Identify last stable commit
 git log --oneline -10
 
@@ -37,7 +38,7 @@ curl -I https://zeropointprotocol.ai
 ### Standard Rollback
 ```bash
 # 1. Create rollback branch
-git checkout -b rollback/$(date +%Y%m%d-%H%M)
+git checkout -b rollback/\$(date +%Y%m%d-%H%M)
 
 # 2. Revert to stable commit
 git revert <problematic-commit-hash>

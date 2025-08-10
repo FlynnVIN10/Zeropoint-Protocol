@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/phases/09/",
+  "source": "@site/src/pages/phases/09/index.mdx",
+  "title": "Phase 9 - Synthiant Core Implementation",
+  "description": "Implementation of Synthiant core platform with identity, scopes, memory, tools, quotas, and audit systems",
+  "frontMatter": {
+    "title": "Phase 9 - Synthiant Core Implementation",
+    "description": "Implementation of Synthiant core platform with identity, scopes, memory, tools, quotas, and audit systems"
+  },
+  "unlisted": false
+}

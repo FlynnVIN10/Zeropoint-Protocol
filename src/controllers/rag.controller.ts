@@ -35,19 +35,21 @@ export class RAGController {
   @Post('query')
   async queryContext(@Body() request: RAGQueryRequest): Promise<any> {
     try {
-      const sources = await this.ragService.searchContext(request.query);
-      const context = { sources: sources.slice(0, request.topK || 5) };
+      const response = await this.ragService.queryRAG(request.query, request.topK || 5);
       
       return {
         status: 'success',
         data: {
           query: request.query,
-          context: request.includeSources ? context : {
-            sources: context.sources.map(s => ({
-              title: s.title,
-              relevance: s.relevance,
-            })),
-          },
+          answer: response.answer,
+          sources: request.includeSources ? response.sources : response.sources.map(s => ({
+            title: s.title,
+            relevance: s.relevance,
+            id: s.id
+          })),
+          confidence: response.confidence,
+          nDCG: response.nDCG,
+          responseTime: response.responseTime,
           timestamp: new Date().toISOString(),
         },
         timestamp: new Date().toISOString(),
@@ -189,6 +191,73 @@ export class RAGController {
     } catch (error) {
       throw new HttpException(
         `Error retrieving RAG stats: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Post('evaluate')
+  async runEvaluation(): Promise<any> {
+    try {
+      const evaluation = await this.ragService.runGoldenSetEvaluation();
+      
+      return {
+        status: 'success',
+        data: {
+          evaluation,
+          targetMet: evaluation.averageNDCG >= 0.65,
+          message: evaluation.averageNDCG >= 0.65 
+            ? '✅ Golden set evaluation target MET (≥0.65 nDCG)'
+            : `⚠️  Target NOT MET. Current: ${evaluation.averageNDCG.toFixed(3)}, Target: 0.65`
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        `Error running evaluation: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('evaluate/history')
+  async getEvaluationHistory(): Promise<any> {
+    try {
+      const history = await this.ragService.getEvaluationHistory();
+      
+      return {
+        status: 'success',
+        data: {
+          history,
+          totalEvaluations: history.length,
+          latestEvaluation: history.length > 0 ? history[history.length - 1] : null
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        `Error getting evaluation history: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  @Get('evaluate/latest')
+  async getLatestEvaluation(): Promise<any> {
+    try {
+      const evaluation = await this.ragService.getLatestEvaluation();
+      
+      return {
+        status: 'success',
+        data: {
+          evaluation,
+          hasEvaluations: evaluation !== null
+        },
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error) {
+      throw new HttpException(
+        `Error getting latest evaluation: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

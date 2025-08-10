@@ -58,6 +58,8 @@ import { ConsensusService } from './services/consensus.service.js';
 import { AgentService } from './services/agent.service.js';
 import { RAGService } from './services/rag.service.js';
 import { PerformanceMonitorService } from './services/performance-monitor.service.js';
+import { MultiLLMService } from './services/multi-llm.service.js';
+import { StreamController } from './controllers/stream.controller.js';
 
 @Module({
   imports: [
@@ -124,7 +126,7 @@ import { PerformanceMonitorService } from './services/performance-monitor.servic
       }
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController, SSEController, PerformanceController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController, SSEController, PerformanceController, StreamController],
   providers: [
     AppService,
     AgentStateService,

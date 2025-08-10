@@ -416,8 +416,7 @@ export class AuditSystem extends EventEmitter {
    * Sign audit event
    */
   private signEvent(event: Omit<AuditEvent, 'signature'>): string {
-    const { signature, ...eventWithoutSignature } = event;
-    const data = JSON.stringify(eventWithoutSignature);
+    const data = JSON.stringify(event);
     
     return createHmac('sha256', this.config.webhookSecret)
       .update(data)
@@ -428,8 +427,7 @@ export class AuditSystem extends EventEmitter {
    * Sign webhook payload
    */
   private signWebhookPayload(payload: Omit<WebhookPayload, 'signature'>): string {
-    const { signature, ...payloadWithoutSignature } = payload;
-    const data = JSON.stringify(payloadWithoutSignature);
+    const data = JSON.stringify(payload);
     
     return createHmac('sha256', this.config.webhookSecret)
       .update(data)

@@ -11,6 +11,10 @@
           "mainDocId": "status",
           "docs": [
             {
+              "id": "api/README",
+              "path": "/docs/api/"
+            },
+            {
               "id": "brand",
               "path": "/docs/brand",
               "sidebar": "tutorialSidebar"
@@ -54,6 +58,10 @@
               "id": "LICENSES",
               "path": "/docs/LICENSES",
               "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "pages-rollback",
+              "path": "/docs/pages-rollback"
             },
             {
               "id": "phase13_consensus_engine",

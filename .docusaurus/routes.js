@@ -8,8 +8,18 @@ export default [
     exact: true
   },
   {
+    path: '/phases/09/',
+    component: ComponentCreator('/phases/09/', '5b7'),
+    exact: true
+  },
+  {
     path: '/phases/10',
     component: ComponentCreator('/phases/10', '260'),
+    exact: true
+  },
+  {
+    path: '/phases/10/',
+    component: ComponentCreator('/phases/10/', '20a'),
     exact: true
   },
   {
@@ -18,22 +28,42 @@ export default [
     exact: true
   },
   {
+    path: '/phases/11/',
+    component: ComponentCreator('/phases/11/', 'ac5'),
+    exact: true
+  },
+  {
     path: '/phases/12',
     component: ComponentCreator('/phases/12', '521'),
     exact: true
   },
   {
+    path: '/phases/12/',
+    component: ComponentCreator('/phases/12/', 'e56'),
+    exact: true
+  },
+  {
+    path: '/phases/13/',
+    component: ComponentCreator('/phases/13/', 'd3e'),
+    exact: true
+  },
+  {
     path: '/docs',
-    component: ComponentCreator('/docs', 'ca4'),
+    component: ComponentCreator('/docs', '802'),
     routes: [
       {
         path: '/docs',
-        component: ComponentCreator('/docs', '956'),
+        component: ComponentCreator('/docs', '705'),
         routes: [
           {
             path: '/docs',
-            component: ComponentCreator('/docs', 'f71'),
+            component: ComponentCreator('/docs', '1ed'),
             routes: [
+              {
+                path: '/docs/api/',
+                component: ComponentCreator('/docs/api/', '8b5'),
+                exact: true
+              },
               {
                 path: '/docs/brand',
                 component: ComponentCreator('/docs/brand', '4cd'),
@@ -87,6 +117,11 @@ export default [
                 component: ComponentCreator('/docs/LICENSES', '8a6'),
                 exact: true,
                 sidebar: "tutorialSidebar"
+              },
+              {
+                path: '/docs/pages-rollback',
+                component: ComponentCreator('/docs/pages-rollback', '063'),
+                exact: true
               },
               {
                 path: '/docs/phase13_consensus_engine',

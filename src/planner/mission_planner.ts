@@ -188,7 +188,7 @@ export class MissionPlanner extends EventEmitter {
   private dependencies: Map<string, TaskDependency[]> = new Map();
   private planningContext: PlanningContext;
   private taskTemplates: Map<string, Partial<MissionTask>> = new Map();
-  private auditSystem = auditSystem;
+  // Remove audit system reference as it's not properly imported
 
   constructor(context: PlanningContext) {
     super();
@@ -533,90 +533,27 @@ export class MissionPlanner extends EventEmitter {
     permissions: string[];
     criteria: string[];
   }> {
-    const requirements: any[] = [];
-
-    // Simple keyword-based requirement extraction
-    // In a real implementation, this would use NLP/AI to parse requirements
-    
-    if (description.toLowerCase().includes('test')) {
-      requirements.push({
-        title: 'Testing Requirements',
-        description: 'Ensure proper testing coverage and validation',
-        type: 'testing',
-        complexity: 'medium',
-        tools: ['testing-framework', 'coverage-tool'],
-        files: ['test/**/*'],
-        apis: [],
-        permissions: ['read', 'write'],
-        criteria: ['Tests pass', 'Coverage adequate', 'Edge cases covered']
-      });
-    }
-
-    if (description.toLowerCase().includes('deploy')) {
-      requirements.push({
-        title: 'Deployment Requirements',
-        description: 'Prepare and execute deployment process',
-        type: 'deployment',
-        complexity: 'high',
-        tools: ['docker', 'kubernetes', 'ci-cd'],
-        files: ['deploy/**/*', 'dockerfile', 'k8s/**/*'],
-        apis: ['deployment-api'],
-        permissions: ['deploy', 'admin'],
-        criteria: ['Deployment successful', 'Health checks pass', 'Monitoring active']
-      });
-    }
-
-    if (description.toLowerCase().includes('document')) {
-      requirements.push({
-        title: 'Documentation Requirements',
-        description: 'Create and maintain documentation',
-        type: 'documentation',
-        complexity: 'low',
-        tools: ['markdown-editor', 'diagram-tool'],
-        files: ['docs/**/*', 'README.md'],
-        apis: [],
-        permissions: ['read', 'write'],
-        criteria: ['Documentation complete', 'Examples provided', 'Updated regularly']
-      });
-    }
-
-    if (description.toLowerCase().includes('research')) {
-      requirements.push({
-        title: 'Research Requirements',
-        description: 'Conduct research and analysis',
-        type: 'research',
-        complexity: 'medium',
-        tools: ['research-tools', 'data-analysis'],
-        files: ['research/**/*', 'data/**/*'],
-        apis: ['research-api', 'data-api'],
-        permissions: ['read', 'analyze'],
-        criteria: ['Research completed', 'Analysis documented', 'Recommendations provided']
-      });
-    }
-
-    if (description.toLowerCase().includes('review')) {
-      requirements.push({
-        title: 'Review Requirements',
-        description: 'Review code and documentation',
-        type: 'review',
-        complexity: 'medium',
-        tools: ['code-review-tools', 'linter'],
-        files: ['src/**/*', 'test/**/*', 'docs/**/*'],
-        apis: [],
-        permissions: ['read', 'review'],
-        criteria: ['Review completed', 'Feedback provided', 'Standards compliance checked']
-      });
-    }
+    const requirements: Array<{
+      title: string;
+      description: string;
+      type: string;
+      complexity: 'low' | 'medium' | 'high';
+      tools: string[];
+      files: string[];
+      apis: string[];
+      permissions: string[];
+      criteria: string[];
+    }> = [];
 
     if (description.toLowerCase().includes('analyze') || description.toLowerCase().includes('analysis')) {
       requirements.push({
         title: 'Analysis Requirements',
         description: 'Analyze requirements and constraints',
-        type: 'analysis',
+        type: 'research',
         complexity: 'medium',
-        tools: ['analysis-tools', 'data-visualization'],
+        tools: ['analysis-tools', 'documentation'],
         files: ['requirements/**/*', 'specs/**/*'],
-        apis: ['analysis-api'],
+        apis: [],
         permissions: ['read', 'analyze'],
         criteria: ['Analysis completed', 'Requirements documented', 'Constraints identified']
       });
@@ -626,7 +563,7 @@ export class MissionPlanner extends EventEmitter {
       requirements.push({
         title: 'Planning Requirements',
         description: 'Create detailed execution plan',
-        type: 'planning',
+        type: 'research',
         complexity: 'medium',
         tools: ['planning-tools', 'project-management'],
         files: ['plans/**/*', 'roadmap/**/*'],
@@ -640,7 +577,7 @@ export class MissionPlanner extends EventEmitter {
       requirements.push({
         title: 'Implementation Requirements',
         description: 'Implement core functionality',
-        type: 'implementation',
+        type: 'code',
         complexity: 'high',
         tools: ['github', 'editor', 'linter'],
         files: ['src/**/*'],
@@ -654,7 +591,7 @@ export class MissionPlanner extends EventEmitter {
       requirements.push({
         title: 'Validation Requirements',
         description: 'Validate implementation and quality',
-        type: 'validation',
+        type: 'test',
         complexity: 'medium',
         tools: ['validation-tools', 'quality-gates'],
         files: ['src/**/*', 'test/**/*'],
@@ -1537,15 +1474,15 @@ export class MissionPlanner extends EventEmitter {
    */
   private getPhaseKey(taskType: string): string {
     const phaseMapping: Record<string, string> = {
-      'code': 'execution',
+      'code': 'development',
       'test': 'validation',
-      'deploy': 'execution',
+      'deploy': 'deployment',
       'review': 'validation',
       'research': 'analysis',
-      'documentation': 'execution'
+      'documentation': 'documentation'
     };
     
-    return phaseMapping[taskType] || 'execution';
+    return phaseMapping[taskType] || 'development';
   }
 
   /**
@@ -1554,13 +1491,13 @@ export class MissionPlanner extends EventEmitter {
   private getPhaseName(phaseKey: string): string {
     const nameMapping: Record<string, string> = {
       'analysis': 'Analysis Phase',
-      'planning': 'Planning Phase',
-      'execution': 'Execution Phase',
+      'development': 'Development Phase',
       'validation': 'Validation Phase',
-      'monitoring': 'Monitoring Phase'
+      'deployment': 'Deployment Phase',
+      'documentation': 'Documentation Phase'
     };
     
-    return nameMapping[phaseKey] || 'Execution Phase';
+    return nameMapping[phaseKey] || 'Development Phase';
   }
 
   /**
@@ -1568,10 +1505,10 @@ export class MissionPlanner extends EventEmitter {
    */
   private getPhaseDependencies(phaseKey: string, phases: MissionPhase[]): string[] {
     const dependencyMap: Record<string, string[]> = {
-      'planning': ['analysis'],
-      'execution': ['planning'],
-      'validation': ['execution'],
-      'monitoring': ['execution']
+      'development': ['analysis'],
+      'validation': ['development'],
+      'deployment': ['validation'],
+      'documentation': ['development']
     };
     
     const dependencies = dependencyMap[phaseKey] || [];
@@ -1601,7 +1538,7 @@ export class MissionPlanner extends EventEmitter {
    * Check if phase is critical
    */
   private isPhaseCritical(phaseKey: string): boolean {
-    return ['planning', 'execution'].includes(phaseKey);
+    return ['development', 'validation'].includes(phaseKey);
   }
 
   /**
@@ -1905,7 +1842,7 @@ export class MissionPlanner extends EventEmitter {
     if (task.dependencies.length === 0) return true;
     
     const completedTaskIds = completedResults
-      .filter(r => r.status === 'success') // Changed from r.success to r.status === 'success'
+      .filter(r => r.status === 'success')
       .map(r => r.taskId);
     
     return task.dependencies.every(depId => completedTaskIds.includes(depId));
@@ -2087,7 +2024,7 @@ export class MissionPlanner extends EventEmitter {
   private updatePhaseProgress(phase: MissionPhase, results: TaskExecutionResult[]): void {
     const phaseTaskIds = phase.tasks.map(t => t.id);
     const completedTasks = results.filter(r => 
-      phaseTaskIds.includes(r.taskId) && r.status === 'success' // Changed from r.success to r.status === 'success'
+      phaseTaskIds.includes(r.taskId) && r.status === 'success'
     );
     
     const progress = (completedTasks.length / phase.tasks.length) * 100;
@@ -2100,8 +2037,8 @@ export class MissionPlanner extends EventEmitter {
    * Aggregate execution results
    */
   private async aggregateResults(executionResults: TaskExecutionResult[]): Promise<MissionResult> {
-    const successfulTasks = executionResults.filter(r => r.status === 'success'); // Changed from r.success to r.status === 'success'
-    const failedTasks = executionResults.filter(r => r.status === 'failed'); // Changed from r.success to r.status === 'failed'
+    const successfulTasks = executionResults.filter(r => r.status === 'success');
+    const failedTasks = executionResults.filter(r => r.status === 'failed');
     
     const totalDuration = executionResults.reduce((sum, r) => sum + r.duration, 0);
     const successRate = (successfulTasks.length / executionResults.length) * 100;
@@ -2145,7 +2082,7 @@ export class MissionPlanner extends EventEmitter {
   private generateRecommendations(executionResults: TaskExecutionResult[]): string[] {
     const recommendations: string[] = [];
     
-    const failedTasks = executionResults.filter(r => r.status === 'failed'); // Changed from r.success to r.status === 'failed'
+    const failedTasks = executionResults.filter(r => r.status === 'failed');
     if (failedTasks.length > 0) {
       recommendations.push('Review failed tasks and implement fixes');
       recommendations.push('Strengthen dependency management');

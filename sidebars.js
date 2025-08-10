@@ -1,26 +1,19 @@
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
-  // Manual sidebar configuration to avoid auto-generation issues
+  // Manual sidebar configuration with only existing documents
   tutorialSidebar: [
-    'intro',
-    'api',
     'design/screenshots/README',
     'errors',
     'legal',
-    'license',
-    'phase8_consensus_ops',
-    'privacy',
-    'status',
-    'terms',
-    'testing',
-    'tutorial-basics/create-a-document',
-    'tutorial-basics/create-a-page',
-    'tutorial-basics/create-a-blog-post',
-    'tutorial-basics/markdown-features',
-    'tutorial-basics/deploy-your-site',
-    'tutorial-basics/congratulations',
-    'tutorial-extras/manage-docs-versions',
-    'tutorial-extras/translate-your-site',
+    'phase13_consensus_engine',
+    'phase13_petal_training',
+    'soulchain-rpc',
+    'feedback',
+    'compliance/gdpr-audit',
+    'design/phase8-visualizer',
+    'design/screenshots/phase4/README',
+    'brand',
+    'LICENSES',
   ],
 };
 

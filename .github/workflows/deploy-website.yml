@@ -16,7 +16,7 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
         
     - name: Install dependencies
@@ -25,6 +25,13 @@ jobs:
     - name: Build website
       run: npm run build
       
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: site-build
+        path: build/
+        retention-days: 30
+        
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       if: github.ref == 'refs/heads/master'
@@ -38,4 +45,5 @@ jobs:
         echo "🚀 Website deployment completed!"
         echo "✅ Build successful"
         echo "✅ Deployed to GitHub Pages"
-        echo "🌐 Live at: https://zeropointprotocol.ai" 
+        echo "🌐 Live at: https://zeropointprotocol.ai"
+        echo "📦 Build artifacts uploaded as 'site-build'" 

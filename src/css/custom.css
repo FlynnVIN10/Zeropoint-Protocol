@@ -63,3 +63,103 @@
   background: var(--ifm-color-danger-lightest);
   color: var(--ifm-color-danger-darkest);
 }
+
+/* Phase Cards Grid */
+.phases-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.phase-card {
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.phase-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: var(--ifm-color-primary);
+}
+
+.phase-card.current-phase {
+  border-color: var(--ifm-color-primary);
+  background: linear-gradient(135deg, var(--ifm-color-primary-lightest) 0%, var(--ifm-color-primary-lighter) 100%);
+}
+
+.phase-card h3 {
+  color: var(--ifm-color-primary);
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+}
+
+.phase-card p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+
+.phase-card .button {
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+/* Features Grid */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.feature-item {
+  background: var(--ifm-color-emphasis-50);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-color: var(--ifm-color-primary-light);
+}
+
+.feature-item h4 {
+  color: var(--ifm-color-primary);
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.feature-item p {
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .phases-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .phase-card {
+    padding: 1rem;
+  }
+  
+  .feature-item {
+    padding: 1rem;
+  }
+}

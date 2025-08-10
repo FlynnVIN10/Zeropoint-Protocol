@@ -19,7 +19,17 @@ export default {
       {
         "docs": {
           "sidebarPath": "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/sidebars.js",
-          "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/"
+          "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/",
+          "routeBasePath": "docs",
+          "include": [
+            "**/*.{md,mdx}"
+          ],
+          "exclude": [
+            "**/_*.{js,jsx,ts,tsx,md,mdx}",
+            "**/_*/**",
+            "**/*.test.{js,jsx,ts,tsx}",
+            "**/__tests__/**"
+          ]
         },
         "blog": {
           "showReadingTime": true,
@@ -39,6 +49,10 @@ export default {
     },
     "navbar": {
       "title": "Zeropoint Protocol",
+      "logo": {
+        "alt": "Zeropoint Protocol Logo",
+        "src": "img/logo.svg"
+      },
       "items": [
         {
           "to": "/",
@@ -54,6 +68,11 @@ export default {
           "to": "/status",
           "label": "Status",
           "position": "left"
+        },
+        {
+          "href": "https://github.com/FlynnVIN10/Zeropoint-Protocol",
+          "label": "GitHub",
+          "position": "right"
         }
       ],
       "style": "dark",
@@ -61,9 +80,60 @@ export default {
     },
     "footer": {
       "style": "dark",
-      "copyright": "Copyright © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. Legal & Licensing.",
-      "links": []
+      "links": [
+        {
+          "title": "Platform",
+          "items": [
+            {
+              "label": "Documentation",
+              "to": "/docs"
+            },
+            {
+              "label": "Status",
+              "to": "/status"
+            },
+            {
+              "label": "API Reference",
+              "to": "/docs/api"
+            }
+          ]
+        },
+        {
+          "title": "Community",
+          "items": [
+            {
+              "label": "GitHub",
+              "href": "https://github.com/FlynnVIN10/Zeropoint-Protocol"
+            },
+            {
+              "label": "Discord",
+              "href": "https://discord.gg/zeropoint"
+            }
+          ]
+        },
+        {
+          "title": "Legal",
+          "items": [
+            {
+              "label": "Privacy Policy",
+              "to": "/docs/legal/privacy"
+            },
+            {
+              "label": "Terms of Service",
+              "to": "/docs/legal/terms"
+            },
+            {
+              "label": "License",
+              "to": "/docs/legal/license"
+            }
+          ]
+        }
+      ],
+      "copyright": "Copyright © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. Legal & Licensing."
     },
+    "customCss": [
+      "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/src/css/custom.css"
+    ],
     "docs": {
       "versionPersistence": "localStorage",
       "sidebar": {
@@ -224,6 +294,12 @@ export default {
       "maxHeadingLevel": 3
     }
   },
+  "scripts": [
+    {
+      "src": "/js/theme-enforcer.js",
+      "async": true
+    }
+  ],
   "baseUrlIssueBanner": true,
   "i18n": {
     "defaultLocale": "en",
@@ -262,7 +338,6 @@ export default {
   "customFields": {},
   "plugins": [],
   "themes": [],
-  "scripts": [],
   "headTags": [],
   "stylesheets": [],
   "clientModules": [],

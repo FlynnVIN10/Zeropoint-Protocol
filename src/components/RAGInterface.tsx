@@ -33,6 +33,195 @@ import {
   Security
 } from '@mui/icons-material';
 
+// Enhanced custom styling for corporate dark mode and futuristic aesthetic
+const darkThemeStyles = {
+  // Card styles
+  card: {
+    background: 'linear-gradient(135deg, #0a0a0a, #111111)',
+    border: '1px solid #2a2a2a',
+    borderRadius: '16px',
+    boxShadow: '0 4px 16px rgba(0, 212, 255, 0.12)',
+    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    '&:hover': {
+      transform: 'translateY(-4px)',
+      boxShadow: '0 8px 32px rgba(0, 212, 255, 0.16)',
+      borderColor: '#00d4ff'
+    }
+  },
+  
+  // Button styles
+  primaryButton: {
+    background: 'linear-gradient(135deg, #00d4ff, #0099cc)',
+    color: '#000000',
+    border: '2px solid #00d4ff',
+    borderRadius: '12px',
+    padding: '12px 24px',
+    fontWeight: 700,
+    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    '&:hover': {
+      transform: 'translateY(-2px)',
+      boxShadow: '0 8px 32px rgba(0, 212, 255, 0.25)',
+      background: 'linear-gradient(135deg, #33ddff, #00b3e6)'
+    }
+  },
+  
+  secondaryButton: {
+    background: 'transparent',
+    color: '#00d4ff',
+    border: '2px solid #00d4ff',
+    borderRadius: '12px',
+    padding: '12px 24px',
+    fontWeight: 600,
+    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    '&:hover': {
+      background: '#00d4ff',
+      color: '#000000',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 8px 32px rgba(0, 212, 255, 0.25)'
+    }
+  },
+  
+  tertiaryButton: {
+    background: '#1a1a1a',
+    color: '#d0d0d0',
+    border: '2px solid #3a3a3a',
+    borderRadius: '12px',
+    padding: '12px 24px',
+    fontWeight: 600,
+    transition: 'all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+    '&:hover': {
+      background: '#222222',
+      color: '#ffffff',
+      borderColor: '#00d4ff',
+      transform: 'translateY(-1px)',
+      boxShadow: '0 4px 16px rgba(0, 212, 255, 0.12)'
+    }
+  },
+  
+  // Text field styles
+  textField: {
+    '& .MuiOutlinedInput-root': {
+      color: '#ffffff',
+      '& fieldset': {
+        borderColor: '#2a2a2a',
+        borderWidth: '2px',
+      },
+      '&:hover fieldset': {
+        borderColor: '#00d4ff',
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: '#00d4ff',
+        borderWidth: '2px',
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: '#a0a0a0',
+      '&.Mui-focused': {
+        color: '#00d4ff',
+      },
+    },
+    '& .MuiInputBase-input': {
+      fontSize: '16px',
+      padding: '16px 20px',
+    },
+  },
+  
+  // Chip styles
+  chip: {
+    background: 'linear-gradient(135deg, #111111, #1a1a1a)',
+    color: '#ffffff',
+    border: '1px solid #3a3a3a',
+    borderRadius: '20px',
+    fontWeight: 600,
+    '&.MuiChip-colorSuccess': {
+      background: 'linear-gradient(135deg, #00ff88, #00cc6a)',
+      color: '#000000',
+      borderColor: '#00ff88',
+    },
+    '&.MuiChip-colorWarning': {
+      background: 'linear-gradient(135deg, #ffaa00, #ff8800)',
+      color: '#000000',
+      borderColor: '#ffaa00',
+    },
+    '&.MuiChip-colorError': {
+      background: 'linear-gradient(135deg, #ff3366, #ff0044)',
+      color: '#ffffff',
+      borderColor: '#ff3366',
+    },
+    '&.MuiChip-colorInfo': {
+      background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
+      color: '#ffffff',
+      borderColor: '#6366f1',
+    },
+  },
+  
+  // Paper styles
+  paper: {
+    background: 'linear-gradient(135deg, #0a0a0a, #111111)',
+    border: '1px solid #2a2a2a',
+    borderRadius: '16px',
+    boxShadow: '0 4px 16px rgba(0, 212, 255, 0.12)',
+  },
+  
+  // Accordion styles
+  accordion: {
+    background: 'linear-gradient(135deg, #0a0a0a, #111111)',
+    border: '1px solid #2a2a2a',
+    borderRadius: '16px',
+    marginBottom: '16px',
+    '&:before': {
+      display: 'none',
+    },
+    '&.Mui-expanded': {
+      margin: '16px 0',
+    },
+  },
+  
+  accordionSummary: {
+    '& .MuiAccordionSummary-content': {
+      margin: '16px 0',
+    },
+    '& .MuiAccordionSummary-expandIconWrapper': {
+      color: '#00d4ff',
+    },
+  },
+  
+  accordionDetails: {
+    padding: '0 16px 16px 16px',
+  },
+  
+  // Alert styles
+  alert: {
+    borderRadius: '12px',
+    border: '1px solid #2a2a2a',
+    '&.MuiAlert-standardSuccess': {
+      background: 'rgba(0, 255, 136, 0.1)',
+      borderColor: '#00ff88',
+      color: '#00ff88',
+    },
+    '&.MuiAlert-standardWarning': {
+      background: 'rgba(255, 170, 0, 0.1)',
+      borderColor: '#ffaa00',
+      color: '#ffaa00',
+    },
+    '&.MuiAlert-standardError': {
+      background: 'rgba(255, 51, 102, 0.1)',
+      borderColor: '#ff3366',
+      color: '#ff3366',
+    },
+    '&.MuiAlert-standardInfo': {
+      background: 'rgba(99, 102, 241, 0.1)',
+      borderColor: '#6366f1',
+      color: '#6366f1',
+    },
+  },
+  
+  // Circular progress styles
+  circularProgress: {
+    color: '#00d4ff',
+  },
+};
+
 interface RAGResponse {
   answer: string;
   sources: Array<{

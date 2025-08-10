@@ -60,10 +60,6 @@
               "sidebar": "tutorialSidebar"
             },
             {
-              "id": "pages-rollback",
-              "path": "/docs/pages-rollback"
-            },
-            {
               "id": "phase13_consensus_engine",
               "path": "/docs/phase13_consensus_engine",
               "sidebar": "tutorialSidebar"

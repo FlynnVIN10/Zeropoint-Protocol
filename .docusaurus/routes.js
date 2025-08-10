@@ -3,61 +3,56 @@ import ComponentCreator from '@docusaurus/ComponentCreator';
 
 export default [
   {
-    path: '/phases/09',
-    component: ComponentCreator('/phases/09', '579'),
+    path: '/__docusaurus/debug',
+    component: ComponentCreator('/__docusaurus/debug', '5ff'),
     exact: true
   },
   {
-    path: '/phases/09/',
-    component: ComponentCreator('/phases/09/', '5b7'),
+    path: '/__docusaurus/debug/config',
+    component: ComponentCreator('/__docusaurus/debug/config', '5ba'),
     exact: true
   },
   {
-    path: '/phases/10',
-    component: ComponentCreator('/phases/10', '260'),
+    path: '/__docusaurus/debug/content',
+    component: ComponentCreator('/__docusaurus/debug/content', 'a2b'),
     exact: true
   },
   {
-    path: '/phases/10/',
-    component: ComponentCreator('/phases/10/', '20a'),
+    path: '/__docusaurus/debug/globalData',
+    component: ComponentCreator('/__docusaurus/debug/globalData', 'c3c'),
     exact: true
   },
   {
-    path: '/phases/11',
-    component: ComponentCreator('/phases/11', '38f'),
+    path: '/__docusaurus/debug/metadata',
+    component: ComponentCreator('/__docusaurus/debug/metadata', '156'),
     exact: true
   },
   {
-    path: '/phases/11/',
-    component: ComponentCreator('/phases/11/', 'ac5'),
+    path: '/__docusaurus/debug/registry',
+    component: ComponentCreator('/__docusaurus/debug/registry', '88c'),
     exact: true
   },
   {
-    path: '/phases/12',
-    component: ComponentCreator('/phases/12', '521'),
+    path: '/__docusaurus/debug/routes',
+    component: ComponentCreator('/__docusaurus/debug/routes', '000'),
     exact: true
   },
   {
-    path: '/phases/12/',
-    component: ComponentCreator('/phases/12/', 'e56'),
-    exact: true
-  },
-  {
-    path: '/phases/13/',
-    component: ComponentCreator('/phases/13/', 'd3e'),
+    path: '/navigation-demo',
+    component: ComponentCreator('/navigation-demo', '7b9'),
     exact: true
   },
   {
     path: '/docs',
-    component: ComponentCreator('/docs', '802'),
+    component: ComponentCreator('/docs', '589'),
     routes: [
       {
         path: '/docs',
-        component: ComponentCreator('/docs', '705'),
+        component: ComponentCreator('/docs', '551'),
         routes: [
           {
             path: '/docs',
-            component: ComponentCreator('/docs', '1ed'),
+            component: ComponentCreator('/docs', '9c5'),
             routes: [
               {
                 path: '/docs/api/',
@@ -117,11 +112,6 @@ export default [
                 component: ComponentCreator('/docs/LICENSES', '8a6'),
                 exact: true,
                 sidebar: "tutorialSidebar"
-              },
-              {
-                path: '/docs/pages-rollback',
-                component: ComponentCreator('/docs/pages-rollback', '063'),
-                exact: true
               },
               {
                 path: '/docs/phase13_consensus_engine',

@@ -1,145 +1,128 @@
 {
-  "/phases/09-579": {
-    "__comp": "1f391b9e",
+  "/__docusaurus/debug-5ff": {
+    "__comp": "__comp---theme-debug-config-23-a-2ff",
     "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "062a6ccb"
-  },
-  "/phases/09/-5b7": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "dd974a1e"
-  },
-  "/phases/10-260": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "72ae5f0b"
-  },
-  "/phases/10/-20a": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "58d7ed1e"
-  },
-  "/phases/11-38f": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "9968db71"
-  },
-  "/phases/11/-ac5": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "3d4c8cc2"
-  },
-  "/phases/12-521": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "f2d812ff"
-  },
-  "/phases/12/-e56": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "528bee6f"
-  },
-  "/phases/13/-d3e": {
-    "__comp": "1f391b9e",
-    "__context": {
-      "plugin": "a7456010"
-    },
-    "content": "9efc2a38"
-  },
-  "/docs-802": {
-    "__comp": "5e95c892",
-    "__context": {
-      "plugin": "aba21aa0"
+      "plugin": "plugin---docusaurus-debugb-38-ad3"
     }
   },
-  "/docs-705": {
-    "__comp": "a7bd4aaa",
-    "__props": "0058b4c6"
+  "/__docusaurus/debug/config-5ba": {
+    "__comp": "__comp---theme-debug-config-23-a-2ff",
+    "__context": {
+      "plugin": "plugin---docusaurus-debugb-38-ad3"
+    }
   },
-  "/docs-1ed": {
-    "__comp": "a94703ab"
+  "/__docusaurus/debug/content-a2b": {
+    "__comp": "__comp---theme-debug-contentba-8-ce7",
+    "__context": {
+      "plugin": "plugin---docusaurus-debugb-38-ad3"
+    },
+    "__props": "__props---docusaurus-debug-content-3-c-0-be2"
+  },
+  "/__docusaurus/debug/globalData-c3c": {
+    "__comp": "__comp---theme-debug-global-dataede-0fa",
+    "__context": {
+      "plugin": "plugin---docusaurus-debugb-38-ad3"
+    }
+  },
+  "/__docusaurus/debug/metadata-156": {
+    "__comp": "__comp---theme-debug-site-metadata-68-e-3d4",
+    "__context": {
+      "plugin": "plugin---docusaurus-debugb-38-ad3"
+    }
+  },
+  "/__docusaurus/debug/registry-88c": {
+    "__comp": "__comp---theme-debug-registry-679-501",
+    "__context": {
+      "plugin": "plugin---docusaurus-debugb-38-ad3"
+    }
+  },
+  "/__docusaurus/debug/routes-000": {
+    "__comp": "__comp---theme-debug-routes-946-699",
+    "__context": {
+      "plugin": "plugin---docusaurus-debugb-38-ad3"
+    }
+  },
+  "/navigation-demo-7b9": {
+    "__comp": "__comp---site-src-pages-navigation-demo-tsx-997-3e5",
+    "__context": {
+      "plugin": "plugin---navigation-demoa-74-2d8"
+    },
+    "config": "config---navigation-demo-5-e-9-20c"
+  },
+  "/docs-589": {
+    "__comp": "__comp---theme-docs-root-5-e-9-0b6",
+    "__context": {
+      "plugin": "plugin---docsaba-d7c"
+    }
+  },
+  "/docs-551": {
+    "__comp": "__comp---theme-doc-version-roota-7-b-5de",
+    "__props": "__props---docs-005-788"
+  },
+  "/docs-9c5": {
+    "__comp": "__comp---theme-doc-roota-94-67a"
   },
   "/docs/api/-8b5": {
-    "__comp": "17896441",
-    "content": "982ac012"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-api-982-4ca"
   },
   "/docs/brand-4cd": {
-    "__comp": "17896441",
-    "content": "33870b66"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-brand-338-dfe"
   },
   "/docs/compliance/gdpr-audit-0ab": {
-    "__comp": "17896441",
-    "content": "c418ec2f"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-compliance-gdpr-auditc-41-8c8"
   },
   "/docs/design/phase8-visualizer-073": {
-    "__comp": "17896441",
-    "content": "509fd3b8"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-design-phase-8-visualizer-509-bca"
   },
   "/docs/design/screenshots/-72d": {
-    "__comp": "17896441",
-    "content": "f6d134a9"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-design-screenshots-f-6-d-52e"
   },
   "/docs/design/screenshots/phase4/-9eb": {
-    "__comp": "17896441",
-    "content": "6c9e9aab"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-design-screenshots-phase-4-6-c-9-e11"
   },
   "/docs/errors-065": {
-    "__comp": "17896441",
-    "content": "8a22f3a9"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-errors-8-a-2-a16"
   },
   "/docs/feedback-7c9": {
-    "__comp": "17896441",
-    "content": "c3e6124d"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-feedbackc-3-e-a4e"
   },
   "/docs/legal-4c5": {
-    "__comp": "17896441",
-    "content": "7015bd2f"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-legal-701-88a"
   },
   "/docs/LICENSES-8a6": {
-    "__comp": "17896441",
-    "content": "d9ecc0e1"
-  },
-  "/docs/pages-rollback-063": {
-    "__comp": "17896441",
-    "content": "52f95147"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-license-sd-9-e-1e7"
   },
   "/docs/phase13_consensus_engine-3d4": {
-    "__comp": "17896441",
-    "content": "b0e883d6"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-phase-13-consensus-engineb-0-e-59a"
   },
   "/docs/phase13_petal_training-439": {
-    "__comp": "17896441",
-    "content": "d45d89e9"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-phase-13-petal-trainingd-45-798"
   },
   "/docs/soulchain-rpc-952": {
-    "__comp": "17896441",
-    "content": "3478029f"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-soulchain-rpc-347-fd6"
   },
   "/docs/status-fa6": {
-    "__comp": "17896441",
-    "content": "b41fe763"
+    "__comp": "__comp---theme-doc-item-178-a40",
+    "content": "content---docs-statusb-41-c29"
   },
   "/-e5f": {
-    "__comp": "1df93b7f",
+    "__comp": "__comp---site-src-pages-index-tsx-1-df-d3e",
     "__context": {
-      "plugin": "a7456010"
+      "plugin": "plugin---navigation-demoa-74-2d8"
     },
-    "config": "5e9f5e1a"
+    "config": "config---navigation-demo-5-e-9-20c"
   }
 }

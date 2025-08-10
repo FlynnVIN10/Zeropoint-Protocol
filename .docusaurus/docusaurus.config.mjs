@@ -8,8 +8,8 @@ export default {
   "tagline": "Ethical Agentic AI Platform",
   "url": "https://zeropointprotocol.ai",
   "baseUrl": "/",
-  "onBrokenLinks": "warn",
-  "onBrokenMarkdownLinks": "warn",
+  "onBrokenLinks": "throw",
+  "onBrokenMarkdownLinks": "throw",
   "favicon": "img/favicon.ico",
   "organizationName": "FlynnVIN10",
   "projectName": "zeropointprotocol",
@@ -19,11 +19,11 @@ export default {
       {
         "docs": {
           "sidebarPath": "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/sidebars.js",
-          "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/"
+          "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/"
         },
         "blog": {
           "showReadingTime": true,
-          "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/blog/"
+          "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/"
         },
         "theme": {
           "customCss": "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/src/css/custom.css"
@@ -39,10 +39,6 @@ export default {
     },
     "navbar": {
       "title": "Zeropoint Protocol",
-      "logo": {
-        "alt": "Zeropoint Protocol Logo",
-        "src": "img/logo.svg"
-      },
       "items": [
         {
           "to": "/",
@@ -50,45 +46,14 @@ export default {
           "position": "left"
         },
         {
-          "to": "/dashboard",
-          "label": "Dashboard",
-          "position": "left"
-        },
-        {
-          "to": "/interact",
-          "label": "Interact",
-          "position": "left"
-        },
-        {
-          "to": "/technology",
-          "label": "Technology",
+          "to": "/docs",
+          "label": "Documentation",
           "position": "left"
         },
         {
           "to": "/status",
           "label": "Status",
           "position": "left"
-        },
-        {
-          "to": "/use-cases",
-          "label": "Use Cases",
-          "position": "left"
-        },
-        {
-          "to": "/legal",
-          "label": "Legal",
-          "position": "left"
-        },
-        {
-          "to": "/contact",
-          "label": "Contact",
-          "position": "left"
-        },
-        {
-          "type": "doc",
-          "docId": "intro",
-          "position": "right",
-          "label": "Documentation"
         }
       ],
       "style": "dark",
@@ -96,239 +61,8 @@ export default {
     },
     "footer": {
       "style": "dark",
-      "links": [
-        {
-          "title": "Technology",
-          "items": [
-            {
-              "label": "Technology",
-              "to": "/technology"
-            }
-          ]
-        },
-        {
-          "title": "Legal",
-          "items": [
-            {
-              "label": "License",
-              "to": "/legal"
-            },
-            {
-              "label": "Terms",
-              "to": "/legal"
-            },
-            {
-              "label": "Privacy",
-              "to": "/legal"
-            }
-          ]
-        },
-        {
-          "title": "Contact",
-          "items": [
-            {
-              "label": "Contact",
-              "to": "/contact"
-            },
-            {
-              "label": "Support",
-              "to": "/contact"
-            }
-          ]
-        }
-      ],
-      "copyright": "Copyright © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. Legal & Licensing."
-    },
-    "prism": {
-      "theme": {
-        "plain": {
-          "color": "#F8F8F2",
-          "backgroundColor": "#282A36"
-        },
-        "styles": [
-          {
-            "types": [
-              "prolog",
-              "constant",
-              "builtin"
-            ],
-            "style": {
-              "color": "rgb(189, 147, 249)"
-            }
-          },
-          {
-            "types": [
-              "inserted",
-              "function"
-            ],
-            "style": {
-              "color": "rgb(80, 250, 123)"
-            }
-          },
-          {
-            "types": [
-              "deleted"
-            ],
-            "style": {
-              "color": "rgb(255, 85, 85)"
-            }
-          },
-          {
-            "types": [
-              "changed"
-            ],
-            "style": {
-              "color": "rgb(255, 184, 108)"
-            }
-          },
-          {
-            "types": [
-              "punctuation",
-              "symbol"
-            ],
-            "style": {
-              "color": "rgb(248, 248, 242)"
-            }
-          },
-          {
-            "types": [
-              "string",
-              "char",
-              "tag",
-              "selector"
-            ],
-            "style": {
-              "color": "rgb(255, 121, 198)"
-            }
-          },
-          {
-            "types": [
-              "keyword",
-              "variable"
-            ],
-            "style": {
-              "color": "rgb(189, 147, 249)",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "types": [
-              "comment"
-            ],
-            "style": {
-              "color": "rgb(98, 114, 164)"
-            }
-          },
-          {
-            "types": [
-              "attr-name"
-            ],
-            "style": {
-              "color": "rgb(241, 250, 140)"
-            }
-          }
-        ]
-      },
-      "darkTheme": {
-        "plain": {
-          "color": "#F8F8F2",
-          "backgroundColor": "#282A36"
-        },
-        "styles": [
-          {
-            "types": [
-              "prolog",
-              "constant",
-              "builtin"
-            ],
-            "style": {
-              "color": "rgb(189, 147, 249)"
-            }
-          },
-          {
-            "types": [
-              "inserted",
-              "function"
-            ],
-            "style": {
-              "color": "rgb(80, 250, 123)"
-            }
-          },
-          {
-            "types": [
-              "deleted"
-            ],
-            "style": {
-              "color": "rgb(255, 85, 85)"
-            }
-          },
-          {
-            "types": [
-              "changed"
-            ],
-            "style": {
-              "color": "rgb(255, 184, 108)"
-            }
-          },
-          {
-            "types": [
-              "punctuation",
-              "symbol"
-            ],
-            "style": {
-              "color": "rgb(248, 248, 242)"
-            }
-          },
-          {
-            "types": [
-              "string",
-              "char",
-              "tag",
-              "selector"
-            ],
-            "style": {
-              "color": "rgb(255, 121, 198)"
-            }
-          },
-          {
-            "types": [
-              "keyword",
-              "variable"
-            ],
-            "style": {
-              "color": "rgb(189, 147, 249)",
-              "fontStyle": "italic"
-            }
-          },
-          {
-            "types": [
-              "comment"
-            ],
-            "style": {
-              "color": "rgb(98, 114, 164)"
-            }
-          },
-          {
-            "types": [
-              "attr-name"
-            ],
-            "style": {
-              "color": "rgb(241, 250, 140)"
-            }
-          }
-        ]
-      },
-      "additionalLanguages": [],
-      "magicComments": [
-        {
-          "className": "theme-code-block-highlighted-line",
-          "line": "highlight-next-line",
-          "block": {
-            "start": "highlight-start",
-            "end": "highlight-end"
-          }
-        }
-      ]
+      "copyright": "Copyright © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. Legal & Licensing.",
+      "links": []
     },
     "docs": {
       "versionPersistence": "localStorage",
@@ -343,6 +77,148 @@ export default {
       }
     },
     "metadata": [],
+    "prism": {
+      "additionalLanguages": [],
+      "theme": {
+        "plain": {
+          "color": "#bfc7d5",
+          "backgroundColor": "#292d3e"
+        },
+        "styles": [
+          {
+            "types": [
+              "comment"
+            ],
+            "style": {
+              "color": "rgb(105, 112, 152)",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "types": [
+              "string",
+              "inserted"
+            ],
+            "style": {
+              "color": "rgb(195, 232, 141)"
+            }
+          },
+          {
+            "types": [
+              "number"
+            ],
+            "style": {
+              "color": "rgb(247, 140, 108)"
+            }
+          },
+          {
+            "types": [
+              "builtin",
+              "char",
+              "constant",
+              "function"
+            ],
+            "style": {
+              "color": "rgb(130, 170, 255)"
+            }
+          },
+          {
+            "types": [
+              "punctuation",
+              "selector"
+            ],
+            "style": {
+              "color": "rgb(199, 146, 234)"
+            }
+          },
+          {
+            "types": [
+              "variable"
+            ],
+            "style": {
+              "color": "rgb(191, 199, 213)"
+            }
+          },
+          {
+            "types": [
+              "class-name",
+              "attr-name"
+            ],
+            "style": {
+              "color": "rgb(255, 203, 107)"
+            }
+          },
+          {
+            "types": [
+              "tag",
+              "deleted"
+            ],
+            "style": {
+              "color": "rgb(255, 85, 114)"
+            }
+          },
+          {
+            "types": [
+              "operator"
+            ],
+            "style": {
+              "color": "rgb(137, 221, 255)"
+            }
+          },
+          {
+            "types": [
+              "boolean"
+            ],
+            "style": {
+              "color": "rgb(255, 88, 116)"
+            }
+          },
+          {
+            "types": [
+              "keyword"
+            ],
+            "style": {
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "types": [
+              "doctype"
+            ],
+            "style": {
+              "color": "rgb(199, 146, 234)",
+              "fontStyle": "italic"
+            }
+          },
+          {
+            "types": [
+              "namespace"
+            ],
+            "style": {
+              "color": "rgb(178, 204, 214)"
+            }
+          },
+          {
+            "types": [
+              "url"
+            ],
+            "style": {
+              "color": "rgb(221, 221, 221)"
+            }
+          }
+        ]
+      },
+      "magicComments": [
+        {
+          "className": "theme-code-block-highlighted-line",
+          "line": "highlight-next-line",
+          "block": {
+            "start": "highlight-start",
+            "end": "highlight-end"
+          }
+        }
+      ]
+    },
     "tableOfContents": {
       "minHeadingLevel": 2,
       "maxHeadingLevel": 3

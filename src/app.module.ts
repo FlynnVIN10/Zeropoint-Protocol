@@ -25,12 +25,13 @@ import { CustomThrottlerGuard } from './guards/throttler.guard.js';
 import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
 import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
 import { SecurityLoggingInterceptor } from './interceptors/security-logging.interceptor.js';
+import { PerformanceMonitorInterceptor } from './interceptors/performance-monitor.interceptor.js';
 // import { SecurityMiddleware } from './middleware/security.middleware.js';
-// import { KeyRotationService } from './services/key-rotation.service.js';
-// import { PerformanceOptimizerService } from './services/performance-optimizer.service.js';
-// import { RedisCacheService } from './services/redis-cache.service.js';
-// import { ConnectionPoolService } from './services/connection-pool.service.js';
-// import { CircuitBreakerService } from './services/circuit-breaker.service.js';
+import { KeyRotationService } from './services/key-rotation.service.js';
+import { PerformanceOptimizerService } from './services/performance-optimizer.service.js';
+import { RedisCacheService } from './services/redis-cache.service.js';
+import { ConnectionPoolService } from './services/connection-pool.service.js';
+import { CircuitBreakerService } from './services/circuit-breaker.service.js';
 // import { OAuthService } from './services/oauth.service.js';
 // import { OAuthController } from './controllers/oauth.controller.js';
 import { UIController } from './controllers/ui.controller.js';
@@ -44,6 +45,7 @@ import { AgentController } from './controllers/agent.controller.js';
 import { SandboxController } from './controllers/sandbox.controller.js';
 import { RAGController } from './controllers/rag.controller.js';
 import { SSEController } from './controllers/sse.controller.js';
+import { PerformanceController } from './controllers/performance.controller.js';
 import { PetalsService } from './services/petals.service.js';
 import { SandboxService } from './services/sandbox.service.js';
 import { TelemetryService } from './services/telemetry.service.js';
@@ -55,7 +57,7 @@ import { UserRoleService } from './services/user-role.service.js';
 import { ConsensusService } from './services/consensus.service.js';
 import { AgentService } from './services/agent.service.js';
 import { RAGService } from './services/rag.service.js';
-import { MultiLLMService } from './services/multi-llm.service.js';
+import { PerformanceMonitorService } from './services/performance-monitor.service.js';
 
 @Module({
   imports: [
@@ -122,7 +124,7 @@ import { MultiLLMService } from './services/multi-llm.service.js';
       }
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController, SSEController],
+  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController, SSEController, PerformanceController],
   providers: [
     AppService,
     AgentStateService,
@@ -141,12 +143,13 @@ import { MultiLLMService } from './services/multi-llm.service.js';
     AgentService,
     RAGService,
     MultiLLMService,
+    PerformanceMonitorService,
     // SecurityMiddleware,
-    // KeyRotationService,
-    // PerformanceOptimizerService,
-    // RedisCacheService,
-    // ConnectionPoolService,
-    // CircuitBreakerService,
+    KeyRotationService,
+    PerformanceOptimizerService,
+    RedisCacheService,
+    ConnectionPoolService,
+    CircuitBreakerService,
     // AuthService,
     // OAuthService,
     // Temporarily commented out for CEO testing of public dashboard
@@ -161,6 +164,10 @@ import { MultiLLMService } from './services/multi-llm.service.js';
     {
       provide: APP_INTERCEPTOR,
       useClass: SecurityLoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: PerformanceMonitorInterceptor,
     },
     {
       provide: 'ENABLE_SCALING',
@@ -178,9 +185,9 @@ import { MultiLLMService } from './services/multi-llm.service.js';
           return JSON.parse(configData);
         } catch (error) {
           return {
-            maxAgents: 100,
+            maxAgents: 1000,
             maxConcurrency: 25,
-            maxRequestsPerSec: 50
+            maxRequestsPerSec: 100
           };
         }
       },

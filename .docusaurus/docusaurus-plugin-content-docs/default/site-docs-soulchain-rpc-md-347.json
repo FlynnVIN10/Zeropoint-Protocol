@@ -8,7 +8,7 @@
   "permalink": "/docs/soulchain-rpc",
   "draft": false,
   "unlisted": false,
-  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/soulchain-rpc.md",
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/soulchain-rpc.md",
   "tags": [],
   "version": "current",
   "frontMatter": {},
@@ -16,5 +16,9 @@
   "previous": {
     "title": "Phase 13: Petal-Based Training & WonderCraft Sandboxing",
     "permalink": "/docs/phase13_petal_training"
+  },
+  "next": {
+    "title": "User Feedback System - Zeropoint Protocol Website",
+    "permalink": "/docs/feedback"
   }
 }

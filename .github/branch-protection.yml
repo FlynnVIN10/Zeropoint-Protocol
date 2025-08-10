@@ -1,0 +1,169 @@
+# Branch Protection Configuration
+# This file defines the protection rules for main branches
+
+branches:
+  - name: main
+    protection:
+      required_status_checks:
+        strict: true
+        contexts:
+          - "Consensus Gate"
+          - "Tests"
+          - "Lint"
+          - "Security Scan"
+          - "Quality Gate"
+      
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: true
+        required_reviewers: []
+      
+      enforce_admins: false
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: true
+      required_conversation_resolution: true
+      
+      restrictions:
+        users: []
+        teams: []
+        apps: []
+      
+      allow_fork_syncing: true
+
+  - name: develop
+    protection:
+      required_status_checks:
+        strict: false
+        contexts:
+          - "Consensus Gate"
+          - "Tests"
+          - "Lint"
+      
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+        required_reviewers: []
+      
+      enforce_admins: false
+      allow_force_pushes: false
+      allow_deletions: false
+      block_creations: false
+      required_conversation_resolution: true
+      
+      restrictions:
+        users: []
+        teams: []
+        apps: []
+      
+      allow_fork_syncing: true
+
+  - name: feature/*
+    protection:
+      required_status_checks:
+        strict: false
+        contexts:
+          - "Tests"
+          - "Lint"
+      
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: false
+        require_code_owner_reviews: false
+        required_reviewers: []
+      
+      enforce_admins: false
+      allow_force_pushes: true
+      allow_deletions: true
+      block_creations: false
+      required_conversation_resolution: false
+      
+      restrictions:
+        users: []
+        teams: []
+        apps: []
+      
+      allow_fork_syncing: true
+
+# CODEOWNERS for sensitive paths
+# This ensures that sensitive code changes require review from specific teams
+codeowners:
+  - path: "src/synthiants/"
+    owners: ["@zeropoint-dev/synthiant-team"]
+    required_reviews: 2
+  
+  - path: "src/audit/"
+    owners: ["@zeropoint-dev/security-team"]
+    required_reviews: 2
+  
+  - path: "src/policies/"
+    owners: ["@zeropoint-dev/security-team", "@zeropoint-dev/architecture-team"]
+    required_reviews: 2
+  
+  - path: "keys/"
+    owners: ["@zeropoint-dev/security-team"]
+    required_reviews: 3
+  
+  - path: "migrations/"
+    owners: ["@zeropoint-dev/database-team"]
+    required_reviews: 2
+  
+  - path: "docker-compose.yml"
+    owners: ["@zeropoint-dev/devops-team"]
+    required_reviews: 1
+  
+  - path: "nginx/"
+    owners: ["@zeropoint-dev/devops-team"]
+    required_reviews: 1
+  
+  - path: "monitoring/"
+    owners: ["@zeropoint-dev/devops-team", "@zeropoint-dev/monitoring-team"]
+    required_reviews: 1
+
+# Consensus labels configuration
+consensus_labels:
+  - name: "needs-consensus"
+    description: "This PR requires consensus approval"
+    color: "f9d0c4"
+  
+  - name: "consensus-pass"
+    description: "Consensus approval granted"
+    color: "0e8a16"
+  
+  - name: "consensus-veto"
+    description: "Consensus veto - blocked"
+    color: "d93f0b"
+  
+  - name: "synthiant-authored"
+    description: "This PR was authored by a Synthiant agent"
+    color: "1d76db"
+  
+  - name: "phase-9-12"
+    description: "Related to Phase 9-12 implementation"
+    color: "5319e7"
+  
+  - name: "synthiant-core"
+    description: "Synthiant core functionality"
+    color: "fbca04"
+  
+  - name: "autonomy-pipeline"
+    description: "Autonomy pipeline implementation"
+    color: "c2e0c6"
+  
+  - name: "consensus-gate"
+    description: "Consensus gate implementation"
+    color: "d4c5f9"
+  
+  - name: "audit-and-quotas"
+    description: "Audit system and quota enforcement"
+    color: "fef2c0"
+  
+  - name: "phases-09-12"
+    description: "Phase 9-12 documentation and implementation"
+    color: "e4e669"
+  
+  - name: "slo-monitors"
+    description: "SLO monitoring and alerting"
+    color: "bfdadc"

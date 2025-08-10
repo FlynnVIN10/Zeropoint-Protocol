@@ -8,17 +8,17 @@
   "permalink": "/docs/errors",
   "draft": false,
   "unlisted": false,
-  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/errors.md",
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/errors.md",
   "tags": [],
   "version": "current",
   "frontMatter": {},
   "sidebar": "tutorialSidebar",
   "previous": {
-    "title": "Phase 4: Feedback System Screenshots",
-    "permalink": "/docs/design/screenshots/phase4/"
+    "title": "Visual Regression Testing Screenshots",
+    "permalink": "/docs/design/screenshots/"
   },
   "next": {
-    "title": "User Feedback System - Zeropoint Protocol Website",
-    "permalink": "/docs/feedback"
+    "title": "Legal Information",
+    "permalink": "/docs/legal"
   }
 }

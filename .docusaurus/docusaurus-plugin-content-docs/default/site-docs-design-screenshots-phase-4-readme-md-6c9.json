@@ -8,17 +8,17 @@
   "permalink": "/docs/design/screenshots/phase4/",
   "draft": false,
   "unlisted": false,
-  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/design/screenshots/phase4/README.md",
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/design/screenshots/phase4/README.md",
   "tags": [],
   "version": "current",
   "frontMatter": {},
   "sidebar": "tutorialSidebar",
   "previous": {
-    "title": "Visual Regression Testing Screenshots",
-    "permalink": "/docs/design/screenshots/"
+    "title": "Phase 8: Consensus Visualizer Mockup",
+    "permalink": "/docs/design/phase8-visualizer"
   },
   "next": {
-    "title": "Error Handling & Logging Protocol - Zeropoint Protocol Website",
-    "permalink": "/docs/errors"
+    "title": "Zeropoint Protocol - Brand Guidelines",
+    "permalink": "/docs/brand"
   }
 }

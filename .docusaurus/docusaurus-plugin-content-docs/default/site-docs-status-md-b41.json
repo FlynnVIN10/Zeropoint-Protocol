@@ -1,24 +1,31 @@
 {
   "id": "status",
-  "title": "Project Status",
-  "description": "© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved.",
+  "title": "System Status",
+  "description": "Real-time system status and deployment information for Zeropoint Protocol",
   "source": "@site/docs/status.md",
   "sourceDirName": ".",
   "slug": "/status",
   "permalink": "/docs/status",
   "draft": false,
   "unlisted": false,
-  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/status.md",
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/status.md",
   "tags": [],
   "version": "current",
-  "frontMatter": {},
-  "sidebar": "tutorialSidebar",
-  "previous": {
-    "title": "Soulchain RPC Endpoint",
-    "permalink": "/docs/soulchain-rpc"
+  "frontMatter": {
+    "id": "status",
+    "title": "System Status",
+    "sidebar_label": "Status",
+    "description": "Real-time system status and deployment information for Zeropoint Protocol",
+    "keywords": [
+      "status",
+      "deployment",
+      "system",
+      "monitoring"
+    ]
   },
+  "sidebar": "tutorialSidebar",
   "next": {
-    "title": "Testing & Deployment Validation - Zeropoint Protocol Website",
-    "permalink": "/docs/testing"
+    "title": "Visual Regression Testing Screenshots",
+    "permalink": "/docs/design/screenshots/"
   }
 }

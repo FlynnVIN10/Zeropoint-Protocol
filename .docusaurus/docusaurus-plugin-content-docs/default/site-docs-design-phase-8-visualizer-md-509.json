@@ -8,7 +8,7 @@
   "permalink": "/docs/design/phase8-visualizer",
   "draft": false,
   "unlisted": false,
-  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/design/phase8-visualizer.md",
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/design/phase8-visualizer.md",
   "tags": [],
   "version": "current",
   "frontMatter": {},
@@ -18,7 +18,7 @@
     "permalink": "/docs/compliance/gdpr-audit"
   },
   "next": {
-    "title": "Visual Regression Testing Screenshots",
-    "permalink": "/docs/design/screenshots/"
+    "title": "Phase 4: Feedback System Screenshots",
+    "permalink": "/docs/design/screenshots/phase4/"
   }
 }

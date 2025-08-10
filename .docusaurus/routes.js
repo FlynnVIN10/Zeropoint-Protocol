@@ -3,51 +3,36 @@ import ComponentCreator from '@docusaurus/ComponentCreator';
 
 export default [
   {
-    path: '/contact',
-    component: ComponentCreator('/contact', 'abe'),
+    path: '/phases/09',
+    component: ComponentCreator('/phases/09', '579'),
     exact: true
   },
   {
-    path: '/dashboard',
-    component: ComponentCreator('/dashboard', 'd63'),
+    path: '/phases/10',
+    component: ComponentCreator('/phases/10', '260'),
     exact: true
   },
   {
-    path: '/interact',
-    component: ComponentCreator('/interact', '04f'),
+    path: '/phases/11',
+    component: ComponentCreator('/phases/11', '38f'),
     exact: true
   },
   {
-    path: '/legal',
-    component: ComponentCreator('/legal', 'da9'),
-    exact: true
-  },
-  {
-    path: '/status',
-    component: ComponentCreator('/status', '3ab'),
-    exact: true
-  },
-  {
-    path: '/technology',
-    component: ComponentCreator('/technology', '88a'),
-    exact: true
-  },
-  {
-    path: '/use-cases',
-    component: ComponentCreator('/use-cases', '612'),
+    path: '/phases/12',
+    component: ComponentCreator('/phases/12', '521'),
     exact: true
   },
   {
     path: '/docs',
-    component: ComponentCreator('/docs', 'd6d'),
+    component: ComponentCreator('/docs', 'ca4'),
     routes: [
       {
         path: '/docs',
-        component: ComponentCreator('/docs', '732'),
+        component: ComponentCreator('/docs', '956'),
         routes: [
           {
             path: '/docs',
-            component: ComponentCreator('/docs', '299'),
+            component: ComponentCreator('/docs', 'f71'),
             routes: [
               {
                 path: '/docs/brand',
@@ -98,6 +83,12 @@ export default [
                 sidebar: "tutorialSidebar"
               },
               {
+                path: '/docs/LICENSES',
+                component: ComponentCreator('/docs/LICENSES', '8a6'),
+                exact: true,
+                sidebar: "tutorialSidebar"
+              },
+              {
                 path: '/docs/phase13_consensus_engine',
                 component: ComponentCreator('/docs/phase13_consensus_engine', '3d4'),
                 exact: true,
@@ -114,6 +105,12 @@ export default [
                 component: ComponentCreator('/docs/soulchain-rpc', '952'),
                 exact: true,
                 sidebar: "tutorialSidebar"
+              },
+              {
+                path: '/docs/status',
+                component: ComponentCreator('/docs/status', 'fa6'),
+                exact: true,
+                sidebar: "tutorialSidebar"
               }
             ]
           }
@@ -123,7 +120,7 @@ export default [
   },
   {
     path: '/',
-    component: ComponentCreator('/', '2e1'),
+    component: ComponentCreator('/', 'e5f'),
     exact: true
   },
   {

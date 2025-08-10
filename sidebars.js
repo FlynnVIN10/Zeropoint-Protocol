@@ -2,6 +2,7 @@
 const sidebars = {
   // Manual sidebar configuration with only existing documents
   tutorialSidebar: [
+    'status',
     'design/screenshots/README',
     'errors',
     'legal',

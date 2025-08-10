@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/phases/10",
+  "source": "@site/src/pages/phases/10.mdx",
+  "title": "Phase 10: Production Scaling",
+  "description": "Production scaling with Redis caching, connection pooling, circuit breaker patterns, and extreme load testing",
+  "frontMatter": {
+    "title": "Phase 10: Production Scaling",
+    "description": "Production scaling with Redis caching, connection pooling, circuit breaker patterns, and extreme load testing"
+  },
+  "unlisted": false
+}

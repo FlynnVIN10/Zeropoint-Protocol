@@ -8,17 +8,17 @@
   "permalink": "/docs/feedback",
   "draft": false,
   "unlisted": false,
-  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/feedback.md",
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/feedback.md",
   "tags": [],
   "version": "current",
   "frontMatter": {},
   "sidebar": "tutorialSidebar",
   "previous": {
-    "title": "Error Handling & Logging Protocol - Zeropoint Protocol Website",
-    "permalink": "/docs/errors"
+    "title": "Soulchain RPC Endpoint",
+    "permalink": "/docs/soulchain-rpc"
   },
   "next": {
-    "title": "Legal Information",
-    "permalink": "/docs/legal"
+    "title": "GDPR Compliance Audit - Zeropoint Protocol",
+    "permalink": "/docs/compliance/gdpr-audit"
   }
 }

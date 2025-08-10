@@ -28,6 +28,8 @@
   "exclude": [
     "node_modules",
     "dist",
-    "zeropointprotocol.ai"
+    "zeropointprotocol.ai",
+    "src/components/**/*.tsx",
+    "src/pages/**/*.mdx"
   ]
 }

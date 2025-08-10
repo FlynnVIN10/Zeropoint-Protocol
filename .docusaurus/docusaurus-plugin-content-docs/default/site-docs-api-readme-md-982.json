@@ -1,0 +1,15 @@
+{
+  "id": "api/README",
+  "title": "API Documentation",
+  "description": "Zeropoint Protocol API Reference",
+  "source": "@site/docs/api/README.md",
+  "sourceDirName": "api",
+  "slug": "/api/",
+  "permalink": "/docs/api/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/api/README.md",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {}
+}

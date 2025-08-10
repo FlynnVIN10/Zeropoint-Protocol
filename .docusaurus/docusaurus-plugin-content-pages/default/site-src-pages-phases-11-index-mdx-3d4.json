@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/phases/11/",
+  "source": "@site/src/pages/phases/11/index.mdx",
+  "title": "Phase 11 - Autonomy Pipeline",
+  "description": "Implementation of mission planning, task execution, and automated PR creation with GitHub integration",
+  "frontMatter": {
+    "title": "Phase 11 - Autonomy Pipeline",
+    "description": "Implementation of mission planning, task execution, and automated PR creation with GitHub integration"
+  },
+  "unlisted": false
+}

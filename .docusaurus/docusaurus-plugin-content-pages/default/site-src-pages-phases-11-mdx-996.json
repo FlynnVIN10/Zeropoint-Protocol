@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/phases/11",
+  "source": "@site/src/pages/phases/11.mdx",
+  "title": "Phase 11: UE5 Integration",
+  "description": "UE5 integration with bridge interface, performance optimization, WebSocket deployment, and real-time visualization",
+  "frontMatter": {
+    "title": "Phase 11: UE5 Integration",
+    "description": "UE5 integration with bridge interface, performance optimization, WebSocket deployment, and real-time visualization"
+  },
+  "unlisted": false
+}

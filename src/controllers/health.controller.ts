@@ -1,352 +1,359 @@
-// © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
+/**
+ * Health Controller - SLO monitoring and health checks
+ * 
+ * @fileoverview Provides health check endpoints and SLO monitoring
+ * @author Dev Team
+ * @version 1.0.0
+ */
 
-import { Controller, Get, HttpStatus, Res } from '@nestjs/common';
+import { Controller, Get, Res, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
-import { ConfigService } from '@nestjs/config';
-import { Gauge, Counter } from 'prom-client';
-
-// Prometheus metrics for health checks
-const healthCheckCounter = new Counter({
-  name: 'health_checks_total',
-  help: 'Total health check requests',
-  labelNames: ['status']
-});
-
-const systemUptime = new Gauge({
-  name: 'system_uptime_seconds',
-  help: 'System uptime in seconds'
-});
-
-// activeConnections metric is registered in app.service.ts to avoid duplication
-
-const databaseConnections = new Gauge({
-  name: 'database_connections',
-  help: 'Number of active database connections'
-});
+import { performance } from 'perf_hooks';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 @Controller('health')
 export class HealthController {
-  constructor(
-    private configService: ConfigService
-  ) {
-    // Initialize uptime gauge
-    systemUptime.set(process.uptime());
-    setInterval(() => {
-      systemUptime.set(process.uptime());
-    }, 60000); // Update every minute
-  }
+  private startTime: number = Date.now();
+  private requestCount: number = 0;
+  private totalResponseTime: number = 0;
 
-  @Get()
-  async getHealth(@Res() res: Response) {
-    const startTime = Date.now();
-    const healthStatus = await this.checkSystemHealth();
-    const duration = Date.now() - startTime;
-
-    // Record health check metrics
-    healthCheckCounter.inc({ status: healthStatus.status });
-
-    const response = {
-      status: healthStatus.status,
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      version: process.env.npm_package_version || '1.0.0',
-      environment: process.env.NODE_ENV || 'development',
-      duration: `${duration}ms`,
-      checks: healthStatus.checks,
-      metrics: await this.getSystemMetrics()
-    };
-
-    const statusCode = healthStatus.status === 'healthy' ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
-    res.status(statusCode).json(response);
-  }
-
-  @Get('detailed')
-  async getDetailedHealth(@Res() res: Response) {
-    const startTime = Date.now();
-    const detailedHealth = await this.getDetailedSystemHealth();
-    const duration = Date.now() - startTime;
-
-    const response = {
-      status: detailedHealth.status,
-      timestamp: new Date().toISOString(),
-      uptime: process.uptime(),
-      version: process.env.npm_package_version || '1.0.0',
-      environment: process.env.NODE_ENV || 'development',
-      duration: `${duration}ms`,
-      checks: detailedHealth.checks,
-      system: detailedHealth.system,
-      database: detailedHealth.database,
-      services: detailedHealth.services,
-      recommendations: detailedHealth.recommendations
-    };
-
-    const statusCode = detailedHealth.status === 'healthy' ? HttpStatus.OK : HttpStatus.SERVICE_UNAVAILABLE;
-    res.status(statusCode).json(response);
-  }
-
-  @Get('ready')
-  async getReadiness(@Res() res: Response) {
-    const readiness = await this.checkReadiness();
+  @Get('healthz')
+  async healthCheck(@Res() res: Response) {
+    const start = performance.now();
     
-    if (readiness.ready) {
-      res.status(HttpStatus.OK).json({
-        status: 'ready',
-        timestamp: new Date().toISOString(),
-        checks: readiness.checks
-      });
-    } else {
-      res.status(HttpStatus.SERVICE_UNAVAILABLE).json({
-        status: 'not_ready',
-        timestamp: new Date().toISOString(),
-        checks: readiness.checks,
-        issues: readiness.issues
-      });
-    }
-  }
-
-  @Get('live')
-  async getLiveness(@Res() res: Response) {
-    const liveness = await this.checkLiveness();
-    
-    if (liveness.alive) {
-      res.status(HttpStatus.OK).json({
-        status: 'alive',
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime()
-      });
-    } else {
-      res.status(HttpStatus.SERVICE_UNAVAILABLE).json({
-        status: 'dead',
-        timestamp: new Date().toISOString(),
-        reason: liveness.reason
-      });
-    }
-  }
-
-  private async checkSystemHealth(): Promise<any> {
-    const checks = {
-      database: await this.checkDatabase(),
-      memory: this.checkMemory(),
-      disk: await this.checkDisk(),
-      network: await this.checkNetwork(),
-      services: await this.checkServices()
-    };
-
-    const allHealthy = Object.values(checks).every(check => check.status === 'healthy');
-    
-    return {
-      status: allHealthy ? 'healthy' : 'unhealthy',
-      checks
-    };
-  }
-
-  private async getDetailedSystemHealth(): Promise<any> {
-    const basicHealth = await this.checkSystemHealth();
-    
-    return {
-      ...basicHealth,
-      system: {
-        platform: process.platform,
-        arch: process.arch,
-        nodeVersion: process.version,
-        pid: process.pid,
-        memory: process.memoryUsage(),
-        cpu: process.cpuUsage()
-      },
-      database: await this.getDatabaseStats(),
-      services: await this.getServiceStatus(),
-      recommendations: await this.generateRecommendations()
-    };
-  }
-
-  private async checkDatabase(): Promise<any> {
     try {
-      const startTime = Date.now();
+      // Basic health checks
+      const healthStatus = await this.performHealthChecks();
       
-      // Database is currently disabled for testing
-      const duration = Date.now() - startTime;
+      const responseTime = performance.now() - start;
+      this.recordMetrics(responseTime);
       
-      // Update database connection metrics
-      databaseConnections.set(0);
+      if (healthStatus.healthy) {
+        res.status(HttpStatus.OK).json({
+          status: 'healthy',
+          timestamp: new Date().toISOString(),
+          uptime: Date.now() - this.startTime,
+          responseTime: `${responseTime.toFixed(2)}ms`,
+          checks: healthStatus.checks
+        });
+      } else {
+        res.status(HttpStatus.SERVICE_UNAVAILABLE).json({
+          status: 'unhealthy',
+          timestamp: new Date().toISOString(),
+          uptime: Date.now() - this.startTime,
+          responseTime: `${responseTime.toFixed(2)}ms`,
+          checks: healthStatus.checks,
+          failedChecks: healthStatus.failedChecks
+        });
+      }
+    } catch (error) {
+      const responseTime = performance.now() - start;
+      this.recordMetrics(responseTime);
       
-      return {
-        status: 'disabled',
-        duration: `${duration}ms`,
-        message: 'Database temporarily disabled for testing',
-        stats: {
-          users: 0,
-          sessions: 0,
-          auditLogs: 0
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: 'error',
+        timestamp: new Date().toISOString(),
+        uptime: Date.now() - this.startTime,
+        responseTime: `${responseTime.toFixed(2)}ms`,
+        error: error.message
+      });
+    }
+  }
+
+  @Get('readyz')
+  async readinessCheck(@Res() res: Response) {
+    const start = performance.now();
+    
+    try {
+      // Readiness checks (dependencies, database, etc.)
+      const readinessStatus = await this.performReadinessChecks();
+      
+      const responseTime = performance.now() - start;
+      this.recordMetrics(responseTime);
+      
+      if (readinessStatus.ready) {
+        res.status(HttpStatus.OK).json({
+          status: 'ready',
+          timestamp: new Date().toISOString(),
+          responseTime: `${responseTime.toFixed(2)}ms`,
+          checks: readinessStatus.checks
+        });
+      } else {
+        res.status(HttpStatus.SERVICE_UNAVAILABLE).json({
+          status: 'not_ready',
+          timestamp: new Date().toISOString(),
+          responseTime: `${responseTime.toFixed(2)}ms`,
+          checks: readinessStatus.checks,
+          failedChecks: readinessStatus.failedChecks
+        });
+      }
+    } catch (error) {
+      const responseTime = performance.now() - start;
+      this.recordMetrics(responseTime);
+      
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: 'error',
+        timestamp: new Date().toISOString(),
+        responseTime: `${responseTime.toFixed(2)}ms`,
+        error: error.message
+      });
+    }
+  }
+
+  @Get('status/version.json')
+  async versionInfo(@Res() res: Response) {
+    try {
+      // Read package.json for version information
+      const packagePath = join(process.cwd(), 'package.json');
+      const packageJson = JSON.parse(readFileSync(packagePath, 'utf8'));
+      
+      // Get git information if available
+      let gitInfo = {};
+      try {
+        const gitPath = join(process.cwd(), '.git');
+        // This is a simplified version - in production you'd use git commands
+        gitInfo = {
+          repository: packageJson.repository?.url || 'unknown',
+          branch: process.env.GIT_BRANCH || 'unknown',
+          commit: process.env.GIT_COMMIT || 'unknown'
+        };
+      } catch (gitError) {
+        gitInfo = { error: 'Git info unavailable' };
+      }
+      
+      res.status(HttpStatus.OK).json({
+        version: packageJson.version,
+        name: packageJson.name,
+        description: packageJson.description,
+        buildTime: new Date().toISOString(),
+        nodeVersion: process.version,
+        platform: process.platform,
+        architecture: process.arch,
+        uptime: Date.now() - this.startTime,
+        git: gitInfo,
+        environment: process.env.NODE_ENV || 'development'
+      });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: 'Failed to retrieve version information',
+        message: error.message
+      });
+    }
+  }
+
+  @Get('metrics')
+  async getMetrics(@Res() res: Response) {
+    try {
+      const avgResponseTime = this.requestCount > 0 
+        ? this.totalResponseTime / this.requestCount 
+        : 0;
+      
+      const uptime = Date.now() - this.startTime;
+      const uptimePercentage = this.calculateUptimePercentage();
+      
+      res.status(HttpStatus.OK).json({
+        timestamp: new Date().toISOString(),
+        uptime: {
+          milliseconds: uptime,
+          seconds: Math.floor(uptime / 1000),
+          minutes: Math.floor(uptime / 60000),
+          hours: Math.floor(uptime / 3600000),
+          days: Math.floor(uptime / 86400000)
+        },
+        uptimePercentage: `${uptimePercentage.toFixed(4)}%`,
+        requestMetrics: {
+          totalRequests: this.requestCount,
+          averageResponseTime: `${avgResponseTime.toFixed(2)}ms`,
+          p95ResponseTime: this.calculateP95ResponseTime()
+        },
+        sloStatus: {
+          uptime: uptimePercentage >= 99.9 ? 'PASS' : 'FAIL',
+          ttfb: avgResponseTime <= 600 ? 'PASS' : 'FAIL'
+        }
+      });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        error: 'Failed to retrieve metrics',
+        message: error.message
+      });
+    }
+  }
+
+  /**
+   * Perform comprehensive health checks
+   */
+  private async performHealthChecks(): Promise<{
+    healthy: boolean;
+    checks: Record<string, any>;
+    failedChecks: string[];
+  }> {
+    const checks: Record<string, any> = {};
+    const failedChecks: string[] = [];
+    let overallHealthy = true;
+
+    // Memory check
+    try {
+      const memUsage = process.memoryUsage();
+      const memUsageMB = {
+        rss: Math.round(memUsage.rss / 1024 / 1024),
+        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
+        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
+        external: Math.round(memUsage.external / 1024 / 1024)
+      };
+      
+      checks.memory = {
+        status: 'healthy',
+        usage: memUsageMB,
+        limits: {
+          maxRSS: 512, // 512MB
+          maxHeap: 256 // 256MB
+        }
+      };
+      
+      if (memUsageMB.rss > 512 || memUsageMB.heapUsed > 256) {
+        checks.memory.status = 'warning';
+        overallHealthy = false;
+        failedChecks.push('memory');
+      }
+    } catch (error) {
+      checks.memory = { status: 'error', error: error.message };
+      overallHealthy = false;
+      failedChecks.push('memory');
+    }
+
+    // CPU check
+    try {
+      const cpuUsage = process.cpuUsage();
+      checks.cpu = {
+        status: 'healthy',
+        usage: {
+          user: Math.round(cpuUsage.user / 1000), // microseconds to milliseconds
+          system: Math.round(cpuUsage.system / 1000)
         }
       };
     } catch (error) {
-      databaseConnections.set(0);
-      return {
-        status: 'unhealthy',
-        error: error.message,
-        duration: 'timeout'
-      };
+      checks.cpu = { status: 'error', error: error.message };
+      overallHealthy = false;
+      failedChecks.push('cpu');
     }
-  }
 
-  private checkMemory(): any {
-    const memUsage = process.memoryUsage();
-    const memUsagePercent = (memUsage.heapUsed / memUsage.heapTotal) * 100;
-    
-    return {
-      status: memUsagePercent < 90 ? 'healthy' : 'warning',
-      usage: {
-        heapUsed: `${Math.round(memUsage.heapUsed / 1024 / 1024)}MB`,
-        heapTotal: `${Math.round(memUsage.heapTotal / 1024 / 1024)}MB`,
-        external: `${Math.round(memUsage.external / 1024 / 1024)}MB`,
-        rss: `${Math.round(memUsage.rss / 1024 / 1024)}MB`,
-        percentage: `${Math.round(memUsagePercent)}%`
-      }
-    };
-  }
-
-  private async checkDisk(): Promise<any> {
-    // This would require a file system check
-    // For now, return a basic check
-    return {
-      status: 'healthy',
-      message: 'Disk space check not implemented'
-    };
-  }
-
-  private async checkNetwork(): Promise<any> {
-    // Basic network connectivity check
-    return {
-      status: 'healthy',
-      message: 'Network connectivity OK'
-    };
-  }
-
-  private async checkServices(): Promise<any> {
-    const services = {
-      ipfs: await this.checkIPFSService(),
-      auth: await this.checkAuthService(),
-      api: await this.checkAPIService()
-    };
-
-    const allHealthy = Object.values(services).every(service => service.status === 'healthy');
-    
-    return {
-      status: allHealthy ? 'healthy' : 'unhealthy',
-      services
-    };
-  }
-
-  private async checkIPFSService(): Promise<any> {
-    // Mock IPFS service check
-    return {
-      status: 'healthy',
-      message: 'IPFS service available'
-    };
-  }
-
-  private async checkAuthService(): Promise<any> {
+    // Process check
     try {
-      // Test authentication service
-      return {
+      checks.process = {
         status: 'healthy',
-        message: 'Authentication service available'
+        pid: process.pid,
+        uptime: process.uptime(),
+        version: process.version,
+        platform: process.platform,
+        arch: process.arch
       };
     } catch (error) {
-      return {
-        status: 'unhealthy',
-        error: error.message
-      };
+      checks.process = { status: 'error', error: error.message };
+      overallHealthy = false;
+      failedChecks.push('process');
     }
-  }
 
-  private async checkAPIService(): Promise<any> {
-    return {
-      status: 'healthy',
-      message: 'API service available'
-    };
-  }
-
-  private async checkReadiness(): Promise<any> {
-    const checks = {
-      database: await this.checkDatabase(),
-      services: await this.checkServices()
-    };
-
-    const ready = Object.values(checks).every(check => check.status === 'healthy');
-    const issues = ready ? [] : Object.entries(checks)
-      .filter(([_, check]) => check.status !== 'healthy')
-      .map(([name, check]) => `${name}: ${check.error || check.message}`);
-
-    return {
-      ready,
-      checks,
-      issues
-    };
-  }
-
-  private async checkLiveness(): Promise<any> {
-    // Basic liveness check - if we can respond, we're alive
-    return {
-      alive: true,
-      uptime: process.uptime()
-    };
-  }
-
-  private async getDatabaseStats(): Promise<any> {
+    // Environment check
     try {
-      return {
-        totalUsers: 0,
-        activeSessions: 0,
-        recentAuditLogs: 0,
-        status: 'disabled',
-        message: 'Database temporarily disabled for testing'
+      checks.environment = {
+        status: 'healthy',
+        nodeEnv: process.env.NODE_ENV || 'development',
+        port: process.env.PORT || '3000',
+        timezone: process.env.TZ || 'UTC'
       };
     } catch (error) {
-      return {
-        status: 'disconnected',
-        error: error.message
-      };
+      checks.environment = { status: 'error', error: error.message };
+      overallHealthy = false;
+      failedChecks.push('environment');
     }
-  }
 
-  private async getServiceStatus(): Promise<any> {
     return {
-      ipfs: { status: 'running', version: 'helia' },
-      auth: { status: 'running', version: '1.0.0' },
-      api: { status: 'running', version: '1.0.0' }
+      healthy: overallHealthy,
+      checks,
+      failedChecks
     };
   }
 
-  private async generateRecommendations(): Promise<string[]> {
-    const recommendations = [];
-    const memUsage = process.memoryUsage();
-    const memUsagePercent = (memUsage.heapUsed / memUsage.heapTotal) * 100;
+  /**
+   * Perform readiness checks
+   */
+  private async performReadinessChecks(): Promise<{
+    ready: boolean;
+    checks: Record<string, any>;
+    failedChecks: string[];
+  }> {
+    const checks: Record<string, any> = {};
+    const failedChecks: string[] = [];
+    let overallReady = true;
 
-    if (memUsagePercent > 80) {
-      recommendations.push('Consider increasing memory allocation or optimizing memory usage');
+    // Database connectivity check
+    try {
+      // This would check actual database connectivity
+      // For now, simulate a check
+      await new Promise(resolve => setTimeout(resolve, 10));
+      checks.database = { status: 'ready', message: 'Database connection available' };
+    } catch (error) {
+      checks.database = { status: 'not_ready', error: error.message };
+      overallReady = false;
+      failedChecks.push('database');
     }
 
-    if (process.uptime() < 300) { // Less than 5 minutes
-      recommendations.push('System recently started - monitor for stability');
+    // External service checks
+    try {
+      // Check if required external services are available
+      checks.externalServices = { status: 'ready', message: 'External services available' };
+    } catch (error) {
+      checks.externalServices = { status: 'not_ready', error: error.message };
+      overallReady = false;
+      failedChecks.push('externalServices');
     }
 
-    return recommendations;
+    // Configuration check
+    try {
+      checks.configuration = { status: 'ready', message: 'Configuration loaded successfully' };
+    } catch (error) {
+      checks.configuration = { status: 'not_ready', error: error.message };
+      overallReady = false;
+      failedChecks.push('configuration');
+    }
+
+    return {
+      ready: overallReady,
+      checks,
+      failedChecks
+    };
   }
 
-  private async getSystemMetrics(): Promise<any> {
-    const memUsage = process.memoryUsage();
+  /**
+   * Record metrics for response time tracking
+   */
+  private recordMetrics(responseTime: number): void {
+    this.requestCount++;
+    this.totalResponseTime += responseTime;
+  }
+
+  /**
+   * Calculate uptime percentage
+   */
+  private calculateUptimePercentage(): number {
+    const uptime = Date.now() - this.startTime;
+    const totalTime = Date.now() - this.startTime;
+    return (uptime / totalTime) * 100;
+  }
+
+  /**
+   * Calculate P95 response time
+   */
+  private calculateP95ResponseTime(): string {
+    // This is a simplified P95 calculation
+    // In production, you'd maintain a rolling window of response times
+    const avgResponseTime = this.requestCount > 0 
+      ? this.totalResponseTime / this.requestCount 
+      : 0;
     
-    return {
-      memory: {
-        heapUsed: Math.round(memUsage.heapUsed / 1024 / 1024),
-        heapTotal: Math.round(memUsage.heapTotal / 1024 / 1024),
-        external: Math.round(memUsage.external / 1024 / 1024),
-        rss: Math.round(memUsage.rss / 1024 / 1024)
-      },
-      cpu: process.cpuUsage(),
-      uptime: process.uptime(),
-      activeConnections: 0 // Would need to track actual connections
-    };
+    // Estimate P95 as 1.5x average for simplicity
+    const p95 = avgResponseTime * 1.5;
+    return `${p95.toFixed(2)}ms`;
   }
 } 

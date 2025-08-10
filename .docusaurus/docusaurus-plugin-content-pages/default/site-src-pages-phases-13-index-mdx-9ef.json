@@ -1,0 +1,12 @@
+{
+  "type": "mdx",
+  "permalink": "/phases/13/",
+  "source": "@site/src/pages/phases/13/index.mdx",
+  "title": "Phase 13 - Mission Planner & RAG Integration",
+  "description": "Advanced mission planning with AI-driven RAG capabilities for legal and manufacturing domains",
+  "frontMatter": {
+    "title": "Phase 13 - Mission Planner & RAG Integration",
+    "description": "Advanced mission planning with AI-driven RAG capabilities for legal and manufacturing domains"
+  },
+  "unlisted": false
+}

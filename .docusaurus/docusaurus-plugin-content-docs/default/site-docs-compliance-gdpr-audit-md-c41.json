@@ -8,14 +8,14 @@
   "permalink": "/docs/compliance/gdpr-audit",
   "draft": false,
   "unlisted": false,
-  "editUrl": "https://github.com/facebook/docusaurus/edit/main/website/docs/compliance/gdpr-audit.md",
+  "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/docs/compliance/gdpr-audit.md",
   "tags": [],
   "version": "current",
   "frontMatter": {},
   "sidebar": "tutorialSidebar",
   "previous": {
-    "title": "Zeropoint Protocol - Brand Guidelines",
-    "permalink": "/docs/brand"
+    "title": "User Feedback System - Zeropoint Protocol Website",
+    "permalink": "/docs/feedback"
   },
   "next": {
     "title": "Phase 8: Consensus Visualizer Mockup",

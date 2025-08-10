@@ -8,8 +8,12 @@
           "label": "Next",
           "isLast": true,
           "path": "/docs",
-          "mainDocId": "brand",
+          "mainDocId": "status",
           "docs": [
+            {
+              "id": "api/README",
+              "path": "/docs/api/"
+            },
             {
               "id": "brand",
               "path": "/docs/brand",
@@ -51,6 +55,15 @@
               "sidebar": "tutorialSidebar"
             },
             {
+              "id": "LICENSES",
+              "path": "/docs/LICENSES",
+              "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "pages-rollback",
+              "path": "/docs/pages-rollback"
+            },
+            {
               "id": "phase13_consensus_engine",
               "path": "/docs/phase13_consensus_engine",
               "sidebar": "tutorialSidebar"
@@ -64,14 +77,19 @@
               "id": "soulchain-rpc",
               "path": "/docs/soulchain-rpc",
               "sidebar": "tutorialSidebar"
+            },
+            {
+              "id": "status",
+              "path": "/docs/status",
+              "sidebar": "tutorialSidebar"
             }
           ],
           "draftIds": [],
           "sidebars": {
             "tutorialSidebar": {
               "link": {
-                "path": "/docs/brand",
-                "label": "brand"
+                "path": "/docs/status",
+                "label": "status"
               }
             }
           }

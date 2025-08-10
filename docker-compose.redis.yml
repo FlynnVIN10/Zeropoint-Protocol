@@ -1,0 +1,66 @@
+# © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
+
+# Redis Docker Compose for Phase 10 Performance Optimization
+# This file sets up Redis with performance monitoring and health checks
+
+version: '3.8'
+
+services:
+  redis:
+    image: redis:7.2-alpine
+    container_name: zeropoint-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - zeropoint-network
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: zeropoint-redis-commander
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+      - HTTP_USER=
+      - HTTP_PASSWORD=
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - zeropoint-network
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: zeropoint-redis-exporter
+    restart: unless-stopped
+    ports:
+      - "9121:9121"
+    command: --redis.addr=redis://redis:6379
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - zeropoint-network
+
+volumes:
+  redis_data:
+    driver: local
+
+networks:
+  zeropoint-network:
+    driver: bridge
+    name: zeropoint-network

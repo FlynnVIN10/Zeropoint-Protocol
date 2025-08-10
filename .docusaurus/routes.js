@@ -3,52 +3,67 @@ import ComponentCreator from '@docusaurus/ComponentCreator';
 
 export default [
   {
-    path: '/contact',
-    component: ComponentCreator('/contact', 'abe'),
+    path: '/phases/09',
+    component: ComponentCreator('/phases/09', '579'),
     exact: true
   },
   {
-    path: '/dashboard',
-    component: ComponentCreator('/dashboard', 'd63'),
+    path: '/phases/09/',
+    component: ComponentCreator('/phases/09/', '5b7'),
     exact: true
   },
   {
-    path: '/interact',
-    component: ComponentCreator('/interact', '04f'),
+    path: '/phases/10',
+    component: ComponentCreator('/phases/10', '260'),
     exact: true
   },
   {
-    path: '/legal',
-    component: ComponentCreator('/legal', 'da9'),
+    path: '/phases/10/',
+    component: ComponentCreator('/phases/10/', '20a'),
     exact: true
   },
   {
-    path: '/status',
-    component: ComponentCreator('/status', '3ab'),
+    path: '/phases/11',
+    component: ComponentCreator('/phases/11', '38f'),
     exact: true
   },
   {
-    path: '/technology',
-    component: ComponentCreator('/technology', '88a'),
+    path: '/phases/11/',
+    component: ComponentCreator('/phases/11/', 'ac5'),
     exact: true
   },
   {
-    path: '/use-cases',
-    component: ComponentCreator('/use-cases', '612'),
+    path: '/phases/12',
+    component: ComponentCreator('/phases/12', '521'),
+    exact: true
+  },
+  {
+    path: '/phases/12/',
+    component: ComponentCreator('/phases/12/', 'e56'),
+    exact: true
+  },
+  {
+    path: '/phases/13/',
+    component: ComponentCreator('/phases/13/', 'd3e'),
     exact: true
   },
   {
     path: '/docs',
-    component: ComponentCreator('/docs', 'd6d'),
+    component: ComponentCreator('/docs', '802'),
     routes: [
       {
         path: '/docs',
-        component: ComponentCreator('/docs', '732'),
+        component: ComponentCreator('/docs', '705'),
         routes: [
           {
             path: '/docs',
-            component: ComponentCreator('/docs', '299'),
+            component: ComponentCreator('/docs', '1ed'),
             routes: [
+              {
+                path: '/docs/api/',
+                component: ComponentCreator('/docs/api/', '8b5'),
+                exact: true
+              },
               {
                 path: '/docs/brand',
                 component: ComponentCreator('/docs/brand', '4cd'),
@@ -98,6 +113,17 @@ export default [
                 sidebar: "tutorialSidebar"
               },
               {
+                path: '/docs/LICENSES',
+                component: ComponentCreator('/docs/LICENSES', '8a6'),
+                exact: true,
+                sidebar: "tutorialSidebar"
+              },
+              {
+                path: '/docs/pages-rollback',
+                component: ComponentCreator('/docs/pages-rollback', '063'),
+                exact: true
+              },
+              {
                 path: '/docs/phase13_consensus_engine',
                 component: ComponentCreator('/docs/phase13_consensus_engine', '3d4'),
                 exact: true,
@@ -114,6 +140,12 @@ export default [
                 component: ComponentCreator('/docs/soulchain-rpc', '952'),
                 exact: true,
                 sidebar: "tutorialSidebar"
+              },
+              {
+                path: '/docs/status',
+                component: ComponentCreator('/docs/status', 'fa6'),
+                exact: true,
+                sidebar: "tutorialSidebar"
               }
             ]
           }
@@ -123,7 +155,7 @@ export default [
   },
   {
     path: '/',
-    component: ComponentCreator('/', '2e1'),
+    component: ComponentCreator('/', 'e5f'),
     exact: true
   },
   {

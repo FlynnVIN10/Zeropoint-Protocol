@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -34,7 +33,7 @@ Thumbs.db
 static/
 
 # Documentation
-docs/
+# docs/
 
 # Project-specific
 zeropointprotocol.ai/

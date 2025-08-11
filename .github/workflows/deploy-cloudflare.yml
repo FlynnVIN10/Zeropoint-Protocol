@@ -9,7 +9,7 @@ on:
 
 env:
   NODE_VERSION: '18'
-  CLOUDFLARE_PROJECT_NAME: zeropointprotocol
+  CLOUDFLARE_PROJECT_NAME: zeropointprotocol-ai
 
 jobs:
   deploy:

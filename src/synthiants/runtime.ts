@@ -479,7 +479,7 @@ class ResourceMonitor {
     this.stopMonitoring(taskId);
 
     // Emit quota breach event
-    process.emit("quota_breach", { taskId, resource, current, limit });
+    (process as any).emit("quota_breach", { taskId, resource, current, limit });
   }
 
   /**

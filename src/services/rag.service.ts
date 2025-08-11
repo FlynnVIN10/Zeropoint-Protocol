@@ -313,10 +313,10 @@ export class RAGService {
       const sources = await this.searchContext(query, topK);
 
       // Generate response using context
-      const answer = await this.generateResponse(query, sources);
+      const answer = await this.generateResponse(query, sources as any);
 
       // Calculate confidence based on source relevance
-      const confidence = this.calculateConfidence(sources);
+      const confidence = this.calculateConfidence(sources as any);
 
       // Calculate nDCG for evaluation
       const nDCG = this.calculateNDCG(query, sources);
@@ -325,7 +325,7 @@ export class RAGService {
 
       return {
         answer,
-        sources,
+        sources: sources as any,
         confidence,
         responseTime,
         query,

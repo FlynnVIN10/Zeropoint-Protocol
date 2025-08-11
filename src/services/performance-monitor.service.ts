@@ -341,15 +341,13 @@ Cache Hit Rate: ${this.metrics.cache.hitRate.toFixed(2)}%
   }
 
   private checkCacheAlerts(evictionRate: number): void {
-    if (
-      evictionRate > performanceTargets.redisHealthCheckConfig.maxEvictionRate
-    ) {
+    if (evictionRate > 0.1) { // Temporary fix - hardcoded threshold
       this.createAlert(
         "warning",
         "Cache eviction rate exceeded threshold",
         "evictionRate",
         evictionRate,
-        performanceTargets.redisHealthCheckConfig.maxEvictionRate,
+        0.1, // Temporary fix - hardcoded threshold
       );
     }
   }

@@ -495,7 +495,7 @@ export class MultiLLMService {
       status.lastCheck = new Date();
     }
 
-    return Object.fromEntries(this.providerStatus);
+    return Object.fromEntries(this.providerStatus) as Record<LLMProvider, ProviderStatus>;
   }
 
   async getProviderCosts(): Promise<

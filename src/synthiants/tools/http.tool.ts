@@ -286,6 +286,7 @@ export class HTTPTool implements ToolInterface {
    * Perform HTTP request
    */
   private async performRequest(params: HTTPRequest): Promise<HTTPResponse> {
+    const startTime = Date.now();
     const timeout = params.timeout || this.config.timeout;
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -330,12 +331,19 @@ export class HTTPTool implements ToolInterface {
         body = await response.arrayBuffer();
       }
 
+      // Convert headers to plain object
+      const headers: Record<string, string> = {};
+      (response.headers as any).forEach((value: string, key: string) => {
+        headers[key] = value;
+      });
+
       return {
         status: response.status,
         statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
+        headers,
         body,
         url: response.url,
+        responseTime: Date.now() - startTime,
       };
     } catch (error) {
       clearTimeout(timeoutId);

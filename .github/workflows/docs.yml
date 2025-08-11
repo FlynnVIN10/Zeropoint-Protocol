@@ -33,7 +33,7 @@ jobs:
         run: npx docusaurus swizzle --help
         
       - name: Build documentation
-        run: npm run build
+        run: npm run build:static
         
       - name: Check build output
         run: |

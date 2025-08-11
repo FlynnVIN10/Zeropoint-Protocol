@@ -29,7 +29,9 @@
     "node_modules",
     "dist",
     "zeropointprotocol.ai",
+    "src/components-disabled/**/*",
     "src/components/**/*.tsx",
+    "src/pages/**/*.tsx",
     "src/pages/**/*.mdx"
   ]
 }

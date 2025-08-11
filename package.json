@@ -7,6 +7,7 @@
   "scripts": {
     "build": "nest build",
     "build:site": "docusaurus build",
+    "build:static": "node scripts/build-static.js",
     "serve:site": "docusaurus serve",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "sh src/scripts/entrypoint.sh",

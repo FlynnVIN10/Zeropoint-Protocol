@@ -74,12 +74,12 @@ class SSELoadTester extends EventEmitter {
     url.searchParams.set('provider', 'auto');
     
     const client = url.protocol === 'https:' ? https : http;
-    
-    const req = client.request(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'text/event-stream',
-        'Cache-Control': 'no-cache',
+      
+      const req = client.request(url, {
+        method: 'GET',
+        headers: {
+          'Accept': 'text/event-stream',
+          'Cache-Control': 'no-cache',
         'Connection': 'keep-alive',
       },
     });
@@ -183,7 +183,7 @@ class SSELoadTester extends EventEmitter {
     if (error.message.includes('429')) {
       this.rateLimitHits++;
       console.log(`🚫 Connection ${connection.id}: Rate limited`);
-    } else {
+        } else {
       console.log(`❌ Connection ${connection.id}: Error - ${error.message}`);
     }
     

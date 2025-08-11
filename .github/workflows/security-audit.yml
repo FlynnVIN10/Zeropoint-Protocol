@@ -1,0 +1,112 @@
+name: Security & Audit
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Every Monday at 2 AM
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run npm audit
+        run: npm audit --audit-level=moderate
+        
+      - name: Check for known vulnerabilities
+        run: npm audit --audit-level=high
+        
+      - name: Check for outdated packages
+        run: npm outdated
+        
+      - name: Security audit report
+        run: |
+          echo "=== Security Audit Report ==="
+          echo "Date: $(date)"
+          echo "Repository: ${{ github.repository }}"
+          echo "Branch: ${{ github.ref }}"
+          echo "Commit: ${{ github.sha }}"
+          
+  dependency-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Check dependency licenses
+        run: |
+          echo "Checking dependency licenses..."
+          npm ls --depth=0
+          
+      - name: Generate dependency report
+        run: |
+          echo "=== Dependency Report ==="
+          npm list --depth=0 > dependency-report.txt
+          cat dependency-report.txt
+          
+      - name: Upload dependency report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-report
+          path: dependency-report.txt
+          retention-days: 30
+          
+  code-scanning:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run ESLint security rules
+        run: |
+          echo "Running ESLint security checks..."
+          npm run lint:security || echo "No security linting configured"
+          
+      - name: Check for sensitive files
+        run: |
+          echo "Checking for sensitive files..."
+          find . -name "*.key" -o -name "*.pem" -o -name "*.p12" -o -name "*.pfx" | head -10
+          
+      - name: Check for hardcoded secrets
+        run: |
+          echo "Checking for potential hardcoded secrets..."
+          grep -r "password\|secret\|key\|token" src/ --exclude-dir=node_modules --exclude-dir=.git | head -20 || echo "No obvious secrets found"

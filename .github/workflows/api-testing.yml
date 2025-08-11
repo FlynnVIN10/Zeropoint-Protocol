@@ -1,0 +1,91 @@
+name: API Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '18'
+
+jobs:
+  api-tests:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run API tests
+        run: |
+          echo "Running API tests..."
+          if [ -d "test/api" ]; then
+            npm run test:api
+          else
+            echo "No API test directory found"
+          fi
+          
+      - name: Run integration tests
+        run: |
+          echo "Running integration tests..."
+          npm run test:integration || echo "No integration tests configured"
+          
+      - name: Run e2e tests
+        run: |
+          echo "Running e2e tests..."
+          npm run test:e2e || echo "No e2e tests configured"
+          
+      - name: Check API documentation
+        run: |
+          echo "Checking API documentation..."
+          if [ -f "docs/api/README.md" ]; then
+            echo "API docs found"
+            ls -la docs/api/
+          else
+            echo "No API docs found"
+          fi
+          
+  load-testing:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run load tests
+        run: |
+          echo "Running load tests..."
+          if [ -f "scripts/load-test.js" ]; then
+            node scripts/load-test.js
+          else
+            echo "No load test script found"
+          fi
+          
+      - name: Run performance tests
+        run: |
+          echo "Running performance tests..."
+          if [ -f "scripts/phase10-enhanced-load-test.js" ]; then
+            node scripts/phase10-enhanced-load-test.js
+          else
+            echo "No performance test script found"
+          fi

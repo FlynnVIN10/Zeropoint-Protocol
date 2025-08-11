@@ -20,8 +20,7 @@ export default {
         "docs": {
           "sidebarPath": "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/sidebars.js",
           "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/",
-          "showLastUpdateTime": false,
-          "showLastUpdateAuthor": false
+          "routeBasePath": "docs"
         },
         "blog": {
           "showReadingTime": true,

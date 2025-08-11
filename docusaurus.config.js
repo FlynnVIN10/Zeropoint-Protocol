@@ -24,10 +24,7 @@
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/',
-
-          // Disable tutorial content generation
-          showLastUpdateTime: false,
-          showLastUpdateAuthor: false,
+          routeBasePath: 'docs',
         },
         blog: {
           showReadingTime: true,

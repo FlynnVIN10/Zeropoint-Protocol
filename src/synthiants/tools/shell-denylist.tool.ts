@@ -1,12 +1,12 @@
 /**
  * Shell Denylist Tool - Security restrictions for shell operations
- * 
+ *
  * @fileoverview Provides secure shell operation validation and denylist enforcement
  * @author Dev Team
  * @version 1.0.0
  */
 
-import { ToolInterface, ResourceUsage } from './index';
+import { ToolInterface, ResourceUsage } from "./index";
 
 export interface ShellDenylistConfig {
   deniedCommands: string[];
@@ -29,7 +29,7 @@ export interface ShellOperation {
 export interface ShellValidationResult {
   allowed: boolean;
   reason?: string;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
   suggestedAlternative?: string;
 }
 
@@ -38,182 +38,192 @@ export interface ShellValidationResult {
  * Provides secure shell operation validation and denylist enforcement
  */
 export class ShellDenylistTool implements ToolInterface {
-  public readonly name = 'shell-denylist';
-  public readonly version = '1.0.0';
-  public readonly description = 'Shell operation security validation and denylist enforcement';
-  public readonly capabilities = ['validation', 'security', 'denylist', 'shell'];
+  public readonly name = "shell-denylist";
+  public readonly version = "1.0.0";
+  public readonly description =
+    "Shell operation security validation and denylist enforcement";
+  public readonly capabilities = [
+    "validation",
+    "security",
+    "denylist",
+    "shell",
+  ];
 
   private config: ShellDenylistConfig;
   private operationCount: number = 0;
-  private blockedOperations: Array<{ timestamp: number; command: string; reason: string }> = [];
+  private blockedOperations: Array<{
+    timestamp: number;
+    command: string;
+    reason: string;
+  }> = [];
 
   constructor(config?: Partial<ShellDenylistConfig>) {
     this.config = {
       deniedCommands: [
-        'rm -rf /',
-        'rm -rf /*',
-        'dd if=/dev/zero',
-        'mkfs.ext4',
-        'fdisk',
-        'parted',
-        'mount',
-        'umount',
-        'chmod 777',
-        'chown root',
-        'sudo',
-        'su',
-        'passwd',
-        'useradd',
-        'userdel',
-        'groupadd',
-        'groupdel',
-        'systemctl',
-        'service',
-        'init',
-        'telinit',
-        'reboot',
-        'shutdown',
-        'halt',
-        'poweroff',
-        'wall',
-        'write',
-        'mesg',
-        'cryptsetup',
-        'lvm',
-        'mdadm',
-        'iptables',
-        'ufw',
-        'firewalld',
-        'nft',
-        'tcpdump',
-        'wireshark',
-        'netcat',
-        'nc',
-        'nmap',
-        'ssh-keygen',
-        'openssl',
-        'gpg',
-        'certbot',
-        'letsencrypt'
+        "rm -rf /",
+        "rm -rf /*",
+        "dd if=/dev/zero",
+        "mkfs.ext4",
+        "fdisk",
+        "parted",
+        "mount",
+        "umount",
+        "chmod 777",
+        "chown root",
+        "sudo",
+        "su",
+        "passwd",
+        "useradd",
+        "userdel",
+        "groupadd",
+        "groupdel",
+        "systemctl",
+        "service",
+        "init",
+        "telinit",
+        "reboot",
+        "shutdown",
+        "halt",
+        "poweroff",
+        "wall",
+        "write",
+        "mesg",
+        "cryptsetup",
+        "lvm",
+        "mdadm",
+        "iptables",
+        "ufw",
+        "firewalld",
+        "nft",
+        "tcpdump",
+        "wireshark",
+        "netcat",
+        "nc",
+        "nmap",
+        "ssh-keygen",
+        "openssl",
+        "gpg",
+        "certbot",
+        "letsencrypt",
       ],
       deniedPaths: [
-        '/etc',
-        '/var',
-        '/usr',
-        '/bin',
-        '/sbin',
-        '/lib',
-        '/lib64',
-        '/boot',
-        '/dev',
-        '/proc',
-        '/sys',
-        '/root',
-        '/home',
-        '/tmp',
-        '/opt',
-        '/mnt',
-        '/media'
+        "/etc",
+        "/var",
+        "/usr",
+        "/bin",
+        "/sbin",
+        "/lib",
+        "/lib64",
+        "/boot",
+        "/dev",
+        "/proc",
+        "/sys",
+        "/root",
+        "/home",
+        "/tmp",
+        "/opt",
+        "/mnt",
+        "/media",
       ],
       deniedUsers: [
-        'root',
-        'admin',
-        'sudo',
-        'wheel',
-        'daemon',
-        'bin',
-        'sys',
-        'adm',
-        'lp',
-        'sync',
-        'shutdown',
-        'halt',
-        'mail',
-        'news',
-        'uucp',
-        'operator',
-        'games',
-        'gopher',
-        'ftp',
-        'nobody',
-        'systemd-network',
-        'systemd-resolve',
-        'systemd-timesync',
-        'dbus',
-        'polkitd',
-        'avahi',
-        'colord',
-        'dnsmasq',
-        'rpc',
-        'rpcuser',
-        'nfsnobody',
-        'sshd',
-        'postfix',
-        'mysql',
-        'postgres',
-        'redis',
-        'mongodb',
-        'nginx',
-        'apache',
-        'www-data'
+        "root",
+        "admin",
+        "sudo",
+        "wheel",
+        "daemon",
+        "bin",
+        "sys",
+        "adm",
+        "lp",
+        "sync",
+        "shutdown",
+        "halt",
+        "mail",
+        "news",
+        "uucp",
+        "operator",
+        "games",
+        "gopher",
+        "ftp",
+        "nobody",
+        "systemd-network",
+        "systemd-resolve",
+        "systemd-timesync",
+        "dbus",
+        "polkitd",
+        "avahi",
+        "colord",
+        "dnsmasq",
+        "rpc",
+        "rpcuser",
+        "nfsnobody",
+        "sshd",
+        "postfix",
+        "mysql",
+        "postgres",
+        "redis",
+        "mongodb",
+        "nginx",
+        "apache",
+        "www-data",
       ],
       allowedCommands: [
-        'ls',
-        'cat',
-        'grep',
-        'find',
-        'head',
-        'tail',
-        'wc',
-        'sort',
-        'uniq',
-        'cut',
-        'awk',
-        'sed',
-        'echo',
-        'printf',
-        'date',
-        'whoami',
-        'pwd',
-        'env',
-        'ps',
-        'top',
-        'htop',
-        'free',
-        'df',
-        'du',
-        'netstat',
-        'ss',
-        'ping',
-        'curl',
-        'wget',
-        'git',
-        'npm',
-        'node',
-        'python',
-        'python3',
-        'pip',
-        'pip3',
-        'docker',
-        'docker-compose',
-        'kubectl',
-        'helm',
-        'terraform',
-        'ansible'
+        "ls",
+        "cat",
+        "grep",
+        "find",
+        "head",
+        "tail",
+        "wc",
+        "sort",
+        "uniq",
+        "cut",
+        "awk",
+        "sed",
+        "echo",
+        "printf",
+        "date",
+        "whoami",
+        "pwd",
+        "env",
+        "ps",
+        "top",
+        "htop",
+        "free",
+        "df",
+        "du",
+        "netstat",
+        "ss",
+        "ping",
+        "curl",
+        "wget",
+        "git",
+        "npm",
+        "node",
+        "python",
+        "python3",
+        "pip",
+        "pip3",
+        "docker",
+        "docker-compose",
+        "kubectl",
+        "helm",
+        "terraform",
+        "ansible",
       ],
       allowedPaths: [
-        './',
-        '../',
-        '~/',
-        '/tmp/synthiant',
-        '/var/tmp/synthiant',
-        '/opt/synthiant',
-        '/home/synthiant'
+        "./",
+        "../",
+        "~/",
+        "/tmp/synthiant",
+        "/var/tmp/synthiant",
+        "/opt/synthiant",
+        "/home/synthiant",
       ],
       maxCommandLength: 1000,
       enableStrictMode: true,
       logAllOperations: true,
-      ...config
+      ...config,
     };
   }
 
@@ -224,7 +234,7 @@ export class ShellDenylistTool implements ToolInterface {
     try {
       // Validate parameters
       if (!this.validateParams(params)) {
-        throw new Error('Invalid shell operation parameters');
+        throw new Error("Invalid shell operation parameters");
       }
 
       // Perform validation
@@ -239,9 +249,8 @@ export class ShellDenylistTool implements ToolInterface {
       this.operationCount++;
 
       return result;
-
     } catch (error) {
-      console.error('Shell denylist tool execution failed:', error);
+      console.error("Shell denylist tool execution failed:", error);
       throw error;
     }
   }
@@ -250,11 +259,11 @@ export class ShellDenylistTool implements ToolInterface {
    * Validate shell operation parameters
    */
   validateParams(params: any): boolean {
-    if (!params || typeof params !== 'object') {
+    if (!params || typeof params !== "object") {
       return false;
     }
 
-    if (!params.command || typeof params.command !== 'string') {
+    if (!params.command || typeof params.command !== "string") {
       return false;
     }
 
@@ -262,15 +271,18 @@ export class ShellDenylistTool implements ToolInterface {
       return false;
     }
 
-    if (params.workingDirectory && typeof params.workingDirectory !== 'string') {
+    if (
+      params.workingDirectory &&
+      typeof params.workingDirectory !== "string"
+    ) {
       return false;
     }
 
-    if (params.user && typeof params.user !== 'string') {
+    if (params.user && typeof params.user !== "string") {
       return false;
     }
 
-    if (params.environment && typeof params.environment !== 'object') {
+    if (params.environment && typeof params.environment !== "object") {
       return false;
     }
 
@@ -287,33 +299,40 @@ export class ShellDenylistTool implements ToolInterface {
       time: 0,
       tokens: this.operationCount * 20, // 20 tokens per operation
       network: 0,
-      fileOps: 0
+      fileOps: 0,
     };
   }
 
   /**
    * Validate shell operation
    */
-  private validateShellOperation(operation: ShellOperation): ShellValidationResult {
+  private validateShellOperation(
+    operation: ShellOperation,
+  ): ShellValidationResult {
     const { command, workingDirectory, user } = operation;
 
     // Check command length
     if (command.length > this.config.maxCommandLength) {
       return {
         allowed: false,
-        reason: 'Command exceeds maximum allowed length',
-        riskLevel: 'high'
+        reason: "Command exceeds maximum allowed length",
+        riskLevel: "high",
       };
     }
 
     // Check denied commands
     for (const deniedCommand of this.config.deniedCommands) {
-      if (command.includes(deniedCommand) || command.match(new RegExp(deniedCommand.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))) {
+      if (
+        command.includes(deniedCommand) ||
+        command.match(
+          new RegExp(deniedCommand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+        )
+      ) {
         return {
           allowed: false,
           reason: `Command contains denied operation: ${deniedCommand}`,
-          riskLevel: 'critical',
-          suggestedAlternative: this.suggestAlternative(command, deniedCommand)
+          riskLevel: "critical",
+          suggestedAlternative: this.suggestAlternative(command, deniedCommand),
         };
       }
     }
@@ -323,18 +342,21 @@ export class ShellDenylistTool implements ToolInterface {
       return {
         allowed: false,
         reason: `Operation denied for user: ${user}`,
-        riskLevel: 'critical'
+        riskLevel: "critical",
       };
     }
 
     // Check working directory
     if (workingDirectory) {
       for (const deniedPath of this.config.deniedPaths) {
-        if (workingDirectory.startsWith(deniedPath) || workingDirectory.includes(deniedPath)) {
+        if (
+          workingDirectory.startsWith(deniedPath) ||
+          workingDirectory.includes(deniedPath)
+        ) {
           return {
             allowed: false,
             reason: `Working directory access denied: ${deniedPath}`,
-            riskLevel: 'high'
+            riskLevel: "high",
           };
         }
       }
@@ -343,24 +365,24 @@ export class ShellDenylistTool implements ToolInterface {
     // Check for suspicious patterns
     const suspiciousPatterns = [
       /(\$\(.*\))/, // Command substitution
-      /(\`.*\`)/,   // Backtick command substitution
-      /(&&|\|\|)/,  // Command chaining
-      /(;|&)/,      // Command separators
+      /(\`.*\`)/, // Backtick command substitution
+      /(&&|\|\|)/, // Command chaining
+      /(;|&)/, // Command separators
       /(\$[A-Z_]+)/, // Environment variables
       /(\.\.\/\.\.)/, // Directory traversal
       /(\/etc\/passwd)/, // Sensitive files
       /(\/etc\/shadow)/, // Sensitive files
-      /(\/proc\/)/,  // Proc filesystem
-      /(\/sys\/)/,   // Sys filesystem
-      /(\/dev\/)/,   // Device filesystem
+      /(\/proc\/)/, // Proc filesystem
+      /(\/sys\/)/, // Sys filesystem
+      /(\/dev\/)/, // Device filesystem
     ];
 
     for (const pattern of suspiciousPatterns) {
       if (pattern.test(command)) {
         return {
           allowed: false,
-          reason: 'Command contains suspicious patterns',
-          riskLevel: 'high'
+          reason: "Command contains suspicious patterns",
+          riskLevel: "high",
         };
       }
     }
@@ -378,8 +400,8 @@ export class ShellDenylistTool implements ToolInterface {
       if (!commandAllowed) {
         return {
           allowed: false,
-          reason: 'Command not in allowed list (strict mode enabled)',
-          riskLevel: 'medium'
+          reason: "Command not in allowed list (strict mode enabled)",
+          riskLevel: "medium",
         };
       }
     }
@@ -387,31 +409,39 @@ export class ShellDenylistTool implements ToolInterface {
     // All checks passed
     return {
       allowed: true,
-      riskLevel: 'low'
+      riskLevel: "low",
     };
   }
 
   /**
    * Suggest alternative command
    */
-  private suggestAlternative(command: string, deniedCommand: string): string | undefined {
+  private suggestAlternative(
+    command: string,
+    deniedCommand: string,
+  ): string | undefined {
     const alternatives: Record<string, string> = {
-      'rm -rf': 'Use specific file deletion or move to trash',
-      'sudo': 'Use specific permissions or contact administrator',
-      'chmod 777': 'Use specific permissions (e.g., chmod 644)',
-      'dd if=/dev/zero': 'Use specific file operations',
-      'systemctl': 'Contact system administrator',
-      'iptables': 'Contact network administrator',
-      'passwd': 'Use password change API or contact administrator'
+      "rm -rf": "Use specific file deletion or move to trash",
+      sudo: "Use specific permissions or contact administrator",
+      "chmod 777": "Use specific permissions (e.g., chmod 644)",
+      "dd if=/dev/zero": "Use specific file operations",
+      systemctl: "Contact system administrator",
+      iptables: "Contact network administrator",
+      passwd: "Use password change API or contact administrator",
     };
 
-    return alternatives[deniedCommand] || 'Contact administrator for assistance';
+    return (
+      alternatives[deniedCommand] || "Contact administrator for assistance"
+    );
   }
 
   /**
    * Log operation
    */
-  private logOperation(operation: ShellOperation, result: ShellValidationResult): void {
+  private logOperation(
+    operation: ShellOperation,
+    result: ShellValidationResult,
+  ): void {
     const logEntry = {
       timestamp: Date.now(),
       command: operation.command,
@@ -419,24 +449,28 @@ export class ShellDenylistTool implements ToolInterface {
       user: operation.user,
       allowed: result.allowed,
       reason: result.reason,
-      riskLevel: result.riskLevel
+      riskLevel: result.riskLevel,
     };
 
     if (!result.allowed) {
       this.blockedOperations.push({
         timestamp: logEntry.timestamp,
         command: operation.command,
-        reason: result.reason || 'Unknown'
+        reason: result.reason || "Unknown",
       });
     }
 
-    console.log('Shell operation validation:', logEntry);
+    console.log("Shell operation validation:", logEntry);
   }
 
   /**
    * Get blocked operations
    */
-  getBlockedOperations(): Array<{ timestamp: number; command: string; reason: string }> {
+  getBlockedOperations(): Array<{
+    timestamp: number;
+    command: string;
+    reason: string;
+  }> {
     return [...this.blockedOperations];
   }
 
@@ -451,13 +485,14 @@ export class ShellDenylistTool implements ToolInterface {
   } {
     const blockedCount = this.blockedOperations.length;
     const allowedCount = this.operationCount - blockedCount;
-    const blockedRate = this.operationCount > 0 ? (blockedCount / this.operationCount) * 100 : 0;
+    const blockedRate =
+      this.operationCount > 0 ? (blockedCount / this.operationCount) * 100 : 0;
 
     return {
       totalOperations: this.operationCount,
       blockedOperations: blockedCount,
       allowedOperations: allowedCount,
-      blockedRate
+      blockedRate,
     };
   }
 
@@ -481,7 +516,9 @@ export class ShellDenylistTool implements ToolInterface {
    * Remove denied command
    */
   removeDeniedCommand(command: string): void {
-    this.config.deniedCommands = this.config.deniedCommands.filter(c => c !== command);
+    this.config.deniedCommands = this.config.deniedCommands.filter(
+      (c) => c !== command,
+    );
   }
 
   /**

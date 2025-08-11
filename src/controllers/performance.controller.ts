@@ -1,11 +1,22 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, Logger } from '@nestjs/common';
-import { PerformanceMonitorService } from '../services/performance-monitor.service.js';
-import { RedisCacheService } from '../services/redis-cache.service.js';
-import { CircuitBreakerService } from '../services/circuit-breaker.service.js';
-import { ConnectionPoolService } from '../services/connection-pool.service.js';
-import { performanceTargets } from '../config/redis.config.js';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  Logger,
+} from "@nestjs/common";
+import { PerformanceMonitorService } from "../services/performance-monitor.service.js";
+import { RedisCacheService } from "../services/redis-cache.service.js";
+import { CircuitBreakerService } from "../services/circuit-breaker.service.js";
+import { ConnectionPoolService } from "../services/connection-pool.service.js";
+import { performanceTargets } from "../config/redis.config.js";
 
 export interface PerformanceDashboard {
   timestamp: string;
@@ -60,7 +71,7 @@ export interface PerformanceDashboard {
   recommendations: string[];
 }
 
-@Controller('performance')
+@Controller("performance")
 export class PerformanceController {
   private readonly logger = new Logger(PerformanceController.name);
 
@@ -74,22 +85,26 @@ export class PerformanceController {
   /**
    * Get comprehensive performance dashboard
    */
-  @Get('dashboard')
+  @Get("dashboard")
   async getPerformanceDashboard(): Promise<PerformanceDashboard> {
     try {
       const metrics = this.performanceMonitor.getMetrics();
       const alerts = this.performanceMonitor.getAlerts();
       const targets = this.performanceMonitor.checkPerformanceTargets();
-      
+
       // Get Redis stats
       const redisStats = await this.redisCache.getStats();
-      
+
       // Generate recommendations based on current performance
-      const recommendations = this.generateRecommendations(metrics, targets, redisStats);
-      
+      const recommendations = this.generateRecommendations(
+        metrics,
+        targets,
+        redisStats,
+      );
+
       const dashboard: PerformanceDashboard = {
         timestamp: new Date().toISOString(),
-        phase: 'Phase 10 - Optimization',
+        phase: "Phase 10 - Optimization",
         targets: {
           responseTime: performanceTargets.responseTime.target,
           uptime: performanceTargets.uptime.target,
@@ -118,7 +133,7 @@ export class PerformanceController {
           errors: {
             total: metrics.errors.total,
             rate: metrics.errors.rate,
-            lastError: metrics.errors.lastError?.toISOString() || 'None',
+            lastError: metrics.errors.lastError?.toISOString() || "None",
           },
           cache: {
             hitRate: metrics.cache.hitRate,
@@ -127,7 +142,7 @@ export class PerformanceController {
           },
         },
         targetsMet: targets,
-        alerts: alerts.map(alert => ({
+        alerts: alerts.map((alert) => ({
           level: alert.level,
           message: alert.message,
           timestamp: alert.timestamp.toISOString(),
@@ -135,10 +150,10 @@ export class PerformanceController {
         recommendations,
       };
 
-      this.logger.log('Performance dashboard generated successfully');
+      this.logger.log("Performance dashboard generated successfully");
       return dashboard;
     } catch (error) {
-      this.logger.error('Failed to generate performance dashboard:', error);
+      this.logger.error("Failed to generate performance dashboard:", error);
       throw error;
     }
   }
@@ -146,12 +161,12 @@ export class PerformanceController {
   /**
    * Get current performance metrics
    */
-  @Get('metrics')
+  @Get("metrics")
   async getCurrentMetrics() {
     try {
       const metrics = this.performanceMonitor.getMetrics();
       const targets = this.performanceMonitor.checkPerformanceTargets();
-      
+
       return {
         timestamp: new Date().toISOString(),
         metrics,
@@ -159,7 +174,7 @@ export class PerformanceController {
         summary: this.performanceMonitor.getPerformanceSummary(),
       };
     } catch (error) {
-      this.logger.error('Failed to get performance metrics:', error);
+      this.logger.error("Failed to get performance metrics:", error);
       throw error;
     }
   }
@@ -167,17 +182,17 @@ export class PerformanceController {
   /**
    * Get performance alerts
    */
-  @Get('alerts')
+  @Get("alerts")
   async getAlerts() {
     try {
       const alerts = this.performanceMonitor.getAlerts();
-      
+
       return {
         timestamp: new Date().toISOString(),
         totalAlerts: alerts.length,
-        criticalAlerts: alerts.filter(a => a.level === 'critical').length,
-        warningAlerts: alerts.filter(a => a.level === 'warning').length,
-        alerts: alerts.map(alert => ({
+        criticalAlerts: alerts.filter((a) => a.level === "critical").length,
+        warningAlerts: alerts.filter((a) => a.level === "warning").length,
+        alerts: alerts.map((alert) => ({
           level: alert.level,
           message: alert.message,
           metric: alert.metric,
@@ -187,7 +202,7 @@ export class PerformanceController {
         })),
       };
     } catch (error) {
-      this.logger.error('Failed to get performance alerts:', error);
+      this.logger.error("Failed to get performance alerts:", error);
       throw error;
     }
   }
@@ -195,12 +210,12 @@ export class PerformanceController {
   /**
    * Get Redis health status
    */
-  @Get('redis/health')
+  @Get("redis/health")
   async getRedisHealth() {
     try {
       const stats = await this.redisCache.getStats();
       const isHealthy = await this.redisCache.healthCheck();
-      
+
       return {
         timestamp: new Date().toISOString(),
         healthy: isHealthy,
@@ -211,7 +226,7 @@ export class PerformanceController {
         recommendations: this.generateRedisRecommendations(stats),
       };
     } catch (error) {
-      this.logger.error('Failed to get Redis health status:', error);
+      this.logger.error("Failed to get Redis health status:", error);
       throw error;
     }
   }
@@ -219,19 +234,19 @@ export class PerformanceController {
   /**
    * Get circuit breaker status
    */
-  @Get('circuit-breaker/status')
+  @Get("circuit-breaker/status")
   async getCircuitBreakerStatus() {
     try {
       // This would need to be implemented in CircuitBreakerService
       return {
         timestamp: new Date().toISOString(),
-        status: 'operational',
+        status: "operational",
         openBreakers: 0,
         totalBreakers: 0,
-        recommendations: ['Monitor circuit breaker patterns for optimization'],
+        recommendations: ["Monitor circuit breaker patterns for optimization"],
       };
     } catch (error) {
-      this.logger.error('Failed to get circuit breaker status:', error);
+      this.logger.error("Failed to get circuit breaker status:", error);
       throw error;
     }
   }
@@ -239,7 +254,7 @@ export class PerformanceController {
   /**
    * Get connection pool status
    */
-  @Get('connection-pool/status')
+  @Get("connection-pool/status")
   async getConnectionPoolStatus() {
     try {
       // This would need to be implemented in ConnectionPoolService
@@ -248,10 +263,10 @@ export class PerformanceController {
         activeConnections: 0,
         maxConnections: 0,
         idleConnections: 0,
-        recommendations: ['Optimize connection pooling for high load'],
+        recommendations: ["Optimize connection pooling for high load"],
       };
     } catch (error) {
-      this.logger.error('Failed to get connection pool status:', error);
+      this.logger.error("Failed to get connection pool status:", error);
       throw error;
     }
   }
@@ -259,21 +274,21 @@ export class PerformanceController {
   /**
    * Force performance metrics refresh
    */
-  @Post('refresh')
+  @Post("refresh")
   async refreshMetrics() {
     try {
       // Force a performance summary log
       const summary = this.performanceMonitor.getPerformanceSummary();
-      
-      this.logger.log('Performance metrics refreshed manually');
-      
+
+      this.logger.log("Performance metrics refreshed manually");
+
       return {
         timestamp: new Date().toISOString(),
-        message: 'Performance metrics refreshed successfully',
+        message: "Performance metrics refreshed successfully",
         summary,
       };
     } catch (error) {
-      this.logger.error('Failed to refresh performance metrics:', error);
+      this.logger.error("Failed to refresh performance metrics:", error);
       throw error;
     }
   }
@@ -281,82 +296,106 @@ export class PerformanceController {
   /**
    * Clear performance alerts
    */
-  @Delete('alerts')
+  @Delete("alerts")
   async clearAlerts() {
     try {
       // This would need to be implemented in PerformanceMonitorService
-      this.logger.log('Performance alerts cleared manually');
-      
+      this.logger.log("Performance alerts cleared manually");
+
       return {
         timestamp: new Date().toISOString(),
-        message: 'Performance alerts cleared successfully',
+        message: "Performance alerts cleared successfully",
       };
     } catch (error) {
-      this.logger.error('Failed to clear performance alerts:', error);
+      this.logger.error("Failed to clear performance alerts:", error);
       throw error;
     }
   }
 
-  private generateRecommendations(metrics: any, targets: any, redisStats: any): string[] {
+  private generateRecommendations(
+    metrics: any,
+    targets: any,
+    redisStats: any,
+  ): string[] {
     const recommendations: string[] = [];
-    
+
     // Response time recommendations
     if (!targets.responseTime) {
-      recommendations.push('Optimize database queries and implement caching for slow endpoints');
-      recommendations.push('Consider implementing request queuing for high-load scenarios');
+      recommendations.push(
+        "Optimize database queries and implement caching for slow endpoints",
+      );
+      recommendations.push(
+        "Consider implementing request queuing for high-load scenarios",
+      );
     }
-    
+
     // Uptime recommendations
     if (!targets.uptime) {
-      recommendations.push('Implement health checks and automatic failover mechanisms');
-      recommendations.push('Review error handling and circuit breaker configurations');
+      recommendations.push(
+        "Implement health checks and automatic failover mechanisms",
+      );
+      recommendations.push(
+        "Review error handling and circuit breaker configurations",
+      );
     }
-    
+
     // Slow requests recommendations
     if (!targets.slowRequests) {
-      recommendations.push('Profile and optimize endpoints with response times >100ms');
-      recommendations.push('Implement request timeout and cancellation mechanisms');
+      recommendations.push(
+        "Profile and optimize endpoints with response times >100ms",
+      );
+      recommendations.push(
+        "Implement request timeout and cancellation mechanisms",
+      );
     }
-    
+
     // Concurrent load recommendations
     if (!targets.concurrentLoad) {
-      recommendations.push('Scale horizontally with load balancers and multiple instances');
-      recommendations.push('Implement request throttling and rate limiting');
+      recommendations.push(
+        "Scale horizontally with load balancers and multiple instances",
+      );
+      recommendations.push("Implement request throttling and rate limiting");
     }
-    
+
     // Redis recommendations
     if (!redisStats.connected) {
-      recommendations.push('Deploy Redis cluster for high availability');
-      recommendations.push('Implement Redis connection pooling and failover');
+      recommendations.push("Deploy Redis cluster for high availability");
+      recommendations.push("Implement Redis connection pooling and failover");
     }
-    
+
     // General optimization recommendations
     if (recommendations.length === 0) {
-      recommendations.push('All Phase 10 targets met - consider Phase 11 UE5 implementation');
-      recommendations.push('Monitor performance trends for proactive optimization');
+      recommendations.push(
+        "All Phase 10 targets met - consider Phase 11 UE5 implementation",
+      );
+      recommendations.push(
+        "Monitor performance trends for proactive optimization",
+      );
     }
-    
+
     return recommendations;
   }
 
   private generateRedisRecommendations(stats: any): string[] {
     const recommendations: string[] = [];
-    
+
     if (!stats.connected) {
-      recommendations.push('Deploy Redis cluster for high availability');
-      recommendations.push('Implement Redis connection pooling and failover');
+      recommendations.push("Deploy Redis cluster for high availability");
+      recommendations.push("Implement Redis connection pooling and failover");
     }
-    
+
     if (stats.keys > 10000) {
-      recommendations.push('Consider implementing cache eviction policies');
-      recommendations.push('Monitor memory usage and implement LRU eviction');
+      recommendations.push("Consider implementing cache eviction policies");
+      recommendations.push("Monitor memory usage and implement LRU eviction");
     }
-    
+
     if (stats.hitRate < 80) {
-      recommendations.push('Optimize cache key strategies and TTL settings');
-      recommendations.push('Implement cache warming for frequently accessed data');
+      recommendations.push("Optimize cache key strategies and TTL settings");
+      recommendations.push(
+        "Implement cache warming for frequently accessed data",
+      );
     }
-    
+
     return recommendations;
   }
 }

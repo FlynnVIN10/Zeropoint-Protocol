@@ -1,34 +1,34 @@
 /**
  * TinyGrad Provider - Local Micro-Model Execution
- * 
+ *
  * @fileoverview Provides local AI model execution using TinyGrad with containerization
  * @author Dev Team
  * @version 1.0.0
  */
 
-import { spawn, ChildProcess } from 'child_process';
-import { EventEmitter } from 'events';
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { spawn, ChildProcess } from "child_process";
+import { EventEmitter } from "events";
+import { promises as fs } from "fs";
+import { join } from "path";
 
 export interface TinyGradConfig {
   modelPath: string;
   containerImage: string;
-  maxMemory: number;        // MB
-  maxCPU: number;           // CPU cores
-  timeout: number;          // milliseconds
+  maxMemory: number; // MB
+  maxCPU: number; // CPU cores
+  timeout: number; // milliseconds
   enableContainerization: boolean;
   enableGPU: boolean;
-  gpuMemory: number;        // MB
-  modelFormat: 'gguf' | 'safetensors' | 'onnx';
-  quantization: 'int8' | 'int4' | 'fp16' | 'fp32';
+  gpuMemory: number; // MB
+  modelFormat: "gguf" | "safetensors" | "onnx";
+  quantization: "int8" | "int4" | "fp16" | "fp32";
 }
 
 export interface ModelInfo {
   id: string;
   name: string;
   version: string;
-  size: number;             // MB
+  size: number; // MB
   format: string;
   quantization: string;
   parameters: number;
@@ -55,7 +55,7 @@ export interface InferenceResponse {
 
 export interface TrainingJob {
   id: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: "pending" | "running" | "completed" | "failed";
   progress: number;
   startTime: number;
   endTime?: number;
@@ -81,27 +81,27 @@ export class TinyGradProvider extends EventEmitter {
   constructor(config?: Partial<TinyGradConfig>) {
     super();
     this.config = {
-      modelPath: process.env.TINYGRAD_MODEL_PATH || './models',
-      containerImage: process.env.TINYGRAD_CONTAINER_IMAGE || 'tinygrad:latest',
-      maxMemory: 2048,              // 2GB
-      maxCPU: 4,                    // 4 CPU cores
-      timeout: 60000,               // 60 seconds
+      modelPath: process.env.TINYGRAD_MODEL_PATH || "./models",
+      containerImage: process.env.TINYGRAD_CONTAINER_IMAGE || "tinygrad:latest",
+      maxMemory: 2048, // 2GB
+      maxCPU: 4, // 4 CPU cores
+      timeout: 60000, // 60 seconds
       enableContainerization: true,
       enableGPU: false,
-      gpuMemory: 4096,              // 4GB
-      modelFormat: 'gguf',
-      quantization: 'int4',
-      ...config
+      gpuMemory: 4096, // 4GB
+      modelFormat: "gguf",
+      quantization: "int4",
+      ...config,
     };
 
     // Check if TinyGrad is enabled
     this.isEnabled = this.checkTinyGradAvailability();
-    
+
     if (this.isEnabled) {
-      console.log('TinyGrad provider enabled and configured');
+      console.log("TinyGrad provider enabled and configured");
       this.initializeModelCache();
     } else {
-      console.log('TinyGrad provider disabled or not available');
+      console.log("TinyGrad provider disabled or not available");
     }
   }
 
@@ -112,12 +112,12 @@ export class TinyGradProvider extends EventEmitter {
     try {
       // Check if container runtime is available
       if (this.config.enableContainerization) {
-        const dockerCheck = spawn('docker', ['--version']);
+        const dockerCheck = spawn("docker", ["--version"]);
         return dockerCheck.pid !== undefined;
       }
-      
+
       // Check if Python and TinyGrad are available
-      const pythonCheck = spawn('python3', ['-c', 'import tinygrad']);
+      const pythonCheck = spawn("python3", ["-c", "import tinygrad"]);
       return pythonCheck.pid !== undefined;
     } catch (error) {
       return false;
@@ -130,30 +130,36 @@ export class TinyGradProvider extends EventEmitter {
   private async initializeModelCache(): Promise<void> {
     try {
       const modelFiles = await fs.readdir(this.config.modelPath);
-      
+
       for (const file of modelFiles) {
-        if (file.endsWith('.gguf') || file.endsWith('.safetensors') || file.endsWith('.onnx')) {
+        if (
+          file.endsWith(".gguf") ||
+          file.endsWith(".safetensors") ||
+          file.endsWith(".onnx")
+        ) {
           const modelPath = join(this.config.modelPath, file);
           const stats = await fs.stat(modelPath);
-          
+
           const modelInfo: ModelInfo = {
-            id: file.replace(/\.[^/.]+$/, ''),
+            id: file.replace(/\.[^/.]+$/, ""),
             name: file,
-            version: '1.0.0',
+            version: "1.0.0",
             size: Math.round(stats.size / (1024 * 1024)),
-            format: file.split('.').pop() || 'unknown',
+            format: file.split(".").pop() || "unknown",
             quantization: this.config.quantization,
             parameters: 0, // Would need to parse model metadata
-            lastModified: stats.mtime.getTime()
+            lastModified: stats.mtime.getTime(),
           };
-          
+
           this.modelCache.set(modelInfo.id, modelInfo);
         }
       }
-      
-      console.log(`Initialized model cache with ${this.modelCache.size} models`);
+
+      console.log(
+        `Initialized model cache with ${this.modelCache.size} models`,
+      );
     } catch (error) {
-      console.warn('Failed to initialize model cache:', error);
+      console.warn("Failed to initialize model cache:", error);
     }
   }
 
@@ -169,7 +175,7 @@ export class TinyGradProvider extends EventEmitter {
    */
   async getModels(): Promise<ModelInfo[]> {
     if (!this.isEnabled) {
-      throw new Error('TinyGrad provider is disabled');
+      throw new Error("TinyGrad provider is disabled");
     }
 
     return Array.from(this.modelCache.values());
@@ -180,7 +186,7 @@ export class TinyGradProvider extends EventEmitter {
    */
   async loadModel(modelId: string): Promise<boolean> {
     if (!this.isEnabled) {
-      throw new Error('TinyGrad provider is disabled');
+      throw new Error("TinyGrad provider is disabled");
     }
 
     const model = this.modelCache.get(modelId);
@@ -206,23 +212,29 @@ export class TinyGradProvider extends EventEmitter {
   private async loadModelInContainer(model: ModelInfo): Promise<boolean> {
     return new Promise((resolve) => {
       const containerName = `tinygrad-${model.id}-${Date.now()}`;
-      
-      const dockerProcess = spawn('docker', [
-        'run',
-        '--rm',
-        '--name', containerName,
-        '--memory', `${this.config.maxMemory}m`,
-        '--cpus', this.config.maxCPU.toString(),
-        '-v', `${this.config.modelPath}:/models`,
+
+      const dockerProcess = spawn("docker", [
+        "run",
+        "--rm",
+        "--name",
+        containerName,
+        "--memory",
+        `${this.config.maxMemory}m`,
+        "--cpus",
+        this.config.maxCPU.toString(),
+        "-v",
+        `${this.config.modelPath}:/models`,
         this.config.containerImage,
-        'python3', '-c', `import tinygrad; print("Model ${model.id} loaded")`
+        "python3",
+        "-c",
+        `import tinygrad; print("Model ${model.id} loaded")`,
       ]);
 
-      dockerProcess.on('close', (code) => {
+      dockerProcess.on("close", (code) => {
         resolve(code === 0);
       });
 
-      dockerProcess.on('error', () => {
+      dockerProcess.on("error", () => {
         resolve(false);
       });
 
@@ -239,16 +251,16 @@ export class TinyGradProvider extends EventEmitter {
    */
   private async loadModelDirectly(model: ModelInfo): Promise<boolean> {
     return new Promise((resolve) => {
-      const pythonProcess = spawn('python3', [
-        '-c',
-        `import tinygrad; print("Model ${model.id} loaded")`
+      const pythonProcess = spawn("python3", [
+        "-c",
+        `import tinygrad; print("Model ${model.id} loaded")`,
       ]);
 
-      pythonProcess.on('close', (code) => {
+      pythonProcess.on("close", (code) => {
         resolve(code === 0);
       });
 
-      pythonProcess.on('error', () => {
+      pythonProcess.on("error", () => {
         resolve(false);
       });
 
@@ -263,9 +275,12 @@ export class TinyGradProvider extends EventEmitter {
   /**
    * Run inference
    */
-  async runInference(modelId: string, request: InferenceRequest): Promise<InferenceResponse> {
+  async runInference(
+    modelId: string,
+    request: InferenceRequest,
+  ): Promise<InferenceResponse> {
     if (!this.isEnabled) {
-      throw new Error('TinyGrad provider is disabled');
+      throw new Error("TinyGrad provider is disabled");
     }
 
     const model = this.modelCache.get(modelId);
@@ -287,15 +302,14 @@ export class TinyGradProvider extends EventEmitter {
 
       result.latency = Date.now() - startTime;
       return result;
-
     } catch (error) {
       return {
         success: false,
-        text: '',
+        text: "",
         tokens: 0,
         latency: Date.now() - startTime,
         memoryUsage: 0,
-        error: error.message
+        error: error.message,
       };
     } finally {
       // Clean up process
@@ -311,55 +325,61 @@ export class TinyGradProvider extends EventEmitter {
    * Run inference in container
    */
   private async runInferenceInContainer(
-    model: ModelInfo, 
-    request: InferenceRequest, 
-    processId: string
+    model: ModelInfo,
+    request: InferenceRequest,
+    processId: string,
   ): Promise<InferenceResponse> {
     return new Promise((resolve, reject) => {
       const containerName = `inference-${processId}`;
-      
-      const dockerProcess = spawn('docker', [
-        'run',
-        '--rm',
-        '--name', containerName,
-        '--memory', `${this.config.maxMemory}m`,
-        '--cpus', this.config.maxCPU.toString(),
-        '-v', `${this.config.modelPath}:/models`,
+
+      const dockerProcess = spawn("docker", [
+        "run",
+        "--rm",
+        "--name",
+        containerName,
+        "--memory",
+        `${this.config.maxMemory}m`,
+        "--cpus",
+        this.config.maxCPU.toString(),
+        "-v",
+        `${this.config.modelPath}:/models`,
         this.config.containerImage,
-        'python3', '-c', this.generateInferenceScript(request)
+        "python3",
+        "-c",
+        this.generateInferenceScript(request),
       ]);
 
       this.activeProcesses.set(processId, dockerProcess);
 
-      let output = '';
-      let error = '';
+      let output = "";
+      let error = "";
 
-      dockerProcess.stdout?.on('data', (data) => {
+      dockerProcess.stdout?.on("data", (data) => {
         output += data.toString();
       });
 
-      dockerProcess.stderr?.on('data', (data) => {
+      dockerProcess.stderr?.on("data", (data) => {
         error += data.toString();
       });
 
-      dockerProcess.on('close', (code) => {
+      dockerProcess.on("close", (code) => {
         if (code === 0 && output) {
           try {
             const result = JSON.parse(output);
             resolve({
               success: true,
-              text: result.text || '',
+              text: result.text || "",
               tokens: result.tokens || 0,
               latency: 0, // Will be set by caller
-              memoryUsage: result.memory || 0
+              memoryUsage: result.memory || 0,
             });
           } catch (parseError) {
             resolve({
               success: true,
               text: output.trim(),
-              tokens: output.split(' ').length,
+              tokens: output.split(" ").length,
               latency: 0,
-              memoryUsage: 0
+              memoryUsage: 0,
             });
           }
         } else {
@@ -367,14 +387,14 @@ export class TinyGradProvider extends EventEmitter {
         }
       });
 
-      dockerProcess.on('error', (err) => {
+      dockerProcess.on("error", (err) => {
         reject(err);
       });
 
       // Set timeout
       setTimeout(() => {
         dockerProcess.kill();
-        reject(new Error('Inference timeout'));
+        reject(new Error("Inference timeout"));
       }, this.config.timeout);
     });
   }
@@ -383,47 +403,47 @@ export class TinyGradProvider extends EventEmitter {
    * Run inference directly
    */
   private async runInferenceDirectly(
-    model: ModelInfo, 
-    request: InferenceRequest, 
-    processId: string
+    model: ModelInfo,
+    request: InferenceRequest,
+    processId: string,
   ): Promise<InferenceResponse> {
     return new Promise((resolve, reject) => {
-      const pythonProcess = spawn('python3', [
-        '-c',
-        this.generateInferenceScript(request)
+      const pythonProcess = spawn("python3", [
+        "-c",
+        this.generateInferenceScript(request),
       ]);
 
       this.activeProcesses.set(processId, pythonProcess);
 
-      let output = '';
-      let error = '';
+      let output = "";
+      let error = "";
 
-      pythonProcess.stdout?.on('data', (data) => {
+      pythonProcess.stdout?.on("data", (data) => {
         output += data.toString();
       });
 
-      pythonProcess.stderr?.on('data', (data) => {
+      pythonProcess.stderr?.on("data", (data) => {
         error += data.toString();
       });
 
-      pythonProcess.on('close', (code) => {
+      pythonProcess.on("close", (code) => {
         if (code === 0 && output) {
           try {
             const result = JSON.parse(output);
             resolve({
               success: true,
-              text: result.text || '',
+              text: result.text || "",
               tokens: result.tokens || 0,
               latency: 0,
-              memoryUsage: result.memory || 0
+              memoryUsage: result.memory || 0,
             });
           } catch (parseError) {
             resolve({
               success: true,
               text: output.trim(),
-              tokens: output.split(' ').length,
+              tokens: output.split(" ").length,
               latency: 0,
-              memoryUsage: 0
+              memoryUsage: 0,
             });
           }
         } else {
@@ -431,14 +451,14 @@ export class TinyGradProvider extends EventEmitter {
         }
       });
 
-      pythonProcess.on('error', (err) => {
+      pythonProcess.on("error", (err) => {
         reject(err);
       });
 
       // Set timeout
       setTimeout(() => {
         pythonProcess.kill();
-        reject(new Error('Inference timeout'));
+        reject(new Error("Inference timeout"));
       }, this.config.timeout);
     });
   }
@@ -477,61 +497,64 @@ print(json.dumps(result))
    */
   async startTraining(modelId: string, trainingData: any): Promise<string> {
     if (!this.isEnabled) {
-      throw new Error('TinyGrad provider is disabled');
+      throw new Error("TinyGrad provider is disabled");
     }
 
     const jobId = `train-${modelId}-${Date.now()}`;
-    
+
     const job: TrainingJob = {
       id: jobId,
-      status: 'pending',
+      status: "pending",
       progress: 0,
       startTime: Date.now(),
       metrics: {
         loss: 0,
         accuracy: 0,
-        learningRate: 0.001
-      }
+        learningRate: 0.001,
+      },
     };
 
     this.trainingJobs.set(jobId, job);
-    
+
     // Start training in background
     this.runTrainingJob(jobId, modelId, trainingData);
-    
+
     return jobId;
   }
 
   /**
    * Run training job
    */
-  private async runTrainingJob(jobId: string, modelId: string, trainingData: any): Promise<void> {
+  private async runTrainingJob(
+    jobId: string,
+    modelId: string,
+    trainingData: any,
+  ): Promise<void> {
     const job = this.trainingJobs.get(jobId);
     if (!job) return;
 
     try {
-      job.status = 'running';
-      
+      job.status = "running";
+
       // Simulate training progress
       for (let i = 0; i <= 100; i += 10) {
         job.progress = i;
-        job.metrics.loss = Math.max(0.1, 1.0 - (i / 100));
+        job.metrics.loss = Math.max(0.1, 1.0 - i / 100);
         job.metrics.accuracy = Math.min(0.95, i / 100);
-        
+
         await this.sleep(1000); // 1 second per step
-        
-        if (job.status === 'failed') {
+
+        if (job.status === "failed") {
           break;
         }
       }
-      
-      if (job.status === 'running') {
-        job.status = 'completed';
+
+      if (job.status === "running") {
+        job.status = "completed";
         job.endTime = Date.now();
       }
-      
     } catch (error) {
-      job.status = 'failed';
+      job.status = "failed";
       job.error = error.message;
       job.endTime = Date.now();
     }
@@ -549,14 +572,14 @@ print(json.dumps(result))
    */
   async cancelTraining(jobId: string): Promise<boolean> {
     const job = this.trainingJobs.get(jobId);
-    if (!job || job.status !== 'running') {
+    if (!job || job.status !== "running") {
       return false;
     }
 
-    job.status = 'failed';
-    job.error = 'Cancelled by user';
+    job.status = "failed";
+    job.error = "Cancelled by user";
     job.endTime = Date.now();
-    
+
     return true;
   }
 
@@ -580,8 +603,8 @@ print(json.dumps(result))
         enableContainerization: this.config.enableContainerization,
         enableGPU: this.config.enableGPU,
         maxMemory: this.config.maxMemory,
-        maxCPU: this.config.maxCPU
-      }
+        maxCPU: this.config.maxCPU,
+      },
     };
   }
 
@@ -602,7 +625,7 @@ print(json.dumps(result))
       process.kill();
     }
     this.activeProcesses.clear();
-    
+
     // Clear training jobs
     this.trainingJobs.clear();
   }
@@ -611,7 +634,7 @@ print(json.dumps(result))
    * Sleep utility
    */
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }
 

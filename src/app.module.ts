@@ -1,65 +1,65 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { AuthController } from './controllers/auth.controller.js';
+import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
+import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { AppController } from "./app.controller.js";
+import { AppService } from "./app.service.js";
+import { AuthController } from "./controllers/auth.controller.js";
 // import { AuthService } from './services/auth.service.js';
-import { HealthController } from './controllers/health.controller.js';
-import { AgentStateController } from './controllers/agent-state.controller.js';
-import { AgentStateService } from './services/agent-state.service.js';
-import { HttpModule } from '@nestjs/axios';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { PassportModule } from '@nestjs/passport';
-import { User } from './entities/user.entity.js';
-import { Session } from './entities/session.entity.js';
-import { AuditLog } from './entities/audit-log.entity.js';
-import { AgentState } from './entities/agent-state.entity.js';
-import { JwtModule } from '@nestjs/jwt';
+import { HealthController } from "./controllers/health.controller.js";
+import { AgentStateController } from "./controllers/agent-state.controller.js";
+import { AgentStateService } from "./services/agent-state.service.js";
+import { HttpModule } from "@nestjs/axios";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { PassportModule } from "@nestjs/passport";
+import { User } from "./entities/user.entity.js";
+import { Session } from "./entities/session.entity.js";
+import { AuditLog } from "./entities/audit-log.entity.js";
+import { AgentState } from "./entities/agent-state.entity.js";
+import { JwtModule } from "@nestjs/jwt";
 // import { JwtStrategy } from './strategies/jwt.strategy.js';
-import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
-import { ThrottlerModule } from '@nestjs/throttler';
-import { CustomThrottlerGuard } from './guards/throttler.guard.js';
-import { EnhancedPetalsService } from './agents/train/enhanced-petals.service.js';
-import { ServiceOrchestrator } from './agents/orchestration/service-orchestrator.js';
-import { SecurityLoggingInterceptor } from './interceptors/security-logging.interceptor.js';
-import { PerformanceMonitorInterceptor } from './interceptors/performance-monitor.interceptor.js';
+import { JwtAuthGuard } from "./guards/jwt-auth.guard.js";
+import { ThrottlerModule } from "@nestjs/throttler";
+import { CustomThrottlerGuard } from "./guards/throttler.guard.js";
+import { EnhancedPetalsService } from "./agents/train/enhanced-petals.service.js";
+import { ServiceOrchestrator } from "./agents/orchestration/service-orchestrator.js";
+import { SecurityLoggingInterceptor } from "./interceptors/security-logging.interceptor.js";
+import { PerformanceMonitorInterceptor } from "./interceptors/performance-monitor.interceptor.js";
 // import { SecurityMiddleware } from './middleware/security.middleware.js';
-import { KeyRotationService } from './services/key-rotation.service.js';
-import { PerformanceOptimizerService } from './services/performance-optimizer.service.js';
-import { RedisCacheService } from './services/redis-cache.service.js';
-import { ConnectionPoolService } from './services/connection-pool.service.js';
-import { CircuitBreakerService } from './services/circuit-breaker.service.js';
+import { KeyRotationService } from "./services/key-rotation.service.js";
+import { PerformanceOptimizerService } from "./services/performance-optimizer.service.js";
+import { RedisCacheService } from "./services/redis-cache.service.js";
+import { ConnectionPoolService } from "./services/connection-pool.service.js";
+import { CircuitBreakerService } from "./services/circuit-breaker.service.js";
 // import { OAuthService } from './services/oauth.service.js';
 // import { OAuthController } from './controllers/oauth.controller.js';
-import { UIController } from './controllers/ui.controller.js';
-import { ChatController } from './controllers/chat.controller.js';
-import { PetalsController } from './controllers/petals.controller.js';
-import { DashboardController } from './controllers/dashboard.controller.js';
-import { GenerateController } from './controllers/generate.controller.js';
-import { UserRoleController } from './controllers/user-role.controller.js';
-import { ConsensusController } from './controllers/consensus.controller.js';
-import { AgentController } from './controllers/agent.controller.js';
-import { SandboxController } from './controllers/sandbox.controller.js';
-import { RAGController } from './controllers/rag.controller.js';
-import { SSEController } from './controllers/sse.controller.js';
-import { PerformanceController } from './controllers/performance.controller.js';
-import { PetalsService } from './services/petals.service.js';
-import { SandboxService } from './services/sandbox.service.js';
-import { TelemetryService } from './services/telemetry.service.js';
-import { ConsensusEngineService } from './services/consensus-engine.service.js';
-import { DashboardService } from './services/dashboard.service.js';
-import { GenerateService } from './services/generate.service.js';
+import { UIController } from "./controllers/ui.controller.js";
+import { ChatController } from "./controllers/chat.controller.js";
+import { PetalsController } from "./controllers/petals.controller.js";
+import { DashboardController } from "./controllers/dashboard.controller.js";
+import { GenerateController } from "./controllers/generate.controller.js";
+import { UserRoleController } from "./controllers/user-role.controller.js";
+import { ConsensusController } from "./controllers/consensus.controller.js";
+import { AgentController } from "./controllers/agent.controller.js";
+import { SandboxController } from "./controllers/sandbox.controller.js";
+import { RAGController } from "./controllers/rag.controller.js";
+import { SSEController } from "./controllers/sse.controller.js";
+import { PerformanceController } from "./controllers/performance.controller.js";
+import { PetalsService } from "./services/petals.service.js";
+import { SandboxService } from "./services/sandbox.service.js";
+import { TelemetryService } from "./services/telemetry.service.js";
+import { ConsensusEngineService } from "./services/consensus-engine.service.js";
+import { DashboardService } from "./services/dashboard.service.js";
+import { GenerateService } from "./services/generate.service.js";
 // import { MultiLLMService } from './services/multi-llm.service.js';
-import { UserRoleService } from './services/user-role.service.js';
-import { ConsensusService } from './services/consensus.service.js';
-import { AgentService } from './services/agent.service.js';
-import { RAGService } from './services/rag.service.js';
-import { PerformanceMonitorService } from './services/performance-monitor.service.js';
-import { MultiLLMService } from './services/multi-llm.service.js';
-import { StreamController } from './controllers/stream.controller.js';
+import { UserRoleService } from "./services/user-role.service.js";
+import { ConsensusService } from "./services/consensus.service.js";
+import { AgentService } from "./services/agent.service.js";
+import { RAGService } from "./services/rag.service.js";
+import { PerformanceMonitorService } from "./services/performance-monitor.service.js";
+import { MultiLLMService } from "./services/multi-llm.service.js";
+import { StreamController } from "./controllers/stream.controller.js";
 
 @Module({
   imports: [
@@ -68,65 +68,87 @@ import { StreamController } from './controllers/stream.controller.js';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get<string>('DATABASE_HOST', 'localhost'),
-        port: configService.get<number>('DATABASE_PORT', 5432),
-        username: configService.get<string>('DATABASE_USERNAME', 'zeropoint'),
-        password: configService.get<string>('DATABASE_PASSWORD', 'zeropointpass'),
-        database: configService.get<string>('DATABASE_NAME', 'zeropointdb'),
+        type: "postgres",
+        host: configService.get<string>("DATABASE_HOST", "localhost"),
+        port: configService.get<number>("DATABASE_PORT", 5432),
+        username: configService.get<string>("DATABASE_USERNAME", "zeropoint"),
+        password: configService.get<string>(
+          "DATABASE_PASSWORD",
+          "zeropointpass",
+        ),
+        database: configService.get<string>("DATABASE_NAME", "zeropointdb"),
         entities: [User, Session, AuditLog, AgentState],
-        synchronize: configService.get<boolean>('DB_SYNC', false), // Disable for now to avoid schema conflicts
-        logging: configService.get<boolean>('DB_LOGGING', false),
-        ssl: configService.get<boolean>('DB_SSL', false) ? { rejectUnauthorized: false } : false,
-        migrations: ['migrations/*.sql'],
+        synchronize: configService.get<boolean>("DB_SYNC", false), // Disable for now to avoid schema conflicts
+        logging: configService.get<boolean>("DB_LOGGING", false),
+        ssl: configService.get<boolean>("DB_SSL", false)
+          ? { rejectUnauthorized: false }
+          : false,
+        migrations: ["migrations/*.sql"],
         migrationsRun: false, // Manual migration control
         autoLoadEntities: true,
       }),
       inject: [ConfigService],
     }),
     TypeOrmModule.forFeature([User, Session, AuditLog, AgentState]),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
+    PassportModule.register({ defaultStrategy: "jwt" }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { 
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '15m',
-          issuer: 'zeropoint-protocol',
-          audience: 'zeropoint-api'
+        secret: configService.get<string>("JWT_SECRET"),
+        signOptions: {
+          expiresIn: configService.get<string>("JWT_EXPIRES_IN") || "15m",
+          issuer: "zeropoint-protocol",
+          audience: "zeropoint-api",
         },
         verifyOptions: {
-          issuer: 'zeropoint-protocol',
-          audience: 'zeropoint-api'
-        }
+          issuer: "zeropoint-protocol",
+          audience: "zeropoint-api",
+        },
       }),
       inject: [ConfigService],
     }),
     // Enhanced throttling with different limits for different endpoints
     ThrottlerModule.forRoot([
       {
-        name: 'default',
+        name: "default",
         ttl: 60000,
         limit: 20,
       },
       {
-        name: 'auth',
+        name: "auth",
         ttl: 60000,
         limit: 5, // Stricter for auth endpoints
       },
       {
-        name: 'api',
+        name: "api",
         ttl: 60000,
         limit: 100, // Higher for general API
       },
       {
-        name: 'strict',
+        name: "strict",
         ttl: 60000,
         limit: 3, // Very strict for sensitive operations
-      }
+      },
     ]),
   ],
-  controllers: [AppController, HealthController, /* OAuthController, */ /* AuthController, */ AgentStateController, UIController, ChatController, PetalsController, DashboardController, GenerateController, UserRoleController, ConsensusController, AgentController, SandboxController, RAGController, SSEController, PerformanceController, StreamController],
+  controllers: [
+    AppController,
+    HealthController,
+    /* OAuthController, */ /* AuthController, */ AgentStateController,
+    UIController,
+    ChatController,
+    PetalsController,
+    DashboardController,
+    GenerateController,
+    UserRoleController,
+    ConsensusController,
+    AgentController,
+    SandboxController,
+    RAGController,
+    SSEController,
+    PerformanceController,
+    StreamController,
+  ],
   providers: [
     AppService,
     AgentStateService,
@@ -172,24 +194,30 @@ import { StreamController } from './controllers/stream.controller.js';
       useClass: PerformanceMonitorInterceptor,
     },
     {
-      provide: 'ENABLE_SCALING',
-      useFactory: (configService: ConfigService) => configService.get<boolean>('ENABLE_SCALING', true),
+      provide: "ENABLE_SCALING",
+      useFactory: (configService: ConfigService) =>
+        configService.get<boolean>("ENABLE_SCALING", true),
       inject: [ConfigService],
     },
     {
-      provide: 'SCALING_CONFIG',
+      provide: "SCALING_CONFIG",
       useFactory: async () => {
         try {
-          const fs = await import('fs/promises');
-          const path = await import('path');
-          const configPath = path.join(process.cwd(), 'src', 'config', 'scaling.json');
-          const configData = await fs.readFile(configPath, 'utf8');
+          const fs = await import("fs/promises");
+          const path = await import("path");
+          const configPath = path.join(
+            process.cwd(),
+            "src",
+            "config",
+            "scaling.json",
+          );
+          const configData = await fs.readFile(configPath, "utf8");
           return JSON.parse(configData);
         } catch (error) {
           return {
             maxAgents: 1000,
             maxConcurrency: 25,
-            maxRequestsPerSec: 100
+            maxRequestsPerSec: 100,
           };
         }
       },

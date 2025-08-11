@@ -1,6 +1,6 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from "@nestjs/common";
 
 export interface PerformanceMetrics {
   endpoint: string;
@@ -39,7 +39,7 @@ export class PerformanceOptimizerService {
    */
   recordMetric(metric: PerformanceMetrics): void {
     this.metrics.push(metric);
-    
+
     // Keep only last 1000 metrics to prevent memory issues
     if (this.metrics.length > 1000) {
       this.metrics = this.metrics.slice(-1000);
@@ -47,7 +47,9 @@ export class PerformanceOptimizerService {
 
     // Log performance issues
     if (metric.responseTime > 100) {
-      this.logger.warn(`Slow response detected: ${metric.endpoint} - ${metric.responseTime}ms`);
+      this.logger.warn(
+        `Slow response detected: ${metric.endpoint} - ${metric.responseTime}ms`,
+      );
     }
 
     if (!metric.success) {
@@ -74,13 +76,17 @@ export class PerformanceOptimizerService {
     }
 
     const totalRequests = this.metrics.length;
-    const successfulRequests = this.metrics.filter(m => m.success).length;
-    const slowRequests = this.metrics.filter(m => m.responseTime > 100).length;
-    const averageResponseTime = this.metrics.reduce((sum, m) => sum + m.responseTime, 0) / totalRequests;
+    const successfulRequests = this.metrics.filter((m) => m.success).length;
+    const slowRequests = this.metrics.filter(
+      (m) => m.responseTime > 100,
+    ).length;
+    const averageResponseTime =
+      this.metrics.reduce((sum, m) => sum + m.responseTime, 0) / totalRequests;
 
     return {
       averageResponseTime: Math.round(averageResponseTime * 100) / 100,
-      successRate: Math.round((successfulRequests / totalRequests) * 100 * 100) / 100,
+      successRate:
+        Math.round((successfulRequests / totalRequests) * 100 * 100) / 100,
       totalRequests,
       slowRequests,
     };
@@ -147,13 +153,13 @@ export class PerformanceOptimizerService {
     try {
       while (this.requestQueue.length > 0) {
         const batch = this.requestQueue.splice(0, this.config.batchSize);
-        
+
         // Process batch concurrently
-        await Promise.allSettled(batch.map(request => request()));
-        
+        await Promise.allSettled(batch.map((request) => request()));
+
         // Small delay to prevent overwhelming the system
         if (this.requestQueue.length > 0) {
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
         }
       }
     } finally {
@@ -181,7 +187,7 @@ export class PerformanceOptimizerService {
    */
   clearCache(): void {
     this.cache.clear();
-    this.logger.log('Cache cleared');
+    this.logger.log("Cache cleared");
   }
 
   /**
@@ -198,4 +204,4 @@ export class PerformanceOptimizerService {
       keys: Array.from(this.cache.keys()),
     };
   }
-} 
+}

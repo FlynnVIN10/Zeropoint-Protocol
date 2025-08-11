@@ -1,13 +1,22 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, BeforeInsert, BeforeUpdate } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+  BeforeInsert,
+  BeforeUpdate,
+} from "typeorm";
+import * as bcrypt from "bcrypt";
 
-@Entity('users')
-@Index(['username'], { unique: true })
-@Index(['email'], { unique: true })
+@Entity("users")
+@Index(["username"], { unique: true })
+@Index(["email"], { unique: true })
 export class User {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ length: 50, unique: true })
@@ -19,42 +28,42 @@ export class User {
   @Column({ length: 255 })
   password: string;
 
-  @Column({ name: 'first_name', length: 100, nullable: true })
+  @Column({ name: "first_name", length: 100, nullable: true })
   firstName: string;
 
-  @Column({ name: 'last_name', length: 100, nullable: true })
+  @Column({ name: "last_name", length: 100, nullable: true })
   lastName: string;
 
-  @Column({ name: 'is_active', default: true })
+  @Column({ name: "is_active", default: true })
   isActive: boolean;
 
-  @Column({ name: 'is_verified', default: false })
+  @Column({ name: "is_verified", default: false })
   isVerified: boolean;
 
-  @Column({ name: 'last_login_at', nullable: true })
+  @Column({ name: "last_login_at", nullable: true })
   lastLoginAt: Date;
 
-  @Column({ name: 'email_verified_at', nullable: true })
+  @Column({ name: "email_verified_at", nullable: true })
   emailVerifiedAt: Date;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   preferences: Record<string, any>;
 
-  @Column({ type: 'text', array: true, default: [] })
+  @Column({ type: "text", array: true, default: [] })
   roles: string[];
 
-  @Column({ 
-    name: 'user_role', 
-    type: 'enum', 
-    enum: ['human-consensus', 'sentient-consensus', 'agent-view'],
-    default: 'human-consensus'
+  @Column({
+    name: "user_role",
+    type: "enum",
+    enum: ["human-consensus", "sentient-consensus", "agent-view"],
+    default: "human-consensus",
   })
   userRole: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 
   @BeforeInsert()
@@ -73,4 +82,4 @@ export class User {
     const { password, ...user } = this;
     return user;
   }
-} 
+}

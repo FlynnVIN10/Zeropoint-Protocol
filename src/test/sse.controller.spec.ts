@@ -1,11 +1,11 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Test, TestingModule } from '@nestjs/testing';
-import { SSEController } from '../controllers/sse.controller.js';
-import { ConfigService } from '@nestjs/config';
-import { Response } from 'express';
+import { Test, TestingModule } from "@nestjs/testing";
+import { SSEController } from "../controllers/sse.controller.js";
+import { ConfigService } from "@nestjs/config";
+import { Response } from "express";
 
-describe('SSEController', () => {
+describe("SSEController", () => {
   let controller: SSEController;
   let configService: ConfigService;
 
@@ -18,8 +18,8 @@ describe('SSEController', () => {
           useValue: {
             get: jest.fn((key: string, defaultValue?: any) => {
               const config = {
-                'SSE_ENABLED': true,
-                'SSE_HEARTBEAT_INTERVAL': 30000,
+                SSE_ENABLED: true,
+                SSE_HEARTBEAT_INTERVAL: 30000,
               };
               return config[key] || defaultValue;
             }),
@@ -32,12 +32,12 @@ describe('SSEController', () => {
     configService = module.get<ConfigService>(ConfigService);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getSSEStatus', () => {
-    it('should return SSE status information', async () => {
+  describe("getSSEStatus", () => {
+    it("should return SSE status information", async () => {
       const mockResponse = {
         status: jest.fn().mockReturnThis(),
         json: jest.fn().mockReturnThis(),
@@ -48,24 +48,24 @@ describe('SSEController', () => {
       expect(mockResponse.status).toHaveBeenCalledWith(200);
       expect(mockResponse.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          status: 'active',
+          status: "active",
           endpoints: {
-            stream: '/v1/sse/stream',
-            status: '/v1/sse/status'
+            stream: "/v1/sse/stream",
+            status: "/v1/sse/status",
           },
           features: expect.arrayContaining([
-            'Real-time system status updates',
-            'Connection heartbeat',
-            'Event streaming',
-            'Automatic reconnection support'
-          ])
-        })
+            "Real-time system status updates",
+            "Connection heartbeat",
+            "Event streaming",
+            "Automatic reconnection support",
+          ]),
+        }),
       );
     });
   });
 
-  describe('streamEvents', () => {
-    it('should set correct SSE headers', async () => {
+  describe("streamEvents", () => {
+    it("should set correct SSE headers", async () => {
       const mockResponse = {
         writeHead: jest.fn(),
         write: jest.fn(),
@@ -75,15 +75,15 @@ describe('SSEController', () => {
       await controller.streamEvents(mockResponse);
 
       expect(mockResponse.writeHead).toHaveBeenCalledWith(200, {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Cache-Control'
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        Connection: "keep-alive",
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Cache-Control",
       });
     });
 
-    it('should send initial connection event', async () => {
+    it("should send initial connection event", async () => {
       const mockResponse = {
         writeHead: jest.fn(),
         write: jest.fn(),
@@ -93,11 +93,11 @@ describe('SSEController', () => {
       await controller.streamEvents(mockResponse);
 
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"type":"connection"')
+        expect.stringContaining('"type":"connection"'),
       );
     });
 
-    it('should send system status event', async () => {
+    it("should send system status event", async () => {
       const mockResponse = {
         writeHead: jest.fn(),
         write: jest.fn(),
@@ -107,7 +107,7 @@ describe('SSEController', () => {
       await controller.streamEvents(mockResponse);
 
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"type":"system_status"')
+        expect.stringContaining('"type":"system_status"'),
       );
     });
   });

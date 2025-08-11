@@ -1,8 +1,8 @@
-import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
-import { Request, Response, NextFunction } from 'express';
-import * as crypto from 'crypto';
-import * as fs from 'fs';
-import * as path from 'path';
+import { Injectable, NestMiddleware, Logger } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+import * as crypto from "crypto";
+import * as fs from "fs";
+import * as path from "path";
 
 interface IPAttempt {
   ip: string;
@@ -24,8 +24,16 @@ interface SecurityMetrics {
 @Injectable()
 export class SecurityMiddleware implements NestMiddleware {
   private readonly logger = new Logger(SecurityMiddleware.name);
-  private readonly attemptsFile = path.join(process.cwd(), 'data', 'security-attempts.json');
-  private readonly metricsFile = path.join(process.cwd(), 'data', 'security-metrics.json');
+  private readonly attemptsFile = path.join(
+    process.cwd(),
+    "data",
+    "security-attempts.json",
+  );
+  private readonly metricsFile = path.join(
+    process.cwd(),
+    "data",
+    "security-metrics.json",
+  );
   private ipAttempts: Map<string, IPAttempt> = new Map();
   private metrics: SecurityMetrics = {
     totalRequests: 0,
@@ -51,22 +59,29 @@ export class SecurityMiddleware implements NestMiddleware {
 
     // Check if IP is locked
     const ipAttempt = this.ipAttempts.get(clientIP);
-    if (ipAttempt && ipAttempt.isLocked && ipAttempt.lockExpiry && ipAttempt.lockExpiry > now) {
+    if (
+      ipAttempt &&
+      ipAttempt.isLocked &&
+      ipAttempt.lockExpiry &&
+      ipAttempt.lockExpiry > now
+    ) {
       this.metrics.blockedRequests++;
       this.saveMetrics();
-      
-      this.logToSoulchain('IP_LOCKED', {
+
+      this.logToSoulchain("IP_LOCKED", {
         ip: clientIP,
-        reason: 'too_many_failed_attempts',
+        reason: "too_many_failed_attempts",
         lockExpiry: ipAttempt.lockExpiry,
-        userAgent: req.headers['user-agent'],
+        userAgent: req.headers["user-agent"],
         url: req.url,
       });
 
       res.status(429).json({
-        error: 'Too many failed attempts',
-        message: 'IP address temporarily locked',
-        retryAfter: Math.ceil((ipAttempt.lockExpiry.getTime() - now.getTime()) / 1000),
+        error: "Too many failed attempts",
+        message: "IP address temporarily locked",
+        retryAfter: Math.ceil(
+          (ipAttempt.lockExpiry.getTime() - now.getTime()) / 1000,
+        ),
       });
       return;
     }
@@ -75,17 +90,17 @@ export class SecurityMiddleware implements NestMiddleware {
     if (this.isRateLimited(clientIP, req.url)) {
       this.metrics.rateLimitHits++;
       this.saveMetrics();
-      
-      this.logToSoulchain('RATE_LIMITED', {
+
+      this.logToSoulchain("RATE_LIMITED", {
         ip: clientIP,
         url: req.url,
-        userAgent: req.headers['user-agent'],
+        userAgent: req.headers["user-agent"],
         method: req.method,
       });
 
       res.status(429).json({
-        error: 'Rate limit exceeded',
-        message: 'Too many requests from this IP',
+        error: "Rate limit exceeded",
+        message: "Too many requests from this IP",
         retryAfter: 60,
       });
       return;
@@ -103,25 +118,23 @@ export class SecurityMiddleware implements NestMiddleware {
   }
 
   private getClientIP(req: Request): string {
-    return (
-      req.headers['x-forwarded-for'] ||
-      req.headers['x-real-ip'] ||
+    return (req.headers["x-forwarded-for"] ||
+      req.headers["x-real-ip"] ||
       req.connection.remoteAddress ||
       req.socket.remoteAddress ||
-      'unknown'
-    ) as string;
+      "unknown") as string;
   }
 
   private isSensitiveEndpoint(url: string): boolean {
     const sensitivePatterns = [
-      '/auth/login',
-      '/auth/register',
-      '/v1/advanced/',
-      '/v1/agent/',
-      '/admin/',
+      "/auth/login",
+      "/auth/register",
+      "/v1/advanced/",
+      "/v1/agent/",
+      "/admin/",
     ];
 
-    return sensitivePatterns.some(pattern => url.includes(pattern));
+    return sensitivePatterns.some((pattern) => url.includes(pattern));
   }
 
   private isRateLimited(ip: string, url: string): boolean {
@@ -155,13 +168,13 @@ export class SecurityMiddleware implements NestMiddleware {
   }
 
   private getRateLimitForEndpoint(url: string): number {
-    if (url.includes('/auth/')) {
+    if (url.includes("/auth/")) {
       return 5; // 5 attempts per minute for auth
     }
-    if (url.includes('/v1/advanced/')) {
+    if (url.includes("/v1/advanced/")) {
       return 10; // 10 requests per minute for advanced endpoints
     }
-    if (url.includes('/v1/agent/')) {
+    if (url.includes("/v1/agent/")) {
       return 20; // 20 requests per minute for agent endpoints
     }
     return 100; // 100 requests per minute for general endpoints
@@ -190,16 +203,18 @@ export class SecurityMiddleware implements NestMiddleware {
       ipAttempt.lockExpiry = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
       this.metrics.lockedIPs++;
 
-      this.logToSoulchain('IP_LOCKED', {
+      this.logToSoulchain("IP_LOCKED", {
         ip,
         attempts: ipAttempt.attempts,
         lockExpiry: ipAttempt.lockExpiry,
-        reason: 'failed_attempts_threshold',
-        userAgent: req.headers['user-agent'],
+        reason: "failed_attempts_threshold",
+        userAgent: req.headers["user-agent"],
         url: req.url,
       });
 
-      this.logger.warn(`IP ${ip} locked due to ${ipAttempt.attempts} failed attempts`);
+      this.logger.warn(
+        `IP ${ip} locked due to ${ipAttempt.attempts} failed attempts`,
+      );
     }
 
     this.saveAttempts();
@@ -209,36 +224,42 @@ export class SecurityMiddleware implements NestMiddleware {
   private addSecurityHeaders(res: Response): void {
     // Content Security Policy
     res.setHeader(
-      'Content-Security-Policy',
-      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none';"
+      "Content-Security-Policy",
+      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' https:; frame-ancestors 'none';",
     );
 
     // XSS Protection
-    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader("X-XSS-Protection", "1; mode=block");
 
     // Prevent MIME type sniffing
-    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader("X-Content-Type-Options", "nosniff");
 
     // Prevent clickjacking
-    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader("X-Frame-Options", "DENY");
 
     // Strict Transport Security
-    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+    res.setHeader(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains",
+    );
 
     // Referrer Policy
-    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
 
     // Permissions Policy
     res.setHeader(
-      'Permissions-Policy',
-      'geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()'
+      "Permissions-Policy",
+      "geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=()",
     );
   }
 
   private startCleanupInterval(): void {
-    setInterval(() => {
-      this.cleanupExpiredLocks();
-    }, 5 * 60 * 1000); // Every 5 minutes
+    setInterval(
+      () => {
+        this.cleanupExpiredLocks();
+      },
+      5 * 60 * 1000,
+    ); // Every 5 minutes
   }
 
   private cleanupExpiredLocks(): void {
@@ -265,41 +286,48 @@ export class SecurityMiddleware implements NestMiddleware {
   private async logToSoulchain(action: string, data: any): Promise<void> {
     try {
       const soulchainPayload = {
-        hashId: crypto.createHash('sha256').update(JSON.stringify({ action, data, timestamp: new Date() })).digest('hex'),
+        hashId: crypto
+          .createHash("sha256")
+          .update(JSON.stringify({ action, data, timestamp: new Date() }))
+          .digest("hex"),
         action: `SOULSEC:${action}`,
         metadata: {
-          service: 'security-middleware',
-          environment: process.env.NODE_ENV || 'development',
-          version: process.env.APP_VERSION || '1.0.0',
+          service: "security-middleware",
+          environment: process.env.NODE_ENV || "development",
+          version: process.env.APP_VERSION || "1.0.0",
         },
         data: JSON.stringify(data),
         timestamp: new Date(),
-        environment: process.env.NODE_ENV || 'development',
+        environment: process.env.NODE_ENV || "development",
       };
 
       // In a real implementation, this would send to soulchain
       this.logger.log(`SOULSEC:LOG ${action} - ${soulchainPayload.hashId}`);
     } catch (error) {
-      this.logger.error('Failed to log to soulchain', error);
+      this.logger.error("Failed to log to soulchain", error);
     }
   }
 
   private loadAttempts(): void {
     try {
       if (fs.existsSync(this.attemptsFile)) {
-        const data = JSON.parse(fs.readFileSync(this.attemptsFile, 'utf8'));
-        this.ipAttempts = new Map(Object.entries(data).map(([ip, attemptData]) => [
-          ip,
-          { 
-            ...(attemptData as any), 
-            firstAttempt: new Date((attemptData as any).firstAttempt), 
-            lastAttempt: new Date((attemptData as any).lastAttempt), 
-            lockExpiry: (attemptData as any).lockExpiry ? new Date((attemptData as any).lockExpiry) : undefined 
-          }
-        ]));
+        const data = JSON.parse(fs.readFileSync(this.attemptsFile, "utf8"));
+        this.ipAttempts = new Map(
+          Object.entries(data).map(([ip, attemptData]) => [
+            ip,
+            {
+              ...(attemptData as any),
+              firstAttempt: new Date((attemptData as any).firstAttempt),
+              lastAttempt: new Date((attemptData as any).lastAttempt),
+              lockExpiry: (attemptData as any).lockExpiry
+                ? new Date((attemptData as any).lockExpiry)
+                : undefined,
+            },
+          ]),
+        );
       }
     } catch (error) {
-      this.logger.error('Failed to load IP attempts', error);
+      this.logger.error("Failed to load IP attempts", error);
     }
   }
 
@@ -308,18 +336,18 @@ export class SecurityMiddleware implements NestMiddleware {
       const data = Object.fromEntries(this.ipAttempts);
       fs.writeFileSync(this.attemptsFile, JSON.stringify(data, null, 2));
     } catch (error) {
-      this.logger.error('Failed to save IP attempts', error);
+      this.logger.error("Failed to save IP attempts", error);
     }
   }
 
   private loadMetrics(): void {
     try {
       if (fs.existsSync(this.metricsFile)) {
-        this.metrics = JSON.parse(fs.readFileSync(this.metricsFile, 'utf8'));
+        this.metrics = JSON.parse(fs.readFileSync(this.metricsFile, "utf8"));
         this.metrics.lastUpdated = new Date(this.metrics.lastUpdated);
       }
     } catch (error) {
-      this.logger.error('Failed to load security metrics', error);
+      this.logger.error("Failed to load security metrics", error);
     }
   }
 
@@ -327,7 +355,7 @@ export class SecurityMiddleware implements NestMiddleware {
     try {
       fs.writeFileSync(this.metricsFile, JSON.stringify(this.metrics, null, 2));
     } catch (error) {
-      this.logger.error('Failed to save security metrics', error);
+      this.logger.error("Failed to save security metrics", error);
     }
   }
 
@@ -351,8 +379,8 @@ export class SecurityMiddleware implements NestMiddleware {
       this.metrics.lockedIPs--;
       this.saveAttempts();
       this.saveMetrics();
-      
-      this.logToSoulchain('IP_UNLOCKED', { ip, reason: 'manual_unlock' });
+
+      this.logToSoulchain("IP_UNLOCKED", { ip, reason: "manual_unlock" });
       return true;
     }
     return false;

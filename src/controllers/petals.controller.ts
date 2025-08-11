@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get, Param, UseGuards } from '@nestjs/common';
-import { PetalsService } from '../services/petals.service.js';
-import { SandboxService } from '../services/sandbox.service.js';
-import { TelemetryService } from '../services/telemetry.service.js';
+import { Controller, Post, Body, Get, Param, UseGuards } from "@nestjs/common";
+import { PetalsService } from "../services/petals.service.js";
+import { SandboxService } from "../services/sandbox.service.js";
+import { TelemetryService } from "../services/telemetry.service.js";
 
 export interface PetalTrainingRequest {
   agentId: string;
@@ -44,7 +44,7 @@ export interface TrainingCycleResult {
   timestamp: number;
 }
 
-@Controller('petals')
+@Controller("petals")
 export class PetalsController {
   constructor(
     private readonly petalsService: PetalsService,
@@ -52,7 +52,7 @@ export class PetalsController {
     private readonly telemetryService: TelemetryService,
   ) {}
 
-  @Post('train')
+  @Post("train")
   async trainOnPetals(@Body() request: PetalTrainingRequest): Promise<any> {
     try {
       // Create isolated WonderCraft sandbox
@@ -63,8 +63,8 @@ export class PetalsController {
           memory: 4096,
           gpu: 0,
         },
-        image: 'wondercraft/petals-training:latest',
-        command: ['python', 'train.py'],
+        image: "wondercraft/petals-training:latest",
+        command: ["python", "train.py"],
         environment: {
           MODEL_TYPE: request.modelType,
           LEARNING_RATE: request.trainingParams.learningRate.toString(),
@@ -83,7 +83,7 @@ export class PetalsController {
       await this.sandboxService.destroySandbox(sandboxId);
 
       return {
-        status: 'success',
+        status: "success",
         data: {
           cycleId: trainingResult.cycleId,
           sandboxId,
@@ -93,7 +93,7 @@ export class PetalsController {
         timestamp: new Date().toISOString(),
       };
     } catch (error) {
-      await this.telemetryService.logEvent('training', 'cycle_failed', {
+      await this.telemetryService.logEvent("training", "cycle_failed", {
         agentId: request.agentId,
         error: error.message,
         timestamp: Date.now(),
@@ -103,61 +103,64 @@ export class PetalsController {
     }
   }
 
-  @Get('status/:cycleId')
-  async getTrainingStatus(@Param('cycleId') cycleId: string): Promise<any> {
+  @Get("status/:cycleId")
+  async getTrainingStatus(@Param("cycleId") cycleId: string): Promise<any> {
     const status = await this.petalsService.getTrainingStatus(cycleId);
     return {
-      status: 'success',
+      status: "success",
       data: status,
       timestamp: new Date().toISOString(),
     };
   }
 
-  @Get('model/shared')
+  @Get("model/shared")
   async getSharedModel(): Promise<any> {
     const model = await this.petalsService.getSharedModel();
     return {
-      status: 'success',
+      status: "success",
       data: model,
       timestamp: new Date().toISOString(),
     };
   }
 
-  @Get('network/status')
+  @Get("network/status")
   async getNetworkStatus(): Promise<any> {
     const networkStatus = await this.petalsService.getNetworkStatus();
     return {
-      status: 'success',
+      status: "success",
       data: networkStatus,
       timestamp: new Date().toISOString(),
     };
   }
 
-  @Post('network/node')
-  async addNode(@Body() nodeConfig: {
-    id: string;
-    url: string;
-    capabilities: string[];
-    status?: 'available' | 'busy' | 'offline';
-  }): Promise<any> {
+  @Post("network/node")
+  async addNode(
+    @Body()
+    nodeConfig: {
+      id: string;
+      url: string;
+      capabilities: string[];
+      status?: "available" | "busy" | "offline";
+    },
+  ): Promise<any> {
     await this.petalsService.addNode({
       ...nodeConfig,
-      status: nodeConfig.status || 'available',
+      status: nodeConfig.status || "available",
     });
     return {
-      status: 'success',
+      status: "success",
       message: `Node ${nodeConfig.id} added successfully`,
       timestamp: new Date().toISOString(),
     };
   }
 
-  @Post('network/node/:nodeId/remove')
-  async removeNode(@Param('nodeId') nodeId: string): Promise<any> {
+  @Post("network/node/:nodeId/remove")
+  async removeNode(@Param("nodeId") nodeId: string): Promise<any> {
     await this.petalsService.removeNode(nodeId);
     return {
-      status: 'success',
+      status: "success",
       message: `Node ${nodeId} removed successfully`,
       timestamp: new Date().toISOString(),
     };
   }
-} 
+}

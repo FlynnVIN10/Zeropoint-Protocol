@@ -1,7 +1,7 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 export interface PoolConfig {
   min: number;
@@ -29,17 +29,37 @@ export class ConnectionPoolService {
 
   constructor(private configService: ConfigService) {
     this.config = {
-      min: this.configService.get<number>('DB_POOL_MIN', 2),
-      max: this.configService.get<number>('DB_POOL_MAX', 10),
-      acquireTimeoutMillis: this.configService.get<number>('DB_POOL_ACQUIRE_TIMEOUT', 30000),
-      createTimeoutMillis: this.configService.get<number>('DB_POOL_CREATE_TIMEOUT', 30000),
-      destroyTimeoutMillis: this.configService.get<number>('DB_POOL_DESTROY_TIMEOUT', 5000),
-      idleTimeoutMillis: this.configService.get<number>('DB_POOL_IDLE_TIMEOUT', 30000),
-      reapIntervalMillis: this.configService.get<number>('DB_POOL_REAP_INTERVAL', 1000),
-      createRetryIntervalMillis: this.configService.get<number>('DB_POOL_RETRY_INTERVAL', 200),
+      min: this.configService.get<number>("DB_POOL_MIN", 2),
+      max: this.configService.get<number>("DB_POOL_MAX", 10),
+      acquireTimeoutMillis: this.configService.get<number>(
+        "DB_POOL_ACQUIRE_TIMEOUT",
+        30000,
+      ),
+      createTimeoutMillis: this.configService.get<number>(
+        "DB_POOL_CREATE_TIMEOUT",
+        30000,
+      ),
+      destroyTimeoutMillis: this.configService.get<number>(
+        "DB_POOL_DESTROY_TIMEOUT",
+        5000,
+      ),
+      idleTimeoutMillis: this.configService.get<number>(
+        "DB_POOL_IDLE_TIMEOUT",
+        30000,
+      ),
+      reapIntervalMillis: this.configService.get<number>(
+        "DB_POOL_REAP_INTERVAL",
+        1000,
+      ),
+      createRetryIntervalMillis: this.configService.get<number>(
+        "DB_POOL_RETRY_INTERVAL",
+        200,
+      ),
     };
 
-    this.logger.log(`Connection pool service initialized with config: ${JSON.stringify(this.config)}`);
+    this.logger.log(
+      `Connection pool service initialized with config: ${JSON.stringify(this.config)}`,
+    );
   }
 
   /**
@@ -54,7 +74,7 @@ export class ConnectionPoolService {
     // In a real implementation, this would create actual database connection pools
     const mockPool = this.createMockPool(serviceName);
     this.pools.set(serviceName, mockPool);
-    
+
     this.logger.log(`Created connection pool for service: ${serviceName}`);
     return mockPool;
   }
@@ -70,23 +90,25 @@ export class ConnectionPoolService {
 
     return {
       name: serviceName,
-      
+
       async acquire(): Promise<any> {
         waitingRequests++;
-        
+
         // Simulate connection acquisition delay
-        await new Promise(resolve => setTimeout(resolve, Math.random() * 10));
-        
+        await new Promise((resolve) => setTimeout(resolve, Math.random() * 10));
+
         if (activeConnections >= this.config.max) {
           waitingRequests--;
-          throw new Error('Connection pool exhausted');
+          throw new Error("Connection pool exhausted");
         }
 
         activeConnections++;
         totalConnections++;
         waitingRequests--;
 
-        this.logger.debug(`Connection acquired for ${serviceName}. Active: ${activeConnections}, Waiting: ${waitingRequests}`);
+        this.logger.debug(
+          `Connection acquired for ${serviceName}. Active: ${activeConnections}, Waiting: ${waitingRequests}`,
+        );
 
         // Return a mock connection
         return {
@@ -94,8 +116,10 @@ export class ConnectionPoolService {
           service: serviceName,
           release: () => {
             activeConnections--;
-            this.logger.debug(`Connection released for ${serviceName}. Active: ${activeConnections}`);
-          }
+            this.logger.debug(
+              `Connection released for ${serviceName}. Active: ${activeConnections}`,
+            );
+          },
         };
       },
 
@@ -109,7 +133,9 @@ export class ConnectionPoolService {
         activeConnections = 0;
         totalConnections = 0;
         waitingRequests = 0;
-        this.logger.log(`Connection pool destroyed for service: ${serviceName}`);
+        this.logger.log(
+          `Connection pool destroyed for service: ${serviceName}`,
+        );
       },
 
       getStats(): PoolStats {
@@ -130,11 +156,11 @@ export class ConnectionPoolService {
    */
   getAllPoolStats(): Record<string, PoolStats> {
     const stats: Record<string, PoolStats> = {};
-    
+
     for (const [serviceName, pool] of this.pools.entries()) {
       stats[serviceName] = pool.getStats();
     }
-    
+
     return stats;
   }
 
@@ -150,7 +176,7 @@ export class ConnectionPoolService {
   } {
     const allStats = this.getAllPoolStats();
     const totalPools = Object.keys(allStats).length;
-    
+
     const totals = Object.values(allStats).reduce(
       (acc, stats) => ({
         totalConnections: acc.totalConnections + stats.total,
@@ -158,7 +184,7 @@ export class ConnectionPoolService {
         totalIdle: acc.totalIdle + stats.idle,
         totalWaiting: acc.totalWaiting + stats.waiting,
       }),
-      { totalConnections: 0, totalActive: 0, totalIdle: 0, totalWaiting: 0 }
+      { totalConnections: 0, totalActive: 0, totalIdle: 0, totalWaiting: 0 },
     );
 
     return {
@@ -181,18 +207,19 @@ export class ConnectionPoolService {
       try {
         const stats = pool.getStats();
         const healthy = stats.active <= pool.config.max && stats.waiting < 10;
-        
+
         pools[serviceName] = { healthy };
-        
+
         if (!healthy) {
           overallHealthy = false;
-          pools[serviceName].error = `Pool exhausted: active=${stats.active}, waiting=${stats.waiting}`;
+          pools[serviceName].error =
+            `Pool exhausted: active=${stats.active}, waiting=${stats.waiting}`;
         }
       } catch (error) {
         overallHealthy = false;
-        pools[serviceName] = { 
-          healthy: false, 
-          error: error.message 
+        pools[serviceName] = {
+          healthy: false,
+          error: error.message,
         };
       }
     }
@@ -205,7 +232,9 @@ export class ConnectionPoolService {
    */
   updateConfig(newConfig: Partial<PoolConfig>): void {
     this.config = { ...this.config, ...newConfig };
-    this.logger.log(`Connection pool config updated: ${JSON.stringify(newConfig)}`);
+    this.logger.log(
+      `Connection pool config updated: ${JSON.stringify(newConfig)}`,
+    );
   }
 
   /**
@@ -226,8 +255,8 @@ export class ConnectionPoolService {
         this.logger.error(`Error destroying pool ${serviceName}:`, error);
       }
     }
-    
+
     this.pools.clear();
-    this.logger.log('All connection pools destroyed');
+    this.logger.log("All connection pools destroyed");
   }
-} 
+}

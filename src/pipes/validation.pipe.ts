@@ -1,15 +1,21 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException, Logger } from '@nestjs/common';
-import { validate } from 'class-validator';
-import { plainToClass } from 'class-transformer';
-import { Counter } from 'prom-client';
+import {
+  PipeTransform,
+  Injectable,
+  ArgumentMetadata,
+  BadRequestException,
+  Logger,
+} from "@nestjs/common";
+import { validate } from "class-validator";
+import { plainToClass } from "class-transformer";
+import { Counter } from "prom-client";
 
 // Prometheus metrics for validation
 const validationErrorCounter = new Counter({
-  name: 'validation_errors_total',
-  help: 'Total validation errors by field and type',
-  labelNames: ['field', 'error_type', 'endpoint']
+  name: "validation_errors_total",
+  help: "Total validation errors by field and type",
+  labelNames: ["field", "error_type", "endpoint"],
 });
 
 @Injectable()
@@ -31,39 +37,39 @@ export class ValidationPipe implements PipeTransform<any> {
       skipUndefinedProperties: false,
       validationError: {
         target: false,
-        value: false
-      }
+        value: false,
+      },
     });
 
     if (errors.length > 0) {
       // Record validation errors in Prometheus
-      errors.forEach(error => {
-        Object.keys(error.constraints || {}).forEach(constraint => {
+      errors.forEach((error) => {
+        Object.keys(error.constraints || {}).forEach((constraint) => {
           validationErrorCounter.inc({
             field: error.property,
             error_type: constraint,
-            endpoint: 'unknown' // Will be set by interceptor
+            endpoint: "unknown", // Will be set by interceptor
           });
         });
       });
 
       // Log validation errors
-      this.logger.warn('Validation failed', {
-        errors: errors.map(error => ({
+      this.logger.warn("Validation failed", {
+        errors: errors.map((error) => ({
           field: error.property,
           constraints: error.constraints,
-          value: error.value
-        }))
+          value: error.value,
+        })),
       });
 
       // Format validation error response
       const formattedErrors = this.formatValidationErrors(errors);
-      
+
       throw new BadRequestException({
-        message: 'Validation failed',
+        message: "Validation failed",
         errors: formattedErrors,
         timestamp: new Date().toISOString(),
-        error: 'VALIDATION_ERROR'
+        error: "VALIDATION_ERROR",
       });
     }
 
@@ -76,11 +82,13 @@ export class ValidationPipe implements PipeTransform<any> {
   }
 
   private formatValidationErrors(errors: any[]): any[] {
-    return errors.map(error => ({
+    return errors.map((error) => ({
       field: error.property,
       value: error.value,
       constraints: error.constraints,
-      children: error.children ? this.formatValidationErrors(error.children) : undefined
+      children: error.children
+        ? this.formatValidationErrors(error.children)
+        : undefined,
     }));
   }
-} 
+}

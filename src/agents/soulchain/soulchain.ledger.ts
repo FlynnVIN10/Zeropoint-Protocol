@@ -6,15 +6,18 @@
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // Ledger entries gated, immutable, distributed for post-singularity symbiosis.
 
-import { unixfs } from '@helia/unixfs';
-import { createHelia } from 'helia';
-import { CID } from 'multiformats/cid';
-import { checkIntent } from '../../guards/synthient.guard.js'; // Ethical firewall
-import { generateTagSet, TagBundle } from '../../core/identity/tags.meta.js'; // Tag injection
-import { AgentMeta } from '../train/train.loop.js'; // AgentMeta import
-import { Counter, Registry } from 'prom-client';
+import { unixfs } from "@helia/unixfs";
+import { createHelia } from "helia";
+import { CID } from "multiformats/cid";
+import { checkIntent } from "../../guards/synthient.guard.js"; // Ethical firewall
+import { generateTagSet, TagBundle } from "../../core/identity/tags.meta.js"; // Tag injection
+import { AgentMeta } from "../train/train.loop.js"; // AgentMeta import
+import { Counter, Registry } from "prom-client";
 
-const ledgerPersistCounter = new Counter({ name: 'soulchain_ledger_persists_total', help: 'Total Soulchain ledger persists to IPFS' });
+const ledgerPersistCounter = new Counter({
+  name: "soulchain_ledger_persists_total",
+  help: "Total Soulchain ledger persists to IPFS",
+});
 const ledgerRegistry = new Registry();
 ledgerRegistry.registerMetric(ledgerPersistCounter);
 
@@ -44,21 +47,21 @@ class SoulchainLedger {
   async addXPTransaction(transaction: XPTransaction): Promise<string> {
     await this.ready;
     if (!checkIntent(transaction.rationale)) {
-      throw new Error('Zeroth violation: Transaction halted.');
+      throw new Error("Zeroth violation: Transaction halted.");
     }
 
     const agentMeta: AgentMeta = {
       name: transaction.agentId,
       did: `did:zeropoint:${transaction.agentId}`,
       handle: `@${transaction.agentId}`,
-      intent: '#xp-log',
+      intent: "#xp-log",
       context: {
-        taskId: 'xp-ledger',
+        taskId: "xp-ledger",
         lineage: [],
-        swarmLink: '',
-        layer: '#live',
-        domain: '#soulchain'
-      }
+        swarmLink: "",
+        layer: "#live",
+        domain: "#soulchain",
+      },
     };
 
     transaction.tags = generateTagSet(agentMeta);
@@ -78,7 +81,9 @@ class SoulchainLedger {
       const data = await this.fs.cat(currentCid);
       const transaction = JSON.parse(data.toString());
       chain.push(transaction);
-      currentCid = transaction.previousCid ? CID.parse(transaction.previousCid) : null;
+      currentCid = transaction.previousCid
+        ? CID.parse(transaction.previousCid)
+        : null;
     }
 
     return chain;
@@ -86,8 +91,14 @@ class SoulchainLedger {
 
   async persistLedgerToIPFS(): Promise<string> {
     await this.ready;
-    const ledgerData = Buffer.from(JSON.stringify({ timestamp: new Date().toISOString(), type: 'soulchain-ledger' }));
-    if (!checkIntent('Persisting Soulchain ledger to IPFS')) throw new Error('Zeroth violation: Ledger persist blocked.');
+    const ledgerData = Buffer.from(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        type: "soulchain-ledger",
+      }),
+    );
+    if (!checkIntent("Persisting Soulchain ledger to IPFS"))
+      throw new Error("Zeroth violation: Ledger persist blocked.");
     const cid = await this.fs.addBytes(ledgerData);
     ledgerPersistCounter.inc();
     return cid.toString();

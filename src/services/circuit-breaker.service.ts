@@ -1,11 +1,11 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from "@nestjs/common";
 
 export enum CircuitState {
-  CLOSED = 'CLOSED',
-  OPEN = 'OPEN',
-  HALF_OPEN = 'HALF_OPEN',
+  CLOSED = "CLOSED",
+  OPEN = "OPEN",
+  HALF_OPEN = "HALF_OPEN",
 }
 
 export interface CircuitBreakerConfig {
@@ -42,7 +42,7 @@ export class CircuitBreakerService {
   async execute<T>(
     circuitName: string,
     operation: () => Promise<T>,
-    config?: Partial<CircuitBreakerConfig>
+    config?: Partial<CircuitBreakerConfig>,
   ): Promise<T> {
     const circuit = this.getOrCreateCircuit(circuitName, config);
     return circuit.execute(operation);
@@ -53,11 +53,15 @@ export class CircuitBreakerService {
    */
   private getOrCreateCircuit(
     circuitName: string,
-    config?: Partial<CircuitBreakerConfig>
+    config?: Partial<CircuitBreakerConfig>,
   ): CircuitBreaker {
     if (!this.circuits.has(circuitName)) {
       const circuitConfig = { ...this.defaultConfig, ...config };
-      const circuit = new CircuitBreaker(circuitName, circuitConfig, this.logger);
+      const circuit = new CircuitBreaker(
+        circuitName,
+        circuitConfig,
+        this.logger,
+      );
       this.circuits.set(circuitName, circuit);
       this.logger.log(`Created circuit breaker: ${circuitName}`);
     }
@@ -78,11 +82,11 @@ export class CircuitBreakerService {
    */
   getAllCircuitStats(): Record<string, CircuitBreakerStats> {
     const stats: Record<string, CircuitBreakerStats> = {};
-    
+
     for (const [name, circuit] of this.circuits.entries()) {
       stats[name] = circuit.getStats();
     }
-    
+
     return stats;
   }
 
@@ -104,7 +108,7 @@ export class CircuitBreakerService {
     for (const [name, circuit] of this.circuits.entries()) {
       circuit.reset();
     }
-    this.logger.log('All circuit breakers reset');
+    this.logger.log("All circuit breakers reset");
   }
 
   /**
@@ -112,7 +116,9 @@ export class CircuitBreakerService {
    */
   updateDefaultConfig(config: Partial<CircuitBreakerConfig>): void {
     this.defaultConfig = { ...this.defaultConfig, ...config };
-    this.logger.log(`Default circuit breaker config updated: ${JSON.stringify(config)}`);
+    this.logger.log(
+      `Default circuit breaker config updated: ${JSON.stringify(config)}`,
+    );
   }
 
   /**
@@ -135,7 +141,7 @@ class CircuitBreaker {
   constructor(
     private name: string,
     private config: CircuitBreakerConfig,
-    private logger: Logger
+    private logger: Logger,
   ) {}
 
   async execute<T>(operation: () => Promise<T>): Promise<T> {
@@ -180,11 +186,18 @@ class CircuitBreaker {
     if (this.state === CircuitState.HALF_OPEN) {
       this.state = CircuitState.OPEN;
       this.nextAttemptTime = new Date(Date.now() + this.config.recoveryTimeout);
-      this.logger.warn(`Circuit ${this.name} moved to OPEN state (half-open failure)`);
-    } else if (this.state === CircuitState.CLOSED && this.failureCount >= this.config.failureThreshold) {
+      this.logger.warn(
+        `Circuit ${this.name} moved to OPEN state (half-open failure)`,
+      );
+    } else if (
+      this.state === CircuitState.CLOSED &&
+      this.failureCount >= this.config.failureThreshold
+    ) {
       this.state = CircuitState.OPEN;
       this.nextAttemptTime = new Date(Date.now() + this.config.recoveryTimeout);
-      this.logger.warn(`Circuit ${this.name} moved to OPEN state (failure threshold reached)`);
+      this.logger.warn(
+        `Circuit ${this.name} moved to OPEN state (failure threshold reached)`,
+      );
     }
   }
 
@@ -194,9 +207,10 @@ class CircuitBreaker {
   }
 
   getStats(): CircuitBreakerStats {
-    const failureRate = this.totalRequests > 0 
-      ? (this.failureCount / this.totalRequests) * 100 
-      : 0;
+    const failureRate =
+      this.totalRequests > 0
+        ? (this.failureCount / this.totalRequests) * 100
+        : 0;
 
     return {
       state: this.state,
@@ -218,4 +232,4 @@ class CircuitBreaker {
     this.totalRequests = 0;
     this.nextAttemptTime = undefined;
   }
-} 
+}

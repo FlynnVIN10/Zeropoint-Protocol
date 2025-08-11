@@ -1,12 +1,12 @@
 /**
  * HTTP Tool - HTTP client for Synthiant agents
- * 
+ *
  * @fileoverview Provides secure HTTP client capabilities with rate limiting and security features
  * @author Dev Team
  * @version 1.0.0
  */
 
-import { ToolInterface, ResourceUsage } from './index';
+import { ToolInterface, ResourceUsage } from "./index";
 
 export interface HTTPConfig {
   maxRequestSize: number;
@@ -21,7 +21,7 @@ export interface HTTPConfig {
 }
 
 export interface HTTPRequest {
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+  method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH" | "HEAD" | "OPTIONS";
   url: string;
   headers?: Record<string, string>;
   body?: any;
@@ -50,16 +50,21 @@ export interface HTTPStats {
  * Provides secure HTTP client capabilities with comprehensive security features
  */
 export class HTTPTool implements ToolInterface {
-  public readonly name = 'http';
-  public readonly version = '1.0.0';
-  public readonly description = 'HTTP client tool with security features and rate limiting';
-  public readonly capabilities = ['http', 'https', 'api', 'rest', 'fetch'];
+  public readonly name = "http";
+  public readonly version = "1.0.0";
+  public readonly description =
+    "HTTP client tool with security features and rate limiting";
+  public readonly capabilities = ["http", "https", "api", "rest", "fetch"];
 
   private config: HTTPConfig;
   private requestCount: number = 0;
   private lastReset: number = Date.now();
   private stats: HTTPStats;
-  private requestHistory: Array<{ timestamp: number; url: string; status: number }> = [];
+  private requestHistory: Array<{
+    timestamp: number;
+    url: string;
+    status: number;
+  }> = [];
 
   constructor(config?: Partial<HTTPConfig>) {
     this.config = {
@@ -68,11 +73,21 @@ export class HTTPTool implements ToolInterface {
       timeout: 30000, // 30 seconds
       maxRedirects: 5,
       rateLimitPerMinute: 100,
-      allowedDomains: ['api.zeropointprotocol.ai', 'github.com', 'api.github.com'],
-      deniedDomains: ['localhost', '127.0.0.1', '0.0.0.0', '10.0.0.0', '192.168.0.0'],
+      allowedDomains: [
+        "api.zeropointprotocol.ai",
+        "github.com",
+        "api.github.com",
+      ],
+      deniedDomains: [
+        "localhost",
+        "127.0.0.1",
+        "0.0.0.0",
+        "10.0.0.0",
+        "192.168.0.0",
+      ],
       enableCompression: true,
-      userAgent: 'Synthiant-HTTP/1.0.0',
-      ...config
+      userAgent: "Synthiant-HTTP/1.0.0",
+      ...config,
     };
 
     this.stats = {
@@ -80,7 +95,7 @@ export class HTTPTool implements ToolInterface {
       successfulRequests: 0,
       failedRequests: 0,
       averageResponseTime: 0,
-      lastRequestTime: 0
+      lastRequestTime: 0,
     };
   }
 
@@ -91,7 +106,7 @@ export class HTTPTool implements ToolInterface {
     try {
       // Validate parameters
       if (!this.validateParams(params)) {
-        throw new Error('Invalid HTTP request parameters');
+        throw new Error("Invalid HTTP request parameters");
       }
 
       // Check rate limits
@@ -116,11 +131,10 @@ export class HTTPTool implements ToolInterface {
 
       return {
         ...response,
-        responseTime
+        responseTime,
       };
-
     } catch (error) {
-      console.error('HTTP tool execution failed:', error);
+      console.error("HTTP tool execution failed:", error);
       this.updateStats(0, 0); // Failed request
       throw error;
     }
@@ -130,15 +144,20 @@ export class HTTPTool implements ToolInterface {
    * Validate request parameters
    */
   validateParams(params: any): boolean {
-    if (!params || typeof params !== 'object') {
+    if (!params || typeof params !== "object") {
       return false;
     }
 
-    if (!params.method || !['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'].includes(params.method)) {
+    if (
+      !params.method ||
+      !["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"].includes(
+        params.method,
+      )
+    ) {
       return false;
     }
 
-    if (!params.url || typeof params.url !== 'string') {
+    if (!params.url || typeof params.url !== "string") {
       return false;
     }
 
@@ -148,11 +167,14 @@ export class HTTPTool implements ToolInterface {
       return false;
     }
 
-    if (params.timeout && (typeof params.timeout !== 'number' || params.timeout <= 0)) {
+    if (
+      params.timeout &&
+      (typeof params.timeout !== "number" || params.timeout <= 0)
+    ) {
       return false;
     }
 
-    if (params.headers && typeof params.headers !== 'object') {
+    if (params.headers && typeof params.headers !== "object") {
       return false;
     }
 
@@ -169,7 +191,7 @@ export class HTTPTool implements ToolInterface {
       time: 0,
       tokens: this.requestCount * 50, // 50 tokens per request
       network: this.requestCount * 0.1, // 0.1MB per request
-      fileOps: 0
+      fileOps: 0,
     };
   }
 
@@ -191,7 +213,10 @@ export class HTTPTool implements ToolInterface {
     if (this.config.allowedDomains.length > 0) {
       let allowed = false;
       for (const allowedDomain of this.config.allowedDomains) {
-        if (hostname === allowedDomain || hostname.endsWith(`.${allowedDomain}`)) {
+        if (
+          hostname === allowedDomain ||
+          hostname.endsWith(`.${allowedDomain}`)
+        ) {
           allowed = true;
           break;
         }
@@ -202,8 +227,10 @@ export class HTTPTool implements ToolInterface {
     }
 
     // Check for local/private IP addresses
-    if (urlObj.protocol === 'http:' && !this.isPublicDomain(hostname)) {
-      throw new Error(`HTTP requests to non-public domains not allowed: ${hostname}`);
+    if (urlObj.protocol === "http:" && !this.isPublicDomain(hostname)) {
+      throw new Error(
+        `HTTP requests to non-public domains not allowed: ${hostname}`,
+      );
     }
   }
 
@@ -212,8 +239,17 @@ export class HTTPTool implements ToolInterface {
    */
   private isPublicDomain(hostname: string): boolean {
     // Simple check for common public domains
-    const publicSuffixes = ['.com', '.org', '.net', '.edu', '.gov', '.ai', '.io', '.dev'];
-    return publicSuffixes.some(suffix => hostname.endsWith(suffix));
+    const publicSuffixes = [
+      ".com",
+      ".org",
+      ".net",
+      ".edu",
+      ".gov",
+      ".ai",
+      ".io",
+      ".dev",
+    ];
+    return publicSuffixes.some((suffix) => hostname.endsWith(suffix));
   }
 
   /**
@@ -232,7 +268,7 @@ export class HTTPTool implements ToolInterface {
 
     // Body size
     if (params.body) {
-      if (typeof params.body === 'string') {
+      if (typeof params.body === "string") {
         size += params.body.length;
       } else {
         size += JSON.stringify(params.body).length;
@@ -240,7 +276,9 @@ export class HTTPTool implements ToolInterface {
     }
 
     if (size > this.config.maxRequestSize) {
-      throw new Error(`Request size ${size} exceeds maximum allowed size ${this.config.maxRequestSize}`);
+      throw new Error(
+        `Request size ${size} exceeds maximum allowed size ${this.config.maxRequestSize}`,
+      );
     }
   }
 
@@ -256,30 +294,37 @@ export class HTTPTool implements ToolInterface {
       const response = await fetch(params.url, {
         method: params.method,
         headers: {
-          'User-Agent': this.config.userAgent,
-          'Accept': 'application/json, text/plain, */*',
-          'Accept-Encoding': this.config.enableCompression ? 'gzip, deflate' : 'identity',
-          ...params.headers
+          "User-Agent": this.config.userAgent,
+          Accept: "application/json, text/plain, */*",
+          "Accept-Encoding": this.config.enableCompression
+            ? "gzip, deflate"
+            : "identity",
+          ...params.headers,
         },
         body: params.body ? JSON.stringify(params.body) : undefined,
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
 
       // Check response size
-      const contentLength = response.headers.get('content-length');
-      if (contentLength && parseInt(contentLength) > this.config.maxResponseSize) {
-        throw new Error(`Response size ${contentLength} exceeds maximum allowed size ${this.config.maxResponseSize}`);
+      const contentLength = response.headers.get("content-length");
+      if (
+        contentLength &&
+        parseInt(contentLength) > this.config.maxResponseSize
+      ) {
+        throw new Error(
+          `Response size ${contentLength} exceeds maximum allowed size ${this.config.maxResponseSize}`,
+        );
       }
 
       // Parse response body
       let body: any;
-      const contentType = response.headers.get('content-type') || '';
-      
-      if (contentType.includes('application/json')) {
+      const contentType = response.headers.get("content-type") || "";
+
+      if (contentType.includes("application/json")) {
         body = await response.json();
-      } else if (contentType.includes('text/')) {
+      } else if (contentType.includes("text/")) {
         body = await response.text();
       } else {
         body = await response.arrayBuffer();
@@ -290,16 +335,15 @@ export class HTTPTool implements ToolInterface {
         statusText: response.statusText,
         headers: Object.fromEntries(response.headers.entries()),
         body,
-        url: response.url
+        url: response.url,
       };
-
     } catch (error) {
       clearTimeout(timeoutId);
-      
-      if (error.name === 'AbortError') {
+
+      if (error.name === "AbortError") {
         throw new Error(`Request timeout after ${timeout}ms`);
       }
-      
+
       throw error;
     }
   }
@@ -309,7 +353,7 @@ export class HTTPTool implements ToolInterface {
    */
   private checkRateLimit(): void {
     const now = Date.now();
-    const minuteAgo = now - (60 * 1000);
+    const minuteAgo = now - 60 * 1000;
 
     // Reset counter if minute has passed
     if (now - this.lastReset > 60 * 1000) {
@@ -319,7 +363,9 @@ export class HTTPTool implements ToolInterface {
 
     // Check if rate limit exceeded
     if (this.requestCount >= this.config.rateLimitPerMinute) {
-      throw new Error(`Rate limit exceeded: ${this.config.rateLimitPerMinute} requests per minute`);
+      throw new Error(
+        `Rate limit exceeded: ${this.config.rateLimitPerMinute} requests per minute`,
+      );
     }
 
     this.requestCount++;
@@ -339,7 +385,9 @@ export class HTTPTool implements ToolInterface {
     }
 
     // Update average response time
-    const totalTime = this.stats.averageResponseTime * (this.stats.totalRequests - 1) + responseTime;
+    const totalTime =
+      this.stats.averageResponseTime * (this.stats.totalRequests - 1) +
+      responseTime;
     this.stats.averageResponseTime = totalTime / this.stats.totalRequests;
   }
 
@@ -350,7 +398,7 @@ export class HTTPTool implements ToolInterface {
     this.requestHistory.push({
       timestamp: Date.now(),
       url,
-      status
+      status,
     });
 
     // Keep only last 1000 requests
@@ -369,7 +417,9 @@ export class HTTPTool implements ToolInterface {
   /**
    * Get request history
    */
-  getRequestHistory(limit: number = 100): Array<{ timestamp: number; url: string; status: number }> {
+  getRequestHistory(
+    limit: number = 100,
+  ): Array<{ timestamp: number; url: string; status: number }> {
     return this.requestHistory.slice(-limit);
   }
 
@@ -390,25 +440,27 @@ export class HTTPTool implements ToolInterface {
   /**
    * Test connectivity to a domain
    */
-  async testConnectivity(domain: string): Promise<{ reachable: boolean; responseTime: number }> {
+  async testConnectivity(
+    domain: string,
+  ): Promise<{ reachable: boolean; responseTime: number }> {
     const startTime = Date.now();
-    
+
     try {
       const response = await fetch(`https://${domain}`, {
-        method: 'HEAD',
-        signal: AbortSignal.timeout(10000) // 10 second timeout
+        method: "HEAD",
+        signal: AbortSignal.timeout(10000), // 10 second timeout
       });
-      
+
       const responseTime = Date.now() - startTime;
-      
+
       return {
         reachable: response.ok,
-        responseTime
+        responseTime,
       };
     } catch (error) {
       return {
         reachable: false,
-        responseTime: Date.now() - startTime
+        responseTime: Date.now() - startTime,
       };
     }
   }
@@ -416,4 +468,3 @@ export class HTTPTool implements ToolInterface {
 
 // Export default instance
 export const httpTool = new HTTPTool();
-

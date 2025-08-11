@@ -1,16 +1,19 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Observable, interval, from } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
-import { TelemetryService } from './telemetry.service.js';
-import { RAGService } from './rag.service.js';
-import OpenAI from 'openai';
-import { Pool } from 'pg';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { Observable, interval, from } from "rxjs";
+import { map, mergeMap } from "rxjs/operators";
+import { TelemetryService } from "./telemetry.service.js";
+import { RAGService } from "./rag.service.js";
+import OpenAI from "openai";
+import { Pool } from "pg";
 
 interface GenerationRequest {
   prompt: string;
   context?: {
-    conversation?: Array<{ role: 'user' | 'assistant' | 'system'; content: string }>;
+    conversation?: Array<{
+      role: "user" | "assistant" | "system";
+      content: string;
+    }>;
     timestamp?: string;
     sessionId?: string;
     userAgent?: string;
@@ -37,7 +40,7 @@ interface GenerationResponse {
 }
 
 interface StreamToken {
-  type: 'token' | 'complete' | 'error';
+  type: "token" | "complete" | "error";
   content?: string;
   confidence?: number;
   metadata?: any;
@@ -53,29 +56,29 @@ export class GenerateService {
 
   constructor(
     private readonly telemetryService: TelemetryService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
-    const apiKey = this.configService.get<string>('OPENAI_API_KEY');
-    
+    const apiKey = this.configService.get<string>("OPENAI_API_KEY");
+
     if (apiKey) {
       this.openai = new OpenAI({
         apiKey: apiKey,
         organization: process.env.OPENAI_ORG_ID,
       });
-      this.logger.log('OpenAI client initialized with API key');
+      this.logger.log("OpenAI client initialized with API key");
     } else {
-      this.logger.warn('OPENAI_API_KEY not provided, using fallback responses');
+      this.logger.warn("OPENAI_API_KEY not provided, using fallback responses");
       this.openai = null;
     }
 
     this.ragService = new RAGService(this.configService);
-    
+
     this.dbPool = new Pool({
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      user: process.env.DB_USER || 'zeropoint',
-      password: process.env.DB_PASS || 'zeropointpass',
-      database: process.env.DB_NAME || 'zeropointdb',
+      host: process.env.DB_HOST || "localhost",
+      port: parseInt(process.env.DB_PORT || "5432"),
+      user: process.env.DB_USER || "zeropoint",
+      password: process.env.DB_PASS || "zeropointpass",
+      database: process.env.DB_NAME || "zeropointdb",
     });
   }
 
@@ -85,34 +88,39 @@ export class GenerateService {
 
     try {
       // Emit generation start event
-      await this.telemetryService.logEvent('generation', 'text_started', {
+      await this.telemetryService.logEvent("generation", "text_started", {
         prompt: request.prompt,
-        model: request.model || 'gpt-4-turbo',
+        model: request.model || "gpt-4-turbo",
         timestamp: startTime,
       });
 
       // Retrieve relevant context using RAG
       const ragSources = await this.ragService.searchContext(request.prompt);
       const ragContext = { sources: ragSources };
-      
+
       // Build enhanced prompt with RAG context
-      const enhancedPrompt = this.buildEnhancedPrompt(request.prompt, ragContext, request.context);
-      
+      const enhancedPrompt = this.buildEnhancedPrompt(
+        request.prompt,
+        ragContext,
+        request.context,
+      );
+
       // Generate response using OpenAI or fallback
-      let response = '';
+      let response = "";
       let tokensUsed = 0;
-      
+
       if (this.openai) {
         const completion = await this.openai.chat.completions.create({
-          model: request.model || 'gpt-4-turbo',
+          model: request.model || "gpt-4-turbo",
           messages: [
             {
-              role: 'system',
-              content: 'You are an AI assistant powered by the Zeropoint Protocol, an advanced AI safety framework. Provide helpful, accurate, and ethically-aligned responses. When referencing information, cite your sources clearly.',
+              role: "system",
+              content:
+                "You are an AI assistant powered by the Zeropoint Protocol, an advanced AI safety framework. Provide helpful, accurate, and ethically-aligned responses. When referencing information, cite your sources clearly.",
             },
             ...(request.context?.conversation || []),
             {
-              role: 'user',
+              role: "user",
               content: enhancedPrompt,
             },
           ],
@@ -121,7 +129,7 @@ export class GenerateService {
           stream: false,
         });
 
-        response = completion.choices[0]?.message?.content || '';
+        response = completion.choices[0]?.message?.content || "";
         tokensUsed = completion.usage?.total_tokens || 0;
       } else {
         // Fallback response when OpenAI is not available
@@ -141,7 +149,7 @@ export class GenerateService {
           prompt: request.prompt,
           context: request.context,
           timestamp: new Date().toISOString(),
-          model: request.model || 'gpt-4-turbo',
+          model: request.model || "gpt-4-turbo",
           ragSources: ragContext.sources,
           tokensUsed: tokensUsed,
           latency,
@@ -149,7 +157,7 @@ export class GenerateService {
       };
 
       // Emit generation completion event
-      await this.telemetryService.logEvent('generation', 'text_completed', {
+      await this.telemetryService.logEvent("generation", "text_completed", {
         prompt: request.prompt,
         responseLength: response.length,
         confidence,
@@ -159,12 +167,11 @@ export class GenerateService {
       });
 
       return result;
-
     } catch (error) {
       this.logger.error(`Text generation failed: ${error.message}`);
-      
+
       // Emit generation failure event
-      await this.telemetryService.logEvent('generation', 'text_failed', {
+      await this.telemetryService.logEvent("generation", "text_failed", {
         prompt: request.prompt,
         error: error.message,
         timestamp: Date.now(),
@@ -176,36 +183,46 @@ export class GenerateService {
 
   streamText(request: GenerationRequest): Observable<StreamToken> {
     const startTime = Date.now();
-    this.logger.log(`Starting streaming text generation for prompt: ${request.prompt}`);
+    this.logger.log(
+      `Starting streaming text generation for prompt: ${request.prompt}`,
+    );
 
     return from(this.streamTextGeneration(request, startTime));
   }
 
-  private async *streamTextGeneration(request: GenerationRequest, startTime: number): AsyncGenerator<StreamToken> {
+  private async *streamTextGeneration(
+    request: GenerationRequest,
+    startTime: number,
+  ): AsyncGenerator<StreamToken> {
     try {
       // Emit streaming start event
-      await this.telemetryService.logEvent('generation', 'stream_started', {
+      await this.telemetryService.logEvent("generation", "stream_started", {
         prompt: request.prompt,
-        model: request.model || 'gpt-4-turbo',
+        model: request.model || "gpt-4-turbo",
         timestamp: startTime,
       });
 
       // Retrieve RAG context
-              const ragSources = await this.ragService.searchContext(request.prompt);
-        const ragContext = { sources: ragSources };
-      const enhancedPrompt = this.buildEnhancedPrompt(request.prompt, ragContext, request.context);
+      const ragSources = await this.ragService.searchContext(request.prompt);
+      const ragContext = { sources: ragSources };
+      const enhancedPrompt = this.buildEnhancedPrompt(
+        request.prompt,
+        ragContext,
+        request.context,
+      );
 
       // Create streaming completion
       const stream = await this.openai.chat.completions.create({
-        model: request.model || 'gpt-4-turbo',
+        model: request.model || "gpt-4-turbo",
         messages: [
           {
-            role: 'system',
-            content: 'You are an AI assistant powered by the Zeropoint Protocol. Provide helpful, accurate, and ethically-aligned responses. Stream your response token by token.',
+            role: "system",
+            content:
+              "You are an AI assistant powered by the Zeropoint Protocol. Provide helpful, accurate, and ethically-aligned responses. Stream your response token by token.",
           },
           ...(request.context?.conversation || []),
           {
-            role: 'user',
+            role: "user",
             content: enhancedPrompt,
           },
         ],
@@ -214,7 +231,7 @@ export class GenerateService {
         stream: true,
       });
 
-      let fullResponse = '';
+      let fullResponse = "";
       let tokenCount = 0;
 
       for await (const chunk of stream) {
@@ -222,9 +239,9 @@ export class GenerateService {
         if (content) {
           fullResponse += content;
           tokenCount++;
-          
+
           yield {
-            type: 'token',
+            type: "token",
             content,
             metadata: {
               tokenIndex: tokenCount,
@@ -238,7 +255,7 @@ export class GenerateService {
       const confidence = this.calculateConfidence(fullResponse, ragContext);
 
       // Emit streaming completion event
-      await this.telemetryService.logEvent('generation', 'stream_completed', {
+      await this.telemetryService.logEvent("generation", "stream_completed", {
         prompt: request.prompt,
         responseLength: fullResponse.length,
         confidence,
@@ -248,32 +265,31 @@ export class GenerateService {
       });
 
       yield {
-        type: 'complete',
+        type: "complete",
         content: fullResponse,
         confidence,
         metadata: {
           prompt: request.prompt,
           context: request.context,
           timestamp: new Date().toISOString(),
-          model: request.model || 'gpt-4-turbo',
+          model: request.model || "gpt-4-turbo",
           ragSources: ragContext.sources,
           tokensUsed: tokenCount,
           latency,
         },
       };
-
     } catch (error) {
       this.logger.error(`Streaming text generation failed: ${error.message}`);
-      
+
       // Emit streaming failure event
-      await this.telemetryService.logEvent('generation', 'stream_failed', {
+      await this.telemetryService.logEvent("generation", "stream_failed", {
         prompt: request.prompt,
         error: error.message,
         timestamp: Date.now(),
       });
 
       yield {
-        type: 'error',
+        type: "error",
         error: error.message,
         metadata: {
           timestamp: Date.now(),
@@ -284,11 +300,13 @@ export class GenerateService {
 
   async generateImage(prompt: string, style?: string): Promise<any> {
     const startTime = Date.now();
-    this.logger.log(`Generating image for prompt: ${prompt} with style: ${style}`);
+    this.logger.log(
+      `Generating image for prompt: ${prompt} with style: ${style}`,
+    );
 
     try {
       // Emit image generation start event
-      await this.telemetryService.logEvent('generation', 'image_started', {
+      await this.telemetryService.logEvent("generation", "image_started", {
         prompt,
         style,
         timestamp: startTime,
@@ -297,8 +315,8 @@ export class GenerateService {
       if (!this.openai) {
         // Fallback response when OpenAI is not available
         const latency = Date.now() - startTime;
-        
-        await this.telemetryService.logEvent('generation', 'image_completed', {
+
+        await this.telemetryService.logEvent("generation", "image_completed", {
           prompt,
           style,
           latency,
@@ -306,16 +324,17 @@ export class GenerateService {
         });
 
         return {
-          status: 'success',
+          status: "success",
           data: {
-            imageUrl: 'https://via.placeholder.com/1024x1024/0066cc/ffffff?text=AI+Generated+Image',
+            imageUrl:
+              "https://via.placeholder.com/1024x1024/0066cc/ffffff?text=AI+Generated+Image",
             prompt,
-            style: style || 'realistic',
+            style: style || "realistic",
             metadata: {
               timestamp: new Date().toISOString(),
-              model: 'fallback',
+              model: "fallback",
               latency,
-              note: 'OpenAI API not configured, using placeholder image',
+              note: "OpenAI API not configured, using placeholder image",
             },
           },
           timestamp: new Date().toISOString(),
@@ -323,26 +342,28 @@ export class GenerateService {
       }
 
       const response = await this.openai.images.generate({
-        model: 'dall-e-3',
-        prompt: `${prompt} ${style ? `in ${style} style` : ''}`,
+        model: "dall-e-3",
+        prompt: `${prompt} ${style ? `in ${style} style` : ""}`,
         n: 1,
-        size: '1024x1024',
-        quality: 'standard',
+        size: "1024x1024",
+        quality: "standard",
       });
 
       if (!response || !response.data || !response.data[0]) {
-        throw new Error('Failed to generate image: Invalid response from OpenAI');
+        throw new Error(
+          "Failed to generate image: Invalid response from OpenAI",
+        );
       }
 
       const imageUrl = response.data[0].url;
       const latency = Date.now() - startTime;
 
       if (!imageUrl) {
-        throw new Error('Failed to generate image');
+        throw new Error("Failed to generate image");
       }
 
       // Emit image generation completion event
-      await this.telemetryService.logEvent('generation', 'image_completed', {
+      await this.telemetryService.logEvent("generation", "image_completed", {
         prompt,
         style,
         latency,
@@ -350,25 +371,24 @@ export class GenerateService {
       });
 
       return {
-        status: 'success',
+        status: "success",
         data: {
           imageUrl,
           prompt,
-          style: style || 'realistic',
+          style: style || "realistic",
           metadata: {
             timestamp: new Date().toISOString(),
-            model: 'dall-e-3',
+            model: "dall-e-3",
             latency,
           },
         },
         timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       this.logger.error(`Image generation failed: ${error.message}`);
-      
+
       // Emit image generation failure event
-      await this.telemetryService.logEvent('generation', 'image_failed', {
+      await this.telemetryService.logEvent("generation", "image_failed", {
         prompt,
         style,
         error: error.message,
@@ -379,21 +399,29 @@ export class GenerateService {
     }
   }
 
-  private buildEnhancedPrompt(prompt: string, ragContext: any, conversationContext?: any): string {
+  private buildEnhancedPrompt(
+    prompt: string,
+    ragContext: any,
+    conversationContext?: any,
+  ): string {
     let enhancedPrompt = prompt;
 
     // Add RAG context if available
     if (ragContext.sources && ragContext.sources.length > 0) {
-      enhancedPrompt += '\n\nRelevant context:\n';
+      enhancedPrompt += "\n\nRelevant context:\n";
       ragContext.sources.forEach((source: any, index: number) => {
         enhancedPrompt += `${index + 1}. ${source.title}: ${source.content}\n`;
       });
-      enhancedPrompt += '\nPlease use this context to provide an accurate and informed response.';
+      enhancedPrompt +=
+        "\nPlease use this context to provide an accurate and informed response.";
     }
 
     // Add conversation context if available
-    if (conversationContext?.conversation && conversationContext.conversation.length > 0) {
-      enhancedPrompt += '\n\nConversation history:\n';
+    if (
+      conversationContext?.conversation &&
+      conversationContext.conversation.length > 0
+    ) {
+      enhancedPrompt += "\n\nConversation history:\n";
       conversationContext.conversation.forEach((msg: any) => {
         enhancedPrompt += `${msg.role}: ${msg.content}\n`;
       });
@@ -416,9 +444,19 @@ export class GenerateService {
     }
 
     // Decrease confidence for responses that seem uncertain
-    const uncertaintyIndicators = ['i think', 'maybe', 'possibly', 'not sure', 'uncertain'];
+    const uncertaintyIndicators = [
+      "i think",
+      "maybe",
+      "possibly",
+      "not sure",
+      "uncertain",
+    ];
     const lowerResponse = response.toLowerCase();
-    if (uncertaintyIndicators.some(indicator => lowerResponse.includes(indicator))) {
+    if (
+      uncertaintyIndicators.some((indicator) =>
+        lowerResponse.includes(indicator),
+      )
+    ) {
       confidence -= 0.1;
     }
 
@@ -429,27 +467,39 @@ export class GenerateService {
     const lowerPrompt = prompt.toLowerCase();
     const lowerResponse = response.toLowerCase();
 
-    if (lowerPrompt.includes('hello') || lowerPrompt.includes('hi')) {
-      return 'greeting';
-    } else if (lowerPrompt.includes('zeropoint') || lowerPrompt.includes('protocol')) {
-      return 'informational';
-    } else if (lowerPrompt.includes('ai') || lowerPrompt.includes('artificial intelligence')) {
-      return 'educational';
-    } else if (lowerPrompt.includes('consensus') || lowerPrompt.includes('agreement')) {
-      return 'technical';
-    } else if (lowerResponse.includes('error') || lowerResponse.includes('failed')) {
-      return 'error';
+    if (lowerPrompt.includes("hello") || lowerPrompt.includes("hi")) {
+      return "greeting";
+    } else if (
+      lowerPrompt.includes("zeropoint") ||
+      lowerPrompt.includes("protocol")
+    ) {
+      return "informational";
+    } else if (
+      lowerPrompt.includes("ai") ||
+      lowerPrompt.includes("artificial intelligence")
+    ) {
+      return "educational";
+    } else if (
+      lowerPrompt.includes("consensus") ||
+      lowerPrompt.includes("agreement")
+    ) {
+      return "technical";
+    } else if (
+      lowerResponse.includes("error") ||
+      lowerResponse.includes("failed")
+    ) {
+      return "error";
     } else {
-      return 'general';
+      return "general";
     }
   }
 
   async generateCode(prompt: string, language?: string): Promise<any> {
     const startTime = Date.now();
-    
+
     try {
       // Emit code generation start event
-      await this.telemetryService.logEvent('generation', 'code_started', {
+      await this.telemetryService.logEvent("generation", "code_started", {
         prompt,
         language,
         timestamp: startTime,
@@ -458,8 +508,8 @@ export class GenerateService {
       if (!this.openai) {
         // Fallback response when OpenAI is not available
         const latency = Date.now() - startTime;
-        
-        await this.telemetryService.logEvent('generation', 'code_completed', {
+
+        await this.telemetryService.logEvent("generation", "code_completed", {
           prompt,
           language,
           latency,
@@ -467,7 +517,7 @@ export class GenerateService {
         });
 
         return {
-          status: 'success',
+          status: "success",
           data: {
             code: `// Fallback code generation - OpenAI API not configured
 // ${prompt}
@@ -476,13 +526,13 @@ function example() {
   return "This is a fallback response when OpenAI is not available";
 }`,
             prompt,
-            language: language || 'JavaScript',
+            language: language || "JavaScript",
             metadata: {
               timestamp: new Date().toISOString(),
-              model: 'fallback',
+              model: "fallback",
               latency,
               tokensUsed: 0,
-              note: 'OpenAI API not configured, using fallback code',
+              note: "OpenAI API not configured, using fallback code",
             },
           },
           timestamp: new Date().toISOString(),
@@ -490,16 +540,16 @@ function example() {
       }
 
       const response = await this.openai.chat.completions.create({
-        model: 'gpt-4-turbo',
+        model: "gpt-4-turbo",
         messages: [
           {
-            role: 'system',
-            content: `You are an expert software developer. Generate clean, well-documented code in ${language || 'JavaScript'}. Always include comments explaining the logic and provide a brief description of what the code does.`
+            role: "system",
+            content: `You are an expert software developer. Generate clean, well-documented code in ${language || "JavaScript"}. Always include comments explaining the logic and provide a brief description of what the code does.`,
           },
           {
-            role: 'user',
-            content: prompt
-          }
+            role: "user",
+            content: prompt,
+          },
         ],
         max_tokens: 2000,
         temperature: 0.3,
@@ -509,11 +559,11 @@ function example() {
       const latency = Date.now() - startTime;
 
       if (!code) {
-        throw new Error('Failed to generate code');
+        throw new Error("Failed to generate code");
       }
 
       // Emit code generation completion event
-      await this.telemetryService.logEvent('generation', 'code_completed', {
+      await this.telemetryService.logEvent("generation", "code_completed", {
         prompt,
         language,
         latency,
@@ -521,26 +571,25 @@ function example() {
       });
 
       return {
-        status: 'success',
+        status: "success",
         data: {
           code,
           prompt,
-          language: language || 'JavaScript',
+          language: language || "JavaScript",
           metadata: {
             timestamp: new Date().toISOString(),
-            model: 'gpt-4-turbo',
+            model: "gpt-4-turbo",
             latency,
             tokensUsed: response.usage?.total_tokens || 0,
           },
         },
         timestamp: new Date().toISOString(),
       };
-
     } catch (error) {
       this.logger.error(`Code generation failed: ${error.message}`);
-      
+
       // Emit code generation failure event
-      await this.telemetryService.logEvent('generation', 'code_failed', {
+      await this.telemetryService.logEvent("generation", "code_failed", {
         prompt,
         language,
         error: error.message,
@@ -552,7 +601,7 @@ function example() {
   }
 
   async getGenerationStats(): Promise<any> {
-    const stats = await this.telemetryService.getEventStats('generation');
+    const stats = await this.telemetryService.getEventStats("generation");
     return {
       totalGenerations: stats.total || 0,
       successfulGenerations: stats.successful || 0,
@@ -562,4 +611,4 @@ function example() {
       lastUpdated: new Date().toISOString(),
     };
   }
-} 
+}

@@ -1,12 +1,17 @@
-import { Injectable, Logger, UnauthorizedException, ExecutionContext } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { Reflector } from '@nestjs/core';
+import {
+  Injectable,
+  Logger,
+  UnauthorizedException,
+  ExecutionContext,
+} from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { Reflector } from "@nestjs/core";
 // import { OAuthService, OAuthUser } from '../services/oauth.service.js';
 // import { checkIntent } from './synthient.guard.js';
 // import { soulchain } from '../agents/soulchain/soulchain.ledger.js';
 
 @Injectable()
-export class OAuthAuthGuard extends AuthGuard('jwt') {
+export class OAuthAuthGuard extends AuthGuard("jwt") {
   private readonly logger = new Logger(OAuthAuthGuard.name);
 
   constructor(
@@ -22,7 +27,7 @@ export class OAuthAuthGuard extends AuthGuard('jwt') {
       const { method, url, ip, headers } = request;
 
       // Check for public routes
-      const isPublic = this.reflector.getAllAndOverride<boolean>('isPublic', [
+      const isPublic = this.reflector.getAllAndOverride<boolean>("isPublic", [
         context.getHandler(),
         context.getClass(),
       ]);
@@ -95,7 +100,10 @@ export class OAuthAuthGuard extends AuthGuard('jwt') {
 
       // return true;
     } catch (error) {
-      this.logger.error(`OAuth Auth Guard error: ${error.message}`, error.stack);
+      this.logger.error(
+        `OAuth Auth Guard error: ${error.message}`,
+        error.stack,
+      );
       // await this.logAuthEvent('auth_error', error.message, {
       //   method: context.switchToHttp().getRequest().method,
       //   url: context.switchToHttp().getRequest().url,
@@ -136,4 +144,4 @@ export class OAuthAuthGuard extends AuthGuard('jwt') {
   //     this.logger.error(`Failed to log auth event: ${error.message}`);
   //   }
   // }
-} 
+}

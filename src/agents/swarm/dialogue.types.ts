@@ -26,8 +26,8 @@ export interface SwarmResolution {
 }
 
 export interface CollectiveInsight {
-  tagEcho: string[];            // Convergent tag map
-  emergentIntent: string;       // Derived collective intent
+  tagEcho: string[]; // Convergent tag map
+  emergentIntent: string; // Derived collective intent
   insightLog: DialogueTranscript[];
 }
 
@@ -35,10 +35,10 @@ export interface CollectiveInsight {
  * Calculate how different the intents and ethics are between agents.
  */
 export function measureDivergence(transcripts: DialogueTranscript[]): number {
-  const intents = transcripts.map(t => t.dominantIntent);
+  const intents = transcripts.map((t) => t.dominantIntent);
   const uniqueIntents = new Set(intents);
   const entropy = -Array.from(uniqueIntents).reduce((sum, intent) => {
-    const p = intents.filter(i => i === intent).length / intents.length;
+    const p = intents.filter((i) => i === intent).length / intents.length;
     return sum + p * Math.log2(p);
   }, 0);
   return Math.abs(entropy) / Math.log2(intents.length || 1);
@@ -49,12 +49,12 @@ export function measureDivergence(transcripts: DialogueTranscript[]): number {
  */
 export function aggregateTagField(transcripts: DialogueTranscript[]): string[] {
   // Stub: Collect and rank tags (expand with actual tag extraction)
-  return transcripts.flatMap(t => [t.dominantIntent]);
+  return transcripts.flatMap((t) => [t.dominantIntent]);
 }
 
 /**
  * Stream the collective insight as a narrative.
  */
 export function streamInsight(insight: CollectiveInsight): string {
-  return `Emergent intent: ${insight.emergentIntent}. Log: ${insight.insightLog.map(l => l.message).join(' ')}`;
+  return `Emergent intent: ${insight.emergentIntent}. Log: ${insight.insightLog.map((l) => l.message).join(" ")}`;
 }

@@ -1,22 +1,29 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus, Logger } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { checkIntent } from '../guards/synthient.guard.js';
-import { Counter, Histogram } from 'prom-client';
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from "@nestjs/common";
+import { Request, Response } from "express";
+import { checkIntent } from "../guards/synthient.guard.js";
+import { Counter, Histogram } from "prom-client";
 
 // Prometheus metrics for error tracking
 const errorCounter = new Counter({
-  name: 'http_errors_total',
-  help: 'Total HTTP errors by status code and endpoint',
-  labelNames: ['status_code', 'endpoint', 'method', 'error_type']
+  name: "http_errors_total",
+  help: "Total HTTP errors by status code and endpoint",
+  labelNames: ["status_code", "endpoint", "method", "error_type"],
 });
 
 const errorDuration = new Histogram({
-  name: 'http_error_duration_seconds',
-  help: 'HTTP error response duration',
-  labelNames: ['status_code', 'endpoint', 'method'],
-  buckets: [0.1, 0.5, 1, 2, 5]
+  name: "http_error_duration_seconds",
+  help: "HTTP error response duration",
+  labelNames: ["status_code", "endpoint", "method"],
+  buckets: [0.1, 0.5, 1, 2, 5],
 });
 
 @Catch()
@@ -27,23 +34,25 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
-    
+
     const startTime = Date.now();
-    
+
     // Determine status and message
     const status = this.getHttpStatus(exception);
     const message = this.getErrorMessage(exception);
     const errorType = this.getErrorType(exception);
-    
+
     // Zeroth-gate error reporting
-    if (!checkIntent('error-report')) {
-      this.logger.warn(`Zeroth violation: Error reporting blocked for ${request.method} ${request.url}`);
+    if (!checkIntent("error-report")) {
+      this.logger.warn(
+        `Zeroth violation: Error reporting blocked for ${request.method} ${request.url}`,
+      );
       response.status(HttpStatus.FORBIDDEN).json({
         statusCode: HttpStatus.FORBIDDEN,
         timestamp: new Date().toISOString(),
         path: request.url,
-        message: 'Zeroth violation: Error reporting blocked.',
-        error: 'FORBIDDEN'
+        message: "Zeroth violation: Error reporting blocked.",
+        error: "FORBIDDEN",
       });
       return;
     }
@@ -57,13 +66,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
       status_code: status.toString(),
       endpoint: request.url,
       method: request.method,
-      error_type: errorType
+      error_type: errorType,
     });
-    errorDuration.observe({
-      status_code: status.toString(),
-      endpoint: request.url,
-      method: request.method
-    }, duration);
+    errorDuration.observe(
+      {
+        status_code: status.toString(),
+        endpoint: request.url,
+        method: request.method,
+      },
+      duration,
+    );
 
     // Construct error response
     const errorResponse = {
@@ -73,11 +85,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
       method: request.method,
       message: this.sanitizeMessage(message),
       error: errorType,
-      requestId: request.headers['x-request-id'] || this.generateRequestId(),
-      ...(process.env.NODE_ENV === 'development' && {
+      requestId: request.headers["x-request-id"] || this.generateRequestId(),
+      ...(process.env.NODE_ENV === "development" && {
         stack: exception instanceof Error ? exception.stack : undefined,
-        details: this.getErrorDetails(exception)
-      })
+        details: this.getErrorDetails(exception),
+      }),
     };
 
     response.status(status).json(errorResponse);
@@ -87,77 +99,77 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       return exception.getStatus();
     }
-    
+
     // Handle specific error types
     if (exception instanceof Error) {
       const errorName = exception.name;
       switch (errorName) {
-        case 'ValidationError':
+        case "ValidationError":
           return HttpStatus.BAD_REQUEST;
-        case 'UnauthorizedError':
+        case "UnauthorizedError":
           return HttpStatus.UNAUTHORIZED;
-        case 'ForbiddenError':
+        case "ForbiddenError":
           return HttpStatus.FORBIDDEN;
-        case 'NotFoundError':
+        case "NotFoundError":
           return HttpStatus.NOT_FOUND;
-        case 'ConflictError':
+        case "ConflictError":
           return HttpStatus.CONFLICT;
-        case 'TimeoutError':
+        case "TimeoutError":
           return HttpStatus.REQUEST_TIMEOUT;
         default:
           return HttpStatus.INTERNAL_SERVER_ERROR;
       }
     }
-    
+
     return HttpStatus.INTERNAL_SERVER_ERROR;
   }
 
   private getErrorMessage(exception: unknown): string {
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
-      if (typeof response === 'string') {
+      if (typeof response === "string") {
         return response;
       }
-      if (typeof response === 'object' && response !== null) {
+      if (typeof response === "object" && response !== null) {
         return (response as any).message || exception.message;
       }
     }
-    
+
     if (exception instanceof Error) {
       return exception.message;
     }
-    
-    return 'Internal server error';
+
+    return "Internal server error";
   }
 
   private getErrorType(exception: unknown): string {
     if (exception instanceof HttpException) {
-      return 'HTTP_EXCEPTION';
+      return "HTTP_EXCEPTION";
     }
-    
+
     if (exception instanceof Error) {
-      return exception.name || 'UNKNOWN_ERROR';
+      return exception.name || "UNKNOWN_ERROR";
     }
-    
-    return 'UNKNOWN_ERROR';
+
+    return "UNKNOWN_ERROR";
   }
 
   private getErrorDetails(exception: unknown): any {
     if (exception instanceof HttpException) {
       const response = exception.getResponse();
-      if (typeof response === 'object' && response !== null) {
+      if (typeof response === "object" && response !== null) {
         return response;
       }
     }
-    
+
     if (exception instanceof Error) {
       return {
         name: exception.name,
         message: exception.message,
-        cause: (exception as any).cause
+        cause: (exception as any).cause,
       };
     }
-    
+
     return null;
   }
 
@@ -167,14 +179,14 @@ export class AllExceptionsFilter implements ExceptionFilter {
       /password['"]?\s*[:=]\s*['"][^'"]*['"]/gi,
       /token['"]?\s*[:=]\s*['"][^'"]*['"]/gi,
       /secret['"]?\s*[:=]\s*['"][^'"]*['"]/gi,
-      /key['"]?\s*[:=]\s*['"][^'"]*['"]/gi
+      /key['"]?\s*[:=]\s*['"][^'"]*['"]/gi,
     ];
-    
+
     let sanitized = message;
-    sensitivePatterns.forEach(pattern => {
-      sanitized = sanitized.replace(pattern, '$1: [REDACTED]');
+    sensitivePatterns.forEach((pattern) => {
+      sanitized = sanitized.replace(pattern, "$1: [REDACTED]");
     });
-    
+
     return sanitized;
   }
 
@@ -184,23 +196,23 @@ export class AllExceptionsFilter implements ExceptionFilter {
       method: request.method,
       url: request.url,
       status,
-      userAgent: request.headers['user-agent'],
+      userAgent: request.headers["user-agent"],
       ip: request.ip || request.connection.remoteAddress,
       userId: (request as any).user?.userId,
       errorType: this.getErrorType(exception),
-      message: this.getErrorMessage(exception)
+      message: this.getErrorMessage(exception),
     };
 
     if (status >= 500) {
-      this.logger.error('Server error occurred', logData);
+      this.logger.error("Server error occurred", logData);
     } else if (status >= 400) {
-      this.logger.warn('Client error occurred', logData);
+      this.logger.warn("Client error occurred", logData);
     } else {
-      this.logger.log('Error occurred', logData);
+      this.logger.log("Error occurred", logData);
     }
   }
 
   private generateRequestId(): string {
     return `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
-} 
+}

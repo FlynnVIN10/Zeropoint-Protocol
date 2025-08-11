@@ -1,13 +1,22 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index, BeforeInsert, BeforeUpdate } from 'typeorm';
-import { checkIntent } from '../guards/synthient.guard.js';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+  BeforeInsert,
+  BeforeUpdate,
+} from "typeorm";
+import { checkIntent } from "../guards/synthient.guard.js";
 
 export interface AgentMetrics {
   xp: number;
   level: string;
   trustScore: number;
-  ethicalRating: 'aligned' | 'warn' | 'reject';
+  ethicalRating: "aligned" | "warn" | "reject";
   performanceScore: number;
   lastTrainingCycle: Date;
   totalInteractions: number;
@@ -19,7 +28,7 @@ export interface AgentContext {
   taskId: string;
   lineage: string[];
   swarmLink: string;
-  layer: '#sandbox' | '#live' | '#meta' | '#training';
+  layer: "#sandbox" | "#live" | "#meta" | "#training";
   domain: string;
   currentQuest?: string;
   ethicalTension?: string;
@@ -45,12 +54,12 @@ export interface AgentMemory {
   }>;
 }
 
-@Entity('agent_states')
-@Index(['agentId'], { unique: true })
-@Index(['status'])
-@Index(['lastActivityAt'])
+@Entity("agent_states")
+@Index(["agentId"], { unique: true })
+@Index(["status"])
+@Index(["lastActivityAt"])
 export class AgentState {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column({ length: 100, unique: true })
@@ -65,22 +74,22 @@ export class AgentState {
   @Column({ length: 100 })
   handle: string;
 
-  @Column({ length: 50, default: 'active' })
-  status: 'active' | 'inactive' | 'training' | 'suspended' | 'terminated';
+  @Column({ length: 50, default: "active" })
+  status: "active" | "inactive" | "training" | "suspended" | "terminated";
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: "jsonb" })
   metrics: AgentMetrics;
 
-  @Column({ type: 'jsonb' })
+  @Column({ type: "jsonb" })
   context: AgentContext;
 
-  @Column({ type: 'jsonb', default: {} })
+  @Column({ type: "jsonb", default: {} })
   memory: AgentMemory;
 
-  @Column({ type: 'text', array: true, default: [] })
+  @Column({ type: "text", array: true, default: [] })
   tags: string[];
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   currentTask: {
     id: string;
     description: string;
@@ -89,7 +98,7 @@ export class AgentState {
     estimatedCompletion: Date;
   };
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   lastInteraction: {
     timestamp: Date;
     type: string;
@@ -99,7 +108,7 @@ export class AgentState {
     ethicalCheck: boolean;
   };
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   trainingHistory: Array<{
     timestamp: Date;
     cycle: string;
@@ -108,19 +117,19 @@ export class AgentState {
     ethicalAlignment: boolean;
   }>;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   performanceHistory: Array<{
     timestamp: Date;
     metric: string;
     value: number;
     threshold: number;
-    status: 'pass' | 'fail' | 'warning';
+    status: "pass" | "fail" | "warning";
   }>;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   lastError: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   errorHistory: Array<{
     timestamp: Date;
     error: string;
@@ -129,17 +138,17 @@ export class AgentState {
     resolution?: string;
   }>;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   ethicalViolations: Array<{
     timestamp: Date;
     violation: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity: "low" | "medium" | "high" | "critical";
     context: string;
     resolved: boolean;
     resolution?: string;
   }>;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   soulchainTransactions: Array<{
     timestamp: Date;
     cid: string;
@@ -148,10 +157,10 @@ export class AgentState {
     tags: string[];
   }>;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   notes: string;
 
-  @Column({ type: 'jsonb', nullable: true })
+  @Column({ type: "jsonb", nullable: true })
   metadata: Record<string, any>;
 
   @CreateDateColumn()
@@ -172,11 +181,13 @@ export class AgentState {
       status: this.status,
       metrics: this.metrics,
       context: this.context,
-      lastInteraction: this.lastInteraction
+      lastInteraction: this.lastInteraction,
     };
 
     if (!checkIntent(JSON.stringify(validationContext))) {
-      throw new Error('Zeroth violation: Agent state change blocked due to ethical concerns.');
+      throw new Error(
+        "Zeroth violation: Agent state change blocked due to ethical concerns.",
+      );
     }
 
     // Update last activity timestamp
@@ -188,12 +199,12 @@ export class AgentState {
     if (!this.memory.experiences) {
       this.memory.experiences = [];
     }
-    
+
     this.memory.experiences.push({
       timestamp: new Date(),
       action,
       outcome,
-      xpGained
+      xpGained,
     });
 
     // Update metrics
@@ -210,7 +221,7 @@ export class AgentState {
     this.memory.reflections.push({
       timestamp: new Date(),
       content,
-      tags
+      tags,
     });
   }
 
@@ -223,24 +234,35 @@ export class AgentState {
       timestamp: new Date(),
       concept,
       application,
-      confidence
+      confidence,
     });
   }
 
-  recordInteraction(type: string, input: string, output: string, xpGained: number, ethicalCheck: boolean) {
+  recordInteraction(
+    type: string,
+    input: string,
+    output: string,
+    xpGained: number,
+    ethicalCheck: boolean,
+  ) {
     this.lastInteraction = {
       timestamp: new Date(),
       type,
       input,
       output,
       xpGained,
-      ethicalCheck
+      ethicalCheck,
     };
 
     this.addExperience(type, output, xpGained);
   }
 
-  recordTrainingCycle(cycle: string, xpGained: number, improvements: string[], ethicalAlignment: boolean) {
+  recordTrainingCycle(
+    cycle: string,
+    xpGained: number,
+    improvements: string[],
+    ethicalAlignment: boolean,
+  ) {
     if (!this.trainingHistory) {
       this.trainingHistory = [];
     }
@@ -250,7 +272,7 @@ export class AgentState {
       cycle,
       xpGained,
       improvements,
-      ethicalAlignment
+      ethicalAlignment,
     });
 
     this.metrics.lastTrainingCycle = new Date();
@@ -262,14 +284,19 @@ export class AgentState {
       this.performanceHistory = [];
     }
 
-    const status = value >= threshold ? 'pass' : value >= threshold * 0.8 ? 'warning' : 'fail';
+    const status =
+      value >= threshold
+        ? "pass"
+        : value >= threshold * 0.8
+          ? "warning"
+          : "fail";
 
     this.performanceHistory.push({
       timestamp: new Date(),
       metric,
       value,
       threshold,
-      status
+      status,
     });
   }
 
@@ -282,13 +309,17 @@ export class AgentState {
       timestamp: new Date(),
       error,
       context,
-      resolved: false
+      resolved: false,
     });
 
     this.lastError = error;
   }
 
-  recordEthicalViolation(violation: string, severity: 'low' | 'medium' | 'high' | 'critical', context: string) {
+  recordEthicalViolation(
+    violation: string,
+    severity: "low" | "medium" | "high" | "critical",
+    context: string,
+  ) {
     if (!this.ethicalViolations) {
       this.ethicalViolations = [];
     }
@@ -298,18 +329,23 @@ export class AgentState {
       violation,
       severity,
       context,
-      resolved: false
+      resolved: false,
     });
 
     // Update ethical rating based on severity
-    if (severity === 'critical' || severity === 'high') {
-      this.metrics.ethicalRating = 'reject';
-    } else if (severity === 'medium') {
-      this.metrics.ethicalRating = 'warn';
+    if (severity === "critical" || severity === "high") {
+      this.metrics.ethicalRating = "reject";
+    } else if (severity === "medium") {
+      this.metrics.ethicalRating = "warn";
     }
   }
 
-  recordSoulchainTransaction(cid: string, amount: number, rationale: string, tags: string[]) {
+  recordSoulchainTransaction(
+    cid: string,
+    amount: number,
+    rationale: string,
+    tags: string[],
+  ) {
     if (!this.soulchainTransactions) {
       this.soulchainTransactions = [];
     }
@@ -319,34 +355,34 @@ export class AgentState {
       cid,
       amount,
       rationale,
-      tags
+      tags,
     });
   }
 
   // Utility methods
   isActive(): boolean {
-    return this.status === 'active' || this.status === 'training';
+    return this.status === "active" || this.status === "training";
   }
 
   canInteract(): boolean {
-    return this.isActive() && this.metrics.ethicalRating !== 'reject';
+    return this.isActive() && this.metrics.ethicalRating !== "reject";
   }
 
-  getTrustLevel(): 'high' | 'medium' | 'low' {
-    if (this.metrics.trustScore >= 0.8) return 'high';
-    if (this.metrics.trustScore >= 0.5) return 'medium';
-    return 'low';
+  getTrustLevel(): "high" | "medium" | "low" {
+    if (this.metrics.trustScore >= 0.8) return "high";
+    if (this.metrics.trustScore >= 0.5) return "medium";
+    return "low";
   }
 
-  getPerformanceStatus(): 'excellent' | 'good' | 'fair' | 'poor' {
-    if (this.metrics.performanceScore >= 0.9) return 'excellent';
-    if (this.metrics.performanceScore >= 0.7) return 'good';
-    if (this.metrics.performanceScore >= 0.5) return 'fair';
-    return 'poor';
+  getPerformanceStatus(): "excellent" | "good" | "fair" | "poor" {
+    if (this.metrics.performanceScore >= 0.9) return "excellent";
+    if (this.metrics.performanceScore >= 0.7) return "good";
+    if (this.metrics.performanceScore >= 0.5) return "fair";
+    return "poor";
   }
 
   toJSON() {
     const { id, ...agentState } = this;
     return agentState;
   }
-} 
+}

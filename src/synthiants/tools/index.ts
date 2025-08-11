@@ -1,6 +1,6 @@
 /**
  * Synthiant Tools - Main index file
- * 
+ *
  * @fileoverview Exports all available tools for Synthiant agents
  * @author Dev Team
  * @version 1.0.0
@@ -27,11 +27,11 @@ export interface ResourceUsage {
 }
 
 // Tool implementations
-export { GitHubTool } from './github.tool';
-export { RAGTool } from './rag.tool';
-export { SSETool } from './sse.tool';
-export { HTTPTool } from './http.tool';
-export { ShellDenylistTool } from './shell-denylist.tool';
+export { GitHubTool } from "./github.tool";
+export { RAGTool } from "./rag.tool";
+export { SSETool } from "./sse.tool";
+export { HTTPTool } from "./http.tool";
+export { ShellDenylistTool } from "./shell-denylist.tool";
 
 // Tool registry
 export class ToolRegistry {
@@ -75,25 +75,35 @@ export class ToolRegistry {
    */
   private registerDefaultTools(): void {
     // Import and register default tools
-    import('./github.tool').then(({ GitHubTool }) => {
-      this.registerTool(new GitHubTool());
-    }).catch(console.error);
+    import("./github.tool")
+      .then(({ GitHubTool }) => {
+        this.registerTool(new GitHubTool());
+      })
+      .catch(console.error);
 
-    import('./rag.tool').then(({ RAGTool }) => {
-      this.registerTool(new RAGTool());
-    }).catch(console.error);
+    import("./rag.tool")
+      .then(({ RAGTool }) => {
+        this.registerTool(new RAGTool());
+      })
+      .catch(console.error);
 
-    import('./sse.tool').then(({ SSETool }) => {
-      this.registerTool(new SSETool());
-    }).catch(console.error);
+    import("./sse.tool")
+      .then(({ SSETool }) => {
+        this.registerTool(new SSETool());
+      })
+      .catch(console.error);
 
-    import('./http.tool').then(({ HTTPTool }) => {
-      this.registerTool(new HTTPTool());
-    }).catch(console.error);
+    import("./http.tool")
+      .then(({ HTTPTool }) => {
+        this.registerTool(new HTTPTool());
+      })
+      .catch(console.error);
 
-    import('./shell-denylist.tool').then(({ ShellDenylistTool }) => {
-      this.registerTool(new ShellDenylistTool());
-    }).catch(console.error);
+    import("./shell-denylist.tool")
+      .then(({ ShellDenylistTool }) => {
+        this.registerTool(new ShellDenylistTool());
+      })
+      .catch(console.error);
   }
 
   /**
@@ -106,14 +116,20 @@ export class ToolRegistry {
     totalCPUUsage: number;
   } {
     const tools = this.listTools();
-    const totalMemoryUsage = tools.reduce((sum, tool) => sum + tool.getQuotaUsage().memory, 0);
-    const totalCPUUsage = tools.reduce((sum, tool) => sum + tool.getQuotaUsage().cpu, 0);
+    const totalMemoryUsage = tools.reduce(
+      (sum, tool) => sum + tool.getQuotaUsage().memory,
+      0,
+    );
+    const totalCPUUsage = tools.reduce(
+      (sum, tool) => sum + tool.getQuotaUsage().cpu,
+      0,
+    );
 
     return {
       totalTools: tools.length,
-      toolNames: tools.map(t => t.name),
+      toolNames: tools.map((t) => t.name),
       totalMemoryUsage,
-      totalCPUUsage
+      totalCPUUsage,
     };
   }
 

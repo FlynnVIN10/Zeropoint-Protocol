@@ -7,7 +7,7 @@
 // All tags embed intent-validation; misuse halts propagation.
 
 export interface TagIdentity {
-  type: '#who';
+  type: "#who";
   name: string; // Human-readable name
   did: string; // Decentralized Identifier (DID)
   handle: string; // Symbolic handle, e.g., '@flynn-gm'
@@ -16,15 +16,15 @@ export interface TagIdentity {
 }
 
 export interface TagIntent {
-  type: '#intent';
+  type: "#intent";
   purpose: string; // Core motivation, e.g., '#build', '#heal', '#preserve'
-  validation: 'good-heart' | 'neutral' | 'halt'; // Ethical gate: auto-halt on misalignment
+  validation: "good-heart" | "neutral" | "halt"; // Ethical gate: auto-halt on misalignment
   // Example: { type: '#intent', purpose: '#build', validation: 'good-heart' }
   // TODO: amp.sdk mapping - amp.intent.verify(purpose)
 }
 
 export interface TagThread {
-  type: '#thread';
+  type: "#thread";
   taskId: string; // Unique task identifier
   lineage: string[]; // Array of parent message/event IDs
   swarmLink: string; // Petals/IPFS swarm event CID
@@ -32,18 +32,24 @@ export interface TagThread {
 }
 
 export interface TagLayer {
-  type: '#layer';
-  level: '#sandbox' | '#live' | '#meta' | '#training'; // Execution context
+  type: "#layer";
+  level: "#sandbox" | "#live" | "#meta" | "#training"; // Execution context
   // Example: { type: '#layer', level: '#sandbox' }
 }
 
 export interface TagDomain {
-  type: '#domain';
+  type: "#domain";
   field: string; // Knowledge cluster, e.g., '#ethics', '#code', '#memory'
   // Example: { type: '#domain', field: '#ethics' }
 }
 
-export type TagBundle = (TagIdentity | TagIntent | TagThread | TagLayer | TagDomain)[];
+export type TagBundle = (
+  | TagIdentity
+  | TagIntent
+  | TagThread
+  | TagLayer
+  | TagDomain
+)[];
 
 // Symbolic Injection Hook
 export function generateTagSet(agent: AgentMeta): TagBundle {
@@ -51,7 +57,7 @@ export function generateTagSet(agent: AgentMeta): TagBundle {
 
   // Core identity
   tags.push({
-    type: '#who',
+    type: "#who",
     name: agent.name,
     did: agent.did,
     handle: agent.handle,
@@ -60,26 +66,26 @@ export function generateTagSet(agent: AgentMeta): TagBundle {
   // Intent with ethical gate
   const intentValidation = validateIntent(agent.intent); // Stub: Implement Zeroth Principle check
   tags.push({
-    type: '#intent',
+    type: "#intent",
     purpose: agent.intent,
     validation: intentValidation,
   });
 
   // Thread lineage
   tags.push({
-    type: '#thread',
+    type: "#thread",
     taskId: agent.context.taskId,
     lineage: agent.context.lineage,
     swarmLink: agent.context.swarmLink,
   });
 
   // Layer and domain
-  tags.push({ type: '#layer', level: agent.context.layer });
-  tags.push({ type: '#domain', field: agent.context.domain });
+  tags.push({ type: "#layer", level: agent.context.layer });
+  tags.push({ type: "#domain", field: agent.context.domain });
 
   // Halt on ethical breach
-  if (intentValidation !== 'good-heart') {
-    throw new Error('Zeroth Principle violation: Propagation halted.');
+  if (intentValidation !== "good-heart") {
+    throw new Error("Zeroth Principle violation: Propagation halted.");
   }
 
   return tags;
@@ -95,16 +101,16 @@ export interface AgentMeta {
     taskId: string;
     lineage: string[];
     swarmLink: string;
-    layer: '#sandbox' | '#live' | '#meta' | '#training';
+    layer: "#sandbox" | "#live" | "#meta" | "#training";
     domain: string;
   };
 }
 
 // Stub: Intent validation logic (expand with NLP/chain analysis)
-function validateIntent(intent: string): 'good-heart' | 'neutral' | 'halt' {
+function validateIntent(intent: string): "good-heart" | "neutral" | "halt" {
   // Example: Semantic check for alignment
-  if (intent.includes('#destroy') || intent.includes('#harm')) return 'halt';
-  return 'good-heart';
+  if (intent.includes("#destroy") || intent.includes("#harm")) return "halt";
+  return "good-heart";
 }
 
 // JSON/IPFS export utility

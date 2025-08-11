@@ -1,14 +1,14 @@
 /**
  * Audit System - JSONL logging and webhook integration
- * 
+ *
  * @fileoverview Provides comprehensive audit logging for all Synthiant activities
  * @author Dev Team
  * @version 1.0.0
  */
 
-import { createWriteStream, WriteStream } from 'fs';
-import { createHmac } from 'crypto';
-import { EventEmitter } from 'events';
+import { createWriteStream, WriteStream } from "fs";
+import { createHmac } from "crypto";
+import { EventEmitter } from "events";
 
 // Types and interfaces
 export interface AuditEvent {
@@ -18,7 +18,7 @@ export interface AuditEvent {
   taskId?: string;
   action: string;
   resource: string;
-  outcome: 'success' | 'failure' | 'quota_exceeded' | 'security_violation';
+  outcome: "success" | "failure" | "quota_exceeded" | "security_violation";
   details: Record<string, any>;
   metadata: {
     version: string;
@@ -37,7 +37,7 @@ export interface AuditConfig {
   retentionDays: number;
   maxFileSize: number;
   enableCompression: boolean;
-  logLevel: 'debug' | 'info' | 'warn' | 'error';
+  logLevel: "debug" | "info" | "warn" | "error";
 }
 
 export interface WebhookPayload {
@@ -73,10 +73,10 @@ export class AuditSystem extends EventEmitter {
   async logEvent(
     action: string,
     resource: string,
-    outcome: AuditEvent['outcome'],
+    outcome: AuditEvent["outcome"],
     details: Record<string, any> = {},
     agentId?: string,
-    taskId?: string
+    taskId?: string,
   ): Promise<string> {
     const event: AuditEvent = {
       id: this.generateEventId(),
@@ -88,13 +88,13 @@ export class AuditSystem extends EventEmitter {
       outcome,
       details,
       metadata: {
-        version: '1.0.0',
-        source: 'synthiant-runtime',
-        environment: process.env.NODE_ENV || 'development',
+        version: "1.0.0",
+        source: "synthiant-runtime",
+        environment: process.env.NODE_ENV || "development",
         userAgent: details.userAgent,
-        ipAddress: details.ipAddress
+        ipAddress: details.ipAddress,
       },
-      signature: ''
+      signature: "",
     };
 
     // Generate signature
@@ -104,7 +104,7 @@ export class AuditSystem extends EventEmitter {
     this.eventBuffer.push(event);
 
     // Emit event for real-time processing
-    this.emit('audit_event', event);
+    this.emit("audit_event", event);
 
     // Flush if buffer is full
     if (this.eventBuffer.length >= this.bufferSize) {
@@ -122,9 +122,9 @@ export class AuditSystem extends EventEmitter {
     resource: string,
     details: Record<string, any> = {},
     agentId?: string,
-    taskId?: string
+    taskId?: string,
   ): Promise<string> {
-    return this.logEvent(action, resource, 'success', details, agentId, taskId);
+    return this.logEvent(action, resource, "success", details, agentId, taskId);
   }
 
   /**
@@ -136,13 +136,20 @@ export class AuditSystem extends EventEmitter {
     error: string,
     details: Record<string, any> = {},
     agentId?: string,
-    taskId?: string
+    taskId?: string,
   ): Promise<string> {
-    return this.logEvent(action, resource, 'failure', {
-      ...details,
-      error,
-      stack: new Error().stack
-    }, agentId, taskId);
+    return this.logEvent(
+      action,
+      resource,
+      "failure",
+      {
+        ...details,
+        error,
+        stack: new Error().stack,
+      },
+      agentId,
+      taskId,
+    );
   }
 
   /**
@@ -155,14 +162,21 @@ export class AuditSystem extends EventEmitter {
     current: number,
     limit: number,
     agentId?: string,
-    taskId?: string
+    taskId?: string,
   ): Promise<string> {
-    return this.logEvent(action, resource, 'quota_exceeded', {
-      quotaType,
-      current,
-      limit,
-      breach: current - limit
-    }, agentId, taskId);
+    return this.logEvent(
+      action,
+      resource,
+      "quota_exceeded",
+      {
+        quotaType,
+        current,
+        limit,
+        breach: current - limit,
+      },
+      agentId,
+      taskId,
+    );
   }
 
   /**
@@ -174,12 +188,19 @@ export class AuditSystem extends EventEmitter {
     violationType: string,
     details: Record<string, any> = {},
     agentId?: string,
-    taskId?: string
+    taskId?: string,
   ): Promise<string> {
-    return this.logEvent(action, resource, 'security_violation', {
-      violationType,
-      ...details
-    }, agentId, taskId);
+    return this.logEvent(
+      action,
+      resource,
+      "security_violation",
+      {
+        violationType,
+        ...details,
+      },
+      agentId,
+      taskId,
+    );
   }
 
   /**
@@ -200,12 +221,14 @@ export class AuditSystem extends EventEmitter {
       // Send to webhook
       await this.sendToWebhook(events);
 
-      this.emit('buffer_flushed', { count: events.length, timestamp: Date.now() });
-
+      this.emit("buffer_flushed", {
+        count: events.length,
+        timestamp: Date.now(),
+      });
     } catch (error) {
-      console.error('Failed to flush audit buffer:', error);
-      this.emit('flush_error', { error: error.message, events });
-      
+      console.error("Failed to flush audit buffer:", error);
+      this.emit("flush_error", { error: error.message, events });
+
       // Re-add events to buffer for retry
       this.eventBuffer.unshift(...events);
     }
@@ -231,7 +254,10 @@ export class AuditSystem extends EventEmitter {
   /**
    * Export audit log for specified time range
    */
-  async exportAuditLog(startTime: number, endTime: number): Promise<AuditEvent[]> {
+  async exportAuditLog(
+    startTime: number,
+    endTime: number,
+  ): Promise<AuditEvent[]> {
     // In a real implementation, this would read from the log file
     // For now, return empty array
     return [];
@@ -241,8 +267,9 @@ export class AuditSystem extends EventEmitter {
    * Clean up old audit logs
    */
   async cleanupOldLogs(): Promise<number> {
-    const cutoffTime = Date.now() - (this.config.retentionDays * 24 * 60 * 60 * 1000);
-    
+    const cutoffTime =
+      Date.now() - this.config.retentionDays * 24 * 60 * 60 * 1000;
+
     // In a real implementation, this would remove old log files
     // For now, return 0
     return 0;
@@ -253,21 +280,21 @@ export class AuditSystem extends EventEmitter {
    */
   async shutdown(): Promise<void> {
     this.isShuttingDown = true;
-    
+
     // Stop periodic flush
     if (this.flushInterval) {
       clearInterval(this.flushInterval);
     }
-    
+
     // Flush remaining buffer
     await this.flushBuffer();
-    
+
     // Close log stream
     if (this.logStream) {
       this.logStream.end();
     }
-    
-    this.emit('shutdown_complete');
+
+    this.emit("shutdown_complete");
   }
 
   /**
@@ -276,18 +303,18 @@ export class AuditSystem extends EventEmitter {
   private initializeLogging(): void {
     try {
       this.logStream = createWriteStream(this.config.logFilePath, {
-        flags: 'a',
-        encoding: 'utf8'
+        flags: "a",
+        encoding: "utf8",
       });
 
-      this.logStream.on('error', (error) => {
-        console.error('Audit log stream error:', error);
-        this.emit('log_error', error);
+      this.logStream.on("error", (error) => {
+        console.error("Audit log stream error:", error);
+        this.emit("log_error", error);
       });
 
       console.log(`Audit logging initialized: ${this.config.logFilePath}`);
     } catch (error) {
-      console.error('Failed to initialize audit logging:', error);
+      console.error("Failed to initialize audit logging:", error);
       throw error;
     }
   }
@@ -298,8 +325,8 @@ export class AuditSystem extends EventEmitter {
   private setupPeriodicFlush(): void {
     this.flushInterval = setInterval(() => {
       if (!this.isShuttingDown) {
-        this.flushBuffer().catch(error => {
-          console.error('Periodic flush failed:', error);
+        this.flushBuffer().catch((error) => {
+          console.error("Periodic flush failed:", error);
         });
       }
     }, 30000); // Flush every 30 seconds
@@ -309,19 +336,21 @@ export class AuditSystem extends EventEmitter {
    * Setup event handlers
    */
   private setupEventHandlers(): void {
-    this.on('audit_event', (event) => {
-      if (this.config.logLevel === 'debug') {
-        console.debug(`[Audit] ${event.action} on ${event.resource}: ${event.outcome}`);
+    this.on("audit_event", (event) => {
+      if (this.config.logLevel === "debug") {
+        console.debug(
+          `[Audit] ${event.action} on ${event.resource}: ${event.outcome}`,
+        );
       }
     });
 
-    this.on('buffer_flushed', (data) => {
-      if (this.config.logLevel === 'info') {
+    this.on("buffer_flushed", (data) => {
+      if (this.config.logLevel === "info") {
         console.info(`[Audit] Buffer flushed: ${data.count} events`);
       }
     });
 
-    this.on('flush_error', (data) => {
+    this.on("flush_error", (data) => {
       console.error(`[Audit] Flush error: ${data.error}`);
     });
   }
@@ -331,17 +360,17 @@ export class AuditSystem extends EventEmitter {
    */
   private async writeToLogFile(events: AuditEvent[]): Promise<void> {
     if (!this.logStream) {
-      throw new Error('Log stream not initialized');
+      throw new Error("Log stream not initialized");
     }
 
     for (const event of events) {
-      const logLine = JSON.stringify(event) + '\n';
+      const logLine = JSON.stringify(event) + "\n";
       this.logStream.write(logLine);
     }
 
     // Ensure data is written
     await new Promise<void>((resolve, reject) => {
-      this.logStream!.write('', (error) => {
+      this.logStream!.write("", (error) => {
         if (error) reject(error);
         else resolve();
       });
@@ -360,7 +389,7 @@ export class AuditSystem extends EventEmitter {
       events,
       batchId: this.generateBatchId(),
       timestamp: Date.now(),
-      signature: ''
+      signature: "",
     };
 
     // Generate webhook signature
@@ -368,32 +397,33 @@ export class AuditSystem extends EventEmitter {
 
     try {
       const response = await fetch(this.config.webhookUrl, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'Synthiant-Audit/1.0.0'
+          "Content-Type": "application/json",
+          "User-Agent": "Synthiant-Audit/1.0.0",
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
-        throw new Error(`Webhook failed: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `Webhook failed: ${response.status} ${response.statusText}`,
+        );
       }
 
-      this.emit('webhook_sent', { 
-        batchId: payload.batchId, 
+      this.emit("webhook_sent", {
+        batchId: payload.batchId,
         eventCount: events.length,
-        status: response.status 
+        status: response.status,
+      });
+    } catch (error) {
+      console.error("Webhook delivery failed:", error);
+      this.emit("webhook_error", {
+        error: error.message,
+        batchId: payload.batchId,
+        eventCount: events.length,
       });
 
-    } catch (error) {
-      console.error('Webhook delivery failed:', error);
-      this.emit('webhook_error', { 
-        error: error.message, 
-        batchId: payload.batchId,
-        eventCount: events.length 
-      });
-      
       // In a real implementation, you might want to retry or queue failed webhooks
     }
   }
@@ -415,49 +445,53 @@ export class AuditSystem extends EventEmitter {
   /**
    * Sign audit event
    */
-  private signEvent(event: Omit<AuditEvent, 'signature'>): string {
+  private signEvent(event: Omit<AuditEvent, "signature">): string {
     const data = JSON.stringify(event);
-    
-    return createHmac('sha256', this.config.webhookSecret)
+
+    return createHmac("sha256", this.config.webhookSecret)
       .update(data)
-      .digest('hex');
+      .digest("hex");
   }
 
   /**
    * Sign webhook payload
    */
-  private signWebhookPayload(payload: Omit<WebhookPayload, 'signature'>): string {
+  private signWebhookPayload(
+    payload: Omit<WebhookPayload, "signature">,
+  ): string {
     const data = JSON.stringify(payload);
-    
-    return createHmac('sha256', this.config.webhookSecret)
+
+    return createHmac("sha256", this.config.webhookSecret)
       .update(data)
-      .digest('hex');
+      .digest("hex");
   }
 }
 
 // Default configuration
 export const defaultAuditConfig: AuditConfig = {
-  logFilePath: './logs/audit.jsonl',
-  webhookUrl: process.env.AUDIT_WEBHOOK_URL || 'http://localhost:3000/audit/events',
-  webhookSecret: process.env.AUDIT_WEBHOOK_SECRET || 'default-secret-change-in-production',
+  logFilePath: "./logs/audit.jsonl",
+  webhookUrl:
+    process.env.AUDIT_WEBHOOK_URL || "http://localhost:3000/audit/events",
+  webhookSecret:
+    process.env.AUDIT_WEBHOOK_SECRET || "default-secret-change-in-production",
   retentionDays: 90,
   maxFileSize: 100 * 1024 * 1024, // 100MB
   enableCompression: true,
-  logLevel: 'info'
+  logLevel: "info",
 };
 
 // Export singleton instance
 export const auditSystem = new AuditSystem(defaultAuditConfig);
 
 // Graceful shutdown handling
-process.on('SIGINT', async () => {
-  console.log('Shutting down audit system...');
+process.on("SIGINT", async () => {
+  console.log("Shutting down audit system...");
   await auditSystem.shutdown();
   process.exit(0);
 });
 
-process.on('SIGTERM', async () => {
-  console.log('Shutting down audit system...');
+process.on("SIGTERM", async () => {
+  console.log("Shutting down audit system...");
   await auditSystem.shutdown();
   process.exit(0);
 });

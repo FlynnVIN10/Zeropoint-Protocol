@@ -1,12 +1,12 @@
 /**
  * SSE Tool - Server-Sent Events for Synthiant agents
- * 
+ *
  * @fileoverview Provides real-time data streaming capabilities for Synthiant agents
  * @author Dev Team
  * @version 1.0.0
  */
 
-import { ToolInterface, ResourceUsage } from './index';
+import { ToolInterface, ResourceUsage } from "./index";
 
 export interface SSEConfig {
   maxConnections: number;
@@ -34,7 +34,7 @@ export interface SSEConnection {
 }
 
 export interface SSEMessage {
-  type: 'connect' | 'disconnect' | 'event' | 'heartbeat';
+  type: "connect" | "disconnect" | "event" | "heartbeat";
   data: any;
   timestamp: number;
 }
@@ -44,10 +44,16 @@ export interface SSEMessage {
  * Provides real-time event streaming capabilities
  */
 export class SSETool implements ToolInterface {
-  public readonly name = 'sse';
-  public readonly version = '1.0.0';
-  public readonly description = 'Server-Sent Events tool for real-time data streaming';
-  public readonly capabilities = ['streaming', 'events', 'realtime', 'broadcast'];
+  public readonly name = "sse";
+  public readonly version = "1.0.0";
+  public readonly description =
+    "Server-Sent Events tool for real-time data streaming";
+  public readonly capabilities = [
+    "streaming",
+    "events",
+    "realtime",
+    "broadcast",
+  ];
 
   private config: SSEConfig;
   private connections: Map<string, SSEConnection> = new Map();
@@ -63,7 +69,7 @@ export class SSETool implements ToolInterface {
       maxEventSize: 1024 * 1024, // 1MB
       enableCompression: true,
       rateLimitPerMinute: 1000,
-      ...config
+      ...config,
     };
 
     this.startHeartbeat();
@@ -77,21 +83,21 @@ export class SSETool implements ToolInterface {
       const { action, ...actionParams } = params;
 
       switch (action) {
-        case 'connect':
+        case "connect":
           return this.connect(actionParams.agentId, actionParams.connectionId);
-        case 'disconnect':
+        case "disconnect":
           return this.disconnect(actionParams.connectionId);
-        case 'send':
+        case "send":
           return this.sendEvent(actionParams.connectionId, actionParams.event);
-        case 'broadcast':
+        case "broadcast":
           return this.broadcastEvent(actionParams.event, actionParams.filter);
-        case 'status':
+        case "status":
           return this.getConnectionStatus(actionParams.connectionId);
         default:
           throw new Error(`Unknown SSE action: ${action}`);
       }
     } catch (error) {
-      console.error('SSE tool execution failed:', error);
+      console.error("SSE tool execution failed:", error);
       throw error;
     }
   }
@@ -100,32 +106,41 @@ export class SSETool implements ToolInterface {
    * Validate parameters
    */
   validateParams(params: any): boolean {
-    if (!params || typeof params !== 'object') {
+    if (!params || typeof params !== "object") {
       return false;
     }
 
-    if (!params.action || typeof params.action !== 'string') {
+    if (!params.action || typeof params.action !== "string") {
       return false;
     }
 
-    const validActions = ['connect', 'disconnect', 'send', 'broadcast', 'status'];
+    const validActions = [
+      "connect",
+      "disconnect",
+      "send",
+      "broadcast",
+      "status",
+    ];
     if (!validActions.includes(params.action)) {
       return false;
     }
 
     // Validate action-specific parameters
     switch (params.action) {
-      case 'connect':
-        return params.agentId && typeof params.agentId === 'string';
-      case 'disconnect':
-      case 'status':
-        return params.connectionId && typeof params.connectionId === 'string';
-      case 'send':
-        return params.connectionId && params.event && 
-               typeof params.connectionId === 'string' && 
-               typeof params.event === 'object';
-      case 'broadcast':
-        return params.event && typeof params.event === 'object';
+      case "connect":
+        return params.agentId && typeof params.agentId === "string";
+      case "disconnect":
+      case "status":
+        return params.connectionId && typeof params.connectionId === "string";
+      case "send":
+        return (
+          params.connectionId &&
+          params.event &&
+          typeof params.connectionId === "string" &&
+          typeof params.event === "object"
+        );
+      case "broadcast":
+        return params.event && typeof params.event === "object";
       default:
         return false;
     }
@@ -135,39 +150,46 @@ export class SSETool implements ToolInterface {
    * Get current resource usage
    */
   getQuotaUsage(): ResourceUsage {
-    const activeConnections = Array.from(this.connections.values()).filter(c => c.isActive);
-    
+    const activeConnections = Array.from(this.connections.values()).filter(
+      (c) => c.isActive,
+    );
+
     return {
       memory: activeConnections.length * 0.5, // 0.5MB per connection
       cpu: activeConnections.length * 0.01, // 0.01 CPU per connection
       time: 0,
       tokens: this.messageCount * 10, // 10 tokens per message
       network: activeConnections.length * 0.1, // 0.1MB per connection
-      fileOps: 0
+      fileOps: 0,
     };
   }
 
   /**
    * Connect a new SSE client
    */
-  private async connect(agentId: string, connectionId?: string): Promise<{ connectionId: string; status: string }> {
+  private async connect(
+    agentId: string,
+    connectionId?: string,
+  ): Promise<{ connectionId: string; status: string }> {
     // Check connection limits
     if (this.connections.size >= this.config.maxConnections) {
-      throw new Error('Maximum connections exceeded');
+      throw new Error("Maximum connections exceeded");
     }
 
     // Check rate limits
     this.checkRateLimit();
 
-    const id = connectionId || `sse_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+    const id =
+      connectionId ||
+      `sse_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
     const connection: SSEConnection = {
       id,
       agentId,
       connectedAt: Date.now(),
       lastHeartbeat: Date.now(),
       eventCount: 0,
-      isActive: true
+      isActive: true,
     };
 
     this.connections.set(id, connection);
@@ -177,7 +199,7 @@ export class SSETool implements ToolInterface {
 
     return {
       connectionId: id,
-      status: 'connected'
+      status: "connected",
     };
   }
 
@@ -187,7 +209,7 @@ export class SSETool implements ToolInterface {
   private async disconnect(connectionId: string): Promise<{ status: string }> {
     const connection = this.connections.get(connectionId);
     if (!connection) {
-      throw new Error('Connection not found');
+      throw new Error("Connection not found");
     }
 
     connection.isActive = false;
@@ -196,21 +218,24 @@ export class SSETool implements ToolInterface {
 
     console.log(`SSE connection closed: ${connectionId}`);
 
-    return { status: 'disconnected' };
+    return { status: "disconnected" };
   }
 
   /**
    * Send event to specific connection
    */
-  private async sendEvent(connectionId: string, event: SSEEvent): Promise<{ status: string; messageId: string }> {
+  private async sendEvent(
+    connectionId: string,
+    event: SSEEvent,
+  ): Promise<{ status: string; messageId: string }> {
     const connection = this.connections.get(connectionId);
     if (!connection || !connection.isActive) {
-      throw new Error('Connection not found or inactive');
+      throw new Error("Connection not found or inactive");
     }
 
     // Validate event size
     if (JSON.stringify(event).length > this.config.maxEventSize) {
-      throw new Error('Event size exceeds maximum allowed size');
+      throw new Error("Event size exceeds maximum allowed size");
     }
 
     // Add event to queue
@@ -225,17 +250,22 @@ export class SSETool implements ToolInterface {
     this.messageCount++;
 
     return {
-      status: 'sent',
-      messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+      status: "sent",
+      messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
   }
 
   /**
    * Broadcast event to all connections
    */
-  private async broadcastEvent(event: SSEEvent, filter?: (connection: SSEConnection) => boolean): Promise<{ status: string; sentCount: number }> {
+  private async broadcastEvent(
+    event: SSEEvent,
+    filter?: (connection: SSEConnection) => boolean,
+  ): Promise<{ status: string; sentCount: number }> {
     let sentCount = 0;
-    const activeConnections = Array.from(this.connections.values()).filter(c => c.isActive);
+    const activeConnections = Array.from(this.connections.values()).filter(
+      (c) => c.isActive,
+    );
 
     for (const connection of activeConnections) {
       // Apply filter if provided
@@ -247,20 +277,25 @@ export class SSETool implements ToolInterface {
         await this.sendEvent(connection.id, event);
         sentCount++;
       } catch (error) {
-        console.error(`Failed to send broadcast to connection ${connection.id}:`, error);
+        console.error(
+          `Failed to send broadcast to connection ${connection.id}:`,
+          error,
+        );
       }
     }
 
     return {
-      status: 'broadcasted',
-      sentCount
+      status: "broadcasted",
+      sentCount,
     };
   }
 
   /**
    * Get connection status
    */
-  private async getConnectionStatus(connectionId: string): Promise<SSEConnection | null> {
+  private async getConnectionStatus(
+    connectionId: string,
+  ): Promise<SSEConnection | null> {
     return this.connections.get(connectionId) || null;
   }
 
@@ -269,7 +304,7 @@ export class SSETool implements ToolInterface {
    */
   private checkRateLimit(): void {
     const now = Date.now();
-    const minuteAgo = now - (60 * 1000);
+    const minuteAgo = now - 60 * 1000;
 
     // Reset counter if minute has passed
     if (now - this.lastReset > 60 * 1000) {
@@ -279,7 +314,9 @@ export class SSETool implements ToolInterface {
 
     // Check if rate limit exceeded
     if (this.messageCount >= this.config.rateLimitPerMinute) {
-      throw new Error(`Rate limit exceeded: ${this.config.rateLimitPerMinute} messages per minute`);
+      throw new Error(
+        `Rate limit exceeded: ${this.config.rateLimitPerMinute} messages per minute`,
+      );
     }
   }
 
@@ -313,7 +350,7 @@ export class SSETool implements ToolInterface {
    * Get all active connections
    */
   getActiveConnections(): SSEConnection[] {
-    return Array.from(this.connections.values()).filter(c => c.isActive);
+    return Array.from(this.connections.values()).filter((c) => c.isActive);
   }
 
   /**
@@ -326,14 +363,17 @@ export class SSETool implements ToolInterface {
     averageMessagesPerConnection: number;
   } {
     const activeConnections = this.getActiveConnections();
-    const avgMessages = activeConnections.length > 0 ? 
-      activeConnections.reduce((sum, c) => sum + c.eventCount, 0) / activeConnections.length : 0;
+    const avgMessages =
+      activeConnections.length > 0
+        ? activeConnections.reduce((sum, c) => sum + c.eventCount, 0) /
+          activeConnections.length
+        : 0;
 
     return {
       totalConnections: this.connections.size,
       activeConnections: activeConnections.length,
       totalMessages: this.messageCount,
-      averageMessagesPerConnection: avgMessages
+      averageMessagesPerConnection: avgMessages,
     };
   }
 

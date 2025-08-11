@@ -6,9 +6,9 @@
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // XP rewards ethical alignment, creativity, tag depth.
 
-import { TagBundle } from '../../core/identity/tags.meta.js'; // Tag dependency
-import { checkIntent } from '../../guards/synthient.guard.js'; // Ethical firewall
-import { soulchain } from '../soulchain/soulchain.ledger.js'; // Soulchain integration
+import { TagBundle } from "../../core/identity/tags.meta.js"; // Tag dependency
+import { checkIntent } from "../../guards/synthient.guard.js"; // Ethical firewall
+import { soulchain } from "../soulchain/soulchain.ledger.js"; // Soulchain integration
 
 /**
  * Calculate XP based on tag bundle (intent, domain, lineage depth).
@@ -22,13 +22,18 @@ export async function calculateXP(tags: TagBundle): Promise<number> {
   xp += tags.length * 10;
 
   // Bonus for ethical intent
-  const intentTag = tags.find(t => t.type === '#intent') as { purpose: string, validation: string };
-  if (intentTag && intentTag.validation === 'good-heart') {
+  const intentTag = tags.find((t) => t.type === "#intent") as {
+    purpose: string;
+    validation: string;
+  };
+  if (intentTag && intentTag.validation === "good-heart") {
     xp += 50;
   }
 
   // Depth bonus for lineage
-  const threadTag = tags.find(t => t.type === '#thread') as { lineage: string[] };
+  const threadTag = tags.find((t) => t.type === "#thread") as {
+    lineage: string[];
+  };
   if (threadTag) {
     xp += threadTag.lineage.length * 5;
   }
@@ -40,9 +45,9 @@ export async function calculateXP(tags: TagBundle): Promise<number> {
 
   // Log to Soulchain
   const transaction = {
-    agentId: 'testAgent', // Stub; derive from context
+    agentId: "testAgent", // Stub; derive from context
     amount: xp,
-    rationale: 'Ethical action rewarded',
+    rationale: "Ethical action rewarded",
     timestamp: new Date().toISOString(),
     previousCid: null, // Stub; fetch last CID
     tags,
@@ -58,7 +63,10 @@ export async function calculateXP(tags: TagBundle): Promise<number> {
  * @param amount XP to add
  * @returns Updated state (stubbed)
  */
-export function applyXP(agentId: string, amount: number): { xp: number, levelDelta: number } {
+export function applyXP(
+  agentId: string,
+  amount: number,
+): { xp: number; levelDelta: number } {
   // Stub: Fetch current XP (integrate with memory)
   const currentXP = 0; // Placeholder
   const newXP = currentXP + amount;
@@ -75,11 +83,11 @@ export function applyXP(agentId: string, amount: number): { xp: number, levelDel
  * @param agentId Agent ID
  * @returns Level string
  */
-export function getLevel(agentId: string): string {
+export function getLevel(_agentId: string): string {
   // Stub: Fetch XP (integrate with memory)
   const xp = 0; // Placeholder
 
-  if (xp > 1000) return 'Ascendant';
-  if (xp > 500) return 'Mirrorthinker';
-  return 'Initiate';
+  if (xp > 1000) return "Ascendant";
+  if (xp > 500) return "Mirrorthinker";
+  return "Initiate";
 }

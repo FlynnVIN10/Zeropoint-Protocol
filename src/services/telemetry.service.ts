@@ -1,8 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { InfluxDB, Point, WriteApi } from '@influxdata/influxdb-client';
+import { Injectable, Logger } from "@nestjs/common";
+import { InfluxDB, Point, WriteApi } from "@influxdata/influxdb-client";
 
 export interface TrainingTelemetryEvent {
-  event: 'training_cycle_completed' | 'training_cycle_failed';
+  event: "training_cycle_completed" | "training_cycle_failed";
   cycleId?: string;
   agentId: string;
   timestamp: number;
@@ -16,12 +16,16 @@ export interface TrainingTelemetryEvent {
 }
 
 export interface ConsensusTelemetryEvent {
-  event: 'proposal_created' | 'sentient_voted' | 'human_voted' | 'proposal_finalized';
+  event:
+    | "proposal_created"
+    | "sentient_voted"
+    | "human_voted"
+    | "proposal_finalized";
   proposalId: string;
   agentId?: string;
   voterId?: string;
   vote?: boolean;
-  role?: 'sentient' | 'human';
+  role?: "sentient" | "human";
   timestamp: number;
   details?: any;
 }
@@ -44,13 +48,13 @@ export class TelemetryService {
 
   constructor() {
     // Initialize InfluxDB connection
-    const url = process.env.INFLUXDB_URL || 'http://localhost:8086';
-    const token = process.env.INFLUXDB_TOKEN || 'your-token';
-    const org = process.env.INFLUXDB_ORG || 'zeropoint';
-    const bucket = process.env.INFLUXDB_BUCKET || 'telemetry';
+    const url = process.env.INFLUXDB_URL || "http://localhost:8086";
+    const token = process.env.INFLUXDB_TOKEN || "your-token";
+    const org = process.env.INFLUXDB_ORG || "zeropoint";
+    const bucket = process.env.INFLUXDB_BUCKET || "telemetry";
 
     this.influxDB = new InfluxDB({ url, token });
-    this.writeApi = this.influxDB.getWriteApi(org, bucket, 'ms');
+    this.writeApi = this.influxDB.getWriteApi(org, bucket, "ms");
 
     // Note: InfluxDB WriteApi doesn't have event listeners in this version
     // Error handling is done through try-catch blocks
@@ -62,25 +66,26 @@ export class TelemetryService {
 
     try {
       // Create InfluxDB point
-      const point = new Point('telemetry_event')
-        .tag('category', category)
-        .tag('action', action)
-        .tag('service', 'zeropoint-api')
-        .tag('environment', process.env.NODE_ENV || 'development')
-        .intField('timestamp', timestamp)
-        .stringField('data', JSON.stringify(data));
+      const point = new Point("telemetry_event")
+        .tag("category", category)
+        .tag("action", action)
+        .tag("service", "zeropoint-api")
+        .tag("environment", process.env.NODE_ENV || "development")
+        .intField("timestamp", timestamp)
+        .stringField("data", JSON.stringify(data));
 
       // Add additional tags from data if available
-      if (data.agentId) point.tag('agent_id', data.agentId);
-      if (data.cycleId) point.tag('cycle_id', data.cycleId);
-      if (data.proposalId) point.tag('proposal_id', data.proposalId);
-      if (data.sandboxId) point.tag('sandbox_id', data.sandboxId);
+      if (data.agentId) point.tag("agent_id", data.agentId);
+      if (data.cycleId) point.tag("cycle_id", data.cycleId);
+      if (data.proposalId) point.tag("proposal_id", data.proposalId);
+      if (data.sandboxId) point.tag("sandbox_id", data.sandboxId);
 
       // Add numeric fields for metrics
-      if (data.latency) point.floatField('latency', data.latency);
-      if (data.tokensUsed) point.intField('tokens_used', data.tokensUsed);
-      if (data.confidence) point.floatField('confidence', data.confidence);
-      if (data.responseLength) point.intField('response_length', data.responseLength);
+      if (data.latency) point.floatField("latency", data.latency);
+      if (data.tokensUsed) point.intField("tokens_used", data.tokensUsed);
+      if (data.confidence) point.floatField("confidence", data.confidence);
+      if (data.responseLength)
+        point.intField("response_length", data.responseLength);
 
       // Write to InfluxDB
       await this.writeApi.writePoint(point);
@@ -90,22 +95,23 @@ export class TelemetryService {
       this.updateEventStats(category, action, data);
 
       this.logger.debug(`Telemetry event logged: ${category}.${action}`);
-
     } catch (error) {
       this.logger.error(`Failed to log telemetry event: ${error.message}`);
-      
+
       // Fallback to local storage
       this.storeEventLocally(category, action, data, timestamp);
     }
   }
 
   async emitTrainingTelemetry(event: TrainingTelemetryEvent): Promise<void> {
-    this.logger.log(`Emitting training telemetry: ${event.event} for agent ${event.agentId}`);
-    
+    this.logger.log(
+      `Emitting training telemetry: ${event.event} for agent ${event.agentId}`,
+    );
+
     this.trainingEvents.push(event);
 
     // Log to InfluxDB
-    await this.logEvent('training', event.event, {
+    await this.logEvent("training", event.event, {
       agentId: event.agentId,
       cycleId: event.cycleId,
       metrics: event.metrics,
@@ -116,21 +122,27 @@ export class TelemetryService {
     // Log the telemetry event
     this.logger.log(`Training Telemetry: ${JSON.stringify(event)}`);
 
-    if (event.event === 'training_cycle_completed') {
+    if (event.event === "training_cycle_completed") {
       this.logger.log(`Training cycle ${event.cycleId} completed successfully`);
-      this.logger.log(`Metrics: Loss=${event.metrics?.loss}, Accuracy=${event.metrics?.accuracy}, Duration=${event.metrics?.duration}ms`);
-    } else if (event.event === 'training_cycle_failed') {
-      this.logger.error(`Training cycle failed for agent ${event.agentId}: ${event.error}`);
+      this.logger.log(
+        `Metrics: Loss=${event.metrics?.loss}, Accuracy=${event.metrics?.accuracy}, Duration=${event.metrics?.duration}ms`,
+      );
+    } else if (event.event === "training_cycle_failed") {
+      this.logger.error(
+        `Training cycle failed for agent ${event.agentId}: ${event.error}`,
+      );
     }
   }
 
   async emitConsensusTelemetry(event: ConsensusTelemetryEvent): Promise<void> {
-    this.logger.log(`Emitting consensus telemetry: ${event.event} for proposal ${event.proposalId}`);
-    
+    this.logger.log(
+      `Emitting consensus telemetry: ${event.event} for proposal ${event.proposalId}`,
+    );
+
     this.consensusEvents.push(event);
 
     // Log to InfluxDB
-    await this.logEvent('consensus', event.event, {
+    await this.logEvent("consensus", event.event, {
       proposalId: event.proposalId,
       agentId: event.agentId,
       voterId: event.voterId,
@@ -144,52 +156,80 @@ export class TelemetryService {
     this.logger.log(`Consensus Telemetry: ${JSON.stringify(event)}`);
 
     switch (event.event) {
-      case 'proposal_created':
-        this.logger.log(`Proposal ${event.proposalId} created by agent ${event.agentId}`);
+      case "proposal_created":
+        this.logger.log(
+          `Proposal ${event.proposalId} created by agent ${event.agentId}`,
+        );
         break;
-      case 'sentient_voted':
-        this.logger.log(`Sentient ${event.voterId} voted ${event.vote ? 'APPROVE' : 'VETO'} on proposal ${event.proposalId}`);
+      case "sentient_voted":
+        this.logger.log(
+          `Sentient ${event.voterId} voted ${event.vote ? "APPROVE" : "VETO"} on proposal ${event.proposalId}`,
+        );
         break;
-      case 'human_voted':
-        this.logger.log(`Human ${event.voterId} voted ${event.vote ? 'APPROVE' : 'VETO'} on proposal ${event.proposalId}`);
+      case "human_voted":
+        this.logger.log(
+          `Human ${event.voterId} voted ${event.vote ? "APPROVE" : "VETO"} on proposal ${event.proposalId}`,
+        );
         break;
-      case 'proposal_finalized':
-        this.logger.log(`Proposal ${event.proposalId} finalized with status: ${event.details?.status}`);
+      case "proposal_finalized":
+        this.logger.log(
+          `Proposal ${event.proposalId} finalized with status: ${event.details?.status}`,
+        );
         break;
     }
   }
 
-  async getTrainingTelemetry(agentId?: string, startTime?: number, endTime?: number): Promise<TrainingTelemetryEvent[]> {
+  async getTrainingTelemetry(
+    agentId?: string,
+    startTime?: number,
+    endTime?: number,
+  ): Promise<TrainingTelemetryEvent[]> {
     let filteredEvents = this.trainingEvents;
 
     if (agentId) {
-      filteredEvents = filteredEvents.filter(event => event.agentId === agentId);
+      filteredEvents = filteredEvents.filter(
+        (event) => event.agentId === agentId,
+      );
     }
 
     if (startTime) {
-      filteredEvents = filteredEvents.filter(event => event.timestamp >= startTime);
+      filteredEvents = filteredEvents.filter(
+        (event) => event.timestamp >= startTime,
+      );
     }
 
     if (endTime) {
-      filteredEvents = filteredEvents.filter(event => event.timestamp <= endTime);
+      filteredEvents = filteredEvents.filter(
+        (event) => event.timestamp <= endTime,
+      );
     }
 
     return filteredEvents;
   }
 
-  async getConsensusTelemetry(proposalId?: string, startTime?: number, endTime?: number): Promise<ConsensusTelemetryEvent[]> {
+  async getConsensusTelemetry(
+    proposalId?: string,
+    startTime?: number,
+    endTime?: number,
+  ): Promise<ConsensusTelemetryEvent[]> {
     let filteredEvents = this.consensusEvents;
 
     if (proposalId) {
-      filteredEvents = filteredEvents.filter(event => event.proposalId === proposalId);
+      filteredEvents = filteredEvents.filter(
+        (event) => event.proposalId === proposalId,
+      );
     }
 
     if (startTime) {
-      filteredEvents = filteredEvents.filter(event => event.timestamp >= startTime);
+      filteredEvents = filteredEvents.filter(
+        (event) => event.timestamp >= startTime,
+      );
     }
 
     if (endTime) {
-      filteredEvents = filteredEvents.filter(event => event.timestamp <= endTime);
+      filteredEvents = filteredEvents.filter(
+        (event) => event.timestamp <= endTime,
+      );
     }
 
     return filteredEvents;
@@ -197,23 +237,40 @@ export class TelemetryService {
 
   async getTelemetrySummary(): Promise<any> {
     const now = Date.now();
-    const last24Hours = now - (24 * 60 * 60 * 1000);
+    const last24Hours = now - 24 * 60 * 60 * 1000;
 
-    const recentTrainingEvents = this.trainingEvents.filter(event => event.timestamp >= last24Hours);
-    const recentConsensusEvents = this.consensusEvents.filter(event => event.timestamp >= last24Hours);
+    const recentTrainingEvents = this.trainingEvents.filter(
+      (event) => event.timestamp >= last24Hours,
+    );
+    const recentConsensusEvents = this.consensusEvents.filter(
+      (event) => event.timestamp >= last24Hours,
+    );
 
     const trainingStats = {
-      totalCycles: recentTrainingEvents.filter(e => e.event === 'training_cycle_completed').length,
-      failedCycles: recentTrainingEvents.filter(e => e.event === 'training_cycle_failed').length,
-      successRate: recentTrainingEvents.length > 0 
-        ? recentTrainingEvents.filter(e => e.event === 'training_cycle_completed').length / recentTrainingEvents.length 
-        : 0,
+      totalCycles: recentTrainingEvents.filter(
+        (e) => e.event === "training_cycle_completed",
+      ).length,
+      failedCycles: recentTrainingEvents.filter(
+        (e) => e.event === "training_cycle_failed",
+      ).length,
+      successRate:
+        recentTrainingEvents.length > 0
+          ? recentTrainingEvents.filter(
+              (e) => e.event === "training_cycle_completed",
+            ).length / recentTrainingEvents.length
+          : 0,
     };
 
     const consensusStats = {
-      totalProposals: recentConsensusEvents.filter(e => e.event === 'proposal_created').length,
-      totalVotes: recentConsensusEvents.filter(e => e.event === 'sentient_voted' || e.event === 'human_voted').length,
-      finalizedProposals: recentConsensusEvents.filter(e => e.event === 'proposal_finalized').length,
+      totalProposals: recentConsensusEvents.filter(
+        (e) => e.event === "proposal_created",
+      ).length,
+      totalVotes: recentConsensusEvents.filter(
+        (e) => e.event === "sentient_voted" || e.event === "human_voted",
+      ).length,
+      finalizedProposals: recentConsensusEvents.filter(
+        (e) => e.event === "proposal_finalized",
+      ).length,
     };
 
     return {
@@ -236,28 +293,30 @@ export class TelemetryService {
     return stats;
   }
 
-  async getMetrics(timeRange: string = '1h'): Promise<any> {
+  async getMetrics(timeRange: string = "1h"): Promise<any> {
     try {
-      const queryApi = this.influxDB.getQueryApi(process.env.INFLUXDB_ORG || 'zeropoint');
-      
+      const queryApi = this.influxDB.getQueryApi(
+        process.env.INFLUXDB_ORG || "zeropoint",
+      );
+
       // Query for various metrics
       const queries = [
         // Training metrics
-        `from(bucket: "${process.env.INFLUXDB_BUCKET || 'telemetry'}")
+        `from(bucket: "${process.env.INFLUXDB_BUCKET || "telemetry"}")
           |> range(start: -${timeRange})
           |> filter(fn: (r) => r["_measurement"] == "telemetry_event" and r["category"] == "training")
           |> group()
           |> count()`,
-        
+
         // Generation metrics
-        `from(bucket: "${process.env.INFLUXDB_BUCKET || 'telemetry'}")
+        `from(bucket: "${process.env.INFLUXDB_BUCKET || "telemetry"}")
           |> range(start: -${timeRange})
           |> filter(fn: (r) => r["_measurement"] == "telemetry_event" and r["category"] == "generation")
           |> group()
           |> mean(column: "_value")`,
-        
+
         // Consensus metrics
-        `from(bucket: "${process.env.INFLUXDB_BUCKET || 'telemetry'}")
+        `from(bucket: "${process.env.INFLUXDB_BUCKET || "telemetry"}")
           |> range(start: -${timeRange})
           |> filter(fn: (r) => r["_measurement"] == "telemetry_event" and r["category"] == "consensus")
           |> group()
@@ -265,7 +324,7 @@ export class TelemetryService {
       ];
 
       const results = await Promise.all(
-        queries.map(query => queryApi.queryRaw(query))
+        queries.map((query) => queryApi.queryRaw(query)),
       );
 
       return {
@@ -274,7 +333,6 @@ export class TelemetryService {
         consensus: this.parseQueryResult(results[2]),
         timestamp: Date.now(),
       };
-
     } catch (error) {
       this.logger.error(`Failed to query metrics: ${error.message}`);
       return {
@@ -303,7 +361,7 @@ export class TelemetryService {
     } catch (error) {
       this.logger.warn(`Failed to parse query result: ${error.message}`);
     }
-    
+
     return { value: 0, timestamp: Date.now() };
   }
 
@@ -319,28 +377,37 @@ export class TelemetryService {
     };
 
     currentStats.total++;
-    
-    if (action.includes('completed') || action.includes('success')) {
+
+    if (action.includes("completed") || action.includes("success")) {
       currentStats.successful++;
-    } else if (action.includes('failed') || action.includes('error')) {
+    } else if (action.includes("failed") || action.includes("error")) {
       currentStats.failed++;
     }
 
     // Update average latency
     if (data.latency) {
-      currentStats.avgLatency = (currentStats.avgLatency * (currentStats.total - 1) + data.latency) / currentStats.total;
+      currentStats.avgLatency =
+        (currentStats.avgLatency * (currentStats.total - 1) + data.latency) /
+        currentStats.total;
     }
 
     // Update average tokens
     if (data.tokensUsed) {
-      currentStats.avgTokens = (currentStats.avgTokens * (currentStats.total - 1) + data.tokensUsed) / currentStats.total;
+      currentStats.avgTokens =
+        (currentStats.avgTokens * (currentStats.total - 1) + data.tokensUsed) /
+        currentStats.total;
     }
 
     currentStats.lastUpdated = Date.now();
     this.eventStats.set(key, currentStats);
   }
 
-  private storeEventLocally(category: string, action: string, data: any, timestamp: number): void {
+  private storeEventLocally(
+    category: string,
+    action: string,
+    data: any,
+    timestamp: number,
+  ): void {
     // Fallback storage when InfluxDB is unavailable
     const event: TelemetryEvent = {
       category,
@@ -350,35 +417,45 @@ export class TelemetryService {
     };
 
     // Store in appropriate local array based on category
-    if (category === 'training') {
+    if (category === "training") {
       this.trainingEvents.push(event as any);
-    } else if (category === 'consensus') {
+    } else if (category === "consensus") {
       this.consensusEvents.push(event as any);
     }
 
-    this.logger.warn(`Event stored locally due to InfluxDB unavailability: ${category}.${action}`);
+    this.logger.warn(
+      `Event stored locally due to InfluxDB unavailability: ${category}.${action}`,
+    );
   }
 
   async clearOldTelemetry(olderThanDays: number = 7): Promise<void> {
-    const cutoffTime = Date.now() - (olderThanDays * 24 * 60 * 60 * 1000);
-    
+    const cutoffTime = Date.now() - olderThanDays * 24 * 60 * 60 * 1000;
+
     const originalTrainingCount = this.trainingEvents.length;
     const originalConsensusCount = this.consensusEvents.length;
 
-    this.trainingEvents = this.trainingEvents.filter(event => event.timestamp >= cutoffTime);
-    this.consensusEvents = this.consensusEvents.filter(event => event.timestamp >= cutoffTime);
+    this.trainingEvents = this.trainingEvents.filter(
+      (event) => event.timestamp >= cutoffTime,
+    );
+    this.consensusEvents = this.consensusEvents.filter(
+      (event) => event.timestamp >= cutoffTime,
+    );
 
-    const removedTrainingCount = originalTrainingCount - this.trainingEvents.length;
-    const removedConsensusCount = originalConsensusCount - this.consensusEvents.length;
+    const removedTrainingCount =
+      originalTrainingCount - this.trainingEvents.length;
+    const removedConsensusCount =
+      originalConsensusCount - this.consensusEvents.length;
 
-    this.logger.log(`Cleared old telemetry: ${removedTrainingCount} training events, ${removedConsensusCount} consensus events`);
+    this.logger.log(
+      `Cleared old telemetry: ${removedTrainingCount} training events, ${removedConsensusCount} consensus events`,
+    );
   }
 
   async logUXEvent(event: any): Promise<void> {
     this.logger.log(`Logging UX event: ${event.event} - ${event.component}`);
-    
+
     // Store UX events for analytics
-    await this.logEvent('ux', event.event, {
+    await this.logEvent("ux", event.event, {
       component: event.component,
       data: event.data,
       timestamp: Date.now(),
@@ -391,4 +468,4 @@ export class TelemetryService {
       await this.writeApi.close();
     }
   }
-} 
+}

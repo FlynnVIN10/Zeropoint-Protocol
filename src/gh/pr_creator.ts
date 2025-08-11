@@ -1,12 +1,12 @@
 /**
  * GitHub PR Creator - Branch, commit, PR, and label management
- * 
+ *
  * @fileoverview Manages GitHub operations for Synthiant autonomy pipeline
  * @author Dev Team
  * @version 1.0.0
  */
 
-import { auditSystem } from '../audit';
+import { auditSystem } from "../audit";
 
 // Types and interfaces
 export interface GitHubConfig {
@@ -30,7 +30,7 @@ export interface CommitInfo {
 export interface FileChange {
   path: string;
   content: string;
-  mode: '100644' | '100755' | '040000' | '160000' | '120000'; // Git file modes
+  mode: "100644" | "100755" | "040000" | "160000" | "120000"; // Git file modes
 }
 
 export interface PullRequestInfo {
@@ -44,7 +44,12 @@ export interface PullRequestInfo {
 }
 
 export interface GitHubOperation {
-  type: 'create_branch' | 'create_commit' | 'create_pr' | 'add_labels' | 'request_review';
+  type:
+    | "create_branch"
+    | "create_commit"
+    | "create_pr"
+    | "add_labels"
+    | "request_review";
   data: any;
   timestamp: number;
   success: boolean;
@@ -86,43 +91,46 @@ export class GitHubPRCreator {
           createBlob: this.mockCreateBlob.bind(this),
           createTree: this.mockCreateTree.bind(this),
           createCommit: this.mockCreateCommit.bind(this),
-          updateRef: this.mockUpdateRef.bind(this)
+          updateRef: this.mockUpdateRef.bind(this),
         },
         pulls: {
           create: this.mockCreatePR.bind(this),
-          update: this.mockUpdatePR.bind(this)
+          update: this.mockUpdatePR.bind(this),
         },
         issues: {
           addLabels: this.mockAddLabels.bind(this),
           addAssignees: this.mockAddAssignees.bind(this),
-          requestReviewers: this.mockRequestReviewers.bind(this)
-        }
-      }
+          requestReviewers: this.mockRequestReviewers.bind(this),
+        },
+      },
     };
   }
 
   /**
    * Create a new branch
    */
-  async createBranch(branchName: string, baseSha: string): Promise<GitHubResult> {
+  async createBranch(
+    branchName: string,
+    baseSha: string,
+  ): Promise<GitHubResult> {
     const operation: GitHubOperation = {
-      type: 'create_branch',
+      type: "create_branch",
       data: { branchName, baseSha },
       timestamp: Date.now(),
-      success: false
+      success: false,
     };
 
     try {
       // Log operation start
       await auditSystem.logSuccess(
-        'github_branch_creation_started',
-        'github_api',
-        { 
-          branchName, 
+        "github_branch_creation_started",
+        "github_api",
+        {
+          branchName,
           baseSha,
           repo: this.config.repo,
-          owner: this.config.owner
-        }
+          owner: this.config.owner,
+        },
       );
 
       // Create branch reference
@@ -130,53 +138,48 @@ export class GitHubPRCreator {
         owner: this.config.owner,
         repo: this.config.repo,
         ref: `refs/heads/${branchName}`,
-        sha: baseSha
+        sha: baseSha,
       });
 
       operation.success = true;
       operation.data = { ...operation.data, result: result.data };
 
       // Log success
-      await auditSystem.logSuccess(
-        'github_branch_created',
-        'github_api',
-        { 
-          branchName, 
-          baseSha,
-          ref: result.data.ref,
-          sha: result.data.object.sha
-        }
-      );
+      await auditSystem.logSuccess("github_branch_created", "github_api", {
+        branchName,
+        baseSha,
+        ref: result.data.ref,
+        sha: result.data.object.sha,
+      });
 
       return {
         success: true,
-        operation: 'create_branch',
+        operation: "create_branch",
         result: result.data,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
-
     } catch (error) {
       operation.success = false;
       operation.error = error.message;
 
       // Log failure
       await auditSystem.logFailure(
-        'github_branch_creation_failed',
-        'github_api',
+        "github_branch_creation_failed",
+        "github_api",
         error.message,
-        { 
-          branchName, 
+        {
+          branchName,
           baseSha,
-          error: error.message
-        }
+          error: error.message,
+        },
       );
 
       return {
         success: false,
-        operation: 'create_branch',
+        operation: "create_branch",
         result: null,
         error: error.message,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
     } finally {
       this.operations.push(operation);
@@ -186,33 +189,36 @@ export class GitHubPRCreator {
   /**
    * Create a commit with file changes
    */
-  async createCommit(branchName: string, commitInfo: CommitInfo): Promise<GitHubResult> {
+  async createCommit(
+    branchName: string,
+    commitInfo: CommitInfo,
+  ): Promise<GitHubResult> {
     const operation: GitHubOperation = {
-      type: 'create_commit',
+      type: "create_commit",
       data: { branchName, commitInfo },
       timestamp: Date.now(),
-      success: false
+      success: false,
     };
 
     try {
       // Log operation start
       await auditSystem.logSuccess(
-        'github_commit_creation_started',
-        'github_api',
-        { 
-          branchName, 
+        "github_commit_creation_started",
+        "github_api",
+        {
+          branchName,
           message: commitInfo.message,
           fileCount: commitInfo.files.length,
           repo: this.config.repo,
-          owner: this.config.owner
-        }
+          owner: this.config.owner,
+        },
       );
 
       // Get current tree SHA
       const currentRef = await this.octokit.rest.git.getRef({
         owner: this.config.owner,
         repo: this.config.repo,
-        ref: `heads/${branchName}`
+        ref: `heads/${branchName}`,
       });
 
       const baseTreeSha = currentRef.data.object.sha;
@@ -223,13 +229,13 @@ export class GitHubPRCreator {
           owner: this.config.owner,
           repo: this.config.repo,
           content: file.content,
-          encoding: 'utf-8'
+          encoding: "utf-8",
         });
         return {
           path: file.path,
           mode: file.mode,
-          type: 'blob',
-          sha: blob.data.sha
+          type: "blob",
+          sha: blob.data.sha,
         };
       });
 
@@ -240,7 +246,7 @@ export class GitHubPRCreator {
         owner: this.config.owner,
         repo: this.config.repo,
         base_tree: baseTreeSha,
-        tree: blobs
+        tree: blobs,
       });
 
       // Create commit
@@ -250,7 +256,7 @@ export class GitHubPRCreator {
         message: commitInfo.message,
         tree: tree.data.sha,
         parents: [baseTreeSha],
-        author: commitInfo.author
+        author: commitInfo.author,
       });
 
       // Update branch reference
@@ -258,61 +264,56 @@ export class GitHubPRCreator {
         owner: this.config.owner,
         repo: this.config.repo,
         ref: `heads/${branchName}`,
-        sha: commit.data.sha
+        sha: commit.data.sha,
       });
 
       operation.success = true;
-      operation.data = { 
-        ...operation.data, 
+      operation.data = {
+        ...operation.data,
         commitSha: commit.data.sha,
-        treeSha: tree.data.sha 
+        treeSha: tree.data.sha,
       };
 
       // Log success
-      await auditSystem.logSuccess(
-        'github_commit_created',
-        'github_api',
-        { 
-          branchName, 
-          commitSha: commit.data.sha,
-          message: commitInfo.message,
-          fileCount: commitInfo.files.length
-        }
-      );
+      await auditSystem.logSuccess("github_commit_created", "github_api", {
+        branchName,
+        commitSha: commit.data.sha,
+        message: commitInfo.message,
+        fileCount: commitInfo.files.length,
+      });
 
       return {
         success: true,
-        operation: 'create_commit',
+        operation: "create_commit",
         result: {
           commitSha: commit.data.sha,
           treeSha: tree.data.sha,
-          files: commitInfo.files
+          files: commitInfo.files,
         },
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
-
     } catch (error) {
       operation.success = false;
       operation.error = error.message;
 
       // Log failure
       await auditSystem.logFailure(
-        'github_commit_creation_failed',
-        'github_api',
+        "github_commit_creation_failed",
+        "github_api",
         error.message,
-        { 
-          branchName, 
+        {
+          branchName,
           message: commitInfo.message,
-          error: error.message
-        }
+          error: error.message,
+        },
       );
 
       return {
         success: false,
-        operation: 'create_commit',
+        operation: "create_commit",
         result: null,
         error: error.message,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
     } finally {
       this.operations.push(operation);
@@ -324,25 +325,21 @@ export class GitHubPRCreator {
    */
   async createPullRequest(prInfo: PullRequestInfo): Promise<GitHubResult> {
     const operation: GitHubOperation = {
-      type: 'create_pr',
+      type: "create_pr",
       data: prInfo,
       timestamp: Date.now(),
-      success: false
+      success: false,
     };
 
     try {
       // Log operation start
-      await auditSystem.logSuccess(
-        'github_pr_creation_started',
-        'github_api',
-        { 
-          title: prInfo.title,
-          head: prInfo.head,
-          base: prInfo.base,
-          repo: this.config.repo,
-          owner: this.config.owner
-        }
-      );
+      await auditSystem.logSuccess("github_pr_creation_started", "github_api", {
+        title: prInfo.title,
+        head: prInfo.head,
+        base: prInfo.base,
+        repo: this.config.repo,
+        owner: this.config.owner,
+      });
 
       // Create pull request
       const pr = await this.octokit.rest.pulls.create({
@@ -351,7 +348,7 @@ export class GitHubPRCreator {
         title: prInfo.title,
         body: prInfo.body,
         head: prInfo.head,
-        base: prInfo.base
+        base: prInfo.base,
       });
 
       // Add labels if specified
@@ -360,7 +357,7 @@ export class GitHubPRCreator {
           owner: this.config.owner,
           repo: this.config.repo,
           issue_number: pr.data.number,
-          labels: prInfo.labels
+          labels: prInfo.labels,
         });
       }
 
@@ -370,7 +367,7 @@ export class GitHubPRCreator {
           owner: this.config.owner,
           repo: this.config.repo,
           issue_number: pr.data.number,
-          assignees: prInfo.assignees
+          assignees: prInfo.assignees,
         });
       }
 
@@ -380,61 +377,60 @@ export class GitHubPRCreator {
           owner: this.config.owner,
           repo: this.config.repo,
           pull_number: pr.data.number,
-          reviewers: prInfo.reviewers
+          reviewers: prInfo.reviewers,
         });
       }
 
       operation.success = true;
-      operation.data = { ...operation.data, prNumber: pr.data.number, prUrl: pr.data.html_url };
+      operation.data = {
+        ...operation.data,
+        prNumber: pr.data.number,
+        prUrl: pr.data.html_url,
+      };
 
       // Log success
-      await auditSystem.logSuccess(
-        'github_pr_created',
-        'github_api',
-        { 
-          prNumber: pr.data.number,
-          title: prInfo.title,
-          head: prInfo.head,
-          base: prInfo.base,
-          prUrl: pr.data.html_url
-        }
-      );
+      await auditSystem.logSuccess("github_pr_created", "github_api", {
+        prNumber: pr.data.number,
+        title: prInfo.title,
+        head: prInfo.head,
+        base: prInfo.base,
+        prUrl: pr.data.html_url,
+      });
 
       return {
         success: true,
-        operation: 'create_pr',
+        operation: "create_pr",
         result: {
           prNumber: pr.data.number,
           prUrl: pr.data.html_url,
           title: pr.data.title,
-          state: pr.data.state
+          state: pr.data.state,
         },
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
-
     } catch (error) {
       operation.success = false;
       operation.error = error.message;
 
       // Log failure
       await auditSystem.logFailure(
-        'github_pr_creation_failed',
-        'github_api',
+        "github_pr_creation_failed",
+        "github_api",
         error.message,
-        { 
+        {
           title: prInfo.title,
           head: prInfo.head,
           base: prInfo.base,
-          error: error.message
-        }
+          error: error.message,
+        },
       );
 
       return {
         success: false,
-        operation: 'create_pr',
+        operation: "create_pr",
         result: null,
         error: error.message,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
     } finally {
       this.operations.push(operation);
@@ -446,23 +442,23 @@ export class GitHubPRCreator {
    */
   async addLabels(prNumber: number, labels: string[]): Promise<GitHubResult> {
     const operation: GitHubOperation = {
-      type: 'add_labels',
+      type: "add_labels",
       data: { prNumber, labels },
       timestamp: Date.now(),
-      success: false
+      success: false,
     };
 
     try {
       // Log operation start
       await auditSystem.logSuccess(
-        'github_labels_addition_started',
-        'github_api',
-        { 
-          prNumber, 
+        "github_labels_addition_started",
+        "github_api",
+        {
+          prNumber,
           labels,
           repo: this.config.repo,
-          owner: this.config.owner
-        }
+          owner: this.config.owner,
+        },
       );
 
       // Add labels
@@ -470,52 +466,47 @@ export class GitHubPRCreator {
         owner: this.config.owner,
         repo: this.config.repo,
         issue_number: prNumber,
-        labels
+        labels,
       });
 
       operation.success = true;
       operation.data = { ...operation.data, result: result.data };
 
       // Log success
-      await auditSystem.logSuccess(
-        'github_labels_added',
-        'github_api',
-        { 
-          prNumber, 
-          labels,
-          result: result.data
-        }
-      );
+      await auditSystem.logSuccess("github_labels_added", "github_api", {
+        prNumber,
+        labels,
+        result: result.data,
+      });
 
       return {
         success: true,
-        operation: 'add_labels',
+        operation: "add_labels",
         result: result.data,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
-
     } catch (error) {
       operation.success = false;
       operation.error = error.message;
 
       // Log failure
       await auditSystem.logFailure(
-        'github_labels_addition_failed',
-        'github_api',
+        "github_labels_addition_failed",
+        "github_api",
         error.message,
-        { 
-          prNumber, 
+        {
+          prNumber,
           labels,
-          error: error.message
-        }
+          error: error.message,
+        },
       );
 
       return {
         success: false,
-        operation: 'add_labels',
+        operation: "add_labels",
         result: null,
         error: error.message,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
     } finally {
       this.operations.push(operation);
@@ -525,25 +516,28 @@ export class GitHubPRCreator {
   /**
    * Request review for a PR
    */
-  async requestReview(prNumber: number, reviewers: string[]): Promise<GitHubResult> {
+  async requestReview(
+    prNumber: number,
+    reviewers: string[],
+  ): Promise<GitHubResult> {
     const operation: GitHubOperation = {
-      type: 'request_review',
+      type: "request_review",
       data: { prNumber, reviewers },
       timestamp: Date.now(),
-      success: false
+      success: false,
     };
 
     try {
       // Log operation start
       await auditSystem.logSuccess(
-        'github_review_request_started',
-        'github_api',
-        { 
-          prNumber, 
+        "github_review_request_started",
+        "github_api",
+        {
+          prNumber,
           reviewers,
           repo: this.config.repo,
-          owner: this.config.owner
-        }
+          owner: this.config.owner,
+        },
       );
 
       // Request reviewers
@@ -551,52 +545,47 @@ export class GitHubPRCreator {
         owner: this.config.owner,
         repo: this.config.repo,
         pull_number: prNumber,
-        reviewers
+        reviewers,
       });
 
       operation.success = true;
       operation.data = { ...operation.data, result: result.data };
 
       // Log success
-      await auditSystem.logSuccess(
-        'github_review_requested',
-        'github_api',
-        { 
-          prNumber, 
-          reviewers,
-          result: result.data
-        }
-      );
+      await auditSystem.logSuccess("github_review_requested", "github_api", {
+        prNumber,
+        reviewers,
+        result: result.data,
+      });
 
       return {
         success: true,
-        operation: 'request_review',
+        operation: "request_review",
         result: result.data,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
-
     } catch (error) {
       operation.success = false;
       operation.error = error.message;
 
       // Log failure
       await auditSystem.logFailure(
-        'github_review_request_failed',
-        'github_api',
+        "github_review_request_failed",
+        "github_api",
         error.message,
-        { 
-          prNumber, 
+        {
+          prNumber,
           reviewers,
-          error: error.message
-        }
+          error: error.message,
+        },
       );
 
       return {
         success: false,
-        operation: 'request_review',
+        operation: "request_review",
         result: null,
         error: error.message,
-        auditTrail: [...this.operations, operation]
+        auditTrail: [...this.operations, operation],
       };
     } finally {
       this.operations.push(operation);
@@ -617,13 +606,19 @@ export class GitHubPRCreator {
     total: number;
     successful: number;
     failed: number;
-    byType: Record<string, { total: number; successful: number; failed: number }>;
+    byType: Record<
+      string,
+      { total: number; successful: number; failed: number }
+    >;
   } {
     const stats = {
       total: this.operations.length,
-      successful: this.operations.filter(op => op.success).length,
-      failed: this.operations.filter(op => !op.success).length,
-      byType: {} as Record<string, { total: number; successful: number; failed: number }>
+      successful: this.operations.filter((op) => op.success).length,
+      failed: this.operations.filter((op) => !op.success).length,
+      byType: {} as Record<
+        string,
+        { total: number; successful: number; failed: number }
+      >,
     };
 
     // Group by operation type
@@ -631,7 +626,7 @@ export class GitHubPRCreator {
       if (!stats.byType[op.type]) {
         stats.byType[op.type] = { total: 0, successful: 0, failed: 0 };
       }
-      
+
       stats.byType[op.type].total++;
       if (op.success) {
         stats.byType[op.type].successful++;
@@ -645,80 +640,80 @@ export class GitHubPRCreator {
 
   // Mock methods for testing (would be real GitHub API calls in production)
   private async mockCreateRef(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     return {
       data: {
-        ref: `refs/heads/${params.ref.split('/').pop()}`,
-        object: { sha: 'mock-sha-' + Date.now() }
-      }
+        ref: `refs/heads/${params.ref.split("/").pop()}`,
+        object: { sha: "mock-sha-" + Date.now() },
+      },
     };
   }
 
   private async mockCreateBlob(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     return {
-      data: { sha: 'mock-blob-sha-' + Date.now() }
+      data: { sha: "mock-blob-sha-" + Date.now() },
     };
   }
 
   private async mockCreateTree(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     return {
-      data: { sha: 'mock-tree-sha-' + Date.now() }
+      data: { sha: "mock-tree-sha-" + Date.now() },
     };
   }
 
   private async mockCreateCommit(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
     return {
-      data: { sha: 'mock-commit-sha-' + Date.now() }
+      data: { sha: "mock-commit-sha-" + Date.now() },
     };
   }
 
   private async mockUpdateRef(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     return { data: { success: true } };
   }
 
   private async mockCreatePR(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 200));
+    await new Promise((resolve) => setTimeout(resolve, 200));
     return {
       data: {
         number: Math.floor(Math.random() * 1000) + 1,
         title: params.title,
-        state: 'open',
-        html_url: `https://github.com/${this.config.owner}/${this.config.repo}/pull/${Math.floor(Math.random() * 1000) + 1}`
-      }
+        state: "open",
+        html_url: `https://github.com/${this.config.owner}/${this.config.repo}/pull/${Math.floor(Math.random() * 1000) + 1}`,
+      },
     };
   }
 
   private async mockUpdatePR(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     return { data: { success: true } };
   }
 
   private async mockAddLabels(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     return { data: params.labels };
   }
 
   private async mockAddAssignees(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     return { data: params.assignees };
   }
 
   private async mockRequestReviewers(params: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
     return { data: { requested_reviewers: params.reviewers } };
   }
 }
 
 // Export default configuration
 export const defaultGitHubConfig: GitHubConfig = {
-  token: process.env.GITHUB_TOKEN || '',
-  owner: process.env.GITHUB_OWNER || 'zeropointprotocol',
-  repo: process.env.GITHUB_REPO || 'Zeropoint-Protocol',
-  baseBranch: 'main',
-  botUsername: 'synthiant-bot',
-  botEmail: 'synthiant-bot@zeropointprotocol.ai'
+  token: process.env.GITHUB_TOKEN || "",
+  owner: process.env.GITHUB_OWNER || "zeropointprotocol",
+  repo: process.env.GITHUB_REPO || "Zeropoint-Protocol",
+  baseBranch: "main",
+  botUsername: "synthiant-bot",
+  botEmail: "synthiant-bot@zeropointprotocol.ai",
 };

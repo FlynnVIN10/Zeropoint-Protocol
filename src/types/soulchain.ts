@@ -15,4 +15,4 @@ export interface SoulchainTelemetry {
     stake: number;
   }>;
   timestamp: string;
-} 
+}

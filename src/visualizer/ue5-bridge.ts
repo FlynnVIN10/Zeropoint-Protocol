@@ -1,6 +1,6 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { SoulchainTelemetry } from '../types/soulchain.js';
+import { SoulchainTelemetry } from "../types/soulchain.js";
 
 export interface Synthiant {
   id: string;
@@ -26,17 +26,17 @@ export interface UE5VisualizerBridge {
 
 export const ue5Bridge: UE5VisualizerBridge = {
   initialize: async () => {
-    console.log('UE5 Visualizer: Init stub');
+    console.log("UE5 Visualizer: Init stub");
   },
   renderAgents: (agents) => {
-    console.log('UE5 Visualizer: Render stub', agents);
+    console.log("UE5 Visualizer: Render stub", agents);
   },
   updateTelemetry: (data) => {
-    console.log('UE5 Visualizer: Telemetry stub', data);
+    console.log("UE5 Visualizer: Telemetry stub", data);
   },
   exportAsWebXR: async () => new Blob(),
   updateConsensusTrails: (trails) => {
-    console.log('UE5 Visualizer: Trails stub', trails);
+    console.log("UE5 Visualizer: Trails stub", trails);
   },
 };
 
@@ -53,7 +53,7 @@ export interface UE5Config {
   updateInterval: number;
   enableWebXR: boolean;
   telemetryEndpoint: string;
-  performanceMode: 'low' | 'medium' | 'high';
+  performanceMode: "low" | "medium" | "high";
 }
 
 // Default configuration
@@ -61,6 +61,6 @@ export const defaultUE5Config: UE5Config = {
   maxAgents: 100,
   updateInterval: 16, // 60 FPS
   enableWebXR: false,
-  telemetryEndpoint: '/v1/soulchain/telemetry',
-  performanceMode: 'medium'
-}; 
+  telemetryEndpoint: "/v1/soulchain/telemetry",
+  performanceMode: "medium",
+};

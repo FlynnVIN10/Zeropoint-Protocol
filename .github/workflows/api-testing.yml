@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
+      - name: Build application
+        run: npm run build
+        
       - name: Run API tests
         run: |
           echo "Running API tests..."
@@ -72,13 +75,16 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
+      - name: Build application
+        run: npm run build
+        
       - name: Run load tests
         run: |
           echo "Running load tests..."
-          if [ -f "scripts/load-test.js" ]; then
-            node scripts/load-test.js
+          if [ -f "scripts/ci-load-test.js" ]; then
+            node scripts/ci-load-test.js
           else
-            echo "No load test script found"
+            echo "No CI load test script found"
           fi
           
       - name: Run performance tests

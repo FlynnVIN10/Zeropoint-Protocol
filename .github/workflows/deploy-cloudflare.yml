@@ -28,8 +28,29 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
+      - name: Build application
+        run: npm run build
+        
       - name: Build static site
         run: npm run build:static
+        
+      - name: Verify build output
+        run: |
+          echo "Build directory contents:"
+          ls -la build/
+          echo "Checking for required files:"
+          if [ -f "build/index.html" ]; then
+            echo "✅ index.html found"
+          else
+            echo "❌ index.html missing"
+            exit 1
+          fi
+          if [ -d "build/docs" ]; then
+            echo "✅ docs directory found"
+          else
+            echo "❌ docs directory missing"
+            exit 1
+          fi
         
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1

@@ -27,9 +27,12 @@ export default {
   resetMocks: true,
   restoreMocks: true,
   extensionsToTreatAsEsm: ['.ts'],
-  globals: {
-    'ts-jest': {
+  transform: {
+    '^.+\\.ts$': ['ts-jest', {
       useESM: true,
-    },
+    }],
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.mjs$))'
+  ],
 }; 

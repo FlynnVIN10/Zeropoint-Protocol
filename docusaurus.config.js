@@ -24,18 +24,9 @@
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/',
-          // Disable auto-generated tutorial content
-          routeBasePath: 'docs',
-          // Ensure no default pages are created
-          include: ['**/*.{md,mdx}'],
-          exclude: [
-            '**/_*.{js,jsx,ts,tsx,md,mdx}',
-            '**/_*/**',
-            '**/*.test.{js,jsx,ts,tsx}',
-            '**/__tests__/**',
-          ],
+
+
           // Disable tutorial content generation
-          disableVersioning: true,
           showLastUpdateTime: false,
           showLastUpdateAuthor: false,
         },
@@ -51,8 +42,7 @@
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
-        // Disable pages plugin to prevent auto-generated pages
-        pages: false,
+
       }),
     ],
   ],
@@ -143,10 +133,7 @@
         copyright: `Copyright © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. Legal & Licensing.`,
       },
       
-      // Custom CSS variables for theme integration
-      customCss: [
-        require.resolve('./src/css/custom.css'),
-      ],
+
     }),
     
   // Additional configuration for better dark mode support
@@ -157,9 +144,5 @@
     },
   ],
   
-  // Disable any auto-generated content
-  plugins: [],
-  
-  // Ensure no default content is created
-  themes: [],
+
 });

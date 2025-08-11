@@ -1,0 +1,28 @@
+name = "zeropoint-protocol-website-v2"
+compatibility_date = "2025-08-11"
+compatibility_flags = ["nodejs_compat"]
+
+[build]
+command = "npm run build"
+output_dir = ".next/standalone"
+
+[build.upload]
+format = "service-worker"
+
+[env.production]
+name = "zeropoint-protocol-website-v2"
+route = "zeropointprotocol.ai/*"
+
+[env.preview]
+name = "zeropoint-protocol-website-v2-preview"
+route = "zeropointprotocol-ai.pages.dev/*"
+
+[[redirects]]
+from = "https://zerpointprotocol.ai/*"
+to = "https://zeropointprotocol.ai/:splat"
+status = 301
+
+[[redirects]]
+from = "https://www.zerpointprotocol.ai/*"
+to = "https://zeropointprotocol.ai/:splat"
+status = 301

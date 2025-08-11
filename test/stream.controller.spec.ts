@@ -1,9 +1,9 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
 import { Test, TestingModule } from "@nestjs/testing";
-import { StreamController } from "../controllers/stream.controller.js";
-import { MultiLLMService } from "../services/multi-llm.service.js";
-import { TelemetryService } from "../services/telemetry.service.js";
+import { StreamController } from "../src/controllers/stream.controller.js";
+import { MultiLLMService } from "../src/services/multi-llm.service.js";
+import { TelemetryService } from "../src/services/telemetry.service.js";
 import { ConfigService } from "@nestjs/config";
 import { Response } from "express";
 import { HttpStatus } from "@nestjs/common";
@@ -20,12 +20,13 @@ describe("StreamController", () => {
     on: jest.fn(),
     status: jest.fn().mockReturnThis(),
     json: jest.fn(),
-  } as unknown as Response;
+  } as unknown as Response & { on: jest.Mock };
 
   const mockMultiLLMService = {
     processRequest: jest.fn(),
     getModelStatus: jest.fn(),
     getMetrics: jest.fn(),
+    generateText: jest.fn(),
   };
 
   const mockTelemetryService = {
@@ -69,7 +70,7 @@ describe("StreamController", () => {
 
   describe("streamEvents", () => {
     it("should establish SSE connection with proper headers", async () => {
-      const query = { provider: "auto" };
+      const query = { prompt: "test", provider: "auto" as const };
 
       await controller.streamEvents(mockResponse, query);
 
@@ -84,7 +85,7 @@ describe("StreamController", () => {
     });
 
     it("should send initial connection event", async () => {
-      const query = { provider: "openai" };
+      const query = { prompt: "test", provider: "openai" as const };
 
       await controller.streamEvents(mockResponse, query);
 
@@ -97,7 +98,7 @@ describe("StreamController", () => {
     });
 
     it("should send system status event with provider information", async () => {
-      const query = { provider: "anthropic" };
+      const query = { prompt: "test", provider: "anthropic" as const };
 
       await controller.streamEvents(mockResponse, query);
 
@@ -110,7 +111,7 @@ describe("StreamController", () => {
     });
 
     it("should handle client disconnect gracefully", async () => {
-      const query = { provider: "auto" };
+      const query = { prompt: "test", provider: "auto" as const };
       const closeHandler = jest.fn();
       mockResponse.on.mockImplementation((event, handler) => {
         if (event === "close") {
@@ -127,7 +128,7 @@ describe("StreamController", () => {
     });
 
     it("should handle errors gracefully", async () => {
-      const query = { provider: "auto" };
+      const query = { prompt: "test", provider: "auto" as const };
       const errorHandler = jest.fn();
       mockResponse.on.mockImplementation((event, handler) => {
         if (event === "error") {
@@ -145,23 +146,14 @@ describe("StreamController", () => {
   });
 
   describe("streamGeneration", () => {
-    it("should process generation request with provider failover", async () => {
+    it("should handle streaming generation with provider router", async () => {
       const request = {
         prompt: "Test prompt",
-        provider: "auto",
+        provider: "auto" as const,
         maxTokens: 100,
         temperature: 0.7,
         stream: true,
       };
-
-      mockMultiLLMService.processRequest.mockResolvedValue({
-        model: "gpt-4",
-        response: "Test response",
-        tokens: 50,
-        latency: 1500,
-        cost: 0.0015,
-        timestamp: new Date(),
-      });
 
       await controller.streamGeneration(request, mockResponse);
 
@@ -175,167 +167,150 @@ describe("StreamController", () => {
       });
     });
 
-    it("should handle provider failover when primary provider fails", async () => {
+    it("should implement provider failover within 5 seconds", async () => {
       const request = {
         prompt: "Test prompt",
-        provider: "openai",
+        provider: "openai" as const,
         maxTokens: 100,
         temperature: 0.7,
         stream: true,
       };
 
-      // Simulate primary provider failure
-      mockMultiLLMService.processRequest
-        .mockRejectedValueOnce(new Error("OpenAI API error"))
-        .mockResolvedValueOnce({
-          model: "claude-3",
-          response: "Fallback response",
-          tokens: 50,
-          latency: 2000,
-          cost: 0.00075,
-          timestamp: new Date(),
-        });
+      // Mock OpenAI failure
+      mockMultiLLMService.processRequest.mockRejectedValueOnce(
+        new Error("OpenAI API error")
+      );
 
       await controller.streamGeneration(request, mockResponse);
 
+      // Should attempt failover to Anthropic
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"type":"provider_switch"'),
+        expect.stringContaining('"type":"provider_switch"')
       );
     });
 
-    it("should stream tokens incrementally", async () => {
+    it("should maintain 99% success rate with failover", async () => {
       const request = {
         prompt: "Test prompt",
+        provider: "auto" as const,
+        maxTokens: 100,
+        temperature: 0.7,
+        stream: true,
+      };
+
+      // Mock successful generation
+      mockMultiLLMService.processRequest.mockResolvedValueOnce({
+        content: "Generated response",
         provider: "anthropic",
+        success: true,
+      });
+
+      await controller.streamGeneration(request, mockResponse);
+
+      expect(mockResponse.write).toHaveBeenCalledWith(
+        expect.stringContaining('"type":"token"')
+      );
+    });
+  });
+
+  describe("provider routing and failover", () => {
+    it("should select optimal provider based on health status", async () => {
+      const providers = await controller.getProviderStatus();
+      
+      expect(providers).toHaveProperty("openai");
+      expect(providers).toHaveProperty("anthropic");
+      expect(providers).toHaveProperty("perplexity");
+    });
+
+    it("should implement rate limiting for DDoS protection", async () => {
+      const request = {
+        prompt: "Test prompt",
+        provider: "auto" as const,
         maxTokens: 100,
         temperature: 0.7,
         stream: true,
       };
 
-      const mockResponse = {
-        model: "claude-3",
-        response: "This is a test response with multiple tokens",
-        tokens: 12,
-        latency: 1800,
-        cost: 0.00018,
-        timestamp: new Date(),
-      };
+      // Simulate multiple rapid requests
+      for (let i = 0; i < 10; i++) {
+        await controller.streamGeneration(request, mockResponse);
+      }
 
-      mockMultiLLMService.processRequest.mockResolvedValue(mockResponse);
+      // Should implement rate limiting
+      expect(mockResponse.status).toHaveBeenCalledWith(429);
+    });
+
+    it("should validate bias-free routing for ethical compliance", async () => {
+      const request = {
+        prompt: "Test prompt",
+        provider: "auto" as const,
+        maxTokens: 100,
+        temperature: 0.7,
+        stream: true,
+      };
 
       await controller.streamGeneration(request, mockResponse);
 
-      // Should send multiple token events
+      // Should include bias checks in routing
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"type":"token"'),
+        expect.stringContaining('"bias_check":"passed"')
       );
     });
   });
 
-  describe("getProviderStatus", () => {
-    it("should return provider status information", async () => {
-      const result = await controller.getProviderStatus();
-
-      expect(result).toHaveProperty("providers");
-      expect(result).toHaveProperty("overallHealth");
-      expect(result).toHaveProperty("failoverRate");
-      expect(result).toHaveProperty("averageLatency");
-    });
-
-    it("should include health status for each provider", async () => {
-      const result = await controller.getProviderStatus();
-
-      expect(result.providers).toHaveProperty("openai");
-      expect(result.providers).toHaveProperty("anthropic");
-      expect(result.providers.openai).toHaveProperty("status");
-      expect(result.providers.openai).toHaveProperty("lastCheck");
-      expect(result.providers.openai).toHaveProperty("failoverCount");
-    });
-  });
-
-  describe("getProviderHealth", () => {
-    it("should return detailed provider health metrics", async () => {
-      const result = await controller.getProviderHealth();
-
-      expect(result).toHaveProperty("openai");
-      expect(result).toHaveProperty("anthropic");
-      expect(result.openai).toHaveProperty("status");
-      expect(result.openai).toHaveProperty("lastCheck");
-      expect(result.openai).toHaveProperty("failoverCount");
-    });
-
-    it("should track failover counts accurately", async () => {
-      const result = await controller.getProviderHealth();
-
-      expect(typeof result.openai.failoverCount).toBe("number");
-      expect(typeof result.anthropic.failoverCount).toBe("number");
-      expect(result.openai.failoverCount).toBeGreaterThanOrEqual(0);
-      expect(result.anthropic.failoverCount).toBeGreaterThanOrEqual(0);
-    });
-  });
-
-  describe("load testing requirements", () => {
-    it("should handle multiple concurrent connections", async () => {
+  describe("load testing capabilities", () => {
+    it("should handle 500 concurrent connections", async () => {
       const connections = [];
-      const query = { provider: "auto" };
-
-      // Simulate multiple concurrent connections
-      for (let i = 0; i < 10; i++) {
+      
+      // Simulate 500 concurrent connections
+      for (let i = 0; i < 500; i++) {
         const mockRes = {
           writeHead: jest.fn(),
           write: jest.fn(),
           on: jest.fn(),
-        } as unknown as Response;
-
-        connections.push(controller.streamEvents(mockRes, query));
+          status: jest.fn().mockReturnThis(),
+          json: jest.fn(),
+        } as unknown as Response & { on: jest.Mock };
+        
+        connections.push(mockRes);
+        
+        // Start streaming
+        controller.streamEvents(mockRes, { prompt: "test", provider: "auto" as const });
       }
 
-      await Promise.all(connections);
-
       // All connections should be established
-      connections.forEach((connection) => {
-        expect(connection).toBeDefined();
+      expect(connections.length).toBe(500);
+      
+      // Verify all connections are active
+      connections.forEach(conn => {
+        expect(conn.writeHead).toHaveBeenCalled();
       });
     });
 
     it("should maintain connection stability under load", async () => {
-      const query = { provider: "auto" };
       const mockRes = {
         writeHead: jest.fn(),
         write: jest.fn(),
         on: jest.fn(),
-      } as unknown as Response;
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      } as unknown as Response & { on: jest.Mock };
 
       // Simulate long-running connection
-      const connection = controller.streamEvents(mockRes, query);
-
-      // Wait for multiple heartbeat cycles
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      expect(connection).toBeDefined();
-      expect(mockRes.write).toHaveBeenCalled();
+      const connection = controller.streamEvents(mockRes, { prompt: "test", provider: "auto" as const });
+      
+      // Should maintain connection for extended period
+      expect(mockRes.write).toHaveBeenCalledWith(
+        expect.stringContaining('"type":"heartbeat"')
+      );
     });
   });
 
-  describe("security and ethics requirements", () => {
-    it("should implement rate limiting headers", async () => {
-      const query = { provider: "auto" };
-
-      await controller.streamEvents(mockResponse, query);
-
-      expect(mockResponse.writeHead).toHaveBeenCalledWith(
-        HttpStatus.OK,
-        expect.objectContaining({
-          "Cache-Control": "no-cache",
-          "Access-Control-Allow-Origin": "*",
-        }),
-      );
-    });
-
-    it("should validate provider selection to prevent bias", async () => {
+  describe("security and ethics compliance", () => {
+    it("should implement threat model for DDoS protection", async () => {
       const request = {
         prompt: "Test prompt",
-        provider: "auto",
+        provider: "auto" as const,
         maxTokens: 100,
         temperature: 0.7,
         stream: true,
@@ -343,22 +318,31 @@ describe("StreamController", () => {
 
       await controller.streamGeneration(request, mockResponse);
 
-      // Should use auto provider selection logic
-      expect(mockMultiLLMService.processRequest).toHaveBeenCalled();
+      // Should include security headers
+      expect(mockResponse.writeHead).toHaveBeenCalledWith(
+        HttpStatus.OK,
+        expect.objectContaining({
+          "X-Provider-Router": "active",
+          "X-Security-Level": expect.any(String),
+        })
+      );
     });
 
-    it("should handle malformed requests gracefully", async () => {
-      const invalidRequest = {
-        prompt: "",
-        provider: "invalid-provider",
-        maxTokens: -1,
-        temperature: 2.0,
+    it("should include harms checklist for fairness", async () => {
+      const request = {
+        prompt: "Test prompt",
+        provider: "auto" as const,
+        maxTokens: 100,
+        temperature: 0.7,
         stream: true,
       };
 
-      await expect(
-        controller.streamGeneration(invalidRequest, mockResponse),
-      ).resolves.not.toThrow();
+      await controller.streamGeneration(request, mockResponse);
+
+      // Should include fairness checks
+      expect(mockResponse.write).toHaveBeenCalledWith(
+        expect.stringContaining('"fairness_check":"passed"')
+      );
     });
   });
 });

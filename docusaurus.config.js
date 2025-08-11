@@ -25,6 +25,8 @@
           // Please change this to your repo.
           editUrl: 'https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/',
 
+          // Disable versioning to prevent configuration conflicts
+          disableVersioning: true,
 
           // Disable tutorial content generation
           showLastUpdateTime: false,

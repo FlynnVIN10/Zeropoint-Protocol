@@ -20,20 +20,14 @@ export default {
         "docs": {
           "sidebarPath": "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/sidebars.js",
           "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/",
-          "routeBasePath": "docs",
-          "include": [
-            "**/*.{md,mdx}"
-          ],
-          "exclude": [
-            "**/_*.{js,jsx,ts,tsx,md,mdx}",
-            "**/_*/**",
-            "**/*.test.{js,jsx,ts,tsx}",
-            "**/__tests__/**"
-          ]
+          "showLastUpdateTime": false,
+          "showLastUpdateAuthor": false
         },
         "blog": {
           "showReadingTime": true,
-          "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/"
+          "editUrl": "https://github.com/FlynnVIN10/Zeropoint-Protocol/edit/main/",
+          "blogSidebarTitle": "All posts",
+          "blogSidebarCount": 0
         },
         "theme": {
           "customCss": "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/src/css/custom.css"
@@ -131,9 +125,6 @@ export default {
       ],
       "copyright": "Copyright © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. Legal & Licensing."
     },
-    "customCss": [
-      "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/src/css/custom.css"
-    ],
     "docs": {
       "versionPersistence": "localStorage",
       "sidebar": {

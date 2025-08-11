@@ -4,7 +4,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import OpenAI from "openai";
 import { Anthropic } from "@anthropic-ai/sdk";
-import { Perplexity } from "@perplexity/ai";
+// import { Perplexity } from "@perplexity/ai";
 
 export enum LLMProvider {
   OPENAI = "openai",
@@ -214,7 +214,7 @@ export class MultiLLMService {
       if (perplexityKey) {
         this.providers.set(
           LLMProvider.PERPLEXITY,
-          new Perplexity({ apiKey: perplexityKey }),
+          null as any // Temporarily set to null since Perplexity is commented out
         );
         this.logger.log("Perplexity provider initialized");
       }

@@ -274,7 +274,7 @@ export class SSEController {
               user: cpuUsage.user,
               system: cpuUsage.system,
             },
-            load: process.loadavg ? process.loadavg() : null,
+            load: (process as any).loadavg ? (process as any).loadavg() : null,
           },
         })}\n\n`,
       );

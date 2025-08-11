@@ -133,7 +133,10 @@ export class RAGController {
   @Post("legal/document")
   async addLegalDocument(@Body() request: LegalDocumentRequest): Promise<any> {
     try {
-      const document = await this.ragService.addLegalDocument(request);
+      const document = await this.ragService.addLegalDocument({
+        ...request,
+        relevance: 0.8 // Default relevance score
+      });
 
       return {
         status: "success",
@@ -154,7 +157,10 @@ export class RAGController {
     @Body() request: ManufacturingDocumentRequest,
   ): Promise<any> {
     try {
-      const document = await this.ragService.addManufacturingDocument(request);
+      const document = await this.ragService.addManufacturingDocument({
+        ...request,
+        relevance: 0.8 // Default relevance score
+      });
 
       return {
         status: "success",

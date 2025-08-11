@@ -544,7 +544,7 @@ print(json.dumps(result))
 
         await this.sleep(1000); // 1 second per step
 
-        if (job.status === "failed") {
+        if (job.status === "failed" as any) {
           break;
         }
       }

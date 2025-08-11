@@ -260,31 +260,6 @@ export class StreamController {
     res.end();
   }
 
-  @Get("providers/status")
-  async getProviderStatus() {
-    try {
-      const providerStatus = await this.multiLLMService.getProviderStatus();
-      const providerCosts = await this.multiLLMService.getProviderCosts();
-      const metrics = this.multiLLMService.getMetrics();
-
-      return {
-        providers: providerStatus,
-        costs: providerCosts,
-        metrics: metrics,
-        overallHealth: this.getOverallHealth(),
-        failoverRate: this.calculateFailoverRate(),
-        averageLatency: await this.getAverageLatency(),
-        totalRequests: await this.getTotalRequests(),
-      };
-    } catch (error) {
-      this.logger.error("Failed to get provider status:", error);
-      throw new HttpException(
-        "Failed to get provider status",
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
   @Get("providers/health")
   async getProviderHealth() {
     const health = {};

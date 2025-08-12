@@ -1,166 +1,242 @@
-import { Controller, Post, Body, Get, Param, UseGuards } from "@nestjs/common";
-import { PetalsService } from "../services/petals.service.js";
-import { SandboxService } from "../services/sandbox.service.js";
-import { TelemetryService } from "../services/telemetry.service.js";
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import { PetalsConnector } from '../petals/petals-connector';
 
-export interface PetalTrainingRequest {
-  agentId: string;
-  trainingData?: any[];
-  modelType: string;
-  trainingParams: {
-    learningRate: number;
-    batchSize: number;
-    epochs: number;
-  };
-}
-
-export interface SandboxCreateRequest {
-  agentId: string;
-  resourceCaps: {
-    cpu: number;
-    memory: number;
-    gpu?: number;
-  };
-  image?: string;
-  command?: string[];
-  environment?: Record<string, string>;
-  ports?: number[];
-  volumes?: string[];
-}
-
-export interface TrainingCycleResult {
-  cycleId: string;
-  agentId: string;
-  modelDeltas: any;
-  metrics: {
-    loss: number;
-    accuracy: number;
-    precision: number;
-    recall: number;
-    f1Score: number;
-    duration: number;
-    nodesUsed: number;
-  };
-  timestamp: number;
-}
-
-@Controller("petals")
+@Controller('api/petals')
 export class PetalsController {
-  constructor(
-    private readonly petalsService: PetalsService,
-    private readonly sandboxService: SandboxService,
-    private readonly telemetryService: TelemetryService,
-  ) {}
+  constructor(private readonly petalsConnector: PetalsConnector) {}
 
-  @Post("train")
-  async trainOnPetals(@Body() request: PetalTrainingRequest): Promise<any> {
+  @Get('status')
+  async getStatus() {
     try {
-      // Create isolated WonderCraft sandbox
-      const sandboxId = await this.sandboxService.createSandbox({
-        agentId: request.agentId,
-        resourceCaps: {
-          cpu: 2,
-          memory: 4096,
-          gpu: 0,
-        },
-        image: "wondercraft/petals-training:latest",
-        command: ["python", "train.py"],
-        environment: {
-          MODEL_TYPE: request.modelType,
-          LEARNING_RATE: request.trainingParams.learningRate.toString(),
-          BATCH_SIZE: request.trainingParams.batchSize.toString(),
-          EPOCHS: request.trainingParams.epochs.toString(),
-        },
-      });
-
-      // Execute distributed training cycle
-      const trainingResult = await this.petalsService.executeTrainingCycle(
-        sandboxId,
-        request,
-      );
-
-      // Clean up sandbox
-      await this.sandboxService.destroySandbox(sandboxId);
-
-      return {
-        status: "success",
-        data: {
-          cycleId: trainingResult.cycleId,
-          sandboxId,
-          modelDeltas: trainingResult.modelDeltas,
-          metrics: trainingResult.metrics,
-        },
-        timestamp: new Date().toISOString(),
-      };
+      return await this.petalsConnector.getStatus();
     } catch (error) {
-      await this.telemetryService.logEvent("training", "cycle_failed", {
-        agentId: request.agentId,
-        error: error.message,
-        timestamp: Date.now(),
-      });
-
-      throw error;
+      return {
+        error: 'Failed to get Petals status',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
     }
   }
 
-  @Get("status/:cycleId")
-  async getTrainingStatus(@Param("cycleId") cycleId: string): Promise<any> {
-    const status = await this.petalsService.getTrainingStatus(cycleId);
-    return {
-      status: "success",
-      data: status,
-      timestamp: new Date().toISOString(),
-    };
+  @Get('peers')
+  async getPeers() {
+    try {
+      const status = await this.petalsConnector.getStatus();
+      return {
+        peers: status.peers,
+        total: status.peers.length,
+        online: status.peers.filter(p => p.status === 'online').length,
+        offline: status.peers.filter(p => p.status === 'offline').length,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to get peers',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 
-  @Get("model/shared")
-  async getSharedModel(): Promise<any> {
-    const model = await this.petalsService.getSharedModel();
-    return {
-      status: "success",
-      data: model,
-      timestamp: new Date().toISOString(),
-    };
+  @Get('blocks')
+  async getBlocks() {
+    try {
+      const status = await this.petalsConnector.getStatus();
+      return {
+        blocks: status.blocks,
+        total: status.blocks.length,
+        local: status.blocks.filter(b => b.local).length,
+        cached: status.blocks.filter(b => b.cached).length,
+        byType: {
+          model: status.blocks.filter(b => b.type === 'model').length,
+          data: status.blocks.filter(b => b.type === 'data').length,
+          checkpoint: status.blocks.filter(b => b.type === 'checkpoint').length
+        },
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to get blocks',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 
-  @Get("network/status")
-  async getNetworkStatus(): Promise<any> {
-    const networkStatus = await this.petalsService.getNetworkStatus();
-    return {
-      status: "success",
-      data: networkStatus,
-      timestamp: new Date().toISOString(),
-    };
+  @Get('cache')
+  async getCacheInfo() {
+    try {
+      const status = await this.petalsConnector.getStatus();
+      return {
+        localCache: status.localCache,
+        configuration: this.petalsConnector.getConfiguration(),
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to get cache info',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 
-  @Post("network/node")
-  async addNode(
-    @Body()
-    nodeConfig: {
-      id: string;
-      url: string;
-      capabilities: string[];
-      status?: "available" | "busy" | "offline";
-    },
-  ): Promise<any> {
-    await this.petalsService.addNode({
-      ...nodeConfig,
-      status: nodeConfig.status || "available",
-    });
-    return {
-      status: "success",
-      message: `Node ${nodeConfig.id} added successfully`,
-      timestamp: new Date().toISOString(),
-    };
+  @Post('blocks/join')
+  async joinBlock(@Body() body: { blockId: string; peerId?: string }) {
+    try {
+      const { blockId, peerId } = body;
+      
+      if (!blockId) {
+        return {
+          error: 'Block ID is required',
+          timestamp: new Date().toISOString()
+        };
+      }
+      
+      const success = await this.petalsConnector.joinBlock(blockId, peerId);
+      
+      return {
+        success,
+        blockId,
+        peerId,
+        message: success ? 'Successfully joined block' : 'Failed to join block',
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to join block',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 
-  @Post("network/node/:nodeId/remove")
-  async removeNode(@Param("nodeId") nodeId: string): Promise<any> {
-    await this.petalsService.removeNode(nodeId);
-    return {
-      status: "success",
-      message: `Node ${nodeId} removed successfully`,
-      timestamp: new Date().toISOString(),
-    };
+  @Post('blocks/host')
+  async hostBlock(@Body() body: { blockId: string; data: any; type?: 'model' | 'data' | 'checkpoint' }) {
+    try {
+      const { blockId, data, type = 'data' } = body;
+      
+      if (!blockId || data === undefined) {
+        return {
+          error: 'Block ID and data are required',
+          timestamp: new Date().toISOString()
+        };
+      }
+      
+      const success = await this.petalsConnector.hostBlock(blockId, data, type);
+      
+      return {
+        success,
+        blockId,
+        type,
+        message: success ? 'Successfully hosted block' : 'Failed to host block',
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to host block',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  @Get('blocks/:blockId')
+  async getBlock(@Param('blockId') blockId: string) {
+    try {
+      const block = await this.petalsConnector.getBlock(blockId);
+      
+      if (block === null) {
+        return {
+          error: 'Block not found',
+          blockId,
+          timestamp: new Date().toISOString()
+        };
+      }
+      
+      return {
+        blockId,
+        data: block,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to get block',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        blockId,
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  @Put('config')
+  async updateConfiguration(@Body() config: any) {
+    try {
+      await this.petalsConnector.updateConfiguration(config);
+      
+      return {
+        success: true,
+        message: 'Configuration updated successfully',
+        newConfig: this.petalsConnector.getConfiguration(),
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to update configuration',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  @Get('config')
+  async getConfiguration() {
+    try {
+      return {
+        configuration: this.petalsConnector.getConfiguration(),
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to get configuration',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
+  }
+
+  @Get('metrics')
+  async getMetrics() {
+    try {
+      const status = await this.petalsConnector.getStatus();
+      
+      return {
+        network: {
+          connected: status.connected,
+          peers: status.peers.length,
+          uploadSpeed: status.network.uploadSpeed,
+          downloadSpeed: status.network.downloadSpeed,
+          latency: status.network.latency
+        },
+        storage: {
+          blocks: status.blocks.length,
+          cacheSize: status.localCache.size,
+          cacheItems: status.localCache.items,
+          cacheHitRate: status.localCache.hitRate
+        },
+        performance: {
+          totalBlocks: status.blocks.length,
+          localBlocks: status.blocks.filter(b => b.local).length,
+          cachedBlocks: status.blocks.filter(b => b.cached).length
+        },
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      return {
+        error: 'Failed to get metrics',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 }

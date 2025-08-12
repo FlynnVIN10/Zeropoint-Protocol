@@ -1,480 +1,439 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
-import { Logger } from '@nestjs/common';
-import { createHash } from 'crypto';
-import {
-  PetalsConfig,
-  GenerationOptions,
-  GenerationResult,
-  GenerationMetrics,
-  PeerChurnMetrics,
-  AuditLogEntry,
-  PeerHealth,
-  PeerStatus,
-  PortStatus,
-  ClientLog,
-  PetalsStatus,
-  MetricsStream,
-  ReplayMetrics,
-  PeerConnection,
-  BandwidthUsage,
-  RateLimitStatus,
-  SecurityEvent
-} from './petals.types';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { zpctlDiag } from '../appliance/zpctl.diag';
 
+export interface PetalsPeer {
+  id: string;
+  address: string;
+  port: number;
+  lastSeen: Date;
+  status: 'online' | 'offline' | 'connecting';
+  capabilities: string[];
+  allowlisted: boolean;
+}
+
+export interface PetalsBlock {
+  id: string;
+  hash: string;
+  timestamp: Date;
+  size: number;
+  type: 'model' | 'data' | 'checkpoint';
+  source: string;
+  local: boolean;
+  cached: boolean;
+}
+
+export interface PetalsStatus {
+  connected: boolean;
+  peers: PetalsPeer[];
+  blocks: PetalsBlock[];
+  localCache: {
+    size: number;
+    items: number;
+    hitRate: number;
+  };
+  network: {
+    uploadSpeed: number;
+    downloadSpeed: number;
+    latency: number;
+  };
+  timestamp: string;
+}
+
+export interface PetalsConfig {
+  enableNetworking: boolean;
+  peerAllowlist: string[];
+  localFallback: boolean;
+  hotLayerCache: boolean;
+  cacheSize: number; // MB
+  maxPeers: number;
+}
+
+@Injectable()
 export class PetalsConnector {
   private readonly logger = new Logger(PetalsConnector.name);
-  private readonly config: PetalsConfig;
-  private auditLog: AuditLogEntry[] = [];
-  private clientLogs: ClientLog[] = [];
-  private peers: Map<string, PeerConnection> = new Map();
-  private startTime: number;
-  private isInitialized = false;
-  private healthCheckInterval: NodeJS.Timeout | null = null;
+  private readonly eventEmitter: EventEmitter2;
+  
+  private config: PetalsConfig;
+  private peers: Map<string, PetalsPeer> = new Map();
+  private blocks: Map<string, PetalsBlock> = new Map();
+  private localCache: Map<string, any> = new Map();
+  private cacheStats = {
+    hits: 0,
+    misses: 0,
+    totalRequests: 0
+  };
 
-  constructor(config: PetalsConfig) {
-    this.config = config;
-    this.startTime = Date.now();
-    this.logger.log('PetalsConnector initialized with config:', config);
+  constructor(eventEmitter: EventEmitter2) {
+    this.eventEmitter = eventEmitter;
+    this.config = this.getDefaultConfig();
+    this.initializeConnector();
   }
 
-  async initialize(): Promise<void> {
-    if (this.isInitialized) {
-      return;
-    }
-
-    this.logger.log('Initializing PetalsConnector...');
-    
-    // Initialize peer connections
-    await this.initializePeers();
-    
-    // Start health check interval
-    this.startHealthChecks();
-    
-    // Log initialization
-    this.logClientLog('info', 'PetalsConnector initialized successfully', 'PetalsConnector');
-    
-    this.isInitialized = true;
-    this.logger.log('PetalsConnector initialization complete');
+  private getDefaultConfig(): PetalsConfig {
+    return {
+      enableNetworking: true,
+      peerAllowlist: [
+        '127.0.0.1',
+        'localhost',
+        '::1'
+      ],
+      localFallback: true,
+      hotLayerCache: true,
+      cacheSize: 1024, // 1GB
+      maxPeers: 10
+    };
   }
 
-  async shutdown(): Promise<void> {
-    this.logger.log('Shutting down PetalsConnector...');
+  private async initializeConnector(): Promise<void> {
+    this.logger.log('Initializing Petals Connector...');
     
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
-      this.healthCheckInterval = null;
+    // Load configuration from environment
+    this.loadConfiguration();
+    
+    // Initialize local cache
+    if (this.config.hotLayerCache) {
+      await this.initializeLocalCache();
     }
     
-    // Disconnect from all peers
-    for (const [address, peer] of this.peers) {
-      await this.disconnectPeer(address);
+    // Start peer discovery if networking is enabled
+    if (this.config.enableNetworking) {
+      await this.startPeerDiscovery();
     }
     
-    this.isInitialized = false;
-    this.logger.log('PetalsConnector shutdown complete');
+    this.logger.log('Petals Connector initialized');
   }
 
-  async generateStream(prompt: string, options: GenerationOptions): Promise<GenerationResult> {
-    const startTime = Date.now();
-    const maxTokens = options.maxTokens || this.config.maxLength;
-    const localOnly = options.localOnly ?? this.config.localOnly;
-    
-    this.logger.log(`Generating stream for prompt (${prompt.length} chars, ${maxTokens} tokens, localOnly: ${localOnly})`);
-    
-    // Check bandwidth limits
-    if (prompt.length > this.config.bandwidthLimit) {
-      const error = `Bandwidth limit exceeded: ${prompt.length} bytes > ${this.config.bandwidthLimit} bytes`;
-      this.logSecurityEvent('bandwidth_exceeded', 'client', error, 'rejected', 'medium');
-      throw new Error(error);
+  private loadConfiguration(): void {
+    // Load from environment variables
+    if (process.env.PETALS_ENABLE_NETWORKING !== undefined) {
+      this.config.enableNetworking = process.env.PETALS_ENABLE_NETWORKING === '1';
     }
     
-    // Check rate limits
-    if (!this.checkRateLimits()) {
-      const error = 'Rate limit exceeded';
-      this.logSecurityEvent('rate_limit_exceeded', 'client', error, 'rejected', 'high');
-      throw new Error(error);
+    if (process.env.PETALS_PEER_ALLOWLIST) {
+      this.config.peerAllowlist = process.env.PETALS_PEER_ALLOWLIST.split(',');
     }
     
-    try {
-      let result: GenerationResult;
-      
-      if (localOnly) {
-        result = await this.generateLocal(prompt, maxTokens);
-      } else {
-        result = await this.generateFederated(prompt, maxTokens);
+    if (process.env.PETALS_LOCAL_FALLBACK !== undefined) {
+      this.config.localFallback = process.env.PETALS_LOCAL_FALLBACK === '1';
+    }
+    
+    if (process.env.PETALS_HOT_LAYER_CACHE !== undefined) {
+      this.config.hotLayerCache = process.env.PETALS_HOT_LAYER_CACHE === '1';
+    }
+    
+    if (process.env.PETALS_CACHE_SIZE) {
+      this.config.cacheSize = parseInt(process.env.PETALS_CACHE_SIZE, 10);
+    }
+    
+    if (process.env.PETALS_MAX_PEERS) {
+      this.config.maxPeers = parseInt(process.env.PETALS_MAX_PEERS, 10);
+    }
+  }
+
+  private async initializeLocalCache(): Promise<void> {
+    this.logger.log('Initializing local hot-layer cache...');
+    
+    // Create cache directory if it doesn't exist
+    const fs = await import('fs');
+    const path = await import('path');
+    
+    const cacheDir = path.join(process.cwd(), 'cache', 'petals');
+    if (!fs.existsSync(cacheDir)) {
+      fs.mkdirSync(cacheDir, { recursive: true });
+    }
+    
+    this.logger.log(`Local cache initialized at ${cacheDir}`);
+  }
+
+  private async startPeerDiscovery(): Promise<void> {
+    this.logger.log('Starting peer discovery...');
+    
+    // For Phase B, we'll simulate peer discovery
+    // In production, this would use actual network protocols
+    
+    // Add local peer
+    const localPeer: PetalsPeer = {
+      id: 'local-peer',
+      address: '127.0.0.1',
+      port: 8000,
+      lastSeen: new Date(),
+      status: 'online',
+      capabilities: ['model-serving', 'data-sharing', 'checkpoint-storage'],
+      allowlisted: true
+    };
+    
+    this.peers.set(localPeer.id, localPeer);
+    
+    // Simulate discovering some peers
+    const simulatedPeers = [
+      {
+        id: 'peer-1',
+        address: '192.168.1.100',
+        port: 8000,
+        capabilities: ['model-serving']
+      },
+      {
+        id: 'peer-2', 
+        address: '192.168.1.101',
+        port: 8000,
+        capabilities: ['data-sharing']
       }
-      
-      const duration = Math.max(Date.now() - startTime, 1); // Ensure minimum 1ms duration
-      
-      // Log generation event
-      this.auditLog.push({
-        event: 'generation_completed',
-        timestamp: new Date().toISOString(),
-        modelName: options.modelName || this.config.modelName,
-        tokens: result.tokens,
-        duration
-      });
-      
-      this.logger.log(`Generation completed: ${result.tokens} tokens in ${duration}ms`);
-      return result;
-      
-    } catch (error) {
-      this.logger.error('Generation failed:', error);
-      this.logClientLog('error', `Generation failed: ${error.message}`, 'PetalsConnector');
-      
-      return {
-        tokens: 0,
-        dropped: 0,
-        completed: false,
-        stream: [],
-        metrics: this.createEmptyMetrics(),
-        errors: [error.message]
-      };
-    }
-  }
-
-  private async generateLocal(prompt: string, maxTokens: number): Promise<GenerationResult> {
-    // Simulated local generation for Phase B
-    const tokens = maxTokens; // Always generate exactly maxTokens
-    const stream = this.generateSimulatedStream(prompt, tokens);
+    ];
     
-    return {
-      tokens,
-      dropped: 0,
-      completed: true,
-      stream,
-      metrics: this.createMetrics(tokens, 150, 0, 0),
-      errors: []
-    };
-  }
-
-  private async generateFederated(prompt: string, maxTokens: number): Promise<GenerationResult> {
-    // Simulated federated generation for Phase B
-    const tokens = maxTokens; // Always generate exactly maxTokens
-    const stream = this.generateSimulatedStream(prompt, tokens);
-    
-    // Simulate peer churn
-    const peerChurn = this.simulatePeerChurn();
-    
-    // Simulate fallback if peers drop
-    const fallbackTriggered = peerChurn.drops > 0;
-    
-    return {
-      tokens,
-      dropped: peerChurn.drops,
-      completed: true,
-      stream,
-      metrics: this.createMetrics(tokens, 200, peerChurn.joins, peerChurn.leaves),
-      fallbackTriggered,
-      errors: []
-    };
-  }
-
-  private generateSimulatedStream(prompt: string, tokenCount: number): string[] {
-    const stream: string[] = [];
-    const words = prompt.split(' ');
-    
-    for (let i = 0; i < tokenCount; i++) {
-      const wordIndex = i % words.length;
-      stream.push(words[wordIndex] || 'token');
+    for (const peer of simulatedPeers) {
+      if (this.isPeerAllowlisted(peer.address)) {
+        const fullPeer: PetalsPeer = {
+          ...peer,
+          lastSeen: new Date(),
+          status: 'online',
+          allowlisted: true
+        };
+        this.peers.set(fullPeer.id, fullPeer);
+      }
     }
     
-    return stream;
+    this.logger.log(`Peer discovery complete. Found ${this.peers.size} peers`);
   }
 
-  private simulatePeerChurn(): { joins: number; leaves: number; drops: number } {
-    const joins = Math.floor(Math.random() * 3);
-    const leaves = Math.floor(Math.random() * 2);
-    // For parity tests, ensure no drops to maintain consistency
-    const drops = Math.random() > 0.7 ? Math.floor(Math.random() * 2) : 0;
-    
-    return { joins, leaves, drops };
-  }
-
-  private createMetrics(tokens: number, latency: number, joins: number, leaves: number): GenerationMetrics {
-    return {
-      tokensPerSecond: tokens / (latency / 1000),
-      latencyP95: latency,
-      peerChurn: {
-        joins,
-        leaves,
-        totalPeers: this.peers.size
-      },
-      timestamp: new Date().toISOString()
-    };
-  }
-
-  private createEmptyMetrics(): GenerationMetrics {
-    return {
-      tokensPerSecond: 0,
-      latencyP95: 0,
-      peerChurn: {
-        joins: 0,
-        leaves: 0,
-        totalPeers: 0
-      },
-      timestamp: new Date().toISOString()
-    };
-  }
-
-  async connectToPeer(address: string): Promise<void> {
-    // Check allowlist
-    if (!this.config.peerAllowlist.includes(address)) {
-      const error = `Peer not in allowlist: ${address}`;
-      this.logSecurityEvent('peer_rejected', 'network', error, 'rejected', 'medium');
-      
-      this.auditLog.push({
-        event: 'peer_rejected',
-        timestamp: new Date().toISOString(),
-        peerAddress: address,
-        reason: 'not_in_allowlist'
-      });
-      
-      throw new Error(error);
-    }
-    
-    // Generate peer fingerprint
-    const fingerprint = this.generatePeerFingerprint(address);
-    
-    // Add to peers
-    const peer: PeerConnection = {
-      address,
-      fingerprint,
-      connectedAt: new Date().toISOString(),
-      lastSeen: new Date().toISOString(),
-      status: 'active',
-      bandwidth: 0,
-      latency: 0
-    };
-    
-    this.peers.set(address, peer);
-    
-    // Log peer join
-    this.auditLog.push({
-      event: 'peer_join',
-      timestamp: new Date().toISOString(),
-      peerFingerprint: fingerprint,
-      peerAddress: address
-    });
-    
-    this.logger.log(`Connected to peer: ${address} (${fingerprint})`);
-  }
-
-  async disconnectPeer(address: string): Promise<void> {
-    const peer = this.peers.get(address);
-    if (peer) {
-      this.auditLog.push({
-        event: 'peer_leave',
-        timestamp: new Date().toISOString(),
-        peerFingerprint: peer.fingerprint,
-        peerAddress: address,
-        reason: 'disconnected'
-      });
-      
-      this.peers.delete(address);
-      this.logger.log(`Disconnected from peer: ${address}`);
-    }
-  }
-
-  private generatePeerFingerprint(address: string): string {
-    return createHash('sha256').update(`${address}-${Date.now()}`).digest('hex');
-  }
-
-  async getAuditLog(): Promise<AuditLogEntry[]> {
-    return [...this.auditLog];
-  }
-
-  async getPeerHealth(): Promise<PeerHealth> {
-    const peers: PeerStatus[] = [];
-    
-    for (const [address, peer] of this.peers) {
-      const status: PeerStatus = {
-        address,
-        status: peer.status,
-        lastSeen: peer.lastSeen,
-        responseTime: Math.max(peer.latency, 50), // Ensure minimum 50ms response time
-        uptime: Math.max(Date.now() - new Date(peer.connectedAt).getTime(), 100), // Ensure minimum 100ms uptime
-        fingerprint: peer.fingerprint
-      };
-      
-      peers.push(status);
-    }
-    
-    return {
-      peers,
-      timestamp: new Date().toISOString()
-    };
-  }
-
-  async getPortStatus(): Promise<PortStatus> {
-    const startTime = Date.now();
-    
-    // Simulated port scan - only essential Petals ports
-    const openPorts = [8000, 8001, 8002];
-    
-    return {
-      openPorts,
-      timestamp: new Date().toISOString(),
-      scanDuration: Date.now() - startTime
-    };
-  }
-
-  async getClientLogs(): Promise<ClientLog[]> {
-    return [...this.clientLogs];
+  private isPeerAllowlisted(address: string): boolean {
+    return this.config.peerAllowlist.some(allowed => 
+      address === allowed || address.startsWith(allowed)
+    );
   }
 
   async getStatus(): Promise<PetalsStatus> {
-    return {
-      connected: this.isInitialized,
-      peerCount: this.peers.size,
-      modelName: this.config.modelName,
-      uptime: Date.now() - this.startTime,
-      lastHealthCheck: new Date().toISOString(),
-      localMode: this.config.localOnly,
-      federatedMode: !this.config.localOnly
+    const status: PetalsStatus = {
+      connected: this.config.enableNetworking,
+      peers: Array.from(this.peers.values()),
+      blocks: Array.from(this.blocks.values()),
+      localCache: {
+        size: this.getCacheSize(),
+        items: this.localCache.size,
+        hitRate: this.getCacheHitRate()
+      },
+      network: {
+        uploadSpeed: this.getNetworkSpeed('upload'),
+        downloadSpeed: this.getNetworkSpeed('download'),
+        latency: this.getNetworkLatency()
+      },
+      timestamp: new Date().toISOString()
     };
+    
+    return status;
   }
 
-  async getMetricsStream(): Promise<MetricsStream> {
-    const totalTokens = this.auditLog
-      .filter(entry => entry.event === 'generation_completed')
-      .reduce((sum, entry) => sum + (entry.tokens || 0), 0);
-    
-    const totalDuration = this.auditLog
-      .filter(entry => entry.event === 'generation_completed')
-      .reduce((sum, entry) => sum + (entry.duration || 0), 0);
-    
-    const tokensPerSecond = totalDuration > 0 ? totalTokens / (totalDuration / 1000) : 100; // Default to 100 tokens/s
-    
-    return {
-      tokensPerSecond,
-      latency: totalDuration > 0 ? totalDuration / this.auditLog.length : 150, // Default to 150ms
-      errorRate: this.clientLogs.filter(log => log.level === 'error').length / Math.max(this.clientLogs.length, 1),
-      peerCount: this.peers.size,
-      timestamp: new Date().toISOString(),
-      modelName: this.config.modelName
-    };
+  private getCacheSize(): number {
+    // Calculate cache size in MB
+    let totalSize = 0;
+    for (const [key, value] of this.localCache) {
+      if (typeof value === 'string') {
+        totalSize += Buffer.byteLength(value, 'utf8');
+      } else if (Buffer.isBuffer(value)) {
+        totalSize += value.length;
+      } else if (value !== null && value !== undefined) {
+        totalSize += JSON.stringify(value).length;
+      }
+    }
+    return Math.round(totalSize / (1024 * 1024)); // Convert to MB
   }
 
-  async replayFromAuditLog(auditLog: AuditLogEntry[]): Promise<ReplayMetrics> {
-    const generationEvents = auditLog.filter(entry => entry.event === 'generation_completed');
-    const totalRequests = generationEvents.length;
-    const totalTokens = generationEvents.reduce((sum, entry) => sum + (entry.tokens || 0), 0);
-    const totalDuration = generationEvents.reduce((sum, entry) => sum + (entry.duration || 0), 0);
-    const averageLatency = totalRequests > 0 ? totalDuration / totalRequests : 150; // Default to 150ms
-    
-    const peerChurn: PeerChurnMetrics = {
-      joins: auditLog.filter(entry => entry.event === 'peer_join').length,
-      leaves: auditLog.filter(entry => entry.event === 'peer_leave').length,
-      totalPeers: this.peers.size
-    };
-    
-    const errors = this.clientLogs.filter(log => log.level === 'error').map(log => log.message);
-    const fallbacks = auditLog.filter(entry => entry.event === 'fallback_triggered').length;
-    
-    return {
-      totalRequests,
-      totalTokens,
-      averageLatency,
-      peerChurn,
-      errors,
-      fallbacks
-    };
+  private getCacheHitRate(): number {
+    if (this.cacheStats.totalRequests === 0) return 0;
+    return (this.cacheStats.hits / this.cacheStats.totalRequests) * 100;
   }
 
-  async simulatePeerLoss(): Promise<void> {
-    // Simulate losing a peer during generation
-    if (this.peers.size > 0) {
-      const peerAddresses = Array.from(this.peers.keys());
-      const randomPeer = peerAddresses[Math.floor(Math.random() * peerAddresses.length)];
-      await this.disconnectPeer(randomPeer);
+  private getNetworkSpeed(type: 'upload' | 'download'): number {
+    // Simulated network speeds for Phase B
+    const baseSpeed = 100; // MB/s
+    const variation = Math.random() * 20 - 10; // ±10 MB/s
+    return Math.max(0, baseSpeed + variation);
+  }
+
+  private getNetworkLatency(): number {
+    // Simulated latency for Phase B
+    const baseLatency = 5; // ms
+    const variation = Math.random() * 10; // 0-10ms
+    return Math.round(baseLatency + variation);
+  }
+
+  async joinBlock(blockId: string, peerId?: string): Promise<boolean> {
+    this.logger.log(`Joining block: ${blockId}`);
+    
+    try {
+      // Check if block is already local
+      if (this.blocks.has(blockId)) {
+        this.logger.log(`Block ${blockId} already available locally`);
+        return true;
+      }
       
-      // Add fallback event to audit log
-      this.auditLog.push({
-        event: 'fallback_triggered',
-        timestamp: new Date().toISOString(),
-        reason: 'peer_loss_simulation',
-        peerCount: this.peers.size
-      });
+      // Try to get from network if networking is enabled
+      if (this.config.enableNetworking && peerId) {
+        const peer = this.peers.get(peerId);
+        if (peer && peer.status === 'online') {
+          // Simulate network block retrieval
+          const block = await this.retrieveBlockFromPeer(blockId, peer);
+          if (block) {
+            this.blocks.set(blockId, block);
+            this.logger.log(`Successfully joined block ${blockId} from peer ${peerId}`);
+            return true;
+          }
+        }
+      }
+      
+      // Fallback to local cache if available
+      if (this.config.localFallback) {
+        const cachedBlock = this.localCache.get(blockId);
+        if (cachedBlock) {
+          const block: PetalsBlock = {
+            id: blockId,
+            hash: this.generateHash(blockId),
+            timestamp: new Date(),
+            size: this.getObjectSize(cachedBlock),
+            type: 'data',
+            source: 'local-cache',
+            local: true,
+            cached: true
+          };
+          this.blocks.set(blockId, block);
+          this.logger.log(`Retrieved block ${blockId} from local cache`);
+          return true;
+        }
+      }
+      
+      this.logger.warn(`Failed to join block ${blockId}`);
+      return false;
+      
+    } catch (error) {
+      this.logger.error(`Error joining block ${blockId}:`, error);
+      return false;
     }
   }
 
-  private checkRateLimits(): boolean {
-    // Simple rate limiting check
-    const now = Date.now();
-    const recentRequests = this.auditLog.filter(entry => 
-      entry.event === 'generation_completed' && 
-      now - new Date(entry.timestamp).getTime() < 60000
-    ).length;
+  async hostBlock(blockId: string, data: any, type: 'model' | 'data' | 'checkpoint' = 'data'): Promise<boolean> {
+    this.logger.log(`Hosting block: ${blockId} (${type})`);
     
-    return recentRequests < this.config.rateLimit.requestsPerMinute;
+    try {
+      const block: PetalsBlock = {
+        id: blockId,
+        hash: this.generateHash(JSON.stringify(data)),
+        timestamp: new Date(),
+        size: this.getObjectSize(data),
+        type,
+        source: 'local',
+        local: true,
+        cached: false
+      };
+      
+      // Store locally
+      this.blocks.set(blockId, block);
+      
+      // Add to hot-layer cache if enabled
+      if (this.config.hotLayerCache) {
+        this.localCache.set(blockId, data);
+        this.logger.log(`Added block ${blockId} to hot-layer cache`);
+      }
+      
+      // Emit event for other services
+      this.eventEmitter.emit('petals.block.hosted', { blockId, type, timestamp: new Date() });
+      
+      this.logger.log(`Successfully hosted block ${blockId}`);
+      return true;
+      
+    } catch (error) {
+      this.logger.error(`Error hosting block ${blockId}:`, error);
+      return false;
+    }
   }
 
-  private startHealthChecks(): void {
-    this.healthCheckInterval = setInterval(async () => {
-      await this.performHealthChecks();
-    }, this.config.healthCheckInterval);
+  private async retrieveBlockFromPeer(blockId: string, peer: PetalsPeer): Promise<PetalsBlock | null> {
+    // Simulate network retrieval for Phase B
+    await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
+    
+    // Simulate success/failure
+    if (Math.random() > 0.3) { // 70% success rate
+      return {
+        id: blockId,
+        hash: this.generateHash(blockId),
+        timestamp: new Date(),
+        size: Math.floor(Math.random() * 1000) + 100,
+        type: 'data',
+        source: `peer-${peer.id}`,
+        local: false,
+        cached: false
+      };
+    }
+    
+    return null;
   }
 
-  private async performHealthChecks(): Promise<void> {
-    for (const [address, peer] of this.peers) {
-      try {
-        // Simulate health check
-        peer.lastSeen = new Date().toISOString();
-        peer.latency = Math.random() * 100 + 50; // 50-150ms
-        peer.status = 'active';
-      } catch (error) {
-        peer.status = 'unhealthy';
-        this.logger.warn(`Health check failed for peer ${address}:`, error);
+  private generateHash(input: string): string {
+    // Simple hash generation for Phase B
+    let hash = 0;
+    for (let i = 0; i < input.length; i++) {
+      const char = input.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return hash.toString(16);
+  }
+
+  private getObjectSize(obj: any): number {
+    if (typeof obj === 'string') {
+      return Buffer.byteLength(obj, 'utf8');
+    } else if (Buffer.isBuffer(obj)) {
+      return obj.length;
+    } else {
+      return JSON.stringify(obj).length;
+    }
+  }
+
+  async getBlock(blockId: string): Promise<any | null> {
+    this.cacheStats.totalRequests++;
+    
+    // Check local blocks first
+    if (this.blocks.has(blockId)) {
+      const block = this.blocks.get(blockId);
+      if (block?.local) {
+        this.cacheStats.hits++;
+        return this.localCache.get(blockId) || null;
       }
     }
+    
+    // Check hot-layer cache
+    if (this.localCache.has(blockId)) {
+      this.cacheStats.hits++;
+      return this.localCache.get(blockId);
+    }
+    
+    this.cacheStats.misses++;
+    return null;
   }
 
-  private async initializePeers(): Promise<void> {
-    // Initialize with allowlisted peers
-    for (const peerAddress of this.config.peerAllowlist) {
-      try {
-        await this.connectToPeer(peerAddress);
-      } catch (error) {
-        this.logger.warn(`Failed to connect to peer ${peerAddress}:`, error);
+  async updateConfiguration(newConfig: Partial<PetalsConfig>): Promise<void> {
+    this.logger.log('Updating Petals configuration...');
+    
+    this.config = { ...this.config, ...newConfig };
+    
+    // Apply configuration changes
+    if (newConfig.enableNetworking !== undefined) {
+      if (newConfig.enableNetworking && !this.config.enableNetworking) {
+        await this.startPeerDiscovery();
       }
     }
-  }
-
-  private logClientLog(level: 'info' | 'warn' | 'error' | 'debug', message: string, component: string): void {
-    const log: ClientLog = {
-      level,
-      message,
-      timestamp: new Date().toISOString(),
-      component
-    };
     
-    this.clientLogs.push(log);
-    
-    // Keep only last 1000 logs
-    if (this.clientLogs.length > 1000) {
-      this.clientLogs = this.clientLogs.slice(-1000);
+    if (newConfig.hotLayerCache !== undefined) {
+      if (newConfig.hotLayerCache && !this.config.hotLayerCache) {
+        await this.initializeLocalCache();
+      }
     }
+    
+    this.logger.log('Configuration updated');
   }
 
-  private logSecurityEvent(
-    type: SecurityEvent['type'],
-    source: string,
-    details: string,
-    action: string,
-    severity: SecurityEvent['severity']
-  ): void {
-    const event: SecurityEvent = {
-      type,
-      timestamp: new Date().toISOString(),
-      source,
-      details,
-      action,
-      severity
-    };
-    
-    this.logger.warn(`Security event: ${type} - ${details}`);
-    this.logClientLog('warn', `Security: ${type} - ${details}`, 'Security');
+  getConfiguration(): PetalsConfig {
+    return { ...this.config };
   }
 }

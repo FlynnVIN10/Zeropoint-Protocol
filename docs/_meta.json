@@ -1,0 +1,13 @@
+{
+  "index": "Introduction",
+  "getting-started": "Getting Started",
+  "installation": "Installation",
+  "configuration": "Configuration",
+  "control-center": "Control Center",
+  "tinygrad": "tinygrad Integration",
+  "governance": "Data Governance",
+  "monitoring": "Monitoring & Metrics",
+  "deployment": "Deployment",
+  "contributing": "Contributing",
+  "api": "API Reference"
+}

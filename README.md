@@ -1,85 +1,177 @@
-# Zeropoint Protocol
+# Zeropoint Protocol Website v2
 
-A decentralized, consensus-driven AI platform for symbiotic intelligence.
+A modern, responsive website built with Next.js 14, featuring real-time monitoring, Control Center, and comprehensive documentation.
 
-## 🚀 **Phase 13.1 Implementation - IN PROGRESS**
+## Features
 
-**Status**: Starting Phase 13.1: Enhanced Conversational UI implementation  
-**Branch**: `feature/phase13-1-conversational-ui`  
-**Timeline**: Days 1-10 (2025-08-03 to 2025-08-13)  
-**Features**: Persona Badge System, Context-Aware Suggestions, Intent Visualization Components  
+- **Modern UI/UX**: Built with Next.js 14, Tailwind CSS, and Radix UI
+- **Control Center**: Real-time monitoring of system KPIs, Synthiants, Consensus, Metrics, and Audit
+- **Documentation**: Nextra-powered documentation with search and navigation
+- **Responsive Design**: Mobile-first design that works on all devices
+- **Real-time Data**: Placeholder for SSE/WebSocket integration
+- **No Mocks**: Enforces real compute only with scope controls
 
-### **Current Development Focus**
-- ✅ Feature branch created
-- 🚧 PersonaBadge.tsx component development
-- 🚧 Enhanced ChatBubble.tsx integration
-- 🚧 Backend persona metadata endpoints
-- ⏳ Context-aware suggestion engine
-- ⏳ Intent visualization components
+## Technology Stack
 
-### **Phase 13.1 Success Criteria**
-- [ ] Persona badges implemented across all chat interfaces
-- [ ] Context-aware suggestions achieve 80% relevance
-- [ ] Intent visualization provides clear user feedback
-- [ ] WCAG 2.1 AA compliance maintained
-- [ ] Telemetry integration for all new features
+- **Framework**: Next.js 14 with App Router
+- **Styling**: Tailwind CSS
+- **UI Components**: Radix UI, shadcn/ui
+- **Icons**: Lucide React
+- **Documentation**: Nextra
+- **Deployment**: Cloudflare Pages
+- **TypeScript**: Full type safety
 
----
-
-## Quick Start
+## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+
-- Docker and Docker Compose
-- Git
+- npm or yarn
 
 ### Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/FlynnVIN10/zeropointprotocol.ai.git
-cd zeropointprotocol.ai
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/FlynnVIN10/Zeropoint-Protocol.git
+   cd Zeropoint-Protocol/website-v2
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Start development server**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser**
+   Navigate to `http://localhost:3000`
+
+## Project Structure
+
+```
+website-v2/
+├── src/
+│   ├── app/                    # Next.js App Router pages
+│   │   ├── control/           # Control Center routes
+│   │   │   ├── overview/      # Main dashboard
+│   │   │   ├── synthiants/    # AI agent monitoring
+│   │   │   ├── consensus/     # Proposal tracking
+│   │   │   ├── metrics/       # Performance metrics
+│   │   │   └── audit/         # Audit timeline
+│   │   ├── layout.tsx         # Root layout
+│   │   └── page.tsx           # Home page
+│   ├── components/             # Reusable components
+│   │   └── Navigation.tsx     # Main navigation
+│   └── globals.css            # Global styles
+├── docs/                       # Nextra documentation
+│   ├── index.mdx              # Documentation home
+│   ├── getting-started.mdx    # Getting started guide
+│   └── _meta.json             # Navigation metadata
+├── public/                     # Static assets
+├── next.config.js             # Next.js configuration
+├── theme.config.tsx           # Nextra theme configuration
+├── wrangler.toml              # Cloudflare Pages config
+└── package.json               # Dependencies
 ```
 
-2. Install dependencies:
+## Control Center Routes
+
+### `/control/overview`
+- System KPIs and metrics
+- Recent deployments
+- Active incidents
+- Quick action buttons
+
+### `/control/synthiants`
+- Active AI agents monitoring
+- Queue statistics
+- Chat sessions
+- Performance metrics
+
+### `/control/consensus`
+- Active proposals
+- Voting progress
+- Quorum status
+- Veto decisions
+
+### `/control/metrics`
+- Performance data
+- Cost breakdown
+- RAG metrics
+- Real-time charts (placeholder)
+
+### `/control/audit`
+- System events timeline
+- Security incidents
+- Governance activities
+- Detailed audit logs
+
+## Documentation
+
+The documentation is powered by Nextra and accessible at `/docs`. It includes:
+
+- Getting started guides
+- Installation instructions
+- Configuration details
+- API reference
+- Contributing guidelines
+
+## Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Code Style
+
+- TypeScript for type safety
+- Tailwind CSS for styling
+- Component-based architecture
+- Responsive design principles
+
+## Deployment
+
+### Cloudflare Pages
+
+The website is configured for deployment on Cloudflare Pages:
+
+1. **Build Command**: `npm run build`
+2. **Output Directory**: `.next`
+3. **Node Version**: 18
+
+### Environment Variables
+
+Set the following environment variables in Cloudflare Pages:
+
 ```bash
-npm install
+NODE_VERSION=18
+NEXT_PUBLIC_APP_URL=https://your-domain.com
 ```
-
-3. Start the development server:
-```bash
-npm run start
-```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-### Development
-
-- **Dashboard**: `/dashboard` - Real-time system monitoring
-- **Interact**: `/interact` - AI conversation interface
-- **Documentation**: `/docs` - Technical documentation
-
-### Building for Production
-
-```bash
-npm run build
-npm run serve
-```
-
-## Architecture
-
-- **Frontend**: React with TypeScript, Docusaurus
-- **Backend**: NestJS with PostgreSQL
-- **Real-time**: Server-Sent Events (SSE)
-- **Styling**: CSS Modules with dark mode support
-- **Accessibility**: WCAG 2.1 AA compliant
 
 ## Contributing
 
-Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting pull requests.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-# Push test Sat Aug  9 00:15:08 CDT 2025
+© 2025 Zeropoint Protocol, Inc., Austin, TX. All Rights Reserved.
+
+## Support
+
+- **Documentation**: Browse `/docs` for comprehensive guides
+- **Issues**: Report bugs on GitHub
+- **Discussions**: Join community discussions
+
+---
+
+*Built with ❤️ by the Zeropoint Protocol team*

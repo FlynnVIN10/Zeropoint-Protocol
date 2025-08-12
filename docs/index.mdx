@@ -1,0 +1,88 @@
+# Welcome to Zeropoint Protocol
+
+Real compute attestation and tinygrad integration for AI training and inference.
+
+## What is Zeropoint Protocol?
+
+Zeropoint Protocol is a comprehensive AI training and inference platform built on **tinygrad** with **ROCm** integration. Our platform provides:
+
+- **Real Compute Attestation**: No mocks, no synthetic data, only genuine hardware performance
+- **tinygrad Integration**: Full integration with tinygrad on tinybox hardware
+- **Data Governance**: Comprehensive PII scanning, license validation, and checksum verification
+- **Live Monitoring**: Real-time metrics, consensus monitoring, and audit trails
+- **Scope Controls**: Enforced scope boundaries with mock detection
+
+## Key Features
+
+### 🚀 Real Compute
+- Hardware attestation on tinybox
+- ROCm integration for AMD GPUs
+- Deterministic training with fixed seeds
+- No mock implementations allowed
+
+### 🛡️ Governance & Safety
+- Automated PII detection and mitigation
+- License compliance validation
+- Checksum integrity verification
+- Comprehensive audit logging
+
+### 📊 Live Monitoring
+- Real-time performance metrics
+- Consensus proposal tracking
+- Synthiant performance monitoring
+- Cost and energy tracking
+
+### 🔒 Scope Enforcement
+- CI/CD mock detection
+- Runtime scope validation
+- Hardware interaction verification
+- Synthetic data prevention
+
+## Quick Start
+
+1. **Access Control Center**: Navigate to `/control/overview` for system monitoring
+2. **View Metrics**: Check `/control/metrics` for performance data
+3. **Monitor Consensus**: Track proposals at `/control/consensus`
+4. **Audit Trail**: Review events at `/control/audit`
+
+## Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │    │   Hardware      │
+│   (Next.js)     │◄──►│   (Node.js)     │◄──►│   (tinybox)     │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Control       │    │   tinygrad      │    │   ROCm          │
+│   Center        │    │   Integration   │    │   Runtime       │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+```
+
+## Technology Stack
+
+- **Frontend**: Next.js 14, Tailwind CSS, Radix UI
+- **Backend**: Node.js, TypeScript
+- **AI Framework**: tinygrad
+- **GPU Runtime**: ROCm
+- **Hardware**: tinybox
+- **Deployment**: Cloudflare Pages
+
+## Getting Started
+
+For detailed setup and configuration instructions, see our [Installation Guide](/docs/installation) and [Configuration](/docs/configuration) pages.
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](/docs/contributing) for details on our development process and code standards.
+
+## Support
+
+- **Documentation**: Browse our comprehensive docs
+- **Issues**: Report bugs and request features on GitHub
+- **Discussions**: Join community discussions
+
+---
+
+*Built with ❤️ by the Zeropoint Protocol team*

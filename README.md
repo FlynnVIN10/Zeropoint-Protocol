@@ -162,9 +162,15 @@ NEXT_PUBLIC_APP_URL=https://your-domain.com
 4. Add tests if applicable
 5. Submit a pull request
 
-## License
+## 📑 License & Access
 
-© 2025 Zeropoint Protocol, Inc., Austin, TX. All Rights Reserved.
+**© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. Domain: zeropointprotocol.ai, Contact: legal@zeropointprotocol.ai**
+
+### **View-Only License: Browse on GitHub Only**
+
+This project is licensed under a proprietary view-only license - see the [LICENSE](LICENSE.md) file for details. No clone, modify, run or distribute without signed agreement.
+
+**All other uses require signed license agreement.**
 
 ## Support
 

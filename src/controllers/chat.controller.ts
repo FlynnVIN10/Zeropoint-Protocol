@@ -79,7 +79,7 @@ export class ChatController {
         id: Date.now().toString(),
         author: "ai",
         content:
-          "Hello! I am a Synthiant agent from the Zeropoint Protocol. I can help you learn about our ethical AI framework, consensus mechanisms, and AI safety protocols. How can I assist you today?",
+          "Hello! I am a Synthiant agent from the Zeropoint Protocol. I can help you learn about our ethical AI framework, consensus mechanisms, and AI safety protocols. How can I assist you?",
         timestamp: new Date().toISOString(),
       });
     }, 1000);
@@ -416,7 +416,7 @@ export class ChatController {
     const isFirstInteraction = conversation.length <= 2;
 
     if (isFirstInteraction) {
-      return "Hello! I am a Synthiant agent from the Zeropoint Protocol. I'm here to help you understand our ethical AI framework and consensus mechanisms. What would you like to learn about today?";
+      return "Hello! I am a Synthiant agent from the Zeropoint Protocol. I'm here to help you understand our ethical AI framework and consensus mechanisms. What would you like to learn about?";
     } else {
       return "Hello again! How can I help you further with your questions about the Zeropoint Protocol?";
     }

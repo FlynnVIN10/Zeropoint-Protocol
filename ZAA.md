@@ -163,7 +163,7 @@ Users must report:
 - Security incidents
 
 **Reporting Process:**
-- Reports must be submitted within 30 days of discovery
+- Reports must be submitted promptly after discovery
 - Reports should include detailed documentation
 - Anonymous reporting is supported
 - Whistleblower protection is provided

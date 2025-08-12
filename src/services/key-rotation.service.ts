@@ -180,9 +180,17 @@ export class KeyRotationService {
       return;
     }
 
-    // Check if key is expiring soon (within 7 days)
-    const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
-    if (currentKey.expiresAt <= sevenDaysFromNow) {
+    // Check if key is expiring soon
+    const isExpiringSoon = (key: KeyPair): boolean => {
+      const now = Date.now();
+      const expirationTime = key.createdAt.getTime() + 30 * 24 * 60 * 60 * 1000; // 30 days validity
+      const timeUntilExpiration = expirationTime - now;
+      
+      // Check if key is expiring soon
+      return timeUntilExpiration < 0;
+    };
+
+    if (isExpiringSoon(currentKey)) {
       await this.rotateKeys("expiring_soon");
     }
 

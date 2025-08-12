@@ -154,7 +154,7 @@ export class UIController {
       lowerPrompt.includes("hey")
     ) {
       content =
-        "Hello! I am the Zeropoint Protocol AI system. I'm here to help you understand our ethical AI framework and assist with your questions. How can I help you today?";
+        "Hello! I am the Zeropoint Protocol AI system. I'm here to help you understand our ethical AI framework and assist with your questions. How can I help you?";
       consensusType = "greeting_consensus";
     } else if (lowerPrompt.includes("consensus")) {
       content =

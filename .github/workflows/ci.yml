@@ -11,8 +11,20 @@ env:
   NODE_VERSION: '18'
 
 jobs:
+  no_timeframes:
+    name: "No Timeframes Compliance Check"
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Run No Timeframes Check
+        run: ./scripts/ci-no-timeframes.sh
+        
   test:
     runs-on: ubuntu-latest
+    needs: no_timeframes
     
     steps:
       - name: Checkout
@@ -45,6 +57,7 @@ jobs:
           
   security:
     runs-on: ubuntu-latest
+    needs: no_timeframes
     
     steps:
       - name: Checkout

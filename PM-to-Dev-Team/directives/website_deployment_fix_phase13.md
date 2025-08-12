@@ -9,7 +9,7 @@
 
 Dev Team,  
 
-Despite claims of completion, the public website (https://zeropointprotocol.ai) is not reflecting the updates from Phases 13.1-13.3, including the futuristic dark-mode theme, new feature sections (e.g., RAG, Mission Planner, Role-Based Views), and content sync. Current checks show old title and content, indicating a deployment or caching issue with Cloudflare Pages (as per README and hosting setup). The repo https://github.com/FlynnVIN10/zeropointprotocol.ai has the new content in docs/ or src/, but the live site is stale. Proceed immediately with troubleshooting and forcing an update in the `feature/website-sync-phase13` branch (or current if merged). Aim for resolution by end of day, with live site verification.
+Despite claims of completion, the public website (https://zeropointprotocol.ai) is not reflecting the updates from Phases 13.1-13.3, including the futuristic dark-mode theme, new feature sections (e.g., RAG, Mission Planner, Role-Based Views), and content sync. Current checks show old title and content, indicating a deployment or caching issue with Cloudflare Pages (as per README and hosting setup). The repo https://github.com/FlynnVIN10/zeropointprotocol.ai has the new content in docs/ or src/, but the live site is stale. Proceed immediately with troubleshooting and forcing an update in the `feature/website-sync-phase13` branch (or current if merged). Aim for resolution with live site verification.
 
 **General Guidelines**:  
 - Focus on Cloudflare Pages integration (Docusaurus build to 'build/' directory, deployed on push to main).  

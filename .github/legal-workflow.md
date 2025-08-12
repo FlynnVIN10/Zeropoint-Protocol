@@ -37,7 +37,7 @@ This document outlines the legal invitation workflow for granting access to the 
 ### 3. NDA Signing
 **Process**:
 - Send Non-Disclosure Agreement via DocuSign
-- Require digital signature within 7 days
+- Require digital signature
 - Verify identity through DocuSign authentication
 - Store signed NDA in secure document management
 

@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Following CTO acknowledgment of the Interact page fixes, proceed with enhancing CI, accelerating Phase 13.3, and updating the demo to include live chat. Work in the current feature branch `feature/phase13-3-llm-rag` in https://github.com/FlynnVIN10/Zeropoint-Protocol, with syncs to the website repo https://github.com/FlynnVIN10/zeropointprotocol.ai if needed for Interact previews. Timeline: CI and demo updates by end of day; Phase 13.3 ongoing per Weeks 5-6.
+Following CTO acknowledgment of the Interact page fixes, proceed with enhancing CI, accelerating Phase 13.3, and updating the demo to include live chat. Work in the current feature branch `feature/phase13-3-llm-rag` in https://github.com/FlynnVIN10/Zeropoint-Protocol, with syncs to the website repo https://github.com/FlynnVIN10/zeropointprotocol.ai if needed for Interact previews. Timeline: CI and demo updates; Phase 13.3 ongoing per Weeks 5-6.
 
 ## General Guidelines
 
@@ -22,7 +22,7 @@ Following CTO acknowledgment of the Interact page fixes, proceed with enhancing 
 
 ### 1. CI Enhancement for Endpoint Regression Prevention
 **Priority**: High  
-**Timeline**: Immediate - End of Day
+**Timeline**: End of Day Demo
 
 Add automated tests to CI pipeline (`.github/workflows/ci.yml`) for key endpoints:
 
@@ -64,7 +64,7 @@ Add automated tests to CI pipeline (`.github/workflows/ci.yml`) for key endpoint
 - Integrate with workflow: e.g., use chat to initiate Mission Planner ("Build a factory" prompt → decomposition → voting)
 - Verify in staging: Test full cycle
 - Add to checklist (`demos/phase13_demo_checklist.md`)
-- Support today's walkthrough if needed
+- Support walkthrough if needed
 
 ## Execution Notes
 

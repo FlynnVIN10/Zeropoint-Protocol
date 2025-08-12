@@ -221,7 +221,7 @@ curl -X POST http://localhost:3000/v1/dashboard/telemetry \
 - [ ] Performance optimization based on demo results
 - [ ] Knowledge base expansion for RAG
 
-### Short-term (Next week)
+### Short-term Actions
 - [ ] Phase 13.3 completion (RAG and Mission Planner)
 - [ ] Additional endpoint testing coverage
 - [ ] Performance optimization and scaling

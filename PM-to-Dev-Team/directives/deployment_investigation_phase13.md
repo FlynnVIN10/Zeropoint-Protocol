@@ -9,7 +9,7 @@
 
 Dev Team,  
 
-The live website remains unchanged despite builds, indicating deployment failures in Cloudflare Pages. Following CTO directives, perform the following investigation and fixes in the website repo, using the feature branch feature/website-sync-phase13. Aim for resolution by end of day, with a fix plan if issues persist. Escalate if dashboard access or token regeneration needed (e.g., for owner).
+The live website remains unchanged despite builds, indicating deployment failures in Cloudflare Pages. Following CTO directives, perform the following investigation and fixes in the website repo, using the feature branch feature/website-sync-phase13. Aim for resolution, with a fix plan if issues persist. Escalate if dashboard access or token regeneration needed (e.g., for owner).
 
 **General Guidelines**:  
 - Use local setup to replicate (clone repo, npm install, build).  

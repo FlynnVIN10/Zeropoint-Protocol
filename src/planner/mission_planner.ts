@@ -24,7 +24,7 @@ export interface MissionDirective {
   constraints: string[];
   successCriteria: string[];
   estimatedEffort: number; // hours
-  deadline?: number; // timestamp
+  targetDate?: number; // timestamp
   dependencies: string[]; // mission IDs
   tags: string[];
   createdAt: number;

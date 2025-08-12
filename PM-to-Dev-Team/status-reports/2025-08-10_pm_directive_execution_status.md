@@ -85,7 +85,7 @@
 
 #### **Blocker Assessment:**
 - **Unmitigated High Risks:** 0 ✅
-- **All Risks:** Properly assigned owners and ETAs ✅
+- **All Risks:** Properly assigned owners and monitoring status ✅
 - **System Status:** Fully operational and verified ✅
 
 #### **Sign-Off Request Prepared:**
@@ -168,7 +168,7 @@
 - **Low Risks (Acceptable):** 2 (within tolerance)
 
 ### **Risk Mitigation Status**
-- **All Risks:** Have designated owners and ETAs ✅
+- **All Risks:** Have designated owners and monitoring status ✅
 - **Mitigation Strategies:** Documented and implemented ✅
 - **Rollback Procedures:** Tested and verified ✅
 

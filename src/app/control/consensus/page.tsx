@@ -21,7 +21,7 @@ interface Proposal {
   status: 'active' | 'passed' | 'failed' | 'vetoed'
   proposer: string
   createdAt: string
-  deadline: string
+  targetDate: string
   requiredQuorum: number
   currentVotes: {
     approve: number
@@ -42,7 +42,7 @@ export default function ConsensusPage() {
       status: 'active',
       proposer: 'PM',
       createdAt: '2 hours ago',
-      deadline: '6 hours from now',
+      targetDate: '6 hours from now',
       requiredQuorum: 75,
       currentVotes: { approve: 3, reject: 0, abstain: 1 },
       totalWeight: 100,
@@ -56,7 +56,7 @@ export default function ConsensusPage() {
       status: 'passed',
       proposer: 'DevOps',
       createdAt: '1 day ago',
-      deadline: 'Passed',
+      targetDate: 'Completed',
       requiredQuorum: 75,
       currentVotes: { approve: 4, reject: 0, abstain: 0 },
       totalWeight: 100,
@@ -70,7 +70,7 @@ export default function ConsensusPage() {
       status: 'vetoed',
       proposer: 'Security Team',
       createdAt: '3 days ago',
-      deadline: 'Vetoed',
+      targetDate: 'Vetoed',
       requiredQuorum: 75,
       currentVotes: { approve: 2, reject: 1, abstain: 1 },
       totalWeight: 100,
@@ -292,8 +292,8 @@ export default function ConsensusPage() {
                       <p className="text-gray-900 font-medium">{proposal.createdAt}</p>
                     </div>
                     <div className="text-sm">
-                      <span className="text-gray-500">Deadline:</span>
-                      <p className="text-gray-900 font-medium">{proposal.deadline}</p>
+                      <span className="text-gray-500">Target:</span>
+                      <p className="text-gray-900 font-medium">{proposal.targetDate}</p>
                     </div>
                   </div>
 

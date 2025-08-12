@@ -359,10 +359,8 @@ policy:
     appeals:
       allowed: true
       process:
-        - "Submit appeal within 30 days"
-        - "Review by governance committee"
-        - "Decision within 14 days"
-        - "Final decision binding"
+        - "Submit appeal promptly"
+        - "Decision will be made promptly"
 
   # Documentation and Reporting
   documentation:

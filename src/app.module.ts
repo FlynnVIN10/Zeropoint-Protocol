@@ -60,10 +60,14 @@ import { RAGService } from "./services/rag.service.js";
 import { PerformanceMonitorService } from "./services/performance-monitor.service.js";
 import { MultiLLMService } from "./services/multi-llm.service.js";
 import { StreamController } from "./controllers/stream.controller.js";
+import { ApplianceStatusController } from "./controllers/appliance-status.controller.js";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ 
+      isGlobal: true,
+      envFilePath: ['.env.local', '.env']
+    }),
     HttpModule,
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
@@ -148,6 +152,7 @@ import { StreamController } from "./controllers/stream.controller.js";
     SSEController,
     PerformanceController,
     StreamController,
+    ApplianceStatusController,
   ],
   providers: [
     AppService,

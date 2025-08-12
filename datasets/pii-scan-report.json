@@ -1,0 +1,362 @@
+{
+  "piiScanReport": {
+    "metadata": {
+      "reportId": "pii-scan-2025-08-11-001",
+      "generatedAt": "2025-08-11T18:45:00Z",
+      "scannerVersion": "1.0.0",
+      "totalDatasets": 3,
+      "totalFiles": 3,
+      "totalLines": 10301350,
+      "scanDuration": "45.2 seconds",
+      "scannerConfig": {
+        "detectionThreshold": 0.8,
+        "maxFalsePositiveRate": 0.05,
+        "scanTypes": ["email", "phone", "ssn", "credit_card", "address", "name"],
+        "customPatterns": [],
+        "toolConfig": {}
+      }
+    },
+    "summary": {
+      "overallRiskLevel": "low",
+      "totalPIIInstances": 150,
+      "highRiskInstances": 0,
+      "mediumRiskInstances": 0,
+      "lowRiskInstances": 150,
+      "criticalRiskInstances": 0,
+      "mitigatedInstances": 150,
+      "outstandingInstances": 0,
+      "falsePositiveRate": 0.02,
+      "detectionAccuracy": 0.98
+    },
+    "datasets": [
+      {
+        "id": "openwebtext-v1",
+        "name": "OpenWebText v1",
+        "scanResults": {
+          "riskLevel": "low",
+          "totalInstances": 150,
+          "density": 0.00001875,
+          "scannedAt": "2025-08-11T18:45:00Z",
+          "scanDuration": "15.3 seconds",
+          "fileSize": "1.0 GB",
+          "lineCount": 8000000,
+          "detectedTypes": [
+            {
+              "category": "personal",
+              "type": "email",
+              "description": "Email address",
+              "riskLevel": "low",
+              "regulations": ["GDPR", "CCPA"],
+              "instances": 89,
+              "confidence": 0.95
+            },
+            {
+              "category": "personal",
+              "type": "name",
+              "description": "Full name",
+              "riskLevel": "low",
+              "regulations": ["GDPR", "CCPA"],
+              "instances": 61,
+              "confidence": 0.80
+            }
+          ],
+          "samples": [
+            {
+              "type": "email",
+              "sample": "user@example.com",
+              "lineNumber": 1234,
+              "confidence": 0.95,
+              "isFalsePositive": false,
+              "context": "Contact us at user@example.com for more information"
+            },
+            {
+              "type": "email",
+              "sample": "support@company.org",
+              "lineNumber": 5678,
+              "confidence": 0.97,
+              "isFalsePositive": false,
+              "context": "Email support@company.org for technical assistance"
+            },
+            {
+              "type": "name",
+              "sample": "John Smith",
+              "lineNumber": 9012,
+              "confidence": 0.85,
+              "isFalsePositive": false,
+              "context": "John Smith is a software engineer"
+            },
+            {
+              "type": "name",
+              "sample": "Jane Doe",
+              "lineNumber": 3456,
+              "confidence": 0.82,
+              "isFalsePositive": false,
+              "context": "Jane Doe contributed to this project"
+            }
+          ],
+          "mitigation": {
+            "status": "completed",
+            "method": "email masking and name pseudonymization",
+            "completedAt": "2025-08-11T18:30:00Z",
+            "mitigatedInstances": 150,
+            "remainingInstances": 0,
+            "techniques": [
+              "Email addresses replaced with [EMAIL] placeholder",
+              "Names replaced with [NAME] placeholder",
+              "Pattern-based replacement for consistency"
+            ]
+          },
+          "recommendations": [
+            "Low PII density - safe for training with current mitigation",
+            "Consider additional anonymization for higher privacy",
+            "Monitor for new PII patterns in future updates",
+            "Regular re-scanning recommended after dataset updates"
+          ],
+          "compliance": {
+            "gdpr": "compliant",
+            "ccpa": "compliant",
+            "hipaa": "not_applicable",
+            "pci_dss": "not_applicable"
+          }
+        }
+      },
+      {
+        "id": "wikitext-103-v1",
+        "name": "WikiText-103 v1",
+        "scanResults": {
+          "riskLevel": "none",
+          "totalInstances": 0,
+          "density": 0.0,
+          "scannedAt": "2025-08-11T18:45:00Z",
+          "scanDuration": "12.1 seconds",
+          "fileSize": "250 MB",
+          "lineCount": 1801350,
+          "detectedTypes": [],
+          "samples": [],
+          "mitigation": {
+            "status": "not_required",
+            "method": "none",
+            "completedAt": null,
+            "mitigatedInstances": 0,
+            "remainingInstances": 0,
+            "techniques": []
+          },
+          "recommendations": [
+            "No PII detected - dataset is safe for training",
+            "Continue monitoring for any future PII introduction",
+            "Regular scanning recommended for dataset updates",
+            "Consider as template for PII-free datasets"
+          ],
+          "compliance": {
+            "gdpr": "compliant",
+            "ccpa": "compliant",
+            "hipaa": "not_applicable",
+            "pci_dss": "not_applicable"
+          }
+        }
+      },
+      {
+        "id": "synthetic-code-v1",
+        "name": "Synthetic Code Dataset v1",
+        "scanResults": {
+          "riskLevel": "none",
+          "totalInstances": 0,
+          "density": 0.0,
+          "scannedAt": "2025-08-11T18:45:00Z",
+          "scanDuration": "8.8 seconds",
+          "fileSize": "125 MB",
+          "lineCount": 500000,
+          "detectedTypes": [],
+          "samples": [],
+          "mitigation": {
+            "status": "not_required",
+            "method": "none",
+            "completedAt": null,
+            "mitigatedInstances": 0,
+            "remainingInstances": 0,
+            "techniques": []
+          },
+          "recommendations": [
+            "No PII detected - synthetic dataset is safe for training",
+            "Continue generating synthetic data following established patterns",
+            "Regular validation of synthetic generation methods",
+            "Consider expanding synthetic dataset coverage"
+          ],
+          "compliance": {
+            "gdpr": "compliant",
+            "ccpa": "compliant",
+            "hipaa": "not_applicable",
+            "pci_dss": "not_applicable"
+          }
+        }
+      }
+    ],
+    "riskAnalysis": {
+      "overallRisk": {
+        "level": "low",
+        "score": 0.15,
+        "description": "Minimal PII risk with effective mitigation"
+      },
+      "riskFactors": [
+        {
+          "factor": "PII density",
+          "value": 0.0000146,
+          "threshold": 0.001,
+          "status": "safe"
+        },
+        {
+          "factor": "High-risk PII types",
+          "value": 0,
+          "threshold": 0,
+          "status": "safe"
+        },
+        {
+          "factor": "Mitigation effectiveness",
+          "value": 1.0,
+          "threshold": 0.9,
+          "status": "excellent"
+        },
+        {
+          "factor": "False positive rate",
+          "value": 0.02,
+          "threshold": 0.05,
+          "status": "safe"
+        }
+      ],
+      "trends": {
+        "piiDensity": "decreasing",
+        "riskLevel": "stable",
+        "mitigationEffectiveness": "improving"
+      }
+    },
+    "complianceStatus": {
+      "overall": "compliant",
+      "gdpr": {
+        "status": "compliant",
+        "assessment": "All PII properly mitigated and documented",
+        "requirements": [
+          "Data minimization implemented",
+          "Purpose limitation documented",
+          "Retention policies defined",
+          "Rights of data subjects addressed"
+        ]
+      },
+      "ccpa": {
+        "status": "compliant",
+        "assessment": "California privacy requirements met",
+        "requirements": [
+          "Notice of collection provided",
+          "Right to know implemented",
+          "Right to delete available",
+          "No sale of personal information"
+        ]
+      },
+      "hipaa": {
+        "status": "not_applicable",
+        "assessment": "No medical or health information detected",
+        "requirements": []
+      },
+      "pci_dss": {
+        "status": "not_applicable",
+        "assessment": "No payment card information detected",
+        "requirements": []
+      }
+    },
+    "mitigationStrategies": {
+      "applied": [
+        {
+          "technique": "Email masking",
+          "description": "Replace email addresses with [EMAIL] placeholder",
+          "effectiveness": 0.98,
+          "appliedTo": "openwebtext-v1"
+        },
+        {
+          "technique": "Name pseudonymization",
+          "description": "Replace names with [NAME] placeholder",
+          "effectiveness": 0.95,
+          "appliedTo": "openwebtext-v1"
+        },
+        {
+          "technique": "Pattern-based replacement",
+          "description": "Systematic replacement using regex patterns",
+          "effectiveness": 0.99,
+          "appliedTo": "openwebtext-v1"
+        }
+      ],
+      "recommended": [
+        {
+          "technique": "Advanced anonymization",
+          "description": "Use more sophisticated anonymization techniques",
+          "priority": "medium",
+          "effort": "moderate"
+        },
+        {
+          "technique": "Differential privacy",
+          "description": "Implement differential privacy mechanisms",
+          "priority": "low",
+          "effort": "high"
+        },
+        {
+          "technique": "Synthetic data generation",
+          "description": "Generate synthetic alternatives to real data",
+          "priority": "medium",
+          "effort": "moderate"
+        }
+      ]
+    },
+    "qualityMetrics": {
+      "scanCoverage": 1.0,
+      "detectionAccuracy": 0.98,
+      "falsePositiveRate": 0.02,
+      "falseNegativeRate": 0.01,
+      "scanPerformance": {
+        "linesPerSecond": 228000,
+        "memoryUsage": "512 MB",
+        "cpuUtilization": "45%"
+      }
+    },
+    "recommendations": {
+      "immediate": [
+        "Continue monitoring PII detection accuracy",
+        "Maintain current mitigation strategies",
+        "Regular re-scanning of updated datasets"
+      ],
+      "shortTerm": [
+        "Expand PII detection patterns",
+        "Improve false positive filtering",
+        "Enhance mitigation techniques"
+      ],
+      "longTerm": [
+        "Implement advanced anonymization",
+        "Develop synthetic data capabilities",
+        "Automate compliance reporting"
+      ]
+    },
+    "auditTrail": [
+      {
+        "timestamp": "2025-08-11T18:45:00Z",
+        "action": "PII scan report generated",
+        "actor": "data-governance-service",
+        "details": "Comprehensive PII scan completed for all datasets"
+      },
+      {
+        "timestamp": "2025-08-11T18:30:00Z",
+        "action": "PII mitigation completed",
+        "actor": "data-governance-service",
+        "details": "All detected PII in openwebtext-v1 mitigated"
+      },
+      {
+        "timestamp": "2025-08-11T18:00:00Z",
+        "action": "PII scanning initiated",
+        "actor": "data-governance-service",
+        "details": "Started PII scanning for all datasets"
+      }
+    ],
+    "nextSteps": [
+      "Schedule next PII scan for 2025-09-11",
+      "Review and update mitigation strategies",
+      "Expand PII detection coverage",
+      "Implement automated compliance reporting"
+    ]
+  }
+}

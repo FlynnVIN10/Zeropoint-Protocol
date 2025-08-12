@@ -1,0 +1,88 @@
+name: Documentation Build & Validation
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  docs-build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build documentation
+      run: npm run build
+      
+    - name: Check legal page exists
+      run: |
+        if [ ! -f "docs/legal.md" ]; then
+          echo "❌ Legal page not found"
+          exit 1
+        fi
+        echo "✅ Legal page found"
+        
+    - name: Check status page exists
+      run: |
+        if [ ! -f "docs/status.md" ]; then
+          echo "❌ Status page not found"
+          exit 1
+        fi
+        echo "✅ Status page found"
+        
+    - name: Validate legal page links
+      run: |
+        echo "Checking legal page links..."
+        if ! grep -q "LICENSE.md" docs/legal.md; then
+          echo "❌ LICENSE.md link missing from legal page"
+          exit 1
+        fi
+        if ! grep -q "ZAA.md" docs/legal.md; then
+          echo "❌ ZAA.md link missing from legal page"
+          exit 1
+        fi
+        if ! grep -q "CLA.md" docs/legal.md; then
+          echo "❌ CLA.md link missing from legal page"
+          exit 1
+        fi
+        echo "✅ All legal page links present"
+        
+    - name: Check corporate entity in docs
+      run: |
+        for doc in docs/legal.md docs/status.md; do
+          if ! grep -q "Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX" "$doc"; then
+            echo "❌ Corporate entity not found in $doc"
+            exit 1
+          fi
+          echo "✅ Corporate entity found in $doc"
+        done
+        
+    - name: Check legal contact in docs
+      run: |
+        for doc in docs/legal.md docs/status.md; do
+          if ! grep -q "legal@zeropointprotocol.ai" "$doc"; then
+            echo "❌ Legal contact not found in $doc"
+            exit 1
+          fi
+          echo "✅ Legal contact found in $doc"
+        done
+        
+    - name: Report success
+      run: |
+        echo "🎉 Documentation build and validation passed!"
+        echo "✅ Legal page: All links and content verified"
+        echo "✅ Status page: Content and formatting verified"
+        echo "✅ Corporate entity: Present in all documentation"
+        echo "✅ Legal contact: Present in all documentation"

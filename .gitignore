@@ -71,5 +71,10 @@ artifacts/
 venv/
 env/
 
-# Vendor directories (will be submodules)
-vendor/tinygrad/
+# Vendor submodules - allow directory but exclude build artifacts
+vendor/tinygrad/build/
+vendor/tinygrad/dist/
+vendor/tinygrad/*.so
+vendor/tinygrad/*.dylib
+vendor/tinygrad/*.dll
+vendor/tinygrad/*.exe

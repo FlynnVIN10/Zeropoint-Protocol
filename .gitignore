@@ -7,6 +7,9 @@ yarn-error.log*
 # Build outputs
 dist/
 build/
+out/
+.next/
+*.out/
 
 # Logs
 logs/
@@ -45,3 +48,28 @@ coverage/
 # Temporary files
 *.tmp
 *.temp
+
+# Website specific
+website/node_modules/
+website/.next/
+website/out/
+website/build/
+website/dist/
+
+# Artifacts and large files
+artifacts/
+*.ckpt
+*.onnx
+*.mp4
+*.uasset
+*.bin
+*.mov
+*.usdz
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Vendor directories (will be submodules)
+vendor/tinygrad/

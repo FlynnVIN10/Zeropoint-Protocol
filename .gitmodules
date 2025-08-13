@@ -1,3 +1,0 @@
-[submodule "vendor/tinygrad"]
-	path = vendor/tinygrad
-	url = https://github.com/tinygrad/tinygrad.git

@@ -1,7 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.11
 """
 Test script for tinygrad integration - Phase X Task 1
 Verifies that tinygrad is properly installed and accessible
+
+Note: Requires Python 3.10+ due to match/case syntax in tinygrad
 """
 
 import sys
@@ -21,7 +23,7 @@ def test_tinygrad_import():
         
         # Try to import tinygrad
         import tinygrad as tg
-        print(f"✅ tinygrad imported successfully: {tg.__version__}")
+        print(f"✅ tinygrad imported successfully")
         
         # Test basic functionality
         print(f"🔧 Available devices: {tg.Device.DEFAULT}")

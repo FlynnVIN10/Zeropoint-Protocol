@@ -69,13 +69,13 @@ echo "🏗️  Checking repository structure..."
 REQUIRED_DIRS=(
     "platform"
     "website"
-    "runtime"
     "scripts"
     "PM-to-Dev-Team"
-    "artifacts"
     "test"
     "config"
-    "recipes"
+    "app"
+    "src"
+    "vendor"
 )
 
 for dir in "${REQUIRED_DIRS[@]}"; do

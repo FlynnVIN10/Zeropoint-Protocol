@@ -1,0 +1,49 @@
+# Tinygrad Training Configuration - Phase X Task 1
+# Real LLM training with Apple Silicon Metal backend
+
+# Training hyperparameters
+hyperparams:
+  model_size: "8B"  # 8-13B parameter range as specified
+  epochs: 10
+  batch_size: 32
+  learning_rate: 0.001
+  weight_decay: 0.01
+  warmup_steps: 1000
+  max_steps: 10000
+  
+# Model configuration
+model:
+  type: "transformer"
+  hidden_size: 4096
+  num_layers: 32
+  num_attention_heads: 32
+  intermediate_size: 16384
+  vocab_size: 50257
+  
+# Dataset configuration
+dataset:
+  path: "datasets/training_data.txt"
+  format: "text"
+  max_length: 2048
+  tokenizer: "gpt2"
+  
+# Hardware configuration
+hardware:
+  device: "metal"  # Apple Silicon Metal backend
+  precision: "float16"
+  memory_efficient: true
+  
+# Training schedule
+schedule:
+  gradient_accumulation_steps: 4
+  save_checkpoint_every: 1000
+  eval_every: 500
+  
+# Logging and monitoring
+logging:
+  log_every: 100
+  save_metrics: true
+  tensorboard: false
+  
+# Seed for reproducibility
+seed: 42

@@ -1,0 +1,83 @@
+name: deploy
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: |
+          cd website
+          npm ci
+      - name: Build website
+        run: |
+          cd website
+          npm run build
+        env:
+          NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          BUILD_TIME: ${{ github.event.head_commit.timestamp }}
+
+  probes:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: |
+          cd website
+          npm ci
+      - name: Build website
+        run: |
+          cd website
+          npm run build
+        env:
+          NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          BUILD_TIME: ${{ github.event.head_commit.timestamp }}
+      - name: Start preview server
+        run: |
+          cd website
+          npx wrangler pages dev .next --compatibility-date=2024-12-01 &
+          sleep 10
+      - name: Test health endpoint
+        run: |
+          curl -f http://127.0.0.1:8788/api/healthz | jq -e '.status == "ok"'
+      - name: Test ready endpoint
+        run: |
+          curl -f http://127.0.0.1:8788/api/readyz | jq -e '.ready == true'
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: [build, probes]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install dependencies
+        run: |
+          cd website
+          npm ci
+      - name: Build website
+        run: |
+          cd website
+          npm run build
+        env:
+          NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          BUILD_TIME: ${{ github.event.head_commit.timestamp }}
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          directory: website/.next
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: 2

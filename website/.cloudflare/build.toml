@@ -1,0 +1,8 @@
+[build]
+command = "npm ci && npm run build"
+output_dir = ".next"
+node_version = "20"
+
+[build.environment]
+NEXT_PUBLIC_COMMIT_SHA = "$CF_PAGES_COMMIT_SHA"
+BUILD_TIME = "$(date -u +%FT%TZ)"

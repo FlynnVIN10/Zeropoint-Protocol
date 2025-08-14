@@ -1,183 +1,101 @@
-# Zeropoint Protocol Website v2
+# Zeropoint Protocol - Main Platform Repository
 
-A modern, responsive website built with Next.js 14, featuring real-time monitoring, Control Center, and comprehensive documentation.
+This repository contains the core Zeropoint Protocol platform implementation, including AI agents, consensus mechanisms, and the complete system architecture.
 
-## Features
-
-- **Modern UI/UX**: Built with Next.js 14, Tailwind CSS, and Radix UI
-- **Control Center**: Real-time monitoring of system KPIs, Synthiants, Consensus, Metrics, and Audit
-- **Documentation**: Nextra-powered documentation with search and navigation
-- **Responsive Design**: Mobile-first design that works on all devices
-- **Real-time Data**: Placeholder for SSE/WebSocket integration
-- **No Mocks**: Enforces real compute only with scope controls
-
-## Technology Stack
-
-- **Framework**: Next.js 14 with App Router
-- **Styling**: Tailwind CSS
-- **UI Components**: Radix UI, shadcn/ui
-- **Icons**: Lucide React
-- **Documentation**: Nextra
-- **Deployment**: Cloudflare Pages
-- **TypeScript**: Full type safety
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+
-- npm or yarn
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/FlynnVIN10/Zeropoint-Protocol.git
-   cd Zeropoint-Protocol/website-v2
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:3000`
-
-## Project Structure
+## Repository Structure
 
 ```
-website-v2/
-├── src/
-│   ├── app/                    # Next.js App Router pages
-│   │   ├── control/           # Control Center routes
-│   │   │   ├── overview/      # Main dashboard
-│   │   │   ├── synthiants/    # AI agent monitoring
-│   │   │   ├── consensus/     # Proposal tracking
-│   │   │   ├── metrics/       # Performance metrics
-│   │   │   └── audit/         # Audit timeline
-│   │   ├── layout.tsx         # Root layout
-│   │   └── page.tsx           # Home page
-│   ├── components/             # Reusable components
-│   │   └── Navigation.tsx     # Main navigation
-│   └── globals.css            # Global styles
-├── docs/                       # Nextra documentation
-│   ├── index.mdx              # Documentation home
-│   ├── getting-started.mdx    # Getting started guide
-│   └── _meta.json             # Navigation metadata
-├── public/                     # Static assets
-├── next.config.js             # Next.js configuration
-├── theme.config.tsx           # Nextra theme configuration
-├── wrangler.toml              # Cloudflare Pages config
-└── package.json               # Dependencies
+Zeropoint-Protocol/
+├── license/                    # Licensing and legal documents
+│   ├── CLA.md                 # Contributor License Agreement
+│   ├── LEGAL.md               # Legal information
+│   ├── LICENSE.md             # Main license file
+│   ├── SECURITY.md            # Security policy
+│   └── ZAA.md                 # Zeropoint AI Agreement
+├── reports/                    # Status reports and documentation
+│   ├── CTO_Scan_Report_Resolution_Complete.md
+│   ├── PHASE_A_COMPLETION_SUMMARY.md
+│   ├── PHASE_W_TASK2_AND_PHASE_R_COMPLETION_SUMMARY.md
+│   ├── PHASE_W_TASK2_COMPLETION_REPORT.md
+│   ├── PM_PHASE_X_COMPLETION_REPORT.md
+│   ├── PM_REPOSITORY_ACCESS_INSTRUCTIONS.md
+│   └── PM_STATUS_REPORT.md
+├── iaai/                       # All platform code and configuration
+│   ├── app/                   # Application components
+│   ├── artifacts/             # Generated artifacts
+│   ├── audit-logs/            # System audit logs
+│   ├── config/                # Configuration files
+│   ├── data/                  # Data storage
+│   ├── datasets/              # Training datasets
+│   ├── demos/                 # Demonstration code
+│   ├── docs/                  # Documentation
+│   ├── migrations/            # Database migrations
+│   ├── monitoring/            # System monitoring
+│   ├── nginx/                 # Web server configuration
+│   ├── ops/                   # Operations and deployment
+│   ├── platform/              # Core platform code
+│   ├── runtime/               # Runtime components
+│   ├── scripts/               # Build and utility scripts
+│   ├── src/                   # Source code
+│   ├── test/                  # Test suites
+│   ├── vendor/                # Third-party dependencies
+│   ├── website/               # Website implementations
+│   ├── website-deploy/        # Website deployment configs
+│   ├── website-v2/            # Website version 2
+│   ├── website-v2-deploy/     # Website v2 deployment
+│   ├── website-legacy-archive/# Legacy website code
+│   ├── Zeropoint/             # Zeropoint-specific components
+│   ├── package.json           # Node.js dependencies
+│   ├── next.config.js         # Next.js configuration
+│   ├── docker-compose.yml     # Docker configuration
+│   └── .env                   # Environment variables
+├── .github/                    # GitHub workflows and templates
+├── .git/                       # Git repository data
+├── contributors.txt            # Contributor list
+├── Flynn_Resume.md            # Team member information
+└── README.md                   # This file
 ```
 
-## Control Center Routes
+## Quick Start
 
-### `/control/overview`
-- System KPIs and metrics
-- Recent deployments
-- Active incidents
-- Quick action buttons
-
-### `/control/synthiants`
-- Active AI agents monitoring
-- Queue statistics
-- Chat sessions
-- Performance metrics
-
-### `/control/consensus`
-- Active proposals
-- Voting progress
-- Quorum status
-- Veto decisions
-
-### `/control/metrics`
-- Performance data
-- Cost breakdown
-- RAG metrics
-- Real-time charts (placeholder)
-
-### `/control/audit`
-- System events timeline
-- Security incidents
-- Governance activities
-- Detailed audit logs
-
-## Documentation
-
-The documentation is powered by Nextra and accessible at `/docs`. It includes:
-
-- Getting started guides
-- Installation instructions
-- Configuration details
-- API reference
-- Contributing guidelines
-
-## Development
-
-### Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-
-### Code Style
-
-- TypeScript for type safety
-- Tailwind CSS for styling
-- Component-based architecture
-- Responsive design principles
-
-## Deployment
-
-### Cloudflare Pages
-
-The website is configured for deployment on Cloudflare Pages:
-
-1. **Build Command**: `npm run build`
-2. **Output Directory**: `.next`
-3. **Node Version**: 18
-
-### Environment Variables
-
-Set the following environment variables in Cloudflare Pages:
-
+### Platform Development
 ```bash
-NODE_VERSION=18
-NEXT_PUBLIC_APP_URL=https://your-domain.com
+cd iaai
+npm install
+npm run dev
 ```
 
-## Contributing
+### Website Development
+```bash
+cd iaai/website
+npm install
+npm run dev
+```
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+### Platform Build
+```bash
+cd iaai
+npm run build
+```
 
-## 📑 License & Access
+## License
 
-**© 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. Domain: zeropointprotocol.ai, Contact: legal@zeropointprotocol.ai**
+All licensing information is available in the `license/` folder. Please review the appropriate documents before contributing or using this codebase.
 
-### **View-Only License: Browse on GitHub Only**
+## Reports
 
-This project is licensed under a proprietary view-only license - see the [LICENSE](LICENSE.md) file for details. No clone, modify, run or distribute without signed agreement.
+Project status reports, phase completions, and strategic priorities are maintained in the `reports/` folder.
 
-**All other uses require signed license agreement.**
+## Platform Components
 
-## Support
+The main platform implementation is located in the `iaai/` folder, which contains:
 
-- **Documentation**: Browse `/docs` for comprehensive guides
-- **Issues**: Report bugs on GitHub
-- **Discussions**: Join community discussions
+- **Core Platform**: AI agents, consensus mechanisms, and system architecture
+- **Runtime Components**: Execution environment and monitoring
+- **Documentation**: Comprehensive platform documentation
+- **Website Implementations**: Multiple website versions and configurations
+- **Operations**: Deployment, monitoring, and maintenance tools
 
----
+## Contact
 
-*Built with ❤️ by the Zeropoint Protocol team*
+For questions about the platform or this repository, contact the development team.

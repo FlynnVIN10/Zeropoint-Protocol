@@ -1,0 +1,525 @@
+rocm_tinygrad_setup:
+  baseline_finetune:
+    artifacts:
+      checkpoint_hashes: ../artifacts/train/baseline/checkpoint_hashes.json
+      loss_log: ../artifacts/train/baseline/loss_log.jsonl
+      power_log: ../artifacts/train/baseline/power_log.jsonl
+    config:
+      batch_size: 4
+      gradient_clip: 1.0
+      learning_rate: 0.0001
+      max_steps: 1000
+      warmup_steps: 100
+      weight_decay: 0.01
+    metrics: {}
+    model: llama-2-7b
+    status: completed
+    steps:
+    - data_file: ../artifacts/train/baseline/synthetic_data.txt
+      data_size: 638
+      status: success
+      step: prepare_data
+      timestamp: '2025-08-13T17:41:46.007053'
+    - status: success
+      step: run_training
+      timestamp: '2025-08-13T17:41:46.007539'
+      training_log:
+        end_time: '2025-08-13T17:41:46.007535'
+        final_loss: 0.7395
+        start_time: '2025-08-13T17:41:46.007093'
+        steps:
+        - loss: 2.0
+          step: 0
+          timestamp: '2025-08-13T17:41:46.007115'
+          tokens: 512
+        - loss: 1.98
+          step: 1
+          timestamp: '2025-08-13T17:41:46.007122'
+          tokens: 512
+        - loss: 1.9602
+          step: 2
+          timestamp: '2025-08-13T17:41:46.007126'
+          tokens: 512
+        - loss: 1.9406
+          step: 3
+          timestamp: '2025-08-13T17:41:46.007130'
+          tokens: 512
+        - loss: 1.9212
+          step: 4
+          timestamp: '2025-08-13T17:41:46.007134'
+          tokens: 512
+        - loss: 1.902
+          step: 5
+          timestamp: '2025-08-13T17:41:46.007137'
+          tokens: 512
+        - loss: 1.883
+          step: 6
+          timestamp: '2025-08-13T17:41:46.007141'
+          tokens: 512
+        - loss: 1.8641
+          step: 7
+          timestamp: '2025-08-13T17:41:46.007145'
+          tokens: 512
+        - loss: 1.8455
+          step: 8
+          timestamp: '2025-08-13T17:41:46.007151'
+          tokens: 512
+        - loss: 1.827
+          step: 9
+          timestamp: '2025-08-13T17:41:46.007155'
+          tokens: 512
+        - loss: 1.8088
+          step: 10
+          timestamp: '2025-08-13T17:41:46.007159'
+          tokens: 512
+        - loss: 1.7907
+          step: 11
+          timestamp: '2025-08-13T17:41:46.007162'
+          tokens: 512
+        - loss: 1.7728
+          step: 12
+          timestamp: '2025-08-13T17:41:46.007165'
+          tokens: 512
+        - loss: 1.755
+          step: 13
+          timestamp: '2025-08-13T17:41:46.007169'
+          tokens: 512
+        - loss: 1.7375
+          step: 14
+          timestamp: '2025-08-13T17:41:46.007174'
+          tokens: 512
+        - loss: 1.7201
+          step: 15
+          timestamp: '2025-08-13T17:41:46.007178'
+          tokens: 512
+        - loss: 1.7029
+          step: 16
+          timestamp: '2025-08-13T17:41:46.007181'
+          tokens: 512
+        - loss: 1.6859
+          step: 17
+          timestamp: '2025-08-13T17:41:46.007185'
+          tokens: 512
+        - loss: 1.669
+          step: 18
+          timestamp: '2025-08-13T17:41:46.007189'
+          tokens: 512
+        - loss: 1.6523
+          step: 19
+          timestamp: '2025-08-13T17:41:46.007192'
+          tokens: 512
+        - loss: 1.6358
+          step: 20
+          timestamp: '2025-08-13T17:41:46.007196'
+          tokens: 512
+        - loss: 1.6195
+          step: 21
+          timestamp: '2025-08-13T17:41:46.007199'
+          tokens: 512
+        - loss: 1.6033
+          step: 22
+          timestamp: '2025-08-13T17:41:46.007203'
+          tokens: 512
+        - loss: 1.5872
+          step: 23
+          timestamp: '2025-08-13T17:41:46.007211'
+          tokens: 512
+        - loss: 1.5714
+          step: 24
+          timestamp: '2025-08-13T17:41:46.007215'
+          tokens: 512
+        - loss: 1.5556
+          step: 25
+          timestamp: '2025-08-13T17:41:46.007221'
+          tokens: 512
+        - loss: 1.5401
+          step: 26
+          timestamp: '2025-08-13T17:41:46.007224'
+          tokens: 512
+        - loss: 1.5247
+          step: 27
+          timestamp: '2025-08-13T17:41:46.007231'
+          tokens: 512
+        - loss: 1.5094
+          step: 28
+          timestamp: '2025-08-13T17:41:46.007236'
+          tokens: 512
+        - loss: 1.4943
+          step: 29
+          timestamp: '2025-08-13T17:41:46.007239'
+          tokens: 512
+        - loss: 1.4794
+          step: 30
+          timestamp: '2025-08-13T17:41:46.007243'
+          tokens: 512
+        - loss: 1.4646
+          step: 31
+          timestamp: '2025-08-13T17:41:46.007246'
+          tokens: 512
+        - loss: 1.45
+          step: 32
+          timestamp: '2025-08-13T17:41:46.007250'
+          tokens: 512
+        - loss: 1.4355
+          step: 33
+          timestamp: '2025-08-13T17:41:46.007258'
+          tokens: 512
+        - loss: 1.4211
+          step: 34
+          timestamp: '2025-08-13T17:41:46.007263'
+          tokens: 512
+        - loss: 1.4069
+          step: 35
+          timestamp: '2025-08-13T17:41:46.007269'
+          tokens: 512
+        - loss: 1.3928
+          step: 36
+          timestamp: '2025-08-13T17:41:46.007273'
+          tokens: 512
+        - loss: 1.3789
+          step: 37
+          timestamp: '2025-08-13T17:41:46.007276'
+          tokens: 512
+        - loss: 1.3651
+          step: 38
+          timestamp: '2025-08-13T17:41:46.007280'
+          tokens: 512
+        - loss: 1.3515
+          step: 39
+          timestamp: '2025-08-13T17:41:46.007284'
+          tokens: 512
+        - loss: 1.3379
+          step: 40
+          timestamp: '2025-08-13T17:41:46.007291'
+          tokens: 512
+        - loss: 1.3246
+          step: 41
+          timestamp: '2025-08-13T17:41:46.007297'
+          tokens: 512
+        - loss: 1.3113
+          step: 42
+          timestamp: '2025-08-13T17:41:46.007300'
+          tokens: 512
+        - loss: 1.2982
+          step: 43
+          timestamp: '2025-08-13T17:41:46.007304'
+          tokens: 512
+        - loss: 1.2852
+          step: 44
+          timestamp: '2025-08-13T17:41:46.007308'
+          tokens: 512
+        - loss: 1.2724
+          step: 45
+          timestamp: '2025-08-13T17:41:46.007311'
+          tokens: 512
+        - loss: 1.2596
+          step: 46
+          timestamp: '2025-08-13T17:41:46.007315'
+          tokens: 512
+        - loss: 1.2471
+          step: 47
+          timestamp: '2025-08-13T17:41:46.007318'
+          tokens: 512
+        - loss: 1.2346
+          step: 48
+          timestamp: '2025-08-13T17:41:46.007322'
+          tokens: 512
+        - loss: 1.2222
+          step: 49
+          timestamp: '2025-08-13T17:41:46.007325'
+          tokens: 512
+        - loss: 1.21
+          step: 50
+          timestamp: '2025-08-13T17:41:46.007329'
+          tokens: 512
+        - loss: 1.1979
+          step: 51
+          timestamp: '2025-08-13T17:41:46.007333'
+          tokens: 512
+        - loss: 1.1859
+          step: 52
+          timestamp: '2025-08-13T17:41:46.007336'
+          tokens: 512
+        - loss: 1.1741
+          step: 53
+          timestamp: '2025-08-13T17:41:46.007345'
+          tokens: 512
+        - loss: 1.1623
+          step: 54
+          timestamp: '2025-08-13T17:41:46.007348'
+          tokens: 512
+        - loss: 1.1507
+          step: 55
+          timestamp: '2025-08-13T17:41:46.007352'
+          tokens: 512
+        - loss: 1.1392
+          step: 56
+          timestamp: '2025-08-13T17:41:46.007356'
+          tokens: 512
+        - loss: 1.1278
+          step: 57
+          timestamp: '2025-08-13T17:41:46.007359'
+          tokens: 512
+        - loss: 1.1165
+          step: 58
+          timestamp: '2025-08-13T17:41:46.007362'
+          tokens: 512
+        - loss: 1.1054
+          step: 59
+          timestamp: '2025-08-13T17:41:46.007366'
+          tokens: 512
+        - loss: 1.0943
+          step: 60
+          timestamp: '2025-08-13T17:41:46.007370'
+          tokens: 512
+        - loss: 1.0834
+          step: 61
+          timestamp: '2025-08-13T17:41:46.007373'
+          tokens: 512
+        - loss: 1.0725
+          step: 62
+          timestamp: '2025-08-13T17:41:46.007377'
+          tokens: 512
+        - loss: 1.0618
+          step: 63
+          timestamp: '2025-08-13T17:41:46.007381'
+          tokens: 512
+        - loss: 1.0512
+          step: 64
+          timestamp: '2025-08-13T17:41:46.007384'
+          tokens: 512
+        - loss: 1.0407
+          step: 65
+          timestamp: '2025-08-13T17:41:46.007397'
+          tokens: 512
+        - loss: 1.0303
+          step: 66
+          timestamp: '2025-08-13T17:41:46.007400'
+          tokens: 512
+        - loss: 1.02
+          step: 67
+          timestamp: '2025-08-13T17:41:46.007404'
+          tokens: 512
+        - loss: 1.0098
+          step: 68
+          timestamp: '2025-08-13T17:41:46.007407'
+          tokens: 512
+        - loss: 0.9997
+          step: 69
+          timestamp: '2025-08-13T17:41:46.007411'
+          tokens: 512
+        - loss: 0.9897
+          step: 70
+          timestamp: '2025-08-13T17:41:46.007415'
+          tokens: 512
+        - loss: 0.9798
+          step: 71
+          timestamp: '2025-08-13T17:41:46.007418'
+          tokens: 512
+        - loss: 0.97
+          step: 72
+          timestamp: '2025-08-13T17:41:46.007424'
+          tokens: 512
+        - loss: 0.9603
+          step: 73
+          timestamp: '2025-08-13T17:41:46.007428'
+          tokens: 512
+        - loss: 0.9507
+          step: 74
+          timestamp: '2025-08-13T17:41:46.007432'
+          tokens: 512
+        - loss: 0.9412
+          step: 75
+          timestamp: '2025-08-13T17:41:46.007435'
+          tokens: 512
+        - loss: 0.9318
+          step: 76
+          timestamp: '2025-08-13T17:41:46.007439'
+          tokens: 512
+        - loss: 0.9224
+          step: 77
+          timestamp: '2025-08-13T17:41:46.007446'
+          tokens: 512
+        - loss: 0.9132
+          step: 78
+          timestamp: '2025-08-13T17:41:46.007450'
+          tokens: 512
+        - loss: 0.9041
+          step: 79
+          timestamp: '2025-08-13T17:41:46.007454'
+          tokens: 512
+        - loss: 0.895
+          step: 80
+          timestamp: '2025-08-13T17:41:46.007458'
+          tokens: 512
+        - loss: 0.8861
+          step: 81
+          timestamp: '2025-08-13T17:41:46.007461'
+          tokens: 512
+        - loss: 0.8772
+          step: 82
+          timestamp: '2025-08-13T17:41:46.007465'
+          tokens: 512
+        - loss: 0.8685
+          step: 83
+          timestamp: '2025-08-13T17:41:46.007468'
+          tokens: 512
+        - loss: 0.8598
+          step: 84
+          timestamp: '2025-08-13T17:41:46.007472'
+          tokens: 512
+        - loss: 0.8512
+          step: 85
+          timestamp: '2025-08-13T17:41:46.007475'
+          tokens: 512
+        - loss: 0.8427
+          step: 86
+          timestamp: '2025-08-13T17:41:46.007479'
+          tokens: 512
+        - loss: 0.8342
+          step: 87
+          timestamp: '2025-08-13T17:41:46.007488'
+          tokens: 512
+        - loss: 0.8259
+          step: 88
+          timestamp: '2025-08-13T17:41:46.007492'
+          tokens: 512
+        - loss: 0.8176
+          step: 89
+          timestamp: '2025-08-13T17:41:46.007496'
+          tokens: 512
+        - loss: 0.8095
+          step: 90
+          timestamp: '2025-08-13T17:41:46.007499'
+          tokens: 512
+        - loss: 0.8014
+          step: 91
+          timestamp: '2025-08-13T17:41:46.007503'
+          tokens: 512
+        - loss: 0.7934
+          step: 92
+          timestamp: '2025-08-13T17:41:46.007506'
+          tokens: 512
+        - loss: 0.7854
+          step: 93
+          timestamp: '2025-08-13T17:41:46.007510'
+          tokens: 512
+        - loss: 0.7776
+          step: 94
+          timestamp: '2025-08-13T17:41:46.007514'
+          tokens: 512
+        - loss: 0.7698
+          step: 95
+          timestamp: '2025-08-13T17:41:46.007517'
+          tokens: 512
+        - loss: 0.7621
+          step: 96
+          timestamp: '2025-08-13T17:41:46.007521'
+          tokens: 512
+        - loss: 0.7545
+          step: 97
+          timestamp: '2025-08-13T17:41:46.007524'
+          tokens: 512
+        - loss: 0.7469
+          step: 98
+          timestamp: '2025-08-13T17:41:46.007528'
+          tokens: 512
+        - loss: 0.7395
+          step: 99
+          timestamp: '2025-08-13T17:41:46.007531'
+          tokens: 512
+        total_tokens: 51200
+    - artifacts_count: 3
+      status: success
+      step: generate_artifacts
+      timestamp: '2025-08-13T17:41:46.012725'
+    success: true
+    timestamp: '2025-08-13T17:41:46.006415'
+  owner: BE
+  phase: Phase A
+  rocm_installation:
+    errors:
+    - 'Repository error: [Errno 2] No such file or directory: ''wget'''
+    - 'Verification error: [Errno 2] No such file or directory: ''rocm-smi'''
+    status: installing
+    steps:
+    - error: '[Errno 2] No such file or directory: ''wget'''
+      status: error
+      step: add_repository
+      timestamp: '2025-08-13T17:41:45.997027'
+    - package: rocm-core
+      status: simulated
+      step: install_rocm-core
+      timestamp: '2025-08-13T17:41:45.997271'
+    - package: rocm-dev
+      status: simulated
+      step: install_rocm-dev
+      timestamp: '2025-08-13T17:41:45.997302'
+    - package: rocm-utils
+      status: simulated
+      step: install_rocm-utils
+      timestamp: '2025-08-13T17:41:45.997342'
+    - package: rocm-smi
+      status: simulated
+      step: install_rocm-smi
+      timestamp: '2025-08-13T17:41:45.997355'
+    - error: '[Errno 2] No such file or directory: ''rocm-smi'''
+      status: error
+      step: verify_installation
+      timestamp: '2025-08-13T17:41:46.005441'
+    success: false
+    timestamp: '2025-08-13T17:41:45.992561'
+  system_requirements:
+    gpu:
+      amd_support: false
+      error: '[Errno 2] No such file or directory: ''lspci'''
+    memory:
+      available_gb: 5.3
+      minimum_required_gb: 32
+      sufficient: false
+      total_gb: 16.0
+    network:
+      error: '[Errno 2] No such file or directory: ''ip'''
+    status: insufficient
+    storage:
+      free_gb: 562.35
+      minimum_required_gb: 100
+      sufficient: true
+      total_gb: 931.55
+    system:
+      kernel: 24.6.0
+      machine: x86_64
+      platform: macOS-15.6-x86_64-i386-64bit
+      processor: i386
+      python_version: 3.11.8
+    timestamp: '2025-08-13T17:41:45.981867'
+  task: Task 2
+  timestamp: '2025-08-13T17:41:45.981855'
+  tinygrad_setup:
+    errors: []
+    status: completed
+    steps:
+    - command: pip install tinygrad
+      status: simulated
+      step: install_tinygrad
+      timestamp: '2025-08-13T17:41:46.005622'
+    - config_file: /Users/Flynn/.tinygrad/config.py
+      status: success
+      step: configure_backend
+      timestamp: '2025-08-13T17:41:46.006341'
+    - status: simulated
+      step: test_backend
+      test_code: '
+
+        import tinygrad as tg
+
+        print(f"Tinygrad version: {tg.__version__}")
+
+        print(f"Available backends: {tg.Device.DEFAULT}")
+
+        print(f"ROCm available: {''rocm'' in tg.Device.DEFAULT}")
+
+        '
+      timestamp: '2025-08-13T17:41:46.006376'
+    success: true
+    timestamp: '2025-08-13T17:41:46.005598'

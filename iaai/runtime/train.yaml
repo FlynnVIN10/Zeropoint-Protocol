@@ -1,0 +1,64 @@
+# Tinygrad Training Configuration - Phase X Task 1
+# Real LLM training configuration for Apple Silicon Metal backend
+
+model:
+  type: "transformer"
+  vocab_size: 50257
+  n_embd: 768
+  n_layer: 12
+  n_head: 12
+  max_seq_len: 1024
+
+training:
+  batch_size: 4
+  learning_rate: 1e-4
+  max_steps: 1000
+  warmup_steps: 100
+  weight_decay: 0.01
+  gradient_clip: 1.0
+  
+  # Apple Silicon Metal optimization
+  device: "METAL"
+  mixed_precision: true
+  compile: true
+
+data:
+  dataset: "wikitext-2-raw-v1"
+  train_split: 0.9
+  val_split: 0.1
+  max_length: 1024
+  shuffle: true
+
+optimization:
+  optimizer: "adamw"
+  scheduler: "cosine"
+  lr_schedule: "warmup_cosine"
+  
+  # Metal-specific optimizations
+  metal_optimize: true
+  metal_memory_pool: true
+
+logging:
+  log_interval: 10
+  eval_interval: 100
+  save_interval: 500
+  
+  # Metrics collection
+  track_loss: true
+  track_accuracy: true
+  track_tokens_per_sec: true
+  track_power_metrics: true
+
+outputs:
+  checkpoint_dir: "artifacts/train/checkpoints"
+  log_dir: "artifacts/train/logs"
+  metrics_dir: "metrics"
+  model_export: "artifacts/train/models"
+  
+  # ONNX export
+  export_onnx: true
+  onnx_opset: 17
+  
+  # Parity testing
+  run_parity_test: true
+  parity_tolerance: 0.01

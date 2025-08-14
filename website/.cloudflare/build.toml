@@ -1,6 +1,6 @@
 [build]
 command = "npm ci && npm run build"
-output_dir = ".next"
+output_dir = ".vercel/output/static"
 node_version = "20"
 
 [build.environment]

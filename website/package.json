@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "npx @cloudflare/next-on-pages",
     "start": "next start",
     "lint": "next lint",
-    "preview": "npx wrangler pages dev .next --compatibility-date=2024-12-01"
+    "preview": "npx wrangler pages dev .vercel/output/static --compatibility-date=2024-12-01"
   },
   "dependencies": {
     "next": "15.4.6",
@@ -15,6 +16,7 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.13",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

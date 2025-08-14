@@ -1,5 +1,10 @@
-name: deploy
-on: [push, pull_request]
+name: Deploy Website
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   build:
@@ -13,6 +18,9 @@ jobs:
         run: |
           cd website
           npm ci
+        env:
+          NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
+          BUILD_TIME: ${{ github.event.head_commit.timestamp }}
       - name: Build website
         run: |
           cd website
@@ -27,26 +35,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      - name: Install dependencies
-        run: |
-          cd website
-          npm ci
-      - name: Build website
-        run: |
-          cd website
-          npm run build
-        env:
-          NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
-          BUILD_TIME: ${{ github.event.head_commit.timestamp }}
-      - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+      - uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: website/.next
+          directory: website/.vercel/output/static
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: 2

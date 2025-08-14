@@ -74,8 +74,8 @@ function checkStatusPage() {
 
 function verifyHealthEndpoints() {
   try {
-    const healthContent = readFileSync('app/api/healthz/route.ts', 'utf8');
-    const readyContent = readFileSync('app/api/readyz/route.ts', 'utf8');
+    const healthContent = readFileSync('public/api/healthz/index.json', 'utf8');
+    const readyContent = readFileSync('public/api/readyz/index.json', 'utf8');
     
     // Check that health endpoints exist and return proper data
     if (!healthContent.includes('status') || !healthContent.includes('commit')) {

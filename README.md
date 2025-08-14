@@ -16,29 +16,17 @@ This repository contains both the **Zeropoint Protocol platform** and the **offi
 ```
 Zeropoint-Protocol/
 ├── iaai/                   # Platform source code
-│   ├── src/               # Core platform implementation
-│   │   ├── agents/        # AI agent implementations
-│   │   ├── runtime/       # AI runtime and execution
-│   │   ├── core/          # Core platform services
-│   │   ├── controllers/   # API controllers
-│   │   ├── services/      # Business logic services
-│   │   └── ...            # Platform components
-│   ├── runtime/           # Runtime environment
-│   ├── docs/              # Platform documentation
-│   └── ...                # Platform assets
 ├── app/                    # Website (Next.js App Router)
-│   ├── layout.tsx         # Root layout with navigation
-│   ├── page.tsx           # Home page
-│   ├── legal/             # Legal information
-│   ├── docs/              # Documentation
-│   ├── library/           # Developer library
-│   ├── status/            # Platform status
-│   └── api/               # API endpoints
 ├── components/             # Website components
-├── .github/workflows/      # CI/CD pipelines
+├── .github/                # GitHub workflows and config
 ├── .cloudflare/            # Deployment scripts
+├── docs/                   # Documentation
 ├── directives/             # CTO directives
-├── audit/logs/             # Governance audit trail
+├── audit/                  # Governance audit trail
+├── license/                # License documentation
+├── reports/                # Project reports
+├── scripts/                # Build and utility scripts
+├── types/                  # TypeScript type definitions
 └── package.json            # Dependencies
 ```
 

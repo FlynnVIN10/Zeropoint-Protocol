@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "npx @cloudflare/next-on-pages",
+    "postbuild": "npx @cloudflare/next-on-pages --skip-build",
     "start": "next start",
     "lint": "next lint",
     "preview": "npx wrangler pages dev .vercel/output/static --compatibility-date=2024-12-01"

@@ -21,7 +21,7 @@ Following a review of the public website repo (https://github.com/FlynnVIN10/zer
 
 ### **Detailed Directives**  
 
-1. **Content Synchronization and Updates** (Priority: High, Timeline: Immediate)  
+1. **Content Synchronization and Updates** (Priority: High, Iteration: Immediate)  
    - **Sync Recent Features**: Pull and adapt descriptions/previews from platform repo:  
      - Phase 13.1: Enhanced Conversational UI (persona badges, context-aware suggestions, intent visualization)—add to "Technology" or new "Features" page with screenshots or embedded demos.  
      - Phase 13.2: Role-Based Views (Human/Sentient/Agent dashboards, consensus voting)—include explanations of dual consensus model with human veto power.  
@@ -34,12 +34,12 @@ Following a review of the public website repo (https://github.com/FlynnVIN10/zer
      - Legal/Contact: Update with any new compliance notes from RAG legal datasets.  
    - **Add Live Elements**: Embed staging previews or iframes for Interact/Dashboard if secure; otherwise, use screenshots with tooltips.  
 
-2. **Design and Aesthetic Polish** (Priority: High, Timeline: Parallel)  
+2. **Design and Aesthetic Polish** (Priority: High, Iteration: Parallel)  
    - **Apply Futuristic Theme**: Update `docusaurus.config.js` and CSS for deep black background, neon accents, glassmorphic effects (backdrop-filter: blur(10px)), and fonts. Eliminate any legacy white/grey elements.  
    - **Animations & Interactivity**: Add smooth fades/transitions, hover glows on links/cards, and dynamic elements (e.g., animated status wheel preview). Support reduced-motion.  
    - **Responsive/Accessible**: Test on mobile/desktop; ensure contrast ratios >4.5:1, ARIA labels, keyboard nav.  
 
-3. **Deployment and Verification** (Timeline: Upon Completion)  
+3. **Deployment and Verification** (Iteration: Upon Completion)  
    - Run build (`npm run build`) and deploy to Cloudflare Pages; verify Always Use HTTPS and Full SSL.  
    - Test live site: Check for updates reflecting phases (e.g., search for "RAG" or "role-based" on site).  
    - Run sync script (`scripts/sync-status.js`) to pull latest platform status.  

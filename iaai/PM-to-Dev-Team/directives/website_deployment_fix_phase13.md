@@ -20,13 +20,13 @@ Despite claims of completion, the public website (https://zeropointprotocol.ai) 
 
 ### **Detailed Directives**  
 
-1. **Verify and Fix Local Build** (Timeline: Immediate)  
+1. **Verify and Fix Local Build** (Iteration: Immediate)  
    - Clone/update the repo; run `npm install` to ensure dependencies (Docusaurus, React, etc.).  
    - Build locally: `npx docusaurus build`. Verify 'build/' directory contains updated HTML/CSS with new theme (black/neon, glassmorphic), feature pages (e.g., /features with RAG description), and content (search for "RAG Integration" or "Mission Planner").  
    - If build fails, fix errors (e.g., missing imports, font links for Orbitron/Rajdhani). Commit fixes.  
    - Test local server: `npx docusaurus start`; browse localhost:3000 to confirm futuristic aesthetic, responsive design, animations, and new sections.  
 
-2. **Troubleshoot Cloudflare Pages Configuration** (Timeline: Next 1 Hour)  
+2. **Troubleshoot Cloudflare Pages Configuration** (Iteration: Next development cycle)  
    - The site is hosted on Cloudflare Pages, integrated with GitHub. Verify/fix in Cloudflare dashboard (assume team access; escalate if not):  
      - Go to Cloudflare Pages > Project (zeropointprotocol.ai) > Settings > Builds & deployments.  
      - Confirm: Branch = main, Root directory = /, Build command = npx docusaurus build (or npm run build), Output directory = build.  

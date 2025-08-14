@@ -54,6 +54,6 @@
 - **Iteration**: Demo fixes in staging; PM verifies each.  
 - **Telemetry**: Log UX interactions to `/v1/telemetry`.  
 - **Report**: Upload cycle completions to `/PM-to-Dev-Team/status-reports/phase12_ux_fixes_cycle_[n].md`.  
-- **Escalation**: Blockers to PM within 30 minutes.
+- **Escalation**: Blockers to PM immediately upon identification.
 
 Proceed with symbiotic precision. 

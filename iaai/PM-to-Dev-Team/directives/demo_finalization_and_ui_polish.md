@@ -21,7 +21,7 @@ The CTO has issued directives to finalize the demo for Phases 13.1-13.3, emphasi
 ## Detailed Directives
 
 ### 1. Demo Finalization & Readiness
-**Timeline**: Immediate - Complete by 2025-08-04 for CEO Demo
+**Iteration**: Immediate - Complete for CEO Demo
 
 #### End-to-End Workflow
 - **Update Demo Script**: Enhance `demos/phase13_2_demo_script.md` to showcase full cycle:
@@ -55,7 +55,7 @@ The CTO has issued directives to finalize the demo for Phases 13.1-13.3, emphasi
 - **RAG Integration**: Domain-specific insights for task planning
 
 ### 2. Dark-Mode Polish & Futuristic Aesthetics
-**Timeline**: Parallel, Complete
+**Iteration**: Parallel, Complete
 
 #### Color Palette Implementation
 - **Deep Black Backgrounds**: #000000 for main backgrounds
@@ -93,7 +93,7 @@ The CTO has issued directives to finalize the demo for Phases 13.1-13.3, emphasi
 - **Screen Reader**: ARIA labels and semantic HTML
 
 ### 3. Interactive UI Components
-**Timeline**: Parallel, Integrate with Demo
+**Iteration**: Parallel, Integrate with Demo
 
 #### Status Wheel Enhancement
 - **Interactive Hover**: Trust/ethical metrics tooltips on hover

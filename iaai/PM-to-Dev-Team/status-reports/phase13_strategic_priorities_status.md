@@ -130,7 +130,7 @@ interface LLMResponse {
 
 ## Implementation Roadmap
 
-### **Phase 13.1: Enhanced Conversational UI** (Week 1-2)
+### **Phase 13.1: Enhanced Conversational UI** (First iteration cycle)
 1. **Persona Badge System**
    - Implement agent avatars and role indicators
    - Add intent visualization components
@@ -141,7 +141,7 @@ interface LLMResponse {
    - Implement smart input completion
    - Add contextual help system
 
-### **Phase 13.2: Role-Based Views** (Week 3-4)
+### **Phase 13.2: Role-Based Views** (Second iteration cycle)
 1. **Consensus View Toggle**
    - Create role switching mechanism in header
    - Implement view-specific UI themes
@@ -152,7 +152,7 @@ interface LLMResponse {
    - Sentient consensus interface
    - Individual agent management view
 
-### **Phase 13.3: Advanced LLM Integration** (Week 5-6)
+### **Phase 13.3: Advanced LLM Integration** (Third iteration cycle)
 1. **Domain-Specific RAG**
    - Legal document retrieval system
    - Manufacturing process knowledge base

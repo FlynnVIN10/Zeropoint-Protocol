@@ -19,17 +19,17 @@ The live website remains unchanged despite builds, indicating deployment failure
 
 ### **Detailed Directives**  
 
-1. **Inspect GitHub Actions Logs** (Timeline: Immediate)  
+1. **Inspect GitHub Actions Logs** (Iteration: Immediate)  
    - Pull recent runs of `.github/workflows/deploy-cloudflare.yml` from Actions tab on main branch (access via GitHub UI or API if possible).  
    - Identify errors in "Deploy" step (cloudflare/wrangler-action@v3): Look for 401 (invalid token), 404 (wrong ID/project), permission denied.  
    - Copy log excerpts (error messages, exit codes); attach to status report. Note timestamps for correlation.  
 
-2. **Validate Cloudflare Project Configuration** (Timeline: Next 30 Minutes)  
+2. **Validate Cloudflare Project Configuration** (Iteration: Next development cycle)  
    - **Project Name Match**: Confirm `--project-name` in workflow (`zeropointprotocol-ai`) exactly matches Pages project slug in Cloudflare dashboard (case-sensitive).  
    - **Branch Settings**: Ensure Pages project deploys from main branch.  
    - **Environment Variables**: Verify `CLOUDFLARE_API_TOKEN` and `ACCOUNT_ID` secrets in GitHub Settings > Secrets > Actions; check if expired/rotated (compare timestamps). If expired, escalate for regeneration (Pages Edit scope).  
 
-3. **Test a Manual Wrangler Deploy** (Timeline: After Validation)  
+3. **Test a Manual Wrangler Deploy** (Iteration: After Validation)  
    - **Locally**: Install wrangler globally (`npm install -g @cloudflare/wrangler`).  
    - **Run**: `npx docusaurus build` then manual deploy command with temp environment variables (use placeholders or escalate for actual tokens if needed):  
      ```bash
@@ -39,12 +39,12 @@ The live website remains unchanged despite builds, indicating deployment failure
      ```  
    - **Observe**: authentication/deployment errors; log full output. This isolates if it's Actions-specific or general Cloudflare issue.  
 
-4. **Clear Cache & Force Redeploy** (Timeline: Parallel)  
+4. **Clear Cache & Force Redeploy** (Iteration: Parallel)  
    - In Cloudflare dashboard > Pages project > Settings > Caching > Purge everything.  
    - Trigger manual redeploy from dashboard to test.  
    - **Post-actions**: Make a test commit (e.g., comment in index.js) to trigger workflow; monitor Actions run.  
 
-5. **Report Findings & Action Plan** (Timeline: Upon Completion)  
+5. **Report Findings & Action Plan** (Iteration: Upon Completion)  
    - **Summarize**: Log excerpts/errors, manual deploy success/fail (details), mismatches (project name, branch, tokens).  
    - **Propose fix**: e.g., Update workflow YAML, regenerate tokens (escalate if needed), correct slug.  
    - **Verify fix**: Curl new title (`curl -s https://zeropointprotocol.ai | grep title`), /features page existence, theme elements.  

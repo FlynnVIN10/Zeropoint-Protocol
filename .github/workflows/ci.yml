@@ -191,7 +191,7 @@ jobs:
           # Verify all routes match expected structure
           EXPECTED_ROUTES=("/" "/legal" "/legal/whitelabel" "/docs" "/library" "/status")
           for route in "${EXPECTED_ROUTES[@]}"; do
-            if [ ! -f "src/app${route}/page.tsx" ] && [ ! -f "src/app${route}/page.tsx" ]; then
+            if [ ! -f "app${route}/page.tsx" ] && [ ! -f "app${route}/page.tsx" ]; then
               echo "❌ Missing route: ${route}"
               exit 1
             fi

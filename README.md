@@ -1,101 +1,136 @@
-# Zeropoint Protocol - Main Platform Repository
+# Zeropoint Protocol
 
-This repository contains the core Zeropoint Protocol platform implementation, including AI agents, consensus mechanisms, and the complete system architecture.
+**Dual Consensus Agentic AI Platform** — The future of decentralized AI infrastructure.
 
-## Repository Structure
+This repository contains both the **Zeropoint Protocol platform** and the **official website** at [zeropointprotocol.ai](https://zeropointprotocol.ai).
+
+## 🏗️ Repository Structure
 
 ```
 Zeropoint-Protocol/
-├── license/                    # Licensing and legal documents
-│   ├── CLA.md                 # Contributor License Agreement
-│   ├── LEGAL.md               # Legal information
-│   ├── LICENSE.md             # Main license file
-│   ├── SECURITY.md            # Security policy
-│   └── ZAA.md                 # Zeropoint AI Agreement
-├── reports/                    # Status reports and documentation
-│   ├── CTO_Scan_Report_Resolution_Complete.md
-│   ├── PHASE_A_COMPLETION_SUMMARY.md
-│   ├── PHASE_W_TASK2_AND_PHASE_R_COMPLETION_SUMMARY.md
-│   ├── PHASE_W_TASK2_COMPLETION_REPORT.md
-│   ├── PM_PHASE_X_COMPLETION_REPORT.md
-│   ├── PM_REPOSITORY_ACCESS_INSTRUCTIONS.md
-│   └── PM_STATUS_REPORT.md
-├── iaai/                       # All platform code and configuration
-│   ├── app/                   # Application components
-│   ├── artifacts/             # Generated artifacts
-│   ├── audit-logs/            # System audit logs
-│   ├── config/                # Configuration files
-│   ├── data/                  # Data storage
-│   ├── datasets/              # Training datasets
-│   ├── demos/                 # Demonstration code
-│   ├── docs/                  # Documentation
-│   ├── migrations/            # Database migrations
-│   ├── monitoring/            # System monitoring
-│   ├── nginx/                 # Web server configuration
-│   ├── ops/                   # Operations and deployment
-│   ├── platform/              # Core platform code
-│   ├── runtime/               # Runtime components
-│   ├── scripts/               # Build and utility scripts
-│   ├── src/                   # Source code
-│   ├── test/                  # Test suites
-│   ├── vendor/                # Third-party dependencies
-│   ├── website/               # Website implementations
-│   ├── website-deploy/        # Website deployment configs
-│   ├── website-v2/            # Website version 2
-│   ├── website-v2-deploy/     # Website v2 deployment
-│   ├── website-legacy-archive/# Legacy website code
-│   ├── Zeropoint/             # Zeropoint-specific components
-│   ├── package.json           # Node.js dependencies
-│   ├── next.config.js         # Next.js configuration
-│   ├── docker-compose.yml     # Docker configuration
-│   └── .env                   # Environment variables
-├── .github/                    # GitHub workflows and templates
-├── .git/                       # Git repository data
-├── contributors.txt            # Contributor list
-├── Flynn_Resume.md            # Team member information
-└── README.md                   # This file
+├── src/                    # Platform source code
+│   ├── agents/            # AI agent implementations
+│   ├── runtime/           # AI runtime and execution
+│   ├── core/              # Core platform services
+│   └── ...                # Platform components
+├── app/                    # Website (Next.js App Router)
+│   ├── layout.tsx         # Root layout with navigation
+│   ├── page.tsx           # Home page
+│   ├── legal/             # Legal information
+│   ├── docs/              # Documentation
+│   ├── library/           # Developer library
+│   └── status/            # Platform status
+├── components/             # Website components
+├── .github/workflows/      # CI/CD pipelines
+├── .cloudflare/            # Deployment scripts
+└── package.json            # Dependencies
 ```
 
-## Quick Start
+## 🌐 Website
 
-### Platform Development
+The official website is built with Next.js 14 and deployed to Cloudflare Pages.
+
+### 🚀 Quick Start
+
+#### Prerequisites
+- Node.js 20.x or higher
+- npm or yarn
+
+#### Installation
 ```bash
-cd iaai
 npm install
+```
+
+#### Development
+```bash
 npm run dev
 ```
 
-### Website Development
+#### Build
 ```bash
-cd iaai/website
-npm install
-npm run dev
-```
-
-### Platform Build
-```bash
-cd iaai
 npm run build
 ```
 
-## License
+#### Testing
+```bash
+npm test
+npm run test:watch
+```
 
-All licensing information is available in the `license/` folder. Please review the appropriate documents before contributing or using this codebase.
+#### Linting
+```bash
+npm run lint
+```
 
-## Reports
+## 🧪 Testing
 
-Project status reports, phase completions, and strategic priorities are maintained in the `reports/` folder.
+The project includes comprehensive testing with Jest and React Testing Library:
 
-## Platform Components
+- **Unit Tests**: Component rendering and behavior
+- **Integration Tests**: Page functionality
+- **Accessibility Tests**: Lighthouse audits
+- **Link Validation**: Internal and external link checking
 
-The main platform implementation is located in the `iaai/` folder, which contains:
+## 🚀 Deployment
 
-- **Core Platform**: AI agents, consensus mechanisms, and system architecture
-- **Runtime Components**: Execution environment and monitoring
-- **Documentation**: Comprehensive platform documentation
-- **Website Implementations**: Multiple website versions and configurations
-- **Operations**: Deployment, monitoring, and maintenance tools
+### Cloudflare Pages
+The website is automatically deployed to Cloudflare Pages via GitHub Actions:
 
-## Contact
+1. **CI Pipeline**: Runs on every PR and push to main
+2. **Compliance Checks**: Enforces CTO directive requirements
+3. **Automated Deployment**: Deploys to Cloudflare Pages on main branch merge
 
-For questions about the platform or this repository, contact the development team.
+### Required Secrets
+- `CLOUDFLARE_API_TOKEN`: API token for Cloudflare Pages
+- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID
+- `CLOUDFLARE_PROJECT_NAME`: Cloudflare Pages project name
+
+## 🔒 Compliance & Security
+
+### CTO Directive Compliance
+- ✅ **No Mocks**: MOCKS_DISABLED=1 enforced
+- ✅ **No Timeframes**: Automated detection of planning promises
+- ✅ **Forbidden Terms**: Automated detection of restricted terminology
+- ✅ **Route Parity**: All required routes implemented and tested
+- ✅ **Lighthouse Standards**: Accessibility ≥95, Best Practices ≥90, SEO ≥90
+
+### Security Features
+- **Dependency Scanning**: Automated vulnerability detection
+- **Type Safety**: Full TypeScript implementation
+- **Content Validation**: No placeholder or mock content
+- **Link Security**: External link validation
+
+## 📊 Performance Standards
+
+### Lighthouse Targets
+- **Performance**: ≥80
+- **Accessibility**: ≥95
+- **Best Practices**: ≥90
+- **SEO**: ≥90
+
+## 🤖 Platform Features
+
+- **AI Agent Orchestration**: Advanced multi-agent systems
+- **Dual Consensus**: Revolutionary dual consensus engine
+- **Decentralized Storage**: IPFS-based storage system
+- **Unreal Engine 5**: Advanced simulation and XR capabilities
+
+## 📚 Documentation
+
+- **API Reference**: `/docs/api`
+- **Developer Guides**: `/docs/v1`
+- **SDK Documentation**: `/library`
+- **Legal Information**: `/legal`
+
+## 🌟 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and contribution instructions.
+
+## 📄 License
+
+This project is licensed under the terms specified in the [LICENSE.md](license/LICENSE.md) file.
+
+---
+
+**Zeropoint Protocol, Inc.** — Austin, TX  
+© 2025 All Rights Reserved

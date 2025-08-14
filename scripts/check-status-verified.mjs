@@ -74,21 +74,29 @@ function checkStatusPage() {
 
 function verifyHealthEndpoints() {
   try {
-    const healthContent = readFileSync('public/api/healthz/index.json', 'utf8');
-    const readyContent = readFileSync('public/api/readyz/index.json', 'utf8');
+    // Check for health endpoints
+    console.log('🔍 Checking health endpoints...');
     
-    // Check that health endpoints exist and return proper data
-    if (!healthContent.includes('status') || !healthContent.includes('commit')) {
-      console.error('❌ Health endpoint missing required fields');
+    const healthzPath = 'app/api/healthz/route.ts';
+    const readyzPath = 'app/api/readyz/route.ts';
+    
+    if (!fs.existsSync(healthzPath) || !fs.existsSync(readyzPath)) {
+      console.error('❌ Health endpoints not found');
+      console.error(`Expected: ${healthzPath}, ${readyzPath}`);
       return false;
     }
     
-    if (!readyContent.includes('ready') || !readyContent.includes('commit')) {
-      console.error('❌ Ready endpoint missing required fields');
+    // Check that they export dynamic = 'force-dynamic'
+    const healthzContent = fs.readFileSync(healthzPath, 'utf8');
+    const readyzContent = fs.readFileSync(readyzPath, 'utf8');
+    
+    if (!healthzContent.includes("export const dynamic = 'force-dynamic'") || 
+        !readyzContent.includes("export const dynamic = 'force-dynamic'")) {
+      console.error('❌ Health endpoints must export dynamic = "force-dynamic"');
       return false;
     }
     
-    return true;
+    console.log('✅ Health endpoints properly configured');
   } catch (error) {
     console.error('❌ Error checking health endpoints:', error.message);
     return false;

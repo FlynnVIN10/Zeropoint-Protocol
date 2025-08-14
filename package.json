@@ -12,7 +12,7 @@
     "test:watch": "jest --watch",
     "check:links": "npx linkinator http://localhost:3000 --recurse",
     "test:lh": "npx lighthouse http://localhost:3000 --quiet --only-categories=accessibility --budget-path=./.lighthouse-budget.json",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit --project tsconfig.json"
   },
   "dependencies": {
     "next": "14.2.6",

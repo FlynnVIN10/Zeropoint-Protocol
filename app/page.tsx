@@ -1,241 +1,132 @@
 import React from 'react';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import Link from 'next/link';
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-900 via-purple-900 to-pink-900 text-white py-20">
-        <div className="max-w-6xl mx-auto text-center px-8">
-          <h1 className="text-5xl font-bold mb-6">
-            Zeropoint Protocol
-          </h1>
-          <p className="text-xl mb-8 max-w-3xl mx-auto">
-            Dual Consensus Agentic AI Platform — The future of decentralized AI infrastructure
+    <div className="space-y-6">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold mb-4">Zeropoint Protocol</h1>
+        <p className="text-xl text-sub mb-8">
+          Dual Consensus Agentic AI Platform Enterprise Console
+        </p>
+        <div className="flex gap-4 justify-center">
+          <Link href="/console">
+            <Button variant="primary" size="lg">Launch Console</Button>
+          </Link>
+          <Link href="/docs">
+            <Button variant="subtle" size="lg">Documentation</Button>
+          </Link>
+        </div>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card title="AI Agents" cta={
+          <Link href="/synthients">
+            <Button variant="subtle" size="sm">Manage</Button>
+          </Link>
+        }>
+          <p className="text-sub mb-4">
+            Orchestrate and monitor AI agents with real-time status and memory management
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/docs"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Get Started
-            </a>
-            <a
-              href="/library"
-              className="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              Developer Library
-            </a>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 bg-ok rounded-full"></span>
+            <span>3 agents active</span>
           </div>
-        </div>
-      </section>
+        </Card>
 
-      {/* Features Section */}
-      <section className="py-20 px-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-16">Platform Features</h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🤖</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">AI Agent Orchestration</h3>
-              <p className="text-gray-600">
-                Advanced multi-agent systems with intelligent coordination and consensus mechanisms
-              </p>
-            </div>
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🔗</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Dual Consensus</h3>
-              <p className="text-gray-600">
-                Revolutionary dual consensus engine ensuring reliability and performance
-              </p>
-            </div>
-            <div className="text-center p-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🌐</span>
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Decentralized Storage</h3>
-              <p className="text-gray-600">
-                IPFS-based storage system for secure, distributed data management
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Quick Access Section */}
-      <section className="py-20 px-8 bg-white">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-16">Quick Access</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <a
-              href="/legal"
-              className="group p-6 border-2 border-gray-200 rounded-lg hover:border-blue-500 transition-colors"
-            >
-              <div className="text-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
-                  <span className="text-xl">⚖️</span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
-                  Legal Information
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">
-                  Platform licensing and legal framework
-                </p>
-              </div>
-            </a>
-            <a
-              href="/docs"
-              className="group p-6 border-2 border-gray-200 rounded-lg hover:border-green-500 transition-colors"
-            >
-              <div className="text-center">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
-                  <span className="text-xl">📚</span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-green-600 transition-colors">
-                  Documentation
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">
-                  Comprehensive platform guides
-                </p>
-              </div>
-            </a>
-            <a
-              href="/library"
-              className="group p-6 border-2 border-gray-200 rounded-lg hover:border-purple-500 transition-colors"
-            >
-              <div className="text-center">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
-                  <span className="text-xl">🛠️</span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors">
-                  Developer Library
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">
-                  SDKs, tools, and integration guides
-                </p>
-              </div>
-            </a>
-            <a
-              href="/status"
-              className="group p-6 border-2 border-gray-200 rounded-lg hover:border-orange-500 transition-colors"
-            >
-              <div className="text-center">
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-200 transition-colors">
-                  <span className="text-xl">📊</span>
-                </div>
-                <h3 className="text-lg font-semibold text-gray-900 group-hover:text-orange-600 transition-colors">
-                  System Status
-                </h3>
-                <p className="text-gray-600 text-sm mt-2">
-                  Real-time platform health and metrics
-                </p>
-              </div>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Technology Stack Section */}
-      <section className="py-20 px-8">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-16">Technology Stack</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🐍</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Python</h3>
-              <p className="text-gray-600 text-sm">Core platform and AI agents</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">⚡</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Next.js</h3>
-              <p className="text-gray-600 text-sm">Modern web interface</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🎮</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Unreal Engine 5</h3>
-              <p className="text-gray-600 text-sm">Advanced simulation and XR</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <span className="text-2xl">🌺</span>
-              </div>
-              <h3 className="text-lg font-semibold mb-2">Petals</h3>
-              <p className="text-gray-600 text-sm">Decentralized inference</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 px-8 bg-blue-900 text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-6">Ready to Get Started?</h2>
-          <p className="text-xl mb-8">
-            Join the future of decentralized AI infrastructure with the Zeropoint Protocol
+        <Card title="Model Management" cta={
+          <Link href="/models">
+            <Button variant="subtle" size="sm">Configure</Button>
+          </Link>
+        }>
+          <p className="text-sub mb-4">
+            Deploy and manage LLMs, adapters, and inference engines
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href="/docs"
-              className="bg-white text-blue-900 hover:bg-gray-100 px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              View Documentation
-            </a>
-            <a
-              href="https://github.com/FlynnVIN10/Zeropoint-Protocol"
-              className="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 px-8 py-3 rounded-lg font-semibold transition-colors"
-            >
-              GitHub Repository
-            </a>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 bg-warn rounded-full"></span>
+            <span>2 models running</span>
           </div>
-        </div>
-      </section>
+        </Card>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Platform</h3>
-              <ul className="space-y-2">
-                <li><a href="/docs" className="text-gray-300 hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="/library" className="text-gray-300 hover:text-white transition-colors">Developer Library</a></li>
-                <li><a href="/status" className="text-gray-300 hover:text-white transition-colors">System Status</a></li>
-              </ul>
+        <Card title="Consensus Engine" cta={
+          <Link href="/consensus">
+            <Button variant="subtle" size="sm">Review</Button>
+          </Link>
+        }>
+          <p className="text-sub mb-4">
+            Dual consensus approval system for governance and safety
+          </p>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 bg-ok rounded-full"></span>
+            <span>System operational</span>
+          </div>
+        </Card>
+
+        <Card title="Execution Monitoring" cta={
+          <Link href="/runs">
+            <Button variant="subtle" size="sm">Monitor</Button>
+          </Link>
+        }>
+          <p className="text-sub mb-4">
+            Track training runs, inference jobs, and system performance
+          </p>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 bg-ok rounded-full"></span>
+            <span>1 run active</span>
+          </div>
+        </Card>
+
+        <Card title="System Health" cta={
+          <Link href="/status">
+            <Button variant="subtle" size="sm">Check</Button>
+          </Link>
+        }>
+          <p className="text-sub mb-4">
+            Real-time system status and verified health endpoints
+          </p>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 bg-ok rounded-full"></span>
+            <span>All systems operational</span>
+          </div>
+        </Card>
+
+        <Card title="Analytics" cta={
+          <Link href="/metrics">
+            <Button variant="subtle" size="sm">View</Button>
+          </Link>
+        }>
+          <p className="text-sub mb-4">
+            Performance metrics, resource utilization, and operational insights
+          </p>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="w-2 h-2 bg-ok rounded-full"></span>
+            <span>Metrics available</span>
+          </div>
+        </Card>
+      </div>
+
+      <Card title="Quick Actions">
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="space-y-3">
+            <h3 className="font-medium">Development</h3>
+            <div className="space-y-2">
+              <Link href="/library" className="block text-link hover:underline">Developer Library</Link>
+              <Link href="/docs" className="block text-link hover:underline">API Documentation</Link>
+              <Link href="/audits" className="block text-link hover:underline">Audit Logs</Link>
             </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="/legal" className="text-gray-300 hover:text-white transition-colors">Legal Information</a></li>
-                <li><a href="/legal/whitelabel" className="text-gray-300 hover:text-white transition-colors">Whitelabel Program</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2">
-                <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol" className="text-gray-300 hover:text-white transition-colors">GitHub</a></li>
-                <li><a href="mailto:support@zeropointprotocol.ai" className="text-gray-300 hover:text-white transition-colors">Support</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Company</h3>
-              <p className="text-gray-300">
-                Zeropoint Protocol, Inc.<br />
-                Austin, TX<br />
-                © 2025 All Rights Reserved
-              </p>
+          </div>
+          <div className="space-y-3">
+            <h3 className="font-medium">Administration</h3>
+            <div className="space-y-2">
+              <Link href="/settings" className="block text-link hover:underline">System Settings</Link>
+              <Link href="/consensus" className="block text-link hover:underline">Governance</Link>
+              <Link href="/metrics" className="block text-link hover:underline">Performance</Link>
             </div>
           </div>
         </div>
-      </footer>
+      </Card>
     </div>
   );
 }

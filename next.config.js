@@ -7,8 +7,6 @@ const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'md', 'mdx'],
   experimental: { mdxRs: true },
   eslint: { ignoreDuringBuilds: false },
-  output: 'export',
-  trailingSlash: true,
   images: {
     unoptimized: true
   }

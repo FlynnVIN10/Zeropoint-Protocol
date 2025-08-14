@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "npx @cloudflare/next-on-pages --skip-build",
     "start": "next start",
+    "preview": "wrangler pages dev .vercel/output/static --compatibility-date=2024-12-01",
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
@@ -15,15 +17,19 @@
     "type-check": "tsc --noEmit --project tsconfig.json"
   },
   "dependencies": {
+    "@next/mdx": "14.2.6",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.12",
+    "gray-matter": "4.0.3",
+    "lucide-react": "^0.539.0",
     "next": "14.2.6",
+    "next-mdx-remote": "5.0.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "next-mdx-remote": "5.0.0",
-    "@next/mdx": "14.2.6",
-    "gray-matter": "4.0.3",
-    "clsx": "2.1.1"
+    "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.13",
     "@testing-library/jest-dom": "^6.7.0",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
@@ -37,11 +43,12 @@
     "eslint-config-next": "14.2.6",
     "jest": "^29.0.0",
     "jest-environment-jsdom": "^29.0.0",
-    "linkinator": "6.1.2",
     "lighthouse": "12.1.0",
+    "linkinator": "6.1.2",
     "postcss": "8.4.41",
     "tailwindcss": "3.4.9",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "wrangler": "^4.30.0"
   },
   "engines": {
     "node": ">=20.0.0"

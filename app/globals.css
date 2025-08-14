@@ -4,34 +4,35 @@
 
 @layer base {
   html {
-    font-family: system-ui, sans-serif;
+    font-family: Inter, system-ui, sans-serif;
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-bg text-text;
   }
 }
 
 @layer components {
-  .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors;
+  .skip-to-content {
+    @apply absolute -top-10 left-6 bg-link text-white px-4 py-2 rounded-md z-50;
+    @apply focus:top-6 transition-all duration-200;
   }
   
-  .btn-secondary {
-    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors;
-  }
-  
-  .card {
-    @apply bg-white rounded-lg shadow-md p-6;
-  }
-  
-  .nav-link {
-    @apply text-gray-700 hover:text-blue-600 transition-colors;
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-2;
   }
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+  
+  .motion-safe {
+    @apply transition-all duration-200;
+  }
+  
+  .motion-reduce {
+    @apply transition-none;
   }
 }

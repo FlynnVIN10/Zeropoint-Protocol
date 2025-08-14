@@ -24,8 +24,8 @@ export default function Status() {
     const fetchStatus = async () => {
       try {
         const [healthResponse, readyResponse] = await Promise.all([
-          fetch('/api/healthz'),
-          fetch('/api/readyz')
+          fetch('/api/healthz/index.json'),
+          fetch('/api/readyz/index.json')
         ]);
 
         if (!healthResponse.ok || !readyResponse.ok) {

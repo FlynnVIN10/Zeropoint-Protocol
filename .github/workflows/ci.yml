@@ -173,8 +173,8 @@ jobs:
           # Check that health endpoints are accessible
           echo "Verifying health endpoints..."
           
-          # Test local health endpoints
-          if [ -f "app/api/healthz/route.ts" ] && [ -f "app/api/readyz/route.ts" ]; then
+          # Test static health endpoints
+          if [ -f "public/api/healthz/index.json" ] && [ -f "public/api/readyz/index.json" ]; then
             echo "✅ Health endpoints exist"
           else
             echo "❌ Health endpoints missing"

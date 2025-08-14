@@ -1,3 +1,10 @@
+⚠️ **Governance Directive** — All contributions require CTO/CEO dual consensus.
+See [GOVERNANCE.md](./GOVERNANCE.md).
+
+**Intent: "GOD FIRST, with good intent and a good heart."**
+
+---
+
 # Zeropoint Protocol
 
 **Dual Consensus Agentic AI Platform** — The future of decentralized AI infrastructure.

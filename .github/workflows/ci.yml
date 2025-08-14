@@ -171,14 +171,24 @@ jobs:
           set -euo pipefail
           echo "Checking deploy parity..."
           
-          # Check that health endpoints are accessible
-          echo "Verifying health endpoints..."
+          # Check that health endpoints are accessible on deployed site
+          echo "Verifying health endpoints on deployed site..."
           
-          # Test static health endpoints
-          if [ -f "public/api/healthz/index.json" ] && [ -f "public/api/readyz/index.json" ]; then
-            echo "✅ Health endpoints exist"
+          # Wait a moment for deployment to be fully available
+          sleep 10
+          
+          # Test live health endpoints
+          if curl -s -f "https://zeropointprotocol.ai/api/healthz" > /dev/null; then
+            echo "✅ Health endpoint accessible on deployed site"
           else
-            echo "❌ Health endpoints missing"
+            echo "❌ Health endpoint not accessible on deployed site"
+            exit 1
+          fi
+          
+          if curl -s -f "https://zeropointprotocol.ai/api/readyz" > /dev/null; then
+            echo "✅ Ready endpoint accessible on deployed site"
+          else
+            echo "❌ Ready endpoint not accessible on deployed site"
             exit 1
           fi
           

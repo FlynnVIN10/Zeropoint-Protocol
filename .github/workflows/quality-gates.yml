@@ -1,0 +1,40 @@
+name: quality-gates
+on: [push, pull_request]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run lint --if-present
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+
+  probes:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm run build
+      - name: Start preview
+        run: npx wrangler pages dev .vercel/output/static & sleep 3
+      - name: Probe JSON
+        run: |
+          node -e "fetch('http://127.0.0.1:8788/api/healthz').then(r=>r.json()).then(j=>{if(j.status!=='ok')process.exit(1)})"
+          node -e "fetch('http://127.0.0.1:8788/api/readyz').then(r=>r.json()).then(j=>{if(typeof j.ready!=='boolean')process.exit(1)})"

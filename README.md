@@ -27,6 +27,8 @@ Zeropoint-Protocol/
 ├── reports/                # Project reports
 ├── scripts/                # Build and utility scripts
 ├── types/                  # TypeScript type definitions
+├── lib/                    # Utility libraries
+├── styles/                 # Design system styles
 └── package.json            # Dependencies
 ```
 

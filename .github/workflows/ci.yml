@@ -109,8 +109,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: out
+          directory: .next
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          wranglerVersion: 2
 
   lighthouse:
     name: Lighthouse Audit

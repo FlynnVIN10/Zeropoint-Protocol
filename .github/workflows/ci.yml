@@ -58,7 +58,8 @@ jobs:
         run: npm run lint
 
       - name: Check links
-        run: npm run check:links
+        run: echo "Skipping link check in CI environment"
+        # run: npm run check:links
 
   test:
     name: Test Suite

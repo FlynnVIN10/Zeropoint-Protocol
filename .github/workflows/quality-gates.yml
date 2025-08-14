@@ -1,0 +1,21 @@
+name: quality-gates
+on: [pull_request]
+jobs:
+  parity-readme-tree:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check README structure parity
+        run: node scripts/check-readme-parity.mjs
+  links-public-routes:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Link check (public routes)
+        run: node scripts/check-links.mjs
+  e2e-status-verified-only:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify /status exposes only verified fields
+        run: node scripts/check-status-verified.mjs

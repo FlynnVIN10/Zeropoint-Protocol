@@ -22,7 +22,6 @@ Zeropoint-Protocol/
 ├── .cloudflare/            # Deployment scripts
 ├── docs/                   # Documentation
 ├── directives/             # CTO directives
-
 ├── license/                # License documentation
 ├── reports/                # Project reports
 ├── scripts/                # Build and utility scripts

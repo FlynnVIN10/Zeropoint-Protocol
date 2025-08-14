@@ -98,6 +98,7 @@ function verifyHealthEndpoints() {
     }
     
     console.log('✅ Health endpoints properly configured');
+    return true;
   } catch (error) {
     console.error('❌ Error checking health endpoints:', error.message);
     return false;

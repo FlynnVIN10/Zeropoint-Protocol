@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
 
 function findUnverifiedClaims(content) {
   const unverifiedPatterns = [
@@ -80,15 +81,15 @@ function verifyHealthEndpoints() {
     const healthzPath = 'app/api/healthz/route.ts';
     const readyzPath = 'app/api/readyz/route.ts';
     
-    if (!fs.existsSync(healthzPath) || !fs.existsSync(readyzPath)) {
+    if (!existsSync(healthzPath) || !existsSync(readyzPath)) {
       console.error('❌ Health endpoints not found');
       console.error(`Expected: ${healthzPath}, ${readyzPath}`);
       return false;
     }
     
     // Check that they export dynamic = 'force-dynamic'
-    const healthzContent = fs.readFileSync(healthzPath, 'utf8');
-    const readyzContent = fs.readFileSync(readyzPath, 'utf8');
+    const healthzContent = readFileSync(healthzPath, 'utf8');
+    const readyzContent = readFileSync(readyzPath, 'utf8');
     
     if (!healthzContent.includes("export const dynamic = 'force-dynamic'") || 
         !readyzContent.includes("export const dynamic = 'force-dynamic'")) {

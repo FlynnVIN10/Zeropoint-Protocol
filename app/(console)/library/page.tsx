@@ -26,9 +26,6 @@ export default function LibraryPage() {
               <a href="#sdks" className="block text-sm text-link hover:underline py-1">
                 SDKs & Tools
               </a>
-              <a href="#examples" className="block text-sm text-link hover:underline py-1">
-                Examples
-              </a>
               <a href="#deployment" className="block text-sm text-link hover:underline py-1">
                 Deployment
               </a>

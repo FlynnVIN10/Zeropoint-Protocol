@@ -1,0 +1,20 @@
+---
+const j = (p:string)=>fetch(p,{cache:'no-store'}).then(r=>r.json());
+const [h,r] = await Promise.all([j('/api/healthz'), j('/api/readyz')]);
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Status</title>
+</head>
+<body>
+  <main style="max-width:640px;margin:2rem auto;padding:1rem;">
+    <h1>System Status</h1>
+    <pre>health.status: {h.status}</pre>
+    <pre>ready.ready: {String(r.ready)}</pre>
+    <pre>commit: {h.commit}</pre>
+    <pre>buildTime: {h.buildTime}</pre>
+  </main>
+</body>
+</html>

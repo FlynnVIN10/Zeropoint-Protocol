@@ -28,6 +28,12 @@ jobs:
         env:
           NEXT_PUBLIC_COMMIT_SHA: ${{ github.sha }}
           BUILD_TIME: ${{ github.event.head_commit.timestamp }}
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-build
+          path: website/.vercel/output/static
+          retention-days: 1
 
   deploy:
     if: github.ref == 'refs/heads/main'
@@ -35,6 +41,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: website-build
+          path: website/.vercel/output/static
       - uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

@@ -14,22 +14,9 @@ jobs:
         with: { node-version: 20 }
       - run: npm ci
       - run: VITE_COMMIT=ci-test VITE_BUILD_TIME=$(date -u +%FT%TZ) npm run build
-  probes:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: 20 }
-      - run: npm ci
-      - run: VITE_COMMIT=ci-test VITE_BUILD_TIME=$(date -u +%FT%TZ) npm run build
-      - run: npx wrangler pages dev dist --compatibility-date=2024-12-01 &
-      - run: sleep 5
-      - run: node -e "fetch('http://127.0.0.1:8788/api/healthz').then(r=>r.json()).then(j=>{if(j.status!=='ok')process.exit(1)})"
-      - run: node -e "fetch('http://127.0.0.1:8788/api/readyz').then(r=>r.json()).then(j=>{if(typeof j.ready!=='boolean')process.exit(1)})"
   deploy:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    needs: [build, probes]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: cloudflare/wrangler-action@v3

@@ -1,0 +1,54 @@
+@import url('/tokens.css');
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.55 Inter, system-ui, sans-serif;
+}
+
+.wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.top {
+  position: sticky;
+  top: 0;
+  background: color-mix(in oklab, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(140%) blur(6px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav a {
+  margin-right: 16px;
+  color: var(--sub);
+}
+
+.nav a:hover {
+  color: var(--text);
+}
+
+.env {
+  font-size: 12px;
+  margin: 0 8px;
+  padding: 3px 6px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.logo {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: var(--link);
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.foot {
+  border-top: 1px solid var(--border);
+  margin-top: 48px;
+  color: var(--sub);
+}

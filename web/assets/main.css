@@ -1,0 +1,15 @@
+:root{
+  --bg:#0b0b0c;
+  --text:#e6e6e9;
+  --sub:#b3b3b8;
+  --border:#232326
+}
+html,body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font:14px/1.55 Inter,system-ui,sans-serif
+}
+a{
+  color:#7aa2ff
+}

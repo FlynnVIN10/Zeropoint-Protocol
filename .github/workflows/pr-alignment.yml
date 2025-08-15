@@ -1,0 +1,128 @@
+name: pr-alignment
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited, ready_for_review]
+  workflow_run:
+    workflows: ["quality", "probes"]
+    types: [completed]
+
+jobs:
+  update-pr-alignment:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
+      actions: read
+    env:
+      # Tune these as needed:
+      REQUIRED_WORKFLOWS: '["quality","probes"]'   # names of workflows that must pass
+      REQUIRED_APPROVALS: "1"                      # CTO-only default
+      ALIGNMENT_PATTERN: "Alignment:\\s*\\{Synthiant:.*\\}\\s*\\(live\\)"
+    steps:
+      - name: Resolve PR context
+        id: ctx
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const core = require('@actions/core');
+            const ctx = context;
+
+            // 1) Determine PR number and head SHA for both triggers
+            let prNumber = null, headSha = null;
+
+            if (ctx.eventName === 'pull_request') {
+              prNumber = ctx.payload.number;
+              headSha  = ctx.payload.pull_request.head.sha;
+            } else if (ctx.eventName === 'workflow_run') {
+              const wr = ctx.payload.workflow_run;
+              headSha = wr.head_sha;
+              // Find PR by head SHA
+              const { data: prs } = await github.rest.search.issuesAndPullRequests({
+                q: `repo:${ctx.repo.owner}/${ctx.repo.repo} is:pr sha:${headSha}`
+              });
+              if (prs.items.length) prNumber = prs.items[0].number;
+            }
+
+            if (!prNumber || !headSha) {
+              core.setFailed('No PR context resolved.');
+              return;
+            }
+
+            core.setOutput('pr', prNumber.toString());
+            core.setOutput('sha', headSha);
+
+      - name: Compute alignment metrics
+        id: metrics
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const core = require('@actions/core');
+            const ctx = context;
+
+            const prNumber = Number(core.getInput('pr', { required: true }));
+            const headSha  = core.getInput('sha', { required: true });
+
+            const REQUIRED_WORKFLOWS = JSON.parse(process.env.REQUIRED_WORKFLOWS || '[]');
+            const REQUIRED_APPROVALS = Number(process.env.REQUIRED_APPROVALS || 1);
+
+            // 2) Syntiant alignment = % of REQUIRED_WORKFLOWS that succeeded for this head SHA
+            let passed = 0;
+            for (const name of REQUIRED_WORKFLOWS) {
+              const { data } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: ctx.repo.owner, repo: ctx.repo.repo,
+                workflow_id: name, event: 'pull_request', per_page: 50
+              });
+              // find the run with matching head_sha (latest)
+              const run = data.workflow_runs.find(r => r.head_sha === headSha);
+              if (run && run.conclusion === 'success') passed++;
+            }
+            const totalWF = Math.max(1, REQUIRED_WORKFLOWS.length);
+            const synthiant = Math.round((passed / totalWF) * 100);
+
+            // 3) Human consensus = approvals / REQUIRED_APPROVALS (capped at 100)
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: ctx.repo.owner, repo: ctx.repo.repo, pull_number: prNumber
+            });
+            const approvers = new Set(
+              reviews.filter(r => r.state === 'APPROVED').map(r => r.user.login)
+            );
+            const approvals = approvers.size;
+            const human = Math.min(100, Math.round((approvals / Math.max(1, REQUIRED_APPROVALS)) * 100));
+
+            // 4) Divergence = absolute difference
+            const divergence = Math.abs(synthiant - human);
+
+            core.setOutput('synthiant', synthiant.toString());
+            core.setOutput('human', human.toString());
+            core.setOutput('divergence', divergence.toString());
+
+      - name: Upsert alignment line in PR body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const core = require('@actions/core');
+            const ctx = context;
+
+            const prNumber   = Number(core.getInput('pr', { required: true }));
+            const synthiant  = core.getInput('synthiant',  { required: true });
+            const human      = core.getInput('human',      { required: true });
+            const divergence = core.getInput('divergence', { required: true });
+
+            const line = `Alignment: {Synthiant:${synthiant}% | Human:${human}% | Divergence:${divergence}%} (live)`;
+
+            const { data: pr } = await github.rest.pulls.get({
+              owner: ctx.repo.owner, repo: ctx.repo.repo, pull_number: prNumber
+            });
+
+            const pattern = new RegExp(process.env.ALIGNMENT_PATTERN, 'i');
+            let body = pr.body || '';
+
+            if (pattern.test(body)) {
+              body = body.replace(pattern, line);
+            } else {
+              body = body ? `${line}\n\n${body}` : line;
+            }
+
+            await github.rest.pulls.update({
+              owner: ctx.repo.owner, repo: ctx.repo.repo, pull_number: prNumber, body
+            });

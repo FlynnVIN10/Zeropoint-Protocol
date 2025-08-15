@@ -8,5 +8,18 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: npm ci
+      - run: npm run type-check
       - run: npm run build
       - run: node scripts/guard-no-bare-booleans.mjs
+      - name: Notify on failure
+        if: ${{ failure() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `❌ quality failed in ${context.workflow} for ${context.payload.pull_request.html_url}`;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });

@@ -1,5 +1,10 @@
 name: deploy
 on: [push, pull_request]
+
+defaults:
+  run:
+    working-directory: website
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -8,15 +13,15 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: npm ci
-      - run: VITE_COMMIT=ci-test VITE_BUILD_TIME=$(date -u +%FT%TZ) npm run build --prefix website
+      - run: VITE_COMMIT=ci-test VITE_BUILD_TIME=$(date -u +%FT%TZ) npm run build
   probes:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - run: npx wrangler pages dev website/dist --compatibility-date=2024-12-01 &
-      - run: sleep 5
+      - run: npx wrangler pages dev .vercel/output/static & sleep 3
       - run: node -e "fetch('http://127.0.0.1:8788/api/healthz').then(r=>r.json()).then(j=>{if(j.status!=='ok')process.exit(1)})"
       - run: node -e "fetch('http://127.0.0.1:8788/api/readyz').then(r=>r.json()).then(j=>{if(typeof j.ready!=='boolean')process.exit(1)})"
   deploy:
@@ -27,4 +32,4 @@ jobs:
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          command: pages deploy website/dist --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+          command: pages deploy website/.vercel/output/static --project-name=${{ secrets.CF_PAGES_PROJECT }}

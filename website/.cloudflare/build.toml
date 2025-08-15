@@ -1,6 +1,6 @@
 [build]
 command = "npm ci && VITE_COMMIT=$CF_PAGES_COMMIT_SHA VITE_BUILD_TIME=$(date -u +%FT%TZ) npm run build"
-output_dir = "dist"
+output_dir = ".vercel/output/static"
 node_version = "20"
 
 [build.environment]

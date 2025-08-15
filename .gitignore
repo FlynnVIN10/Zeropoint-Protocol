@@ -5,7 +5,6 @@ yarn-debug.log*
 yarn-error.log*
 
 # Next.js
-.next/
 out/
 build/
 dist/
@@ -77,7 +76,6 @@ jspm_packages/
 .parcel-cache
 
 # Next.js build output
-.next
 
 # Nuxt.js build / generate output
 .nuxt

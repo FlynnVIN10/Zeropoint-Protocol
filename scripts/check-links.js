@@ -81,7 +81,6 @@ function checkFileStructure() {
     'package.json',
     'tsconfig.json',
     'tailwind.config.js',
-    'next.config.ts',
     'src/app/layout.tsx',
     'src/app/page.tsx',
     'src/app/globals.css'

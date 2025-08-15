@@ -1,0 +1,5 @@
+:root{--bg:#0b0b0c;--panel:#121214;--text:#e6e6e9;--sub:#b3b3b8;--link:#7aa2ff;--border:#232326;--ring:#9b87f5}
+html,body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 Inter,system-ui,sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
+.card{border:1px solid var(--border);border-radius:16px;background:var(--panel);box-shadow:0 10px 30px rgba(0,0,0,.35)}
+a{color:var(--link)}a:focus{outline:2px solid var(--ring);outline-offset:2px}

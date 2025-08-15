@@ -1,8 +1,7 @@
 [build]
-command = "npm ci && npm run build"
-output_dir = "dist"
+command = "echo 'Static site - no build required'"
+output_dir = "public"
 node_version = "20"
 
 [build.environment]
-VITE_COMMIT = "$CF_PAGES_COMMIT_SHA"
-VITE_BUILD_TIME = "$(date -u +%FT%TZ)"
+MOCKS_DISABLED = "1"

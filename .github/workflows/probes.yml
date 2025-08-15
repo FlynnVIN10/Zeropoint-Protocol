@@ -1,0 +1,14 @@
+name: probes
+on: [deployment_status]
+jobs:
+  check:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify JSON probes
+        env:
+          URL: ${{ github.event.deployment_status.target_url }}
+        run: |
+          H=$(curl -fsSL "$URL/api/healthz" || exit 1)
+          R=$(curl -fsSL "$URL/api/readyz" || exit 1)
+          node -e "const h=$H,r=$R; if(h.status!=='ok'||typeof r.ready!=='boolean') process.exit(1)"

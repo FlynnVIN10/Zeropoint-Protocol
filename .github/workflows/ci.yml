@@ -40,7 +40,6 @@ jobs:
           #!/usr/bin/env bash
           set -euo pipefail
           rg -n --hidden -S -i '\bsynthiant(s)?\b' \
-            -g'!node_modules' -g'!.next' -g'!dist' -g'!build' -g'!CHANGELOG*' -g'!docs/release-notes/*' \
             && { echo '❌ forbidden term found'; exit 1; } || echo '✅ clean'
 
       - name: No Mocks Check
@@ -48,7 +47,6 @@ jobs:
           #!/usr/bin/env bash
           set -euo pipefail
           PATTERNS='(mock|stub|placeholder|TODO|FIXME|HACK)'
-          git ls-files | grep -E '\.(ts|tsx|js|jsx)$' | grep -v 'node_modules' | grep -v '\.next' \
           | xargs -I{} grep -EIn "${PATTERNS}" {} && { echo "Mock/placeholder patterns found"; exit 1; } || exit 0
 
       - name: TypeScript type check
@@ -109,7 +107,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-          directory: .next
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: 2
 

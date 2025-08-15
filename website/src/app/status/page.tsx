@@ -1,4 +1,5 @@
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 async function fetchProbe(url: string) {
   const response = await fetch(url, { cache: 'no-store' });

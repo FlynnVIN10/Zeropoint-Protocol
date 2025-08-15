@@ -1,13 +1,11 @@
----
 export const prerender = false;
 
 export function GET() {
   return new Response(JSON.stringify({
-    ready: true,
+    status: "ok",
     commit: import.meta.env.VITE_COMMIT ?? "unknown",
     buildTime: import.meta.env.VITE_BUILD_TIME ?? "unknown"
   }), { 
     headers: { 'content-type': 'application/json' } 
   });
 }
----

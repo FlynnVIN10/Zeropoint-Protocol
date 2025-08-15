@@ -1,6 +1,15 @@
 ---
-const j = (p:string)=>fetch(p,{cache:'no-store'}).then(r=>r.json());
-const [h,r] = await Promise.all([j('/api/healthz'), j('/api/readyz')]);
+let h = { status: 'error', commit: 'unknown', buildTime: 'unknown' };
+let r = { ready: false, commit: 'unknown', buildTime: 'unknown' };
+
+try {
+  const j = (p:string) => fetch(p, {cache:'no-store'}).then(r => r.json()).catch(() => null);
+  const results = await Promise.all([j('/api/healthz'), j('/api/readyz')]);
+  if (results[0]) h = results[0];
+  if (results[1]) r = results[1];
+} catch (error) {
+  console.error('Error fetching status:', error);
+}
 ---
 <html lang="en"><body>
   <main style="max-width:640px;margin:2rem auto;padding:1rem;">

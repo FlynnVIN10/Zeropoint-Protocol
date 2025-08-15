@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/BaseLayout.astro';
+
+const [h, r] = await Promise.all([
+  fetch('/api/healthz').then(x => x.ok ? x.json() : null).catch(() => null),
+  fetch('/api/readyz').then(x => x.ok ? x.json() : null).catch(() => null),
+]);
+---
+<Base title="Status — Zeropoint Protocol">
+  <h1>Status</h1>
+  <ul>
+    <li>commit: {h?.commit ?? 'unknown'}</li>
+    <li>built: {h?.buildTime ?? 'unknown'}</li>
+    <li>healthz: {h?.status ?? 'fail'}</li>
+    <li>readyz: {String(r?.ready ?? false)}</li>
+  </ul>
+</Base>

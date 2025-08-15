@@ -1,0 +1,36 @@
+---
+const { title='Zeropoint Protocol' } = Astro.props;
+---
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width"/>
+  <title>{title}</title>
+  <link rel="stylesheet" href="/styles.css"/>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="logo"></div>
+      <strong>Zeropoint</strong>
+      <span class="env">prod</span>
+      <nav class="nav">
+        <a href="/">Home</a>
+        <a href="/status">Status</a>
+        <a href="/metrics">Metrics</a>
+        <a href="/consensus">Consensus</a>
+        <a href="/audits">Audits</a>
+        <a href="/library">Library</a>
+        <a href="/governance">Governance</a>
+        <a href="/legal/terms">Legal</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+    <slot />
+  </main>
+  <footer class="foot wrap">
+    © Zeropoint Protocol. GOD FIRST.
+  </footer>
+</body>
+</html>

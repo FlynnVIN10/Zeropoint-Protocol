@@ -3,23 +3,25 @@
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 
-const root = 'dist';
-let bad = [];
+const bad = [];
 
-function walk(p) {
+(function walk(p) {
   for (const f of readdirSync(p, { withFileTypes: true })) {
     const fp = join(p, f.name);
-    if (f.isDirectory()) walk(fp);
-    else if (f.name.endsWith('.html')) {
+    if (f.isDirectory()) {
+      walk(fp);
+    } else if (f.name.endsWith('.html')) {
       const s = readFileSync(fp, 'utf8');
-      if (/>true</i.test(s) || />false</i.test(s)) bad.push(fp);
+      if (/>true<|>false</i.test(s)) {
+        bad.push(fp);
+      }
     }
   }
-}
+})('dist');
 
-walk(root);
 if (bad.length) {
-  console.error('Bare boolean leaked in:', bad);
+  console.error('Boolean leaked:', bad);
   process.exit(1);
 }
-console.log('No bare booleans detected.');
+
+console.log('OK: no bare booleans.');

@@ -1,0 +1,19 @@
+:root{
+  --bg:#0b0b0c;
+  --panel:#121214;
+  --elev:#16161a;
+  --text:#e6e6e9;
+  --sub:#b3b3b8;
+  --link:#7aa2ff;
+  --border:#232326;
+  --ring:#9b87f5
+}
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#fcfcfd;
+    --panel:#fff;
+    --text:#111215;
+    --sub:#64666c;
+    --border:#e8e9ee
+  }
+}

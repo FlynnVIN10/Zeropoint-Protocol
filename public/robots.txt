@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://zeropointprotocol.ai/sitemap-index.xml

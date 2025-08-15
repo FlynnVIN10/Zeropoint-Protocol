@@ -1,11 +1,14 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+import Base from '../layouts/BaseLayout.astro';
+import Card from '../components/Card.astro';
 ---
-
-<Layout>
-	<Welcome />
-</Layout>
+<Base title="Zeropoint Protocol — Corporate Futurism">
+  <section class="mb-8">
+    <h1 class="text-4xl font-semibold">Dual‑Consensus Agentic Platform</h1>
+    <p class="text-sub mt-2 max-w-2xl">Synthients + Human Consensus. Truthful systems. Post‑singularity minimalism.</p>
+  </section>
+  <div class="grid gap-6 md:grid-cols-2">
+    <Card title="Mission"><p>Build a symbiotic intelligence network with strict alignment and auditability.</p></Card>
+    <Card title="Technology"><ul class="list-disc pl-5 text-sub"><li>Petals: distributed LLMs</li><li>Tinygrad: adapters/training</li><li>Wondercraft: voice</li></ul></Card>
+  </div>
+</Base>

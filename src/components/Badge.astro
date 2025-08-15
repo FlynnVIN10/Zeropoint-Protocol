@@ -1,0 +1,6 @@
+---
+const { state='neutral', label } = Astro.props;
+const map = { ok:'ok', warn:'warn', err:'err', neutral:'border' };
+const color = map[state] ?? 'border';
+---
+<span class={`text-xs px-2 py-1 rounded-md border bg-${color}/15 text-${color} border-${color}/30`}>{label}</span>

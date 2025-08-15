@@ -1,142 +1,46 @@
-⚠️ **Governance Directive** — All contributions require CTO/CEO dual consensus.
-See [GOVERNANCE.md](./GOVERNANCE.md).
+# Astro Starter Kit: Basics
 
-**Intent: "GOD FIRST, with good intent and a good heart."**
-
----
-
-# Zeropoint Protocol
-
-**Dual Consensus Agentic AI Platform** — The future of decentralized AI infrastructure.
-
-This repository contains both the **Zeropoint Protocol platform** and the **official website** at [zeropointprotocol.ai](https://zeropointprotocol.ai).
-
-## 🏗️ Repository Structure
-
-```
-Zeropoint-Protocol/
-├── iaai/                   # Platform source code
-├── app/                    # Website (Next.js App Router)
-├── components/             # Website components
-├── .github/                # GitHub workflows and config
-├── .cloudflare/            # Deployment scripts
-├── docs/                   # Documentation
-├── directives/             # CTO directives
-├── license/                # License documentation
-├── reports/                # Project reports
-├── scripts/                # Build and utility scripts
-├── types/                  # TypeScript type definitions
-├── lib/                    # Utility libraries
-├── styles/                 # Design system styles
-└── package.json            # Dependencies
+```sh
+npm create astro@latest -- --template basics
 ```
 
-## 🌐 Website
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-The official website is built with Next.js 14 and deployed to Cloudflare Pages.
+## 🚀 Project Structure
 
-### 🚀 Quick Start
+Inside of your Astro project, you'll see the following folders and files:
 
-#### Prerequisites
-- Node.js 20.x or higher
-- npm or yarn
-
-#### Installation
-```bash
-npm install
+```text
+/
+├── public/
+│   └── favicon.svg
+├── src
+│   ├── assets
+│   │   └── astro.svg
+│   ├── components
+│   │   └── Welcome.astro
+│   ├── layouts
+│   │   └── Layout.astro
+│   └── pages
+│       └── index.astro
+└── package.json
 ```
 
-#### Development
-```bash
-npm run dev
-```
+To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
 
-#### Build
-```bash
-npm run build
-```
+## 🧞 Commands
 
-#### Testing
-```bash
-npm test
-npm run test:watch
-```
+All commands are run from the root of the project, from a terminal:
 
-#### Linting
-```bash
-npm run lint
-```
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
 
-## 🧪 Testing
+## 👀 Want to learn more?
 
-The project includes comprehensive testing with Jest and React Testing Library:
-
-- **Unit Tests**: Component rendering and behavior
-- **Integration Tests**: Page functionality
-- **Accessibility Tests**: Lighthouse audits
-- **Link Validation**: Internal and external link checking
-
-## 🚀 Deployment
-
-### Cloudflare Pages
-The website is automatically deployed to Cloudflare Pages via GitHub Actions:
-
-1. **CI Pipeline**: Runs on every PR and push to main
-2. **Compliance Checks**: Enforces CTO directive requirements
-3. **Automated Deployment**: Deploys to Cloudflare Pages on main branch merge
-
-### Required Secrets
-- `CLOUDFLARE_API_TOKEN`: API token for Cloudflare Pages
-- `CLOUDFLARE_ACCOUNT_ID`: Cloudflare account ID
-- `CLOUDFLARE_PROJECT_NAME`: Cloudflare Pages project name
-
-## 🔒 Compliance & Security
-
-### CTO Directive Compliance
-- ✅ **No Mocks**: MOCKS_DISABLED=1 enforced
-- ✅ **No Timeframes**: Automated detection of planning promises
-- ✅ **Forbidden Terms**: Automated detection of restricted terminology
-- ✅ **Route Parity**: All required routes implemented and tested
-- ✅ **Lighthouse Standards**: Accessibility ≥95, Best Practices ≥90, SEO ≥90
-
-### Security Features
-- **Dependency Scanning**: Automated vulnerability detection
-- **Type Safety**: Full TypeScript implementation
-- **Content Validation**: No placeholder or mock content
-- **Link Security**: External link validation
-
-## 📊 Performance Standards
-
-### Lighthouse Targets
-- **Performance**: ≥80
-- **Accessibility**: ≥95
-- **Best Practices**: ≥90
-- **SEO**: ≥90
-
-## 🤖 Platform Features
-
-- **AI Agent Orchestration**: Advanced multi-agent systems
-- **Dual Consensus**: Revolutionary dual consensus engine
-- **Decentralized Storage**: IPFS-based storage system
-- **Unreal Engine 5**: Advanced simulation and XR capabilities
-
-## 📚 Documentation
-
-- **API Reference**: `/docs/api`
-- **Developer Guides**: `/docs/v1`
-- **SDK Documentation**: `/library`
-- **Legal Information**: `/legal`
-
-## 🌟 Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for development guidelines and contribution instructions.
-
-## 📄 License
-
-This project is licensed under the terms specified in the [LICENSE.md](license/LICENSE.md) file.
-
----
-
-**Zeropoint Protocol, Inc.** — Austin, TX  
-© 2025 All Rights Reserved
-# Trigger deployment
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).

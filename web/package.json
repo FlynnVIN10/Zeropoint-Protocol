@@ -1,0 +1,27 @@
+{
+  "name": "web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "preview": "nuxt preview",
+    "type-check": "nuxt typecheck",
+    "lint": "eslint . --ext .ts,.js,.vue",
+    "probe:local": "node -e \"fetch('http://localhost:3000/api/healthz').then(r=>r.json()).then(x=>console.log(x))\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@nuxt/ui": "^2.22.1",
+    "nuxt": "^3.18.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.9.2",
+    "vue-tsc": "^2.0.6"
+  }
+}

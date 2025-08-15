@@ -9,6 +9,7 @@ jobs:
         env:
           URL: ${{ github.event.deployment_status.target_url }}
         run: |
+          set -euo pipefail
           curl -fsS "$URL/api/healthz" | jq -e '.status=="ok"'
           curl -fsS "$URL/api/readyz"  | jq -e '.ready==true'
       - name: Notify on failure
@@ -17,10 +18,8 @@ jobs:
         with:
           script: |
             await github.rest.repos.createCommitStatus({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: context.repo.owner, repo: context.repo.repo,
               sha: context.payload.deployment_status.sha,
-              state: 'failure',
-              context: 'probes',
+              state: 'failure', context: 'probes',
               description: 'Probe verification failed'
             });

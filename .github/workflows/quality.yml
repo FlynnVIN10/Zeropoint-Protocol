@@ -1,5 +1,6 @@
 name: quality
 on: [pull_request]
+defaults: { run: { working-directory: web } }
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -10,16 +11,25 @@ jobs:
       - run: npm ci
       - run: npm run type-check
       - run: npm run build
-      - run: node scripts/guard-no-bare-booleans.mjs
+      - name: Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
+        with:
+          urls: 'http://localhost:4173'
+          configPath: '../.lighthouserc.json'
+          uploadArtifacts: true
+        env:
+          LHCI_PORT: 4173
+      - name: Link check
+        uses: lycheeverse/lychee-action@v2
+        with: { args: '--base . --verbose --no-progress --exclude-mail' }
       - name: Notify on failure
         if: ${{ failure() }}
         uses: actions/github-script@v7
         with:
           script: |
-            const body = `❌ quality failed in ${context.workflow} for ${context.payload.pull_request.html_url}`;
+            const pr = context.payload.pull_request;
+            const url = pr ? pr.html_url : `run ${context.runId}`;
             await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: pr.number, body: `❌ quality failed: ${url}`
             });

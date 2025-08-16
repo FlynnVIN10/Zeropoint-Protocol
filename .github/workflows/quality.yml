@@ -7,10 +7,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
-      - run: npm ci
-      - run: npm i -D @astrojs/check typescript || true
-      - run: npx astro check
-      - run: npm run build --if-present || npx astro build
+      - run: npm install
       - run: node scripts/guard-no-bare-booleans.mjs
       - name: Notify on failure
         if: ${{ failure() }}

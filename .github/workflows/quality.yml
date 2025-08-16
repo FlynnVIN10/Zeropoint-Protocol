@@ -1,0 +1,25 @@
+name: quality
+on: [pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm ci
+      - run: npm i -D @astrojs/check typescript || true
+      - run: npx astro check
+      - run: npm run build --if-present || npx astro build
+      - run: node scripts/guard-no-bare-booleans.mjs
+      - name: Notify on failure
+        if: ${{ failure() }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr=context.payload.pull_request;
+            if(pr) await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `❌ quality failed for ${pr.html_url}`
+            });

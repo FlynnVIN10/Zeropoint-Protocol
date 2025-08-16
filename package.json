@@ -1,0 +1,14 @@
+{
+  "name": "zeropoint-protocol",
+  "version": "1.0.0",
+  "description": "Agentic AI Platform",
+  "scripts": {
+    "build": "echo 'Static site - no build required'",
+    "dev": "echo 'Static site - use live server or similar'",
+    "preview": "echo 'Static site - serve public directory'"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.9.2"
+  }
+}

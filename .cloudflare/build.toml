@@ -5,3 +5,5 @@ node_version = "20"
 
 [build.environment]
 MOCKS_DISABLED = "1"
+CF_PAGES_COMMIT_SHA = "{{ .Git.ShortSHA }}"
+BUILD_TIME = "{{ .Build.Time }}"

@@ -1,0 +1,14 @@
+name = "zeropoint-protocol"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[site]
+bucket = "./public"
+
+[env.production]
+name = "zeropointprotocol.ai"
+routes = ["zeropointprotocol.ai/*"]
+
+[env.preview]
+name = "zeropointprotocol-ai.pages.dev"
+routes = ["zeropointprotocol-ai.pages.dev/*"]

@@ -6,36 +6,38 @@ const [h, r] = await Promise.all([
 ]);
 ---
 <Base title="Zeropoint Protocol">
-  <h2>System Status</h2>
-  <p class="lead">Real-time health and readiness monitoring for Zeropoint Protocol.</p>
-  
-  <div class="grid">
-    <div class="card">
-      <h3>Health Check</h3>
-      <div class="kv">
-        <div>Status</div><div class={h?.status === 'ok' ? 'status-ok' : 'status-fail'}>{h?.status ?? 'fail'}</div>
-        <div>Commit</div><div>{h?.commit ?? 'unknown'}</div>
-        <div>Build Time</div><div>{h?.buildTime ? new Date(h.buildTime).toLocaleString() : 'unknown'}</div>
+  <div class="container">
+    <h2>System Status</h2>
+    <p class="lead">Real-time health and readiness monitoring for Zeropoint Protocol.</p>
+    
+    <div class="grid">
+      <div class="card">
+        <h3>Health Check</h3>
+        <div class="kv">
+          <div>Status</div><div class={h?.status === 'ok' ? 'status-ok' : 'status-fail'}>{h?.status ?? 'fail'}</div>
+          <div>Commit</div><div>{h?.commit ?? 'unknown'}</div>
+          <div>Build Time</div><div>{h?.buildTime ? new Date(h.buildTime).toLocaleString() : 'unknown'}</div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3>Readiness Check</h3>
+        <div class="kv">
+          <div>Ready</div><div class={r?.ready ? 'status-ok' : 'status-fail'}>{String(r?.ready ?? false)}</div>
+          <div>Commit</div><div>{r?.commit ?? 'unknown'}</div>
+          <div>Build Time</div><div>{r?.buildTime ? new Date(r.buildTime).toLocaleString() : 'unknown'}</div>
+        </div>
       </div>
     </div>
     
     <div class="card">
-      <h3>Readiness Check</h3>
+      <h3>System Overview</h3>
+      <p>All critical systems are operational and responding to health checks. The platform is ready to serve requests.</p>
       <div class="kv">
-        <div>Ready</div><div class={r?.ready ? 'status-ok' : 'status-fail'}>{String(r?.ready ?? false)}</div>
-        <div>Commit</div><div>{r?.commit ?? 'unknown'}</div>
-        <div>Build Time</div><div>{r?.buildTime ? new Date(r.buildTime).toLocaleString() : 'unknown'}</div>
+        <div>Overall Status</div><div class="status-ok">Operational</div>
+        <div>Last Updated</div><div>{new Date().toLocaleString()}</div>
+        <div>Uptime</div><div>99.9%</div>
       </div>
-    </div>
-  </div>
-  
-  <div class="card">
-    <h3>System Overview</h3>
-    <p>All critical systems are operational and responding to health checks. The platform is ready to serve requests.</p>
-    <div class="kv">
-      <div>Overall Status</div><div class="status-ok">Operational</div>
-      <div>Last Updated</div><div>{new Date().toLocaleString()}</div>
-      <div>Uptime</div><div>99.9%</div>
     </div>
   </div>
 </Base>

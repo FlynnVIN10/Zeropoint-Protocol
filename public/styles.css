@@ -1,0 +1,24 @@
+@import url('/tokens.css');
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.header{position:sticky;top:0;z-index:50;background:color-mix(in oklab,var(--bg) 78%,transparent);
+  border-bottom:1px solid var(--border);backdrop-filter:saturate(140%) blur(8px)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand .dot{width:14px;height:14px;border-radius:6px;background:linear-gradient(135deg,var(--accent),var(--link))}
+.nav a{margin:0 10px;color:var(--muted)} .nav a:hover{color:var(--text)}
+.badge{font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:999px;padding:4px 8px}
+.hero{padding:64px 0}
+h1{font-size:44px;letter-spacing:-0.02em;margin:0 0 8px}
+.lead{color:var(--muted);max-width:760px;margin:0 0 24px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;border:1px solid var(--border);background:var(--elev)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--link));color:#0a0a0b;border-color:transparent}
+.btn:hover{filter:saturate(110%)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:16px}
+.card h3{margin:0 0 8px;font-size:16px}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:8px}
+.footer{border-top:1px solid var(--border);margin-top:64px;color:var(--muted);padding:24px 0}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}

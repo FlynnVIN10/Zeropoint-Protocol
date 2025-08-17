@@ -1,0 +1,12 @@
+{
+  "name": "zeropoint-protocol",
+  "version": "1.0.0",
+  "description": "Agentic AI Platform",
+  "scripts": {
+    "type-check": "astro check",
+    "build": "astro build",
+    "postbuild": "node scripts/guard-no-bare-booleans.mjs",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  }
+}

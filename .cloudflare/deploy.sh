@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # Zeropoint Protocol Website Deployment Script
-# Cloudflare Pages Deployment
+# Cloudflare Pages Deployment for Static Site
 
 set -euo pipefail
 
-echo "🚀 Starting Zeropoint Protocol website deployment..."
+echo "🚀 Starting Zeropoint Protocol static website deployment..."
 
 # Check required environment variables
 if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
@@ -25,24 +25,19 @@ fi
 
 echo "✅ Environment variables validated"
 
-# Build the application
-echo "🔨 Building Next.js application..."
-npm run build
+# Verify static files exist
+echo "🔍 Verifying static files..."
+REQUIRED_FILES=("public/index.html" "public/api/healthz.json" "public/api/readyz.json")
 
-if [ $? -ne 0 ]; then
-    echo "❌ Build failed"
-    exit 1
-fi
+for file in "${REQUIRED_FILES[@]}"; do
+    if [ ! -f "$file" ]; then
+        echo "❌ Required file not found: $file"
+        exit 1
+    fi
+    echo "✅ Found: $file"
+done
 
-echo "✅ Build completed successfully"
-
-# Verify build output
-if [ ! -d "out" ]; then
-    echo "❌ Build output directory 'out' not found"
-    exit 1
-fi
-
-echo "✅ Build output verified"
+echo "✅ All required static files verified"
 
 # Deploy to Cloudflare Pages
 echo "🚀 Deploying to Cloudflare Pages..."
@@ -50,7 +45,7 @@ echo "Project: $CLOUDFLARE_PROJECT_NAME"
 echo "Account: $CLOUDFLARE_ACCOUNT_ID"
 
 # Use wrangler for deployment
-npx wrangler pages deploy out \
+npx wrangler pages deploy public \
     --project-name="$CLOUDFLARE_PROJECT_NAME" \
     --account-id="$CLOUDFLARE_ACCOUNT_ID" \
     --commit-dirty=true
@@ -73,7 +68,7 @@ DEPLOY_URL="https://$CLOUDFLARE_PROJECT_NAME.pages.dev"
 echo "Checking deployment at: $DEPLOY_URL"
 
 # Test main routes
-ROUTES=("/" "/legal" "/legal/whitelabel" "/docs" "/library" "/status")
+ROUTES=("/" "/status" "/metrics" "/consensus" "/audits" "/library" "/governance" "/legal/terms")
 
 for route in "${ROUTES[@]}"; do
     echo "Testing route: $route"
@@ -86,6 +81,25 @@ for route in "${ROUTES[@]}"; do
         FAILED_ROUTES+=("$route")
     fi
 done
+
+# Test API endpoints
+echo "Testing API endpoints..."
+HEALTH_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL/api/healthz")
+READY_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$DEPLOY_URL/api/readyz")
+
+if [ "$HEALTH_CODE" = "200" ]; then
+    echo "✅ /api/healthz: HTTP $HEALTH_CODE"
+else
+    echo "❌ /api/healthz: HTTP $HEALTH_CODE"
+    FAILED_ROUTES+=("/api/healthz")
+fi
+
+if [ "$READY_CODE" = "200" ]; then
+    echo "✅ /api/readyz: HTTP $READY_CODE"
+else
+    echo "❌ /api/readyz: HTTP $READY_CODE"
+    FAILED_ROUTES+=("/api/readyz")
+fi
 
 # Report results
 if [ ${#FAILED_ROUTES[@]} -eq 0 ]; then

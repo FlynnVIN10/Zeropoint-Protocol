@@ -1,2 +1,0 @@
-const o=":root{--bg:#0b0b0c;--text:#e6e6e9;--sub:#b3b3b8;--border:#232326}body,html{background:var(--bg);color:var(--text);font:14px/1.55 Inter,system-ui,sans-serif;margin:0}a{color:#7aa2ff}";export{o as m};
-//# sourceMappingURL=entry-styles-3.mjs-B_Ktl1Wy.mjs.map

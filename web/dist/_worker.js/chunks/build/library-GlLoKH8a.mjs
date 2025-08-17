@@ -1,2 +1,0 @@
-import{_ as r,v as e}from"./server.mjs";import{t as o}from"../routes/renderer.mjs";import"../nitro/nitro.mjs";import"node:buffer";import"node:process";import"cloudflare:workers";import"node:events";import"node:timers";import"../_/shared.esm-bundler.mjs";const s={};const t=s.setup;s.setup=(r,o)=>{const s=e.useSSRContext();return(s.modules||(s.modules=new Set)).add("pages/library.vue"),t?t(r,o):void 0};const m=r(s,[["ssrRender",function(r,e,s,t){e(`<h1${o(t)}>Library</h1>`)}]]);export{m as default};
-//# sourceMappingURL=library-GlLoKH8a.mjs.map

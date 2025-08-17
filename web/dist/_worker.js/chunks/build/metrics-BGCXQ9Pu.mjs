@@ -1,2 +1,0 @@
-import{_ as e,v as r}from"./server.mjs";import{t as o}from"../routes/renderer.mjs";import"../nitro/nitro.mjs";import"node:buffer";import"node:process";import"cloudflare:workers";import"node:events";import"node:timers";import"../_/shared.esm-bundler.mjs";const s={};const t=s.setup;s.setup=(e,o)=>{const s=r.useSSRContext();return(s.modules||(s.modules=new Set)).add("pages/metrics.vue"),t?t(e,o):void 0};const m=e(s,[["ssrRender",function(e,r,s,t){r(`<h1${o(t)}>Metrics</h1>`)}]]);export{m as default};
-//# sourceMappingURL=metrics-BGCXQ9Pu.mjs.map

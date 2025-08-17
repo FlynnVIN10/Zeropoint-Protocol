@@ -1,23 +1,26 @@
+# Platform dependencies
 node_modules
-
-# Output
-.output
-.vercel
-.netlify
-.wrangler
-/.svelte-kit
-/build
 
 # OS
 .DS_Store
 Thumbs.db
 
-# Env
+# Environment
 .env
 .env.*
 !.env.example
 !.env.test
 
-# Vite
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+# Logs
+*.log
+logs/
+
+# Platform artifacts
+*.pyc
+__pycache__/
+*.db
+*.sqlite
+
+# IDE
+.vscode/
+.cursor/

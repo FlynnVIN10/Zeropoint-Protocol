@@ -1,2 +1,0 @@
-import{_ as e,v as s}from"./server.mjs";import{t as o}from"../routes/renderer.mjs";import"../nitro/nitro.mjs";import"node:buffer";import"node:process";import"cloudflare:workers";import"node:events";import"node:timers";import"../_/shared.esm-bundler.mjs";const r={};const t=r.setup;r.setup=(e,o)=>{const r=s.useSSRContext();return(r.modules||(r.modules=new Set)).add("pages/consensus.vue"),t?t(e,o):void 0};const n=e(r,[["ssrRender",function(e,s,r,t){s(`<h1${o(t)}>Consensus</h1>`)}]]);export{n as default};
-//# sourceMappingURL=consensus-BHvtfSx-.mjs.map

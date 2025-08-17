@@ -1,0 +1,3 @@
+Contact: mailto:security@zeropointprotocol.ai
+Policy: https://zeropointprotocol.ai/legal/security
+Preferred-Languages: en

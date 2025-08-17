@@ -1,0 +1,1 @@
+import{_ as s,y as n,A as t,z as a}from"./BobcZlo0.js";const o={};function c(l,e){return a(),n("section",null,e[0]||(e[0]=[t("h1",{class:"text-4xl font-semibold mb-2"},"Dual-Consensus Agentic Platform",-1),t("p",{class:"text-zinc-400 max-w-2xl"},"Futuristic corporate black. Minimal. Auditable. Truthful.",-1)]))}const i=s(o,[["render",c]]);export{i as default};

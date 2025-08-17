@@ -7,23 +7,53 @@ const { title = 'Zeropoint Protocol' } = Astro.props;
     <title>{title}</title>
     <link rel="stylesheet" href="/styles.css"/>
     <meta name="theme-color" content="#0a0a0b"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   </head>
   <body>
     <header class="header">
-      <div class="container" style="display:flex;justify-content:space-between;align-items:center">
-        <div class="brand"><div class="dot"></div><strong>Zeropoint</strong><span class="badge">prod</span></div>
+      <div class="container">
+        <div class="brand">
+          <div class="dot"></div>
+          <strong>Zeropoint</strong>
+          <span class="badge">prod</span>
+        </div>
         <nav class="nav">
-          <a href="/">Home</a><a href="/status">Status</a><a href="/metrics">Metrics</a>
-          <a href="/synthiants">Synthiants</a><a href="/consensus">Consensus</a><a href="/audits">Audits</a>
-          <a href="/library">Library</a><a href="/governance">Governance</a><a href="/legal/licensing">Legal</a>
+          <a href="/">Home</a>
+          <a href="/status">Status</a>
+          <a href="/metrics">Metrics</a>
+          <a href="/synthiants">Synthiants</a>
+          <a href="/consensus">Consensus</a>
+          <a href="/audits">Audits</a>
+          <a href="/library">Library</a>
+          <a href="/governance">Governance</a>
+          <a href="/legal/licensing">Legal</a>
         </nav>
       </div>
     </header>
-    <main class="container">
-      <slot />
+    <main class="main-content">
+      <div class="container">
+        <slot />
+      </div>
     </main>
     <footer class="footer">
-      <div class="container">© Zeropoint Protocol</div>
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <div class="dot"></div>
+            <strong>Zeropoint Protocol</strong>
+          </div>
+          <div class="footer-links">
+            <a href="/legal/licensing">Licensing</a>
+            <a href="/status">Status</a>
+            <a href="/metrics">Metrics</a>
+          </div>
+        </div>
+        <div class="footer-copyright">
+          © 2025 Zeropoint Protocol. All rights reserved.
+        </div>
+      </div>
     </footer>
   </body>
 </html>

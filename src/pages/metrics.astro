@@ -4,10 +4,33 @@ const data = await fetch('/api/metrics').then(r=>r.json()).catch(()=>[]);
 ---
 <Base title="Zeropoint Protocol">
   <h2>Live Metrics</h2>
-  <div class="card"><table style="width:100%">
-    <thead><tr><th align="left">Metric</th><th align="right">Value</th><th>Time</th></tr></thead>
-    <tbody>
-      {data.map((m:any)=><tr><td>{m.name}</td><td align="right">{m.value}</td><td>{m.ts}</td></tr>)}
-    </tbody>
-  </table></div>
+  <p class="lead">Real-time system performance and operational data.</p>
+  
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th align="left">Metric</th>
+          <th align="right">Value</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((m:any) => 
+          <tr>
+            <td>{m.name}</td>
+            <td align="right">{m.value}</td>
+            <td>{new Date(m.ts).toLocaleString()}</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  
+  {data.length === 0 && 
+    <div class="card">
+      <h3>No Metrics Available</h3>
+      <p>System metrics are currently unavailable. This may indicate the metrics service is starting up or experiencing issues.</p>
+    </div>
+  }
 </Base>

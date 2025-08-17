@@ -17,39 +17,79 @@
   
   <main class="wrap">
     <section class="hero">
-      <h1>Agentic AI You Can Audit</h1>
-      <p>Dual-consensus governance you can prove. Truthful probes you can curl. Build the future with confidence.</p>
+      <h1>Agentic AI. Auditable by design.</h1>
+      <p>Dual-consensus control. Signed deploys. Verifiable probes.<br>Build with proof, not promises.</p>
+      <div class="hero-actions">
+        <a href="/docs" class="btn">Open Playground</a>
+        <a href="/status/" class="btn">See Status</a>
+        <a href="/docs" class="btn">Get Started</a>
+      </div>
     </section>
 
-    <div class="grid">
-      <div class="card">
-        <h3>Launch Playground</h3>
-        <p>Experience dual-consensus governance in action. Submit proposals, see Synthiant votes, and verify human consensus.</p>
-        <a href="/docs">Get Started</a>
-      </div>
+    <section class="card">
+      <h2>Prove it in 10 seconds</h2>
+      <pre><code>curl -s https://zeropointprotocol.ai/api/healthz | jq
+curl -s https://zeropointprotocol.ai/api/readyz  | jq</code></pre>
+      <p>You should see <code>status:"ok"</code>, <code>ready:true</code>, a real <code>commit</code>, and an ISO <code>buildTime</code>.</p>
+    </section>
 
-      <div class="card">
-        <h3>Copy cURL</h3>
-        <p>Verify our truthful probes with simple commands. Every deployment is auditable and verifiable.</p>
-        <a href="/status/">View Status</a>
-      </div>
+    <section class="card">
+      <h2>Why Zeropoint</h2>
+      <ul>
+        <li><strong>Truthful Probes</strong> — Health and readiness report real build data. Curl it. Verify it.</li>
+        <li><strong>Dual-Consensus</strong> — Synthiant + Human approvals. No single-actor merges.</li>
+        <li><strong>Signed Receipts</strong> — Every deploy writes a receipt you can audit.</li>
+        <li><strong>Audit Trail</strong> — Actions stream to append-only logs.</li>
+        <li><strong>Policy as Code</strong> — Governance gates in CI, not slideware.</li>
+      </ul>
+      <p><strong>Explore Docs</strong> → Getting Started, Probes, Consensus, Audit, API.</p>
+    </section>
 
-      <div class="card">
-        <h3>Read Docs</h3>
-        <p>Comprehensive guides for building with Zeropoint Protocol. From quick start to advanced governance.</p>
-        <a href="/docs">Browse Docs</a>
+    <section class="card">
+      <h2>Live system signals</h2>
+      <ul>
+        <li><strong>Status:</strong> ok/ready with commit + build time.</li>
+        <li><strong>Metrics:</strong> uptime, requests/min, errors/min, p95.</li>
+        <li><strong>Receipts:</strong> latest deploy evidence in <code>/status/version.json</code>.</li>
+      </ul>
+      <div class="actions">
+        <a href="/status/" class="btn">View Status</a>
+        <a href="/metrics/" class="btn">View Metrics</a>
       </div>
-    </div>
+    </section>
 
-    <div class="card">
-      <h3>Live Probes</h3>
-      <p>Real-time system health and deployment information. These probes return truthful data you can verify.</p>
-      <div id="probes">Loading...</div>
-    </div>
+    <section class="card">
+      <h2>Build in minutes</h2>
+      <ol>
+        <li>Install CLI and template.</li>
+        <li>Register a Synthiant and a Human approver.</li>
+        <li>Ship a gated change. Get a signed receipt.</li>
+      </ol>
+      <div class="actions">
+        <a href="/docs" class="btn">Open Playground</a>
+        <a href="/docs" class="btn">Read Quickstart</a>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Governance</h2>
+      <p>Zeroth Principle: Good intent and good heart or the system doesn't function. There is a built in firewall.</p>
+    </section>
+
+    <section class="card">
+      <h2>Roadmap (public)</h2>
+      <ul>
+        <li>Agent registry browser</li>
+        <li>Consensus playground receipts</li>
+        <li>API explorer with copy-ready calls</li>
+        <li>Docs search and versioning</li>
+      </ul>
+      <p><strong>Follow Changelog</strong></p>
+    </section>
   </main>
 
   <footer class="foot">
-    Zeroth Principle: Good intent and good heart or the system doesn't function. There is a built in firewall.
+    © Zeropoint Protocol · Security · Privacy · GitHub · RSS
   </footer>
 
   <script>

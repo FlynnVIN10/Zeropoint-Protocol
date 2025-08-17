@@ -32,13 +32,10 @@
 
   <script>
     (async()=>{
-      const read = async (p) => {
-        try { const r = await fetch(p); return { ok:r.ok, json: await r.json().catch(()=>null), status:r.status }; }
-        catch(e){ return { ok:false, json:null, status:"fetch_error" }; }
-      };
-      const [h,r] = await Promise.all([read('/api/healthz'), read('/api/readyz')]);
-      hz.textContent = JSON.stringify(h,null,2);
-      rz.textContent = JSON.stringify(r,null,2);
+      const read=async(u)=>{try{const r=await fetch(u);const t=r.headers.get('content-type')||'';const j=t.includes('json')?await r.json():null;return{ok:r.ok,status:r.status,body:j};}catch(e){return{ok:false,status:'fetch_error',body:null}}};
+      const [h,r]=await Promise.all([read('/api/healthz'),read('/api/readyz')]);
+      document.getElementById('hz').textContent=JSON.stringify(h,null,2);
+      document.getElementById('rz').textContent=JSON.stringify(r,null,2);
     })();
   </script>
 </body>

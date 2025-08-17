@@ -1,26 +1,60 @@
-# Zeropoint Protocol White-Label License (ZP-WL)
+# Zeropoint Protocol White Label License
 
-## Grant
-Non-exclusive, non-transferable right to use, brand, and distribute compiled artifacts of Zeropoint Protocol under Customer's trademarks, for the Term, on approved hardware (e.g., Tinybox). Source use limited to internal modifications. No sublicensing of source.
+## Commercial Licensing Terms
 
-## Obligations
-Keep "Powered by Zeropoint Protocol" in about/legal. Preserve probe endpoints. Provide security updates to end users. No dark patterns. No concealed telemetry.
+This document outlines the terms and conditions for commercial use and white-label deployment of Zeropoint Protocol.
 
-## Restrictions
-No public redistribution of source. No removal of safety guardrails. No use violating applicable laws.
+### 1. License Grant
 
-## Support & Updates
-As specified in Order Form. SLA optional.
+Subject to the terms and conditions of this License, Zeropoint Protocol grants you a non-exclusive, non-transferable, limited license to:
 
-## Audit
-Zeropoint may verify compliance with reasonable notice.
+- Deploy and operate Zeropoint Protocol in production environments
+- Customize the user interface and branding for your organization
+- Integrate with your existing systems and workflows
+- Provide services to your customers using the protocol
 
-## Liability/Indemnity/Warranty
-As-is except as expressly agreed.
+### 2. Restrictions
 
-## Governing law + venue
-As per Order Form.
+You may not:
+
+- Redistribute the source code without proper attribution
+- Remove or modify copyright notices
+- Use the protocol for illegal or unethical purposes
+- Claim ownership of the underlying technology
+
+### 3. Attribution Requirements
+
+All deployments must include:
+
+- Visible reference to "Powered by Zeropoint Protocol"
+- Link to the original project repository
+- Proper licensing information
+
+### 4. Commercial Use
+
+This license permits commercial use including:
+
+- Enterprise deployments
+- SaaS offerings
+- Consulting services
+- Integration services
+
+### 5. Support and Updates
+
+- No warranty or support is provided
+- Updates are available through the open source repository
+- Community support available through official channels
+
+### 6. Termination
+
+This license terminates automatically if you fail to comply with its terms.
+
+### 7. Governing Law
+
+This license is governed by the laws of the jurisdiction where Zeropoint Protocol is headquartered.
 
 ---
 
-**This summary is not legal advice and does not replace a signed agreement.**
+**Zeroth Principle: Good intent and good heart or the system doesn't function. There is a built in firewall.**
+
+For questions about commercial licensing, contact: licensing@zeropointprotocol.ai

@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "Agentic AI Platform",
   "scripts": {
-    "build": "echo 'Static site - no build required'",
-    "dev": "echo 'Static site - use live server or similar'",
-    "preview": "echo 'Static site - serve public directory'"
+    "type-check": "astro check",
+    "build": "astro build",
+    "postbuild": "node scripts/guard-no-bare-booleans.mjs",
+    "dev": "astro dev",
+    "preview": "astro preview"
   }
 }

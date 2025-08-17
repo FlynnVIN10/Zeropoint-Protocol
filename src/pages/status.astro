@@ -1,8 +1,8 @@
 ---
 import Base from '../layouts/BaseLayout.astro';
-const [h,r] = await Promise.all([
-  fetch('/api/healthz').then(x=>x.ok?x.json():null).catch(()=>null),
-  fetch('/api/readyz').then(x=>x.ok?x.json():null).catch(()=>null),
+const [h, r] = await Promise.all([
+  fetch(`${Astro.site?.origin ?? ''}/api/healthz`).then(x=>x.json()).catch(()=>null),
+  fetch(`${Astro.site?.origin ?? ''}/api/readyz`).then(x=>x.json()).catch(()=>null),
 ]);
 ---
 <Base title="Zeropoint Protocol">

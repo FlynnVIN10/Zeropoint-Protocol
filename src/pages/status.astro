@@ -1,13 +1,16 @@
 ---
+import Base from "../layouts/BaseLayout.astro";
 const [h,r] = await Promise.all([
   fetch('/api/healthz').then(x=>x.ok?x.json():null).catch(()=>null),
   fetch('/api/readyz').then(x=>x.ok?x.json():null).catch(()=>null),
 ]);
 ---
-<h2>Status</h2>
-<div class="card kv">
-  <div>commit</div><div>{h?.commit ?? 'unknown'}</div>
-  <div>built</div><div>{h?.buildTime ?? 'unknown'}</div>
-  <div>healthz</div><div>{h?.status ?? 'fail'}</div>
-  <div>readyz</div><div>{String(r?.ready ?? false)}</div>
-</div>
+<Base title="System Status">
+  <h2>Status</h2>
+  <div class="card kv">
+    <div>commit</div><div>{h?.commit ?? 'unknown'}</div>
+    <div>built</div><div>{h?.buildTime ?? 'unknown'}</div>
+    <div>healthz</div><div>{h?.status ?? 'fail'}</div>
+    <div>readyz</div><div>{String(r?.ready ?? false)}</div>
+  </div>
+</Base>

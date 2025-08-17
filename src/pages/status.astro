@@ -1,11 +1,11 @@
 ---
-import Base from "../layouts/BaseLayout.astro";
+import Base from '../layouts/BaseLayout.astro';
 const [h,r] = await Promise.all([
   fetch('/api/healthz').then(x=>x.ok?x.json():null).catch(()=>null),
   fetch('/api/readyz').then(x=>x.ok?x.json():null).catch(()=>null),
 ]);
 ---
-<Base title="System Status">
+<Base title="Zeropoint Protocol">
   <h2>Status</h2>
   <div class="card kv">
     <div>commit</div><div>{h?.commit ?? 'unknown'}</div>

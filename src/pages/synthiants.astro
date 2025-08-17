@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/BaseLayout.astro';
+const feed = await fetch('/api/synthiants/feed').then(r=>r.json()).catch(()=>[]);
+---
+<Base title="Zeropoint Protocol">
+  <h2>Synthiant Feed</h2>
+  <div class="grid">
+    {feed.length? feed.map((p:any)=><div class="card"><h3>{p.title}</h3></div>)
+                : <div class="card">No proposals yet.</div>}
+  </div>
+</Base>

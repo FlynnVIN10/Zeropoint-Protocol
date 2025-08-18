@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consensus Proposals - Zeropoint Protocol</title>
+    <meta name="description" content="Review and manage Synthiant proposals requiring dual consensus (AI + Human)">
+    <style>
+        /* Zeroth Principle: Clean, accessible design with no dark patterns */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+        
+        .header p {
+            font-size: 1.125rem;
+            color: #4b5563;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .proposal-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .proposal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .proposal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 0.5rem;
+        }
+        
+        .proposal-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-accepted { background: #d1fae5; color: #065f46; }
+        .status-rejected { background: #fee2e2; color: #991b1b; }
+        .status-under-review { background: #dbeafe; color: #1e40af; }
+        
+        .consensus-status {
+            text-align: right;
+        }
+        
+        .consensus-text {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+        
+        .consensus-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #2563eb;
+        }
+        
+        .proposal-content {
+            margin-bottom: 1.5rem;
+        }
+        
+        .proposal-section {
+            margin-bottom: 1rem;
+        }
+        
+        .section-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .section-content {
+            color: #111827;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .data-label {
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .data-value {
+            color: #111827;
+        }
+        
+        .consensus-review {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1.5rem;
+        }
+        
+        .consensus-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+        
+        .consensus-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-approve {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-approve:hover:not(:disabled) {
+            background: #059669;
+        }
+        
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-reject:hover:not(:disabled) {
+            background: #dc2626;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 0.5rem;
+            background: #e5e7eb;
+            border-radius: 0.25rem;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #2563eb;
+            transition: width 0.3s ease;
+        }
+        
+        .zeroth-notice {
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .zeroth-notice p {
+            font-size: 0.875rem;
+            color: #1e40af;
+            margin: 0;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .error {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            color: #991b1b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+        
+        .empty-state svg {
+            width: 3rem;
+            height: 3rem;
+            margin: 0 auto 1rem;
+            color: #9ca3af;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .proposal-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .consensus-buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Consensus Proposals</h1>
+            <p>Review and manage Synthiant proposals requiring dual consensus (AI + Human)</p>
+        </header>
+
+        <!-- Queue Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number" id="total-count">0</div>
+                <div class="stat-label">Total</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="pending-count">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="under-review-count">0</div>
+                <div class="stat-label">Under Review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="accepted-count">0</div>
+                <div class="stat-label">Accepted</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="rejected-count">0</div>
+                <div class="stat-label">Rejected</div>
+            </div>
+        </div>
+
+        <!-- Proposals Container -->
+        <div id="proposals-container">
+            <div class="loading">
+                <div>Loading proposals...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Zeroth Principle: Transparent, fair consensus system
+        class ConsensusManager {
+            constructor() {
+                this.proposals = [];
+                this.loading = true;
+                this.error = null;
+            }
+
+            async loadProposals() {
+                try {
+                    // Simulate API call to /api/proposals
+                    // In production, this would fetch from the actual API
+                    this.proposals = this.getMockProposals();
+                    this.updateStats();
+                    this.renderProposals();
+                } catch (err) {
+                    this.error = `Error loading proposals: ${err}`;
+                    this.renderError();
+                } finally {
+                    this.loading = false;
+                }
+            }
+
+            getMockProposals() {
+                // Mock data for demonstration
+                return [
+                    {
+                        proposalId: 'proposal_001',
+                        synthiantId: 'synthiant_alpha',
+                        timestamp: '2025-08-18T17:00:00.000Z',
+                        changeType: 'upgrade',
+                        summary: 'Implement advanced training optimization for Petals integration',
+                        details: 'This proposal aims to enhance the Petals training pipeline with advanced optimization algorithms, improving training efficiency by 25% while maintaining safety standards.',
+                        status: 'pending',
+                        consensus: { ai: 'pending', human: 'pending' },
+                        trainingData: {
+                            modelId: 'meta-llama/Llama-2-7b',
+                            steps: 1000,
+                            prompt: 'Optimize training pipeline for distributed learning'
+                        },
+                        metrics: {
+                            trainingSteps: 1000,
+                            modelUsed: 'meta-llama/Llama-2-7b',
+                            safetyValidated: true,
+                            performanceGain: 25
+                        },
+                        ethicsReview: {
+                            complianceScore: 95,
+                            biasAssessment: 'Low risk - training optimization only',
+                            safetyChecks: ['No PII exposure', 'Safe training limits', 'Bias mitigation'],
+                            recommendations: ['Proceed with monitoring', 'Regular safety audits']
+                        }
+                    },
+                    {
+                        proposalId: 'proposal_002',
+                        synthiantId: 'synthiant_beta',
+                        timestamp: '2025-08-18T16:30:00.000Z',
+                        changeType: 'feature',
+                        summary: 'Add TinyGrad integration for enhanced model training',
+                        details: 'Integrate TinyGrad framework to provide additional training capabilities and performance optimization options.',
+                        status: 'under_review',
+                        consensus: { ai: 'pass', human: 'pending' },
+                        trainingData: {
+                            modelId: 'gpt2-tiny',
+                            steps: 500
+                        },
+                        metrics: {
+                            trainingSteps: 500,
+                            modelUsed: 'gpt2-tiny',
+                            safetyValidated: true
+                        }
+                    }
+                ];
+            }
+
+            updateStats() {
+                const stats = {
+                    total: this.proposals.length,
+                    pending: this.proposals.filter(p => p.status === 'pending').length,
+                    underReview: this.proposals.filter(p => p.status === 'under_review').length,
+                    accepted: this.proposals.filter(p => p.status === 'accepted').length,
+                    rejected: this.proposals.filter(p => p.status === 'rejected').length
+                };
+
+                document.getElementById('total-count').textContent = stats.total;
+                document.getElementById('pending-count').textContent = stats.pending;
+                document.getElementById('under-review-count').textContent = stats.underReview;
+                document.getElementById('accepted-count').textContent = stats.accepted;
+                document.getElementById('rejected-count').textContent = stats.rejected;
+            }
+
+            renderProposals() {
+                const container = document.getElementById('proposals-container');
+                
+                if (this.proposals.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <h3>No proposals</h3>
+                            <p>No Synthiant proposals are currently pending consensus review.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = this.proposals.map(proposal => this.renderProposal(proposal)).join('');
+            }
+
+            renderProposal(proposal) {
+                const consensusStatus = this.getConsensusStatus(proposal.consensus);
+                const statusClass = `status-${proposal.status.replace('_', '-')}`;
+                
+                return `
+                    <div class="proposal-card">
+                        <div class="proposal-header">
+                            <div>
+                                <h2 class="proposal-title">${proposal.proposalId}: ${proposal.changeType.replace('_', ' ')}</h2>
+                                <div class="proposal-meta">
+                                    <span>Synthiant: ${proposal.synthiantId}</span>
+                                    <span>Submitted: ${new Date(proposal.timestamp).toLocaleDateString()}</span>
+                                    <span class="status-badge ${statusClass}">${proposal.status.replace('_', ' ')}</span>
+                                </div>
+                            </div>
+                            <div class="consensus-status">
+                                <div class="consensus-text">Consensus Status</div>
+                                <div class="consensus-value">${consensusStatus}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="proposal-content">
+                            <div class="proposal-section">
+                                <div class="section-title">Summary</div>
+                                <div class="section-content">${proposal.summary}</div>
+                            </div>
+                            
+                            ${proposal.details ? `
+                                <div class="proposal-section">
+                                    <div class="section-title">Details</div>
+                                    <div class="section-content">${proposal.details}</div>
+                                </div>
+                            ` : ''}
+                            
+                            ${proposal.trainingData ? `
+                                <div class="proposal-section">
+                                    <div class="section-title">Training Data</div>
+                                    <div class="data-grid">
+                                        ${proposal.trainingData.modelId ? `<div class="data-item"><span class="data-label">Model:</span><span class="data-value">${proposal.trainingData.modelId}</span></div>` : ''}
+                                        ${proposal.trainingData.steps ? `<div class="data-item"><span class="data-label">Steps:</span><span class="data-value">${proposal.trainingData.steps}</span></div>` : ''}
+                                        ${proposal.trainingData.prompt ? `<div class="data-item"><span class="data-label">Prompt:</span><span class="data-value">${proposal.trainingData.prompt}</span></div>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${proposal.metrics ? `
+                                <div class="proposal-section">
+                                    <div class="section-title">Metrics</div>
+                                    <div class="data-grid">
+                                        ${proposal.metrics.trainingSteps ? `<div class="data-item"><span class="data-label">Training Steps:</span><span class="data-value">${proposal.metrics.trainingSteps}</span></div>` : ''}
+                                        ${proposal.metrics.modelUsed ? `<div class="data-item"><span class="data-label">Model Used:</span><span class="data-value">${proposal.metrics.modelUsed}</span></div>` : ''}
+                                        ${proposal.metrics.safetyValidated !== undefined ? `<div class="data-item"><span class="data-label">Safety Validated:</span><span class="data-value">${proposal.metrics.safetyValidated ? 'Yes' : 'No'}</span></div>` : ''}
+                                        ${proposal.metrics.performanceGain ? `<div class="data-item"><span class="data-label">Performance Gain:</span><span class="data-value">${proposal.metrics.performanceGain}%</span></div>` : ''}
+                                    </div>
+                                </div>
+                            ` : ''}
+                            
+                            ${proposal.ethicsReview ? `
+                                <div class="proposal-section">
+                                    <div class="section-title">Ethics Review</div>
+                                    <div class="data-grid">
+                                        <div class="data-item"><span class="data-label">Compliance Score:</span><span class="data-value">${proposal.ethicsReview.complianceScore}%</span></div>
+                                        <div class="data-item"><span class="data-label">Bias Assessment:</span><span class="data-value">${proposal.ethicsReview.biasAssessment}</span></div>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                        
+                        <div class="consensus-review">
+                            <h3 class="consensus-title">Dual Consensus Review</h3>
+                            <div class="consensus-buttons">
+                                <button class="btn btn-approve" onclick="consensusManager.approveProposal('${proposal.proposalId}')" ${proposal.consensus.human === 'pass' ? 'disabled' : ''}>
+                                    ${proposal.consensus.human === 'pass' ? 'Approved' : 'Approve (Human)'}
+                                </button>
+                                <button class="btn btn-reject" onclick="consensusManager.rejectProposal('${proposal.proposalId}')" ${proposal.consensus.human === 'fail' ? 'disabled' : ''}>
+                                    ${proposal.consensus.human === 'fail' ? 'Rejected' : 'Reject (Human)'}
+                                </button>
+                            </div>
+                            
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${this.getConsensusProgress(proposal.consensus)}%"></div>
+                            </div>
+                            <div style="text-align: center; font-size: 0.875rem; color: #6b7280;">
+                                Consensus Progress: ${this.getConsensusProgress(proposal.consensus)}%
+                            </div>
+                            
+                            <div class="zeroth-notice">
+                                <p><strong>Zeroth Principle:</strong> This proposal requires both Synthiant AI consensus and human oversight for approval. No single entity can approve changes unilaterally.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            getConsensusStatus(consensus) {
+                if (consensus.ai === 'pass' && consensus.human === 'pass') {
+                    return 'Dual Consensus Achieved';
+                } else if (consensus.ai === 'fail' || consensus.human === 'fail') {
+                    return 'Consensus Failed';
+                } else if (consensus.ai === 'pending' && consensus.human === 'pending') {
+                    return 'Awaiting Consensus';
+                } else {
+                    return 'Partial Consensus';
+                }
+            }
+
+            getConsensusProgress(consensus) {
+                let progress = 0;
+                if (consensus.ai === 'pass') progress += 50;
+                if (consensus.human === 'pass') progress += 50;
+                return progress;
+            }
+
+            async approveProposal(proposalId) {
+                const proposal = this.proposals.find(p => p.proposalId === proposalId);
+                if (proposal) {
+                    proposal.consensus.human = 'pass';
+                    this.updateProposalStatus(proposal);
+                    this.updateStats();
+                    this.renderProposals();
+                }
+            }
+
+            async rejectProposal(proposalId) {
+                const proposal = this.proposals.find(p => p.proposalId === proposalId);
+                if (proposal) {
+                    proposal.consensus.human = 'fail';
+                    this.updateProposalStatus(proposal);
+                    this.updateStats();
+                    this.renderProposals();
+                }
+            }
+
+            updateProposalStatus(proposal) {
+                if (proposal.consensus.ai === 'pass' && proposal.consensus.human === 'pass') {
+                    proposal.status = 'accepted';
+                } else if (proposal.consensus.ai === 'fail' || proposal.consensus.human === 'fail') {
+                    proposal.status = 'rejected';
+                } else {
+                    proposal.status = 'under_review';
+                }
+            }
+
+            renderError() {
+                const container = document.getElementById('proposals-container');
+                container.innerHTML = `
+                    <div class="error">
+                        <h3>Error Loading Proposals</h3>
+                        <p>${this.error}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize consensus manager
+        const consensusManager = new ConsensusManager();
+        
+        // Load proposals when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            consensusManager.loadProposals();
+        });
+    </script>
+</body>
+</html>

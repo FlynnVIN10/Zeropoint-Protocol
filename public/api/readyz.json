@@ -1,0 +1,12 @@
+{
+  "ready": true,
+  "timestamp": "2025-08-18T18:00:00.000Z",
+  "services": {
+    "consensus": "ready",
+    "petals": "ready",
+    "tinygrad": "ready",
+    "proposals": "ready"
+  },
+  "phase": "2",
+  "status": "operational"
+}

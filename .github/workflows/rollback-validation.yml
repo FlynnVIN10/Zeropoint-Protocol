@@ -80,7 +80,7 @@ jobs:
     name: Cloudflare Pages (PR & Rollback) — best-effort
     runs-on: ubuntu-latest
     needs: [smoke_pr_head_local, smoke_rollback_base_local]
-    if: ${{ secrets.CF_ACCOUNT_ID != '' && secrets.CF_API_TOKEN != '' && secrets.CF_PROJECT_NAME != '' }}
+    if: ${{ secrets.CF_ACCOUNT_ID != '' }}
     steps:
       - uses: actions/checkout@v4
         with:

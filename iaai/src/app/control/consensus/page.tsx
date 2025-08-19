@@ -34,7 +34,11 @@ interface Proposal {
 }
 
 export default function ConsensusPage() {
-  const [proposals, setProposals] = useState<Proposal[]>([
+  const [proposals, setProposals] = useState<Proposal[]>([])
+  const [showMockData, setShowMockData] = useState(false)
+
+  // Mock data for demonstration (can be toggled)
+  const mockProposals: Proposal[] = [
     {
       id: '1',
       title: 'Deploy Phase P0-1 Scope Controls',
@@ -77,7 +81,18 @@ export default function ConsensusPage() {
       vetoedBy: 'CTO',
       vetoReason: 'Insufficient threat modeling documentation'
     }
-  ])
+  ]
+
+  // Toggle mock data for testing
+  const toggleMockData = () => {
+    if (showMockData) {
+      setProposals([])
+      setShowMockData(false)
+    } else {
+      setProposals(mockProposals)
+      setShowMockData(true)
+    }
+  }
 
   const [votes, setVotes] = useState<ConsensusVote[]>([
     {
@@ -161,10 +176,20 @@ export default function ConsensusPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="py-8">
-          <h1 className="text-3xl font-bold text-gray-900">Consensus Monitoring</h1>
-          <p className="mt-2 text-gray-600">
-            Track proposals, votes, quorum, and veto decisions
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Consensus Monitoring</h1>
+              <p className="mt-2 text-gray-600">
+                Track proposals, votes, quorum, and veto decisions
+              </p>
+            </div>
+            <button
+              onClick={toggleMockData}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              {showMockData ? 'Hide Mock Data' : 'Show Mock Data'}
+            </button>
+          </div>
         </div>
 
         {/* Consensus Statistics */}
@@ -269,6 +294,24 @@ export default function ConsensusPage() {
         {/* Active Proposals */}
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Active Proposals</h2>
+          
+          {/* Zero State */}
+          {proposals.length === 0 && (
+            <div className="bg-white shadow rounded-lg p-8 text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-gray-100 mb-4">
+                <Users className="h-6 w-6 text-gray-400" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No proposals available</h3>
+              <p className="text-gray-500 mb-4">There are currently no active proposals in the system.</p>
+              <button
+                onClick={toggleMockData}
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                {showMockData ? 'Hide Mock Data' : 'Show Mock Data'}
+              </button>
+            </div>
+          )}
+          
           <div className="space-y-6">
             {proposals.filter(p => p.status === 'active').map((proposal) => (
               <div key={proposal.id} className="bg-white shadow rounded-lg">

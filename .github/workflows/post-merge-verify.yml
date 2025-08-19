@@ -18,7 +18,7 @@ jobs:
           set -e
           BASE="${{ env.PROD_URL }}"
           mkdir -p evidence/prod
-          for p in "/" "/consensus/proposals" "/robots.txt" "/sitemap.xml" "/api/healthz" "/api/readyz"; do
+          for p in "/" "/consensus/proposals/" "/robots.txt" "/sitemap.xml" "/api/healthz" "/api/readyz"; do
             echo "GET $BASE$p" | tee -a evidence/prod/curl.log
             code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE$p")
             echo "$p -> $code" | tee -a evidence/prod/curl.log

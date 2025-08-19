@@ -42,8 +42,7 @@ jobs:
           # Test critical endpoints
           for p in "/" "/consensus/proposals/" "/robots.txt" "/sitemap.xml" "/api/healthz" "/api/readyz"; do
             echo "Testing $p..."
-            response=$(curl -fsS -w "%{http_code}" "$BASE$p" -o /tmp/response)
-            status_code=$(tail -c 3 /tmp/response)
+            status_code=$(curl -fsS -o /dev/null -w "%{http_code}" "$BASE$p")
             echo "GET $BASE$p -> $status_code" >> evidence/prod/prod-verification.log
             
             if [ "$status_code" != "200" ]; then

@@ -13,24 +13,48 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Mock Lighthouse Audit
-        run: |
-          echo "## Mock Lighthouse Audit for Phase 2" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** ✅ PASS (Mock validation)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Lighthouse Scores (Estimated)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Performance:** 85/100 ✅" >> $GITHUB_STEP_SUMMARY
-          echo "- **Accessibility:** 90/100 ✅" >> $GITHUB_STEP_SUMMARY
-          echo "- **Best Practices:** 95/100 ✅" >> $GITHUB_STEP_SUMMARY
-          echo "- **SEO:** 88/100 ✅" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Validation Result" >> $GITHUB_STEP_SUMMARY
-          echo "✅ **All categories meet ≥80 threshold requirement**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Note:** Using mock validation until full SvelteKit build environment is available." >> $GITHUB_STEP_SUMMARY
-          echo "**Intent:** Good heart, good will, GOD FIRST." >> $GITHUB_STEP_SUMMARY
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
 
-      - name: Lighthouse Gate Pass
+      - name: Install deps
+        run: npm ci
+
+      - name: Build site
+        run: npm run build
+
+      - name: Start local preview
         run: |
-          echo "✅ Lighthouse Audit passed - All categories ≥80"
-          echo "Phase 2 implementation meets performance standards"
+          nohup npm run preview -- --port 4173 >/tmp/preview.log 2>&1 &
+          echo $! > /tmp/preview.pid
+          # give the server a moment
+          sleep 4
+
+      - name: Install Lighthouse
+        run: npm i -g lighthouse@12
+
+      - name: Run Lighthouse against local preview
+        run: |
+          set -e
+          URL="http://localhost:4173/consensus/proposals"
+          lighthouse "$URL" --output=json --output-path=lighthouse.json --quiet --chrome-flags="--headless=new"
+          cat lighthouse.json | jq '.categories | {performance: .performance.score, accessibility: .accessibility.score, best_practices: ."best-practices".score, seo: .seo.score}'
+
+          # Assert all categories >= 0.80
+          jq -e '.categories.performance.score   >= 0.80 and
+                  .categories.accessibility.score >= 0.80 and
+                  .categories["best-practices"].score >= 0.80 and
+                  .categories.seo.score          >= 0.80' lighthouse.json >/dev/null \
+            || (echo "Lighthouse gate failed (<80 in one or more categories)"; exit 1)
+
+      - name: Stop preview
+        if: always()
+        run: |
+          if [ -f /tmp/preview.pid ]; then kill $(cat /tmp/preview.pid) || true; fi
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-audit
+          path: lighthouse.json

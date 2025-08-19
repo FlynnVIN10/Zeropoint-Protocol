@@ -1,26 +1,40 @@
-# Platform dependencies
-node_modules
+# Python files - ignore completely for static site deployment
+*.py
+**/*.py
+iaai/runtime/
+iaai/petals/
+iaai/tinygrad/
+python-tests/
+requirements.txt
+requirements.txt.backup
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Environment
-.env
-.env.*
-!.env.example
-!.env.test
-
-# Logs
-*.log
-logs/
-
-# Platform artifacts
+# Python artifacts
 *.pyc
 __pycache__/
-*.db
-*.sqlite
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
 
-# IDE
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE files
 .vscode/
-.cursor/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

@@ -7,10 +7,21 @@ node_version = "20"
 MOCKS_DISABLED = "1"
 CF_PAGES_COMMIT_SHA = "{{ .Git.ShortSHA }}"
 BUILD_TIME = "{{ .Build.Time }}"
+# Disable Python dependency installation
+PYTHON_VERSION = ""
+PIP_INSTALL = "false"
 
 [site]
 bucket = "public"
 entry-point = "public"
+
+# Explicitly ignore Python files
+[build.ignore]
+*.py = true
+**/*.py = true
+requirements.txt = true
+*.pyc = true
+__pycache__ = true
 
 [env.production]
 name = "zeropointprotocol.ai"

@@ -1,0 +1,53 @@
+# Cloudflare Pages ignore file
+# Prevents Cloudflare Pages from trying to install Python dependencies
+
+# Python files and directories
+*.py
+**/*.py
+iaai/runtime/
+iaai/petals/
+iaai/tinygrad/
+python-tests/
+
+# Python dependencies
+requirements.txt
+requirements.txt.backup
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Development files
+*.log
+*.sqlite
+*.db
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+.coverage
+htmlcov/
+.pytest_cache/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

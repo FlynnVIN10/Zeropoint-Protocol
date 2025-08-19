@@ -25,15 +25,10 @@ jobs:
           cache: npm
           cache-dependency-path: iaai/package-lock.json
 
-      - name: Install dependencies
+      - name: Skip build (static files only)
         run: |
-          cd iaai
-          npm ci
-
-      - name: Build project
-        run: |
-          cd iaai
-          npm run build
+          echo "Skipping build - deploying static files only"
+          echo "Static files are pre-built and ready for deployment"
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1

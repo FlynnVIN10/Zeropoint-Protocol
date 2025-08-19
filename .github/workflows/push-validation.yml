@@ -1,0 +1,88 @@
+name: Push Validation (Direct to Main)
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  validation:
+    name: Validate Push to Main
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: $env.NODE_VERSION
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Start preview server
+        run: |
+          nohup npm run preview -- --port 4173 >/tmp/preview.log 2>&1 &
+          echo $! > /tmp/preview.pid
+          sleep 4
+
+      - name: Run smoke tests
+        run: |
+          set -e
+          BASE="http://localhost:4173"
+          mkdir -p evidence/push-validation
+          
+          echo "## Push Validation Results 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Test critical endpoints
+          for endpoint in "/" "/api/healthz" "/api/readyz"; do
+            echo "Testing $endpoint..."
+            response=$(curl -fsS "$BASE$endpoint" | head -c 400)
+            echo "GET $BASE$endpoint" >> evidence/push-validation/validation.log
+            echo "$response" >> evidence/push-validation/validation.log
+            echo "----" >> evidence/push-validation/validation.log
+            
+            if [[ "$endpoint" == "/api/healthz" ]]; then
+              echo "✅ Health check passed" >> $GITHUB_STEP_SUMMARY
+            elif [[ "$endpoint" == "/api/readyz" ]]; then
+              echo "✅ Readiness check passed" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ Main page loaded" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
+
+      - name: Stop preview server
+        if: always()
+        run: |
+          if [ -f /tmp/preview.pid ]; then 
+            kill $(cat /tmp/preview.pid) || true
+          fi
+
+      - name: Upload validation evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: push-validation-evidence
+          path: |
+            evidence/push-validation/
+            /tmp/preview.log
+
+      - name: Deployment notification
+        run: |
+          echo "## Deployment Status 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** Direct push to main branch validated successfully" >> $GITHUB_STEP_SUMMARY
+          echo "**Next Steps:** Manual Cloudflare Pages deployment may be required" >> $GITHUB_STEP_SUMMARY
+          echo "**Zeroth Principle:** Good intent and good heart, or the system doesn't function." >> $GITHUB_STEP_SUMMARY

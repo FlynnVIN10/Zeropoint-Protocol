@@ -24,12 +24,12 @@
 - [ ] **Rollback Validation** — CI enforced
 
 ### Evidence Pack
-- Commit: `76b32a1a4f04f421e31086e000c739acb072fb9e`
+- Commit: `3cf34e67`
 - CI run URLs: (to be populated by GitHub Actions)
 - Lighthouse artifacts: `/evidence/lighthouse/`
 - Rollback artifacts: `/evidence/rollback/`
 - Consensus logs: `/evidence/proposals/`
-- Rollback plan: `git reset --hard a9e0cfb0`
+- Rollback plan: `git reset --hard 317a220a`
 - Screenshots: `/evidence/screenshots/`
 
 **Status:** Pending Dual Consensus and CI hard gates.

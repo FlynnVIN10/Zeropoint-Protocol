@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /api/
+Disallow: /control/
+Disallow: /iaai/
+Allow: /
+Allow: /docs
+Allow: /consensus/proposals
+
+Sitemap: https://zeropointprotocol.ai/sitemap.xml

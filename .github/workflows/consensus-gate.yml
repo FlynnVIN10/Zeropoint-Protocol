@@ -1,123 +1,37 @@
-name: Consensus Gate (Triple Consensus Required)
+name: Consensus Gate (Dual)
+
 on:
   pull_request:
     branches: [ main ]
-  workflow_dispatch: {}
-permissions:
-  contents: read
-  pull-requests: read
-env:
-  NODE_VERSION: '20'
+
 jobs:
-  consensus_validation:
-    name: Triple Consensus Validation
+  check_consensus:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Check PR Status
+      - name: Extract proposalId from PR body
+        id: extract
         run: |
-          echo "## Consensus Gate Validation 🔒" >> $GITHUB_STEP_SUMMARY
-          echo "PR: ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
-          echo "Branch: ${{ github.event.pull_request.head.ref }} -> ${{ github.event.pull_request.base.ref }}" >> $GITHUB_STEP_SUMMARY
-          echo "Author: ${{ github.event.pull_request.user.login }}" >> $GITHUB_STEP_SUMMARY
-      - name: Validate Synthiant AI Approval
-        run: |
-          echo "### Synthiant AI Approval Status 🤖" >> $GITHUB_STEP_SUMMARY
-          # Check for Synthiant AI approval in PR comments
-          # This would typically be done via a bot or integration
-          echo "✅ Synthiant AI approval required for merge" >> $GITHUB_STEP_SUMMARY
-          echo "**Note:** Synthiant AI must scan diffs and approve ethics compliance" >> $GITHUB_STEP_SUMMARY
-      - name: Validate Human Dev Team Approval
-        run: |
-          echo "### Human Dev Team Approval Status 👥" >> $GITHUB_STEP_SUMMARY
-          # Check for human team member approvals
-          echo "✅ Human Dev Team approval required for merge" >> $GITHUB_STEP_SUMMARY
-          echo "**Note:** At least one human team member must approve code review" >> $GITHUB_STEP_SUMMARY
-      - name: Validate CEO Website Approval
-        run: |
-          echo "### CEO Website Approval Status 👑" >> $GITHUB_STEP_SUMMARY
-          echo "✅ CEO approval via website required for merge" >> $GITHUB_STEP_SUMMARY
-          echo "**Note:** CEO must click Approve/Veto on `/consensus/proposals` UI" >> $GITHUB_STEP_SUMMARY
-          echo "**Workflow:** CEO visits website, reviews proposal, clicks Approve or Veto" >> $GITHUB_STEP_SUMMARY
-      - name: Consensus Summary
-        run: |
-          echo "## Triple Consensus Requirements 📋" >> $GITHUB_STEP_SUMMARY
-          echo "**All three approvals required for merge:**" >> $GITHUB_STEP_SUMMARY
-          echo "1. 🤖 **Synthiant AI:** Ethics scan and diff review" >> $GITHUB_STEP_SUMMARY
-          echo "2. 👥 **Human Dev Team:** Code review and platform integrity" >> $GITHUB_STEP_SUMMARY
-          echo "3. 👑 **CEO:** Final approve/veto via website UI" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Zeroth Principle:** Good intent and good heart, or the system doesn't function." >> $GITHUB_STEP_SUMMARY
-      - name: Create Evidence Directory
-        run: mkdir -p evidence/consensus
-      - name: Log Consensus Status
-        run: |
-          cat > evidence/consensus/consensus_gate_status.json << EOF
-          {
-            "pr_number": ${{ github.event.pull_request.number }},
-            "pr_title": "${{ github.event.pull_request.title }}",
-            "pr_author": "${{ github.event.pull_request.user.login }}",
-            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "consensus_requirements": {
-              "synthiant_ai": "required",
-              "human_dev_team": "required", 
-              "ceo_website": "required"
-            },
-            "status": "pending_triple_consensus",
-            "zeroth_principle": "enforced"
-          }
-          EOF
-      - name: Upload Consensus Evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: consensus-gate-evidence
-          path: evidence/consensus/consensus_gate_status.json
-  website_validation:
-    name: Website Consensus Flow Validation
-    runs-on: ubuntu-latest
-    needs: consensus_validation
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - name: Start preview server
-        run: |
-          nohup npm run preview -- --port 4173 >/tmp/preview.log 2>&1 &
-          echo $! > /tmp/preview.pid; sleep 3
-      - name: Validate Consensus UI Endpoints
-        run: |
-          set -e; BASE="http://localhost:4173"; mkdir -p evidence/consensus
-          echo "## Website Consensus Flow Validation 🌐" >> $GITHUB_STEP_SUMMARY
-          
-          # Test main consensus page
-          echo "Testing /consensus/proposals..." >> $GITHUB_STEP_SUMMARY
-          curl -fsS "$BASE/consensus/proposals" > evidence/consensus/consensus_page.html
-          if [ $? -eq 0 ]; then
-            echo "✅ /consensus/proposals endpoint accessible" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ /consensus/proposals endpoint failed" >> $GITHUB_STEP_SUMMARY
+          body="${{ github.event.pull_request.body }}"
+          # Expect a line like: proposalId: abc123
+          pid=$(printf "%s" "$body" | grep -Eo 'proposalId:\s*[A-Za-z0-9_-]+' | awk '{print $2}')
+          if [ -z "$pid" ]; then
+            echo "No proposalId found in PR body. Add 'proposalId: <value>' line."
             exit 1
           fi
-          
-          # Test API endpoints
-          echo "Testing API endpoints..." >> $GITHUB_STEP_SUMMARY
-          curl -fsS "$BASE/api/healthz" > evidence/consensus/healthz.json
-          curl -fsS "$BASE/api/readyz" > evidence/consensus/readyz.json
-          
-          echo "✅ All consensus endpoints validated" >> $GITHUB_STEP_SUMMARY
-          echo "**CEO can now access website for Approve/Veto decisions**" >> $GITHUB_STEP_SUMMARY
-      - if: always()
-        run: 'if [ -f /tmp/preview.pid ]; then kill $(cat /tmp/preview.pid) || true; fi'
-      - name: Upload Website Validation Evidence
-        uses: actions/upload-artifact@v4
-        with:
-          name: website-validation-evidence
-          path: evidence/consensus/
+          echo "proposalId=$pid" >> $GITHUB_OUTPUT
+
+      - name: Check consensus via API
+        run: |
+          set -e
+          PID="${{ steps.extract.outputs.proposalId }}"
+          # Replace with actual host if needed:
+          API_BASE="https://zeropointprotocol.ai"
+          json=$(curl -fsS "$API_BASE/api/proposals/$PID/consensus")
+          ai=$(echo "$json" | jq -r '.consensus.ai')
+          human=$(echo "$json" | jq -r '.consensus.human')
+          echo "AI: $ai  HUMAN: $human"
+          if [ "$ai" != "pass" ] || [ "$human" != "pass" ]; then
+            echo "❌ Dual Consensus not satisfied (ai=$ai, human=$human)."
+            exit 1
+          fi
+          echo "✅ Dual Consensus satisfied."

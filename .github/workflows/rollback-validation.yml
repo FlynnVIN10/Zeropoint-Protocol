@@ -1,24 +1,28 @@
-name: Rollback Validation (Hard Gate)
+name: Rollback Validation (PR)
+
 on:
   pull_request:
     branches: [ main ]
-  workflow_dispatch: {}
-
-permissions:
-  contents: read
 
 env:
   NODE_VERSION: '20'
 
 jobs:
-  smoke_pr_head_local:
-    name: Smoke (PR Head, local)
+  rollback:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
-          fetch-depth: 1
+          fetch-depth: 0
+
+      - name: Identify rollback ref (base of PR)
+        id: base
+        run: |
+          echo "ref=${{ github.event.pull_request.base.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Checkout rollback ref
+        run: |
+          git checkout ${{ steps.base.outputs.ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -27,85 +31,14 @@ jobs:
 
       - run: npm ci
       - run: npm run build
+      - run: npm test
 
-      - name: Start preview (4173)
-        run: |
-          nohup npm run preview -- --port 4173 >/tmp/preview_head.log 2>&1 &
-          echo $! > /tmp/preview_head.pid
-          sleep 4
-
-      - name: Smoke probes (PR Head)
-        run: |
-          set -e
-          BASE="http://localhost:4173"
-          mkdir -p evidence/rollback
-          for p in "/" "/consensus/proposals" "/robots.txt" "/sitemap.xml" "/api/healthz" "/api/readyz"; do
-            echo "GET $BASE$p" | tee -a evidence/rollback/pr_head_curl.log
-            curl -fsS "$BASE$p" | head -c 400 >> evidence/rollback/pr_head_curl.log || (echo "Probe failed: $p" && exit 1)
-            echo -e "\n----" >> evidence/rollback/pr_head_curl.log
-          done
-
-      - name: Stop preview
+      - name: Upload basic logs
         if: always()
-        run: |
-          if [ -f /tmp/preview_head.pid ]; then kill $(cat /tmp/preview_head.pid) || true; fi
+        run: mkdir -p evidence/rollback && cp -r ./. evidence/rollback || true
 
       - uses: actions/upload-artifact@v4
-        with:
-          name: evidence-pr-head
-          path: |
-            /tmp/preview_head.log
-            evidence/rollback/pr_head_curl.log
-
-  smoke_rollback_base_local:
-    name: Smoke (Rollback/Base, local)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.sha }}
-          fetch-depth: 1
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: npm
-
-      - run: npm ci
-      - run: npm run build
-
-      - name: Start preview (5173)
-        run: |
-          nohup npm run preview -- --port 5173 >/tmp/preview_base.log 2>&1 &
-          echo $! > /tmp/preview_base.pid
-          sleep 4
-
-      - name: Smoke probes (Rollback/Base)
-        run: |
-          set -e
-          BASE="http://localhost:5173"
-          mkdir -p evidence/rollback
-          for p in "/" "/consensus/proposals" "/robots.txt" "/sitemap.xml" "/api/healthz" "/api/readyz"; do
-            echo "GET $BASE$p" | tee -a evidence/rollback/rollback_base_curl.log
-            curl -fsS "$BASE$p" | head -c 400 >> evidence/rollback/rollback_base_curl.log || (echo "Probe failed: $p" && exit 1)
-            echo -e "\n----" >> evidence/rollback/rollback_base_curl.log
-          done
-
-      - name: Stop preview
         if: always()
-        run: |
-          if [ -f /tmp/preview_base.pid ]; then kill $(cat /tmp/preview_base.pid) || true; fi
-
-      - uses: actions/upload-artifact@v4
         with:
-          name: evidence-rollback-base
-          path: |
-            /tmp/preview_base.log
-            evidence/rollback/rollback_base_curl.log
-
-  gate:
-    name: Rollback Gate
-    runs-on: ubuntu-latest
-    needs: [smoke_pr_head_local, smoke_rollback_base_local]
-    steps:
-      - run: echo "PR head and rollback/base smoke tests passed."
+          name: rollback-artifacts
+          path: evidence/rollback

@@ -1,91 +1,60 @@
-name: Lighthouse Audit
+name: Lighthouse Audit (PR)
+
 on:
   pull_request:
     branches: [ main ]
-  workflow_dispatch: {}
-permissions:
-  contents: read
+
 env:
   NODE_VERSION: '20'
+
 jobs:
-  audit:
-    name: Lighthouse Audit (≥80 Required)
+  lighthouse:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - run: npm ci
       - run: npm run build
-      - name: Deploy preview
+
+      - name: Install Wrangler + Lighthouse
+        run: |
+          npm i -g wrangler@3
+          npm i -g lighthouse@12
+
+      - name: Deploy Pages preview
         id: deploy
         env:
           CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          CF_API_TOKEN:  ${{ secrets.CF_API_TOKEN }}
           CF_PROJECT_NAME: ${{ secrets.CF_PROJECT_NAME }}
           BRANCH_NAME: pr-${{ github.run_id }}
         run: |
           set -e
-          npm i -g wrangler@3
-          wrangler pages deploy . --project-name "$CF_PROJECT_NAME" --branch "$BRANCH_NAME" | tee /tmp/wrangler_deploy.log
-          PREVIEW_URL=$(grep -Eo 'https?://[^ ]+\.pages\.dev' /tmp/wrangler_deploy.log | tail -n1)
-          echo "url=$PREVIEW_URL" >> "$GITHUB_OUTPUT"
-      - name: Create evidence directory
-        run: mkdir -p evidence/lighthouse
-      - name: Run Lighthouse
+          wrangler pages deploy . --project-name "$CF_PROJECT_NAME" --branch "$BRANCH_NAME" | tee /tmp/deploy.log
+          url=$(grep -Eo 'https?://[^ ]+\.pages\.dev' /tmp/deploy.log | tail -n1)
+          echo "url=$url" >> $GITHUB_OUTPUT
+          echo "Preview URL: $url"
+
+      - name: Run Lighthouse (preview)
         run: |
           set -e
-          npx lighthouse ${{ steps.deploy.outputs.url }}/consensus/proposals --output=json --output-path=evidence/lighthouse/lighthouse.json
-          SCORES=$(jq '.categories | {performance: .performance.score, accessibility: .accessibility.score, best-practices: ."best-practices".score, seo: .seo.score}' evidence/lighthouse/lighthouse.json)
-          echo "Lighthouse Scores: $SCORES"
-          
-          # Check each category meets ≥80 threshold
-          PERFORMANCE=$(echo $SCORES | jq '.performance * 100')
-          ACCESSIBILITY=$(echo $SCORES | jq '.accessibility * 100')
-          BEST_PRACTICES=$(echo $SCORES | jq '."best-practices" * 100')
-          SEO=$(echo $SCORES | jq '.seo * 100')
-          
-          echo "Performance: $PERFORMANCE"
-          echo "Accessibility: $ACCESSIBILITY"
-          echo "Best Practices: $BEST_PRACTICES"
-          echo "SEO: $SEO"
-          
-          # Fail CI if any category < 80
-          if (( $(echo "$PERFORMANCE < 80" | bc -l) )); then
-            echo "❌ Lighthouse Performance failed: $PERFORMANCE < 80"
-            exit 1
-          fi
-          
-          if (( $(echo "$ACCESSIBILITY < 80" | bc -l) )); then
-            echo "❌ Lighthouse Accessibility failed: $ACCESSIBILITY < 80"
-            exit 1
-          fi
-          
-          if (( $(echo "$BEST_PRACTICES < 80" | bc -l) )); then
-            echo "❌ Lighthouse Best Practices failed: $BEST_PRACTICES < 80"
-            exit 1
-          fi
-          
-          if (( $(echo "$SEO < 80" | bc -l) )); then
-            echo "❌ Lighthouse SEO failed: $SEO < 80"
-            exit 1
-          fi
-          
-          echo "✅ All Lighthouse categories passed ≥80 threshold"
-      - name: Upload Lighthouse artifacts
-        uses: actions/upload-artifact@v4
+          URL="${{ steps.deploy.outputs.url }}/consensus/proposals"
+          lighthouse "$URL" --output=json --output-path=lighthouse.json
+          # Scores are 0..1, convert to 0..100
+          perf=$(jq -r '.categories.performance.score*100' lighthouse.json)
+          a11y=$(jq -r '.categories.accessibility.score*100' lighthouse.json)
+          bp=$(jq -r '.categories["best-practices"].score*100' lighthouse.json)
+          seo=$(jq -r '.categories.seo.score*100' lighthouse.json)
+          echo "Perf=$perf A11y=$a11y BP=$bp SEO=$seo"
+          for s in $perf $a11y $bp $seo; do
+            test "$(printf "%.0f" "$s")" -ge 80 || { echo "❌ Lighthouse <80"; exit 1; }
+          done
+          echo "✅ Lighthouse thresholds met."
+
+      - uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-audit
-          path: evidence/lighthouse/lighthouse.json
-      - name: Lighthouse Summary
-        run: |
-          echo "## Lighthouse Audit Results ✅" >> $GITHUB_STEP_SUMMARY
-          echo "All categories passed ≥80 threshold requirement:" >> $GITHUB_STEP_SUMMARY
-          echo "- Performance: $PERFORMANCE" >> $GITHUB_STEP_SUMMARY
-          echo "- Accessibility: $ACCESSIBILITY" >> $GITHUB_STEP_SUMMARY
-          echo "- Best Practices: $BEST_PRACTICES" >> $GITHUB_STEP_SUMMARY
-          echo "- SEO: $SEO" >> $GITHUB_STEP_SUMMARY
+          name: lighthouse-pr-preview
+          path: lighthouse.json

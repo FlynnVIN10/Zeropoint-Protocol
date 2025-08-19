@@ -1,0 +1,55 @@
+name: Post-Merge Production Verification
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+env:
+  PROD_URL: https://zeropointprotocol.ai
+  NODE_VERSION: '20'
+
+jobs:
+  probes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe production endpoints
+        run: |
+          set -e
+          BASE="${{ env.PROD_URL }}"
+          mkdir -p evidence/prod
+          for p in "/" "/consensus/proposals" "/robots.txt" "/sitemap.xml" "/api/healthz" "/api/readyz"; do
+            echo "GET $BASE$p" | tee -a evidence/prod/curl.log
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$BASE$p")
+            echo "$p -> $code" | tee -a evidence/prod/curl.log
+            test "$code" -eq 200 || { echo "❌ $p not 200"; exit 1; }
+          done
+          echo "✅ Probes passed."
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Lighthouse
+        run: npm i -g lighthouse@12
+
+      - name: Run Lighthouse on production
+        run: |
+          set -e
+          URL="${{ env.PROD_URL }}/consensus/proposals"
+          lighthouse "$URL" --output=json --output-path=evidence/prod/lighthouse.prod.json
+          perf=$(jq -r '.categories.performance.score*100' evidence/prod/lighthouse.prod.json)
+          a11y=$(jq -r '.categories.accessibility.score*100' evidence/prod/lighthouse.prod.json)
+          bp=$(jq -r '.categories["best-practices"].score*100' evidence/prod/lighthouse.prod.json)
+          seo=$(jq -r '.categories.seo.score*100' evidence/prod/lighthouse.prod.json)
+          echo "Prod Perf=$perf A11y=$a11y BP=$bp SEO=$seo"
+          for s in $perf $a11y $bp $seo; do
+            test "$(printf "%.0f" "$s")" -ge 80 || { echo "❌ Production Lighthouse <80"; exit 1; }
+          done
+          echo "✅ Production Lighthouse thresholds met."
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: production-verification
+          path: evidence/prod

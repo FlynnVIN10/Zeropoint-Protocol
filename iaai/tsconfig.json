@@ -1,36 +1,35 @@
 {
   "compilerOptions": {
-    "module": "esnext",
-    "declaration": true,
-    "removeComments": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": false,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "isolatedModules": false,
+    "noEmit": true,
+    "types": ["node", "react", "react-dom"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2019",
     "sourceMap": true,
-    "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "moduleResolution": "bundler",
-    "lib": ["es2019", "dom"],
-    "types": ["node", "jest", "react", "react-dom"],
-    "moduleDetection": "force",
-    "jsx": "react-jsx"
+    "lib": ["ES2020", "dom"]
   },
   "include": [
-    "src/**/*"
+    "./**/*.ts",
+    "./**/*.tsx",
+    "iaai/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
-    "zeropointprotocol.ai",
-    "src/components-disabled/**/*",
-    "test"
+    ".next",
+    "build"
   ]
 }

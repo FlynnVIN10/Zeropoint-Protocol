@@ -1,12 +1,7 @@
 name = "zeropoint-protocol"
 compatibility_date = "2024-01-01"
 
-[build]
-command = "echo 'Static site - no build required'"
-output_dir = "public"
-
-[build.environment]
-NODE_VERSION = "20"
+# Static site - no build required
 
 [site]
 bucket = "public"

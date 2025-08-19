@@ -19,8 +19,9 @@
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "bundler",
     "lib": ["es2019", "dom"],
-    "types": ["node", "jest"],
-    "moduleDetection": "force"
+    "types": ["node", "jest", "react", "react-dom"],
+    "moduleDetection": "force",
+    "jsx": "react-jsx"
   },
   "include": [
     "src/**/*"
@@ -30,9 +31,6 @@
     "dist",
     "zeropointprotocol.ai",
     "src/components-disabled/**/*",
-    "src/components/**/*.tsx",
-    "src/pages/**/*.tsx",
-    "src/pages/**/*.mdx",
     "test"
   ]
 }

@@ -1,13 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+
 import { Menu, X, BarChart3, Users, Vote, Activity, Clock, FileText } from 'lucide-react'
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
-  const pathname = usePathname()
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '/'
 
   const navigation = [
     { name: 'Home', href: '/', icon: null },
@@ -32,13 +31,13 @@ export default function Navigation() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-xl font-bold text-gray-900">
+              <a href="/" className="text-xl font-bold text-gray-900">
                 Zeropoint Protocol
-              </Link>
+              </a>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               {navigation.map((item) => (
-                <Link
+                <a
                   key={item.name}
                   href={item.href}
                   className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
@@ -49,7 +48,7 @@ export default function Navigation() {
                 >
                   {item.icon && <item.icon className="h-4 w-4 mr-2" />}
                   {item.name}
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -84,7 +83,7 @@ export default function Navigation() {
         <div className="sm:hidden">
           <div className="pt-2 pb-3 space-y-1">
             {navigation.map((item) => (
-              <Link
+              <a
                 key={item.name}
                 href={item.href}
                 className={`block pl-3 pr-4 py-2 border-l-4 text-base font-medium ${
@@ -98,7 +97,7 @@ export default function Navigation() {
                   {item.icon && <item.icon className="h-4 w-4 mr-3" />}
                   {item.name}
                 </div>
-              </Link>
+              </a>
             ))}
           </div>
         </div>

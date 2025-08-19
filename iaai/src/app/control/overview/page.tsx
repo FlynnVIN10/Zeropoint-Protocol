@@ -283,9 +283,8 @@ export default function ControlCenterOverview() {
                   <h3 className="text-lg font-medium">
                     <span className="absolute inset-0" aria-hidden="true" />
                     Audit Trail
-                  </span>
-                </h3>
-                <p className="mt-2 text-sm text-gray-500">
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-500">
                     View system audit logs and timeline
                   </p>
                 </div>

@@ -122,8 +122,14 @@ export class PetalsService {
       const aggregatedMetrics = this.aggregateMetrics(trainingResults.metrics);
 
       const result: TrainingCycleResult = {
+        id: cycleId,
         cycleId,
+        requestId: request.id,
         agentId: request.agentId,
+        status: 'completed',
+        progress: 100,
+        startTime: new Date(Date.now() - duration),
+        endTime: new Date(),
         modelDeltas: aggregatedDeltas,
         metrics: {
           loss: aggregatedMetrics.loss,

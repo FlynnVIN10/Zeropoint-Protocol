@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { zpctlDiag } from './zpctl.diag.ts';
-import { zpctlHealth } from './zpctl.health.ts';
+import { zpctlDiag } from './zpctl.diag';
+import { zpctlHealth } from './zpctl.health';
 
 const program = new Command();
 

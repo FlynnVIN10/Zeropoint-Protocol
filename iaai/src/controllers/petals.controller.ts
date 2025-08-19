@@ -240,3 +240,58 @@ export class PetalsController {
     }
   }
 }
+
+// Type definitions for external use
+export interface PetalTrainingRequest {
+  id: string;
+  agentId: string;
+  modelId: string;
+  modelType: string;
+  trainingData: any[];
+  trainingParams: any;
+  parameters: {
+    learningRate: number;
+    epochs: number;
+    batchSize: number;
+  };
+  priority: 'low' | 'medium' | 'high';
+  timestamp: Date | number;
+}
+
+export interface TrainingCycleResult {
+  id: string;
+  cycleId: string;
+  requestId: string;
+  agentId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  progress: number;
+  startTime: Date;
+  endTime?: Date;
+  result?: any;
+  error?: string;
+  metrics?: any;
+  modelDeltas?: any;
+  timestamp: Date | number;
+}
+
+export interface SandboxCreateRequest {
+  name: string;
+  agentId: string;
+  type: 'training' | 'inference' | 'testing';
+  resources: {
+    cpu: number;
+    memory: number;
+    gpu?: number;
+  };
+  resourceCaps: {
+    cpu: number;
+    memory: number;
+    gpu?: number;
+  };
+  environment: Record<string, string>;
+  timeout: number;
+  image?: string;
+  command?: string[];
+  ports?: number[];
+  volumes?: string[];
+}

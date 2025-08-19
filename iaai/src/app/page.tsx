@@ -1,4 +1,4 @@
-import Link from 'next/link'
+
 import { ArrowRight, Cpu, Shield, Zap, BarChart3, Users, FileText } from 'lucide-react'
 
 export default function HomePage() {
@@ -15,19 +15,19 @@ export default function HomePage() {
             No mocks, no synthetic data, only genuine hardware performance.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
-            <Link
+            <a
               href="/control/overview"
               className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
             >
               Control Center
               <ArrowRight className="ml-2 -mr-1 h-5 w-5" />
-            </Link>
-            <Link
+            </a>
+            <a
               href="/docs"
               className="text-sm font-semibold leading-6 text-white"
             >
               Documentation <span aria-hidden="true">→</span>
-            </Link>
+            </a>
           </div>
         </div>
       </section>
@@ -100,18 +100,18 @@ export default function HomePage() {
               Metrics, and Audit timelines in real-time.
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
-              <Link
+              <a
                 href="/control/overview"
                 className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >
                 Enter Control Center
-              </Link>
-              <Link
+              </a>
+              <a
                 href="/docs"
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 Learn more <span aria-hidden="true">→</span>
-              </Link>
+              </a>
             </div>
           </div>
         </div>

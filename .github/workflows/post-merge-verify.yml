@@ -37,7 +37,7 @@ jobs:
         run: |
           set -e
           URL="${{ env.PROD_URL }}/consensus/proposals"
-          lighthouse "$URL" --output=json --output-path=evidence/prod/lighthouse.prod.json
+          lighthouse "$URL" --output=json --output-path=evidence/prod/lighthouse.prod.json --chrome-flags="--headless --no-sandbox --disable-gpu --disable-dev-shm-usage"
           perf=$(jq -r '.categories.performance.score*100' evidence/prod/lighthouse.prod.json)
           a11y=$(jq -r '.categories.accessibility.score*100' evidence/prod/lighthouse.prod.json)
           bp=$(jq -r '.categories["best-practices"].score*100' evidence/prod/lighthouse.prod.json)

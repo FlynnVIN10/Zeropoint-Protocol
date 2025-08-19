@@ -33,6 +33,29 @@ jobs:
       - name: Install Lighthouse
         run: npm i -g lighthouse@12
 
+      - name: Verify production endpoints
+        run: |
+          set -e
+          BASE="${{ env.PROD_URL }}"
+          mkdir -p evidence/prod
+          
+          # Test critical endpoints
+          for p in "/" "/consensus/proposals/" "/robots.txt" "/sitemap.xml" "/api/healthz" "/api/readyz"; do
+            echo "Testing $p..."
+            response=$(curl -fsS -w "%{http_code}" "$BASE$p" -o /tmp/response)
+            status_code=$(tail -c 3 /tmp/response)
+            echo "GET $BASE$p -> $status_code" >> evidence/prod/prod-verification.log
+            
+            if [ "$status_code" != "200" ]; then
+              echo "❌ $p returned $status_code"
+              exit 1
+            else
+              echo "✅ $p -> $status_code"
+            fi
+          done
+          
+          echo "✅ All production endpoints verified"
+      
       - name: Run Lighthouse on production
         run: |
           set -e

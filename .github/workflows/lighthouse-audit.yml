@@ -1,5 +1,4 @@
 name: Lighthouse Audit (PR)
-
 on:
   pull_request:
     branches: [ main ]
@@ -8,7 +7,7 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  lighthouse:
+  lhci:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,45 +15,43 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-      - run: npm ci
-      - run: npm run build
-
-      - name: Install Wrangler + Lighthouse
+          cache-dependency-path: iaai/package-lock.json
+      
+      - name: Install dependencies
         run: |
-          npm i -g wrangler@3
-          npm i -g lighthouse@12
-
-      - name: Deploy Pages preview
-        id: deploy
-        env:
-          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
-          CF_API_TOKEN:  ${{ secrets.CF_API_TOKEN }}
-          CF_PROJECT_NAME: ${{ secrets.CF_PROJECT_NAME }}
-          BRANCH_NAME: pr-${{ github.run_id }}
+          cd iaai
+          npm ci
+      
+      - name: Build project
         run: |
-          set -e
-          wrangler pages deploy . --project-name "$CF_PROJECT_NAME" --branch "$BRANCH_NAME" | tee /tmp/deploy.log
-          url=$(grep -Eo 'https?://[^ ]+\.pages\.dev' /tmp/deploy.log | tail -n1)
-          echo "url=$url" >> $GITHUB_OUTPUT
-          echo "Preview URL: $url"
-
-      - name: Run Lighthouse (preview)
+          cd iaai
+          npm run build
+      
+      - name: Start preview server
         run: |
-          set -e
-          URL="${{ steps.deploy.outputs.url }}/consensus/proposals"
-          lighthouse "$URL" --output=json --output-path=lighthouse.json
-          # Scores are 0..1, convert to 0..100
-          perf=$(jq -r '.categories.performance.score*100' lighthouse.json)
-          a11y=$(jq -r '.categories.accessibility.score*100' lighthouse.json)
-          bp=$(jq -r '.categories["best-practices"].score*100' lighthouse.json)
-          seo=$(jq -r '.categories.seo.score*100' lighthouse.json)
-          echo "Perf=$perf A11y=$a11y BP=$bp SEO=$seo"
-          for s in $perf $a11y $bp $seo; do
-            test "$(printf "%.0f" "$s")" -ge 80 || { echo "❌ Lighthouse <80"; exit 1; }
-          done
-          echo "✅ Lighthouse thresholds met."
-
-      - uses: actions/upload-artifact@v4
+          cd iaai
+          nohup npm run start:dev >/tmp/preview.log 2>&1 &
+          echo $! > /tmp/preview.pid
+          sleep 10
+      
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@v11
         with:
-          name: lighthouse-pr-preview
-          path: lighthouse.json
+          urls: |
+            http://localhost:3000/
+          configPath: ./lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: true
+      
+      - name: Stop preview server
+        if: always()
+        run: |
+          if [ -f /tmp/preview.pid ]; then 
+            kill $(cat /tmp/preview.pid) || true
+          fi
+      
+      - name: Upload Lighthouse artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-artifacts
+          path: .lighthouseci/

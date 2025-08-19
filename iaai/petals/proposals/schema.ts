@@ -5,7 +5,7 @@ export interface Proposal {
   proposalId: string;
   synthiantId: string;
   timestamp: string;
-  changeType: 'upgrade' | 'patch' | 'research' | 'optimization' | 'feature';
+  changeType: 'upgrade' | 'patch' | 'research' | 'optimization' | 'feature' | 'wondercraft_training' | 'wondercraft_inference';
   summary: string;
   details: string;
   status: 'pending' | 'accepted' | 'rejected' | 'under_review';

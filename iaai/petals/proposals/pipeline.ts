@@ -51,6 +51,13 @@ export function submitProposal(proposal: Partial<Proposal>, config: PipelineConf
       throw new Error('Invalid proposal: Missing required fields');
     }
 
+    // Zeroth Principle: Wondercraft-specific validation
+    if (proposal.changeType === 'wondercraft_training' || proposal.changeType === 'wondercraft_inference') {
+      if (!proposal.trainingData?.modelId) {
+        throw new Error('Wondercraft proposals require model ID in training data');
+      }
+    }
+
     // Create and validate proposal
     const validatedProposal = createProposal(proposal);
     

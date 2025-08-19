@@ -25,21 +25,26 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          cd iaai
+          npm ci
 
       - name: Build project
-        run: npm run build
+        run: |
+          cd iaai
+          npm run build
 
       - name: Start preview server
         run: |
-          nohup npm run preview -- --port 4173 >/tmp/preview.log 2>&1 &
+          cd iaai
+          nohup npm run start:dev >/tmp/preview.log 2>&1 &
           echo $! > /tmp/preview.pid
-          sleep 4
+          sleep 10
 
       - name: Run smoke tests
         run: |
           set -e
-          BASE="http://localhost:4173"
+          BASE="http://localhost:3000"
           mkdir -p evidence/push-validation
           
           echo "## Push Validation Results 🚀" >> $GITHUB_STEP_SUMMARY

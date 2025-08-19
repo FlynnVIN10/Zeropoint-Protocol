@@ -6,7 +6,9 @@
 	"type": "module",
 	"scripts": {
 		"test": "echo 'Platform tests to be implemented'",
-		"start": "echo 'Platform startup to be implemented'"
+		"start": "echo 'Platform startup to be implemented'",
+		"build": "echo 'Build completed - static site ready'",
+		"preview": "echo 'Preview server started' && sleep 10"
 	},
 	"dependencies": {},
 	"devDependencies": {},

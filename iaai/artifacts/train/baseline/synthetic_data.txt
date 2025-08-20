@@ -1,0 +1,5 @@
+The quick brown fox jumps over the lazy dog. This is a sample text for baseline finetuning.
+Machine learning models require diverse training data to generalize well. The quality of training data directly impacts model performance.
+Natural language processing tasks benefit from large, high-quality datasets. Synthetic data generation can help augment limited datasets.
+Transfer learning allows models to leverage knowledge from pre-trained weights. Fine-tuning adapts these weights to specific tasks.
+Attention mechanisms enable models to focus on relevant parts of input sequences. Transformers use self-attention for sequence modeling.

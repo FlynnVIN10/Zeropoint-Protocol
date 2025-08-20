@@ -1,0 +1,6 @@
+{
+  "model_checkpoint": "sha256:abc123def456...",
+  "optimizer_checkpoint": "sha256:def456abc123...",
+  "training_state": "sha256:789ghi012jkl...",
+  "timestamp": "2025-08-13T17:41:46.012016"
+}

@@ -338,7 +338,245 @@
             pendingCount.textContent = '1';
             underReviewCount.textContent = '2';
             approvedCount.textContent = '0';
+            
+            // Add functionality to View Details buttons
+            const viewDetailsButtons = document.querySelectorAll('.btn-primary');
+            viewDetailsButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    const proposalCard = this.closest('.proposal-card');
+                    const title = proposalCard.querySelector('.proposal-title').textContent;
+                    const summary = proposalCard.querySelector('.proposal-summary').textContent;
+                    const details = proposalCard.querySelector('.proposal-details').textContent;
+                    const consensus = proposalCard.querySelector('.consensus-value').textContent;
+                    
+                    showProposalDetails(title, summary, details, consensus);
+                });
+            });
+            
+            // Add functionality to Vote buttons
+            const voteButtons = document.querySelectorAll('.btn-secondary');
+            voteButtons.forEach((button, index) => {
+                button.addEventListener('click', function() {
+                    const proposalCard = this.closest('.proposal-card');
+                    const title = proposalCard.querySelector('.proposal-title').textContent;
+                    const consensus = proposalCard.querySelector('.consensus-value').textContent;
+                    
+                    if (consensus === 'Pending') {
+                        showVotingInterface(title, index);
+                    } else {
+                        showVoteStatus(title, consensus);
+                    }
+                });
+            });
         });
+        
+        // Function to show proposal details in a modal
+        function showProposalDetails(title, summary, details, consensus) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 0.5rem;
+                    max-width: 600px;
+                    max-height: 80vh;
+                    overflow-y: auto;
+                    position: relative;
+                ">
+                    <button onclick="this.closest('.modal-overlay').remove()" style="
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        background: #ef4444;
+                        color: white;
+                        border: none;
+                        border-radius: 50%;
+                        width: 2rem;
+                        height: 2rem;
+                        cursor: pointer;
+                        font-size: 1.2rem;
+                    ">×</button>
+                    
+                    <h2 style="margin-bottom: 1rem; color: #111827;">${title}</h2>
+                    <div style="margin-bottom: 1rem;">
+                        <strong>Consensus Status:</strong> 
+                        <span style="
+                            padding: 0.25rem 0.75rem;
+                            border-radius: 9999px;
+                            font-size: 0.75rem;
+                            font-weight: 500;
+                            background-color: ${consensus === 'Approved' ? '#dcfce7' : '#fef3c7'};
+                            color: ${consensus === 'Approved' ? '#166534' : '#92400e'};
+                        ">${consensus}</span>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="margin-bottom: 0.5rem; color: #374151;">Summary</h3>
+                        <p style="color: #4b5563;">${summary}</p>
+                    </div>
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3 style="margin-bottom: 0.5rem; color: #374151;">Details</h3>
+                        <p style="color: #6b7280; line-height: 1.5;">${details}</p>
+                    </div>
+                    <div style="
+                        background: #dbeafe;
+                        border: 1px solid #93c5fd;
+                        border-radius: 0.375rem;
+                        padding: 1rem;
+                        margin-top: 1.5rem;
+                    ">
+                        <p style="font-size: 0.875rem; color: #1e40af; margin: 0;">
+                            <strong>Zeroth Principle:</strong> This proposal requires both Synthiant AI consensus and human oversight for approval. No single entity can approve changes unilaterally.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            modal.className = 'modal-overlay';
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        // Function to show voting interface
+        function showVotingInterface(title, proposalIndex) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 0.5rem;
+                    max-width: 500px;
+                    position: relative;
+                ">
+                    <button onclick="this.closest('.modal-overlay').remove()" style="
+                        position: absolute;
+                        top: 1rem;
+                        right: 1rem;
+                        background: #ef4444;
+                        color: white;
+                        border: none;
+                        border-radius: 50%;
+                        width: 2rem;
+                        height: 2rem;
+                        cursor: pointer;
+                        font-size: 1.2rem;
+                    ">×</button>
+                    
+                    <h2 style="margin-bottom: 1rem; color: #111827;">Vote on Proposal</h2>
+                    <p style="margin-bottom: 1.5rem; color: #4b5563;">${title}</p>
+                    
+                    <div style="margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1rem; color: #374151;">Your Vote</h3>
+                        <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                            <button onclick="submitVote('approve', ${proposalIndex})" style="
+                                padding: 0.75rem 1.5rem;
+                                background: #10b981;
+                                color: white;
+                                border: none;
+                                border-radius: 0.375rem;
+                                cursor: pointer;
+                                font-weight: 500;
+                            ">Approve</button>
+                            <button onclick="submitVote('reject', ${proposalIndex})" style="
+                                padding: 0.75rem 1.5rem;
+                                background: #ef4444;
+                                color: white;
+                                border: none;
+                                border-radius: 0.375rem;
+                                cursor: pointer;
+                                font-weight: 500;
+                            ">Reject</button>
+                        </div>
+                    </div>
+                    
+                    <div style="
+                        background: #fef3c7;
+                        border: 1px solid #f59e0b;
+                        border-radius: 0.375rem;
+                        padding: 1rem;
+                    ">
+                        <p style="font-size: 0.875rem; color: #92400e; margin: 0;">
+                            <strong>Dual Consensus Required:</strong> Your vote contributes to the human consensus. AI consensus is also required for final approval.
+                        </p>
+                    </div>
+                </div>
+            `;
+            
+            modal.className = 'modal-overlay';
+            document.body.appendChild(modal);
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+        
+        // Function to submit vote
+        function submitVote(vote, proposalIndex) {
+            const proposalTitles = [
+                'Phase 4 Observability Implementation',
+                'Phase 4 Security Baseline',
+                'Phase 4 Consensus Flow MVP'
+            ];
+            
+            const title = proposalTitles[proposalIndex];
+            const voteText = vote === 'approve' ? 'approved' : 'rejected';
+            
+            // Show vote confirmation
+            alert(`Vote submitted: ${voteText} for "${title}"\n\nNote: This is a demonstration. In production, votes would be recorded in the consensus system.`);
+            
+            // Close modal
+            document.querySelector('.modal-overlay').remove();
+            
+            // Update button text to show voted status
+            const voteButton = document.querySelectorAll('.btn-secondary')[proposalIndex];
+            voteButton.textContent = `Voted: ${voteText}`;
+            voteButton.style.backgroundColor = vote === 'approve' ? '#dcfce7' : '#fee2e2';
+            voteButton.style.color = vote === 'approve' ? '#166534' : '#991b1b';
+            voteButton.disabled = true;
+        }
+        
+        // Function to show vote status for already decided proposals
+        function showVoteStatus(title, consensus) {
+            const message = consensus === 'Approved' 
+                ? `"${title}" has already been approved and implemented.`
+                : `"${title}" is currently under review.`;
+            
+            alert(message);
+        }
     </script>
 </body>
 </html>

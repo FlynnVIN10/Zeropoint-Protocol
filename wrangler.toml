@@ -4,13 +4,7 @@ compatibility_date = "2024-01-01"
 # Cloudflare Pages configuration
 pages_build_output_dir = "public"
 
-[site]
-bucket = "public"
+# Remove site section for Pages projects
 
 [env.production]
-name = "zeropointprotocol.ai"
-routes = ["zeropointprotocol.ai/*"]
-
-[env.preview]
-name = "zeropointprotocol-ai.pages.dev"
-routes = ["zeropointprotocol-ai.pages.dev/*"]
+name = "zeropoint-protocol"

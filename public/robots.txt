@@ -1,9 +1,8 @@
 User-agent: *
-Disallow: /api/
-Disallow: /control/
-Disallow: /iaai/
-Allow: /
-Allow: /docs
-Allow: /consensus/proposals
+Disallow:
 
 Sitemap: https://zeropointprotocol.ai/sitemap.xml
+
+# Zeropoint Protocol - Dual Consensus Agentic AI Platform
+# Phase 4 Complete - All 10 Milestones Achieved
+# Commit: bace852e

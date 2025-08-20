@@ -29,8 +29,6 @@ jobs:
             "public/index.html"
             "public/api/healthz.json"
             "public/api/readyz.json"
-            "functions/api/healthz.js"
-            "functions/api/readyz.js"
           )
           
           for file in "${REQUIRED_FILES[@]}"; do

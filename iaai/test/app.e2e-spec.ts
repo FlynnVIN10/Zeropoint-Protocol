@@ -1,11 +1,11 @@
 // © [2025] Zeropoint Protocol (C Corp). All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed license. See LICENSE.md for details.
 
-import { type INestApplication } from '@nestjs/common';
-import { Test, type TestingModule } from '@nestjs/testing';
-import request from 'supertest';
-import { AppModule } from '../src/app.module.js';
+import { type INestApplication } from "@nestjs/common";
+import { Test, type TestingModule } from "@nestjs/testing";
+import request from "supertest";
+import { AppModule } from "../src/app.module.js";
 
-describe('AppController (e2e)', () => {
+describe("AppController (e2e)", () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -21,9 +21,9 @@ describe('AppController (e2e)', () => {
     await app.close();
   });
 
-  it('/ (GET)', async () => {
+  it("/ (GET)", async () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get("/")
       .expect(200)
       .expect(/Helia is running/);
   });

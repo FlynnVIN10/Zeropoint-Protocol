@@ -1,7 +1,12 @@
-export type VisionTask = 'image-classification' | 'image-captioning' | 'visual-question-answering' | 'object-detection' | 'image-segmentation';
+export type VisionTask =
+  | "image-classification"
+  | "image-captioning"
+  | "visual-question-answering"
+  | "object-detection"
+  | "image-segmentation";
 
 export interface VLMConfig {
-  modelType: 'ViT-CLIP' | 'ViT-BERT' | 'Vision-Transformer';
+  modelType: "ViT-CLIP" | "ViT-BERT" | "Vision-Transformer";
   baseModel: string;
   visionEncoder: string;
   textEncoder: string;
@@ -29,12 +34,12 @@ export interface VisionArchitecture {
   visionLayers: number;
   textLayers: number;
   crossAttentionLayers: number;
-  fusionStrategy: 'concat' | 'attention' | 'mlp';
+  fusionStrategy: "concat" | "attention" | "mlp";
   outputProjection: boolean;
 }
 
 export interface VisionEncoder {
-  type: 'ViT' | 'ResNet' | 'EfficientNet';
+  type: "ViT" | "ResNet" | "EfficientNet";
   backbone: string;
   pretrained: boolean;
   frozenLayers: string[];
@@ -42,7 +47,7 @@ export interface VisionEncoder {
 }
 
 export interface TextEncoder {
-  type: 'CLIP' | 'BERT' | 'GPT';
+  type: "CLIP" | "BERT" | "GPT";
   backbone: string;
   pretrained: boolean;
   maxLength: number;
@@ -77,9 +82,9 @@ export interface DataAugmentation {
 }
 
 export interface MultimodalConfig {
-  textVisionAlignment: 'contrastive' | 'crossAttention' | 'fusion';
+  textVisionAlignment: "contrastive" | "crossAttention" | "fusion";
   crossAttention: boolean;
-  fusionStrategy: 'early' | 'late' | 'hybrid';
+  fusionStrategy: "early" | "late" | "hybrid";
   alignmentLoss: string;
   temperature: number;
 }
@@ -128,7 +133,7 @@ export interface VisionRecipe {
 export interface VisionTrainingRun {
   id: string;
   recipeId: string;
-  status: 'running' | 'completed' | 'failed' | 'interrupted';
+  status: "running" | "completed" | "failed" | "interrupted";
   startTime: string;
   endTime?: string;
   currentEpoch: number;
@@ -207,14 +212,14 @@ export interface CheckpointIntegrity {
 }
 
 export interface SafetyCard {
-  modality: 'vision';
+  modality: "vision";
   visionSpecificRisks: string[];
   biasMitigation: string[];
   contentFiltering: string[];
   privacyProtection: string[];
   lastUpdated: string;
   version: string;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
   mitigationStrategies: string[];
 }
 

@@ -1,26 +1,30 @@
 /**
  * Scope Enforcement Framework - Phase P0
- * 
+ *
  * This module provides runtime scope validation and mock detection
  * to enforce the frozen scope and prevent mock implementations.
  */
 
 export interface ScopeViolation {
   /** Type of violation */
-  type: 'mock_implementation' | 'scope_boundary' | 'synthetic_data' | 'simulated_hardware';
-  
+  type:
+    | "mock_implementation"
+    | "scope_boundary"
+    | "synthetic_data"
+    | "simulated_hardware";
+
   /** Description of the violation */
   description: string;
-  
+
   /** File or component where violation occurred */
   location: string;
-  
+
   /** Severity level */
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  
+  severity: "low" | "medium" | "high" | "critical";
+
   /** Timestamp of violation */
   timestamp: Date;
-  
+
   /** Recommended action */
   recommendedAction: string;
 }
@@ -28,16 +32,16 @@ export interface ScopeViolation {
 export interface ScopeEnforcementConfig {
   /** Whether scope enforcement is enabled */
   enabled: boolean;
-  
+
   /** Whether to fail on violations */
   failOnViolation: boolean;
-  
+
   /** Logging level */
-  logLevel: 'debug' | 'info' | 'warn' | 'error';
-  
+  logLevel: "debug" | "info" | "warn" | "error";
+
   /** Mock detection patterns */
   mockPatterns: string[];
-  
+
   /** Scope boundaries */
   scopeBoundaries: {
     allowed: string[];
@@ -58,52 +62,47 @@ export class ScopeEnforcementService {
   /**
    * Initialize scope enforcement configuration
    */
-  private initializeConfig(config?: Partial<ScopeEnforcementConfig>): ScopeEnforcementConfig {
+  private initializeConfig(
+    config?: Partial<ScopeEnforcementConfig>,
+  ): ScopeEnforcementConfig {
     const defaultConfig: ScopeEnforcementConfig = {
       enabled: true,
       failOnViolation: true,
-      logLevel: 'error',
+      logLevel: "error",
       mockPatterns: [
-        'mock',
-        'Mock',
-        'MOCK',
-        'fake',
-        'Fake',
-        'FAKE',
-        'synthetic',
-        'Synthetic',
-        'SYNTHETIC',
-        'simulated',
-        'Simulated',
-        'SIMULATED',
-        'stub',
-        'Stub',
-        'STUB',
-        'spy',
-        'Spy',
-        'SPY'
+        "mock",
+        "Mock",
+        "MOCK",
+        "fake",
+        "Fake",
+        "FAKE",
+        "synthetic",
+        "Synthetic",
+        "SYNTHETIC",
+        "simulated",
+        "Simulated",
+        "SIMULATED",
+        "stub",
+        "Stub",
+        "STUB",
+        "spy",
+        "Spy",
+        "SPY",
       ],
       scopeBoundaries: {
         allowed: [
-          'tinygrad',
-          'petals',
-          'wondercraft',
-          'website-v2',
-          'dual-consensus',
-          'governance',
-          'safety',
-          'image',
-          'recovery'
+          "tinygrad",
+          "petals",
+          "wondercraft",
+          "website-v2",
+          "dual-consensus",
+          "governance",
+          "safety",
+          "image",
+          "recovery",
         ],
-        denied: [
-          'mock',
-          'fake',
-          'synthetic',
-          'simulated',
-          'stub',
-          'spy'
-        ]
-      }
+        denied: ["mock", "fake", "synthetic", "simulated", "stub", "spy"],
+      },
     };
 
     return { ...defaultConfig, ...config };
@@ -113,10 +112,11 @@ export class ScopeEnforcementService {
    * Check if mock detection is enabled via environment
    */
   private isMockDetectionEnabled(): boolean {
-    const mocksDisabled = process.env.MOCKS_DISABLED === '1';
-    const runtimeDetection = process.env.RUNTIME_MOCK_DETECTION_ENABLED === '1';
-    const scopeValidation = process.env.RUNTIME_SCOPE_VALIDATION_ENABLED === '1';
-    
+    const mocksDisabled = process.env.MOCKS_DISABLED === "1";
+    const runtimeDetection = process.env.RUNTIME_MOCK_DETECTION_ENABLED === "1";
+    const scopeValidation =
+      process.env.RUNTIME_SCOPE_VALIDATION_ENABLED === "1";
+
     return mocksDisabled && runtimeDetection && scopeValidation;
   }
 
@@ -126,22 +126,23 @@ export class ScopeEnforcementService {
   validateScopeBoundary(component: string, action: string): boolean {
     if (!this.isEnabled) return true;
 
-    const isAllowed = this.config.scopeBoundaries.allowed.some(
-      allowed => component.toLowerCase().includes(allowed.toLowerCase())
+    const isAllowed = this.config.scopeBoundaries.allowed.some((allowed) =>
+      component.toLowerCase().includes(allowed.toLowerCase()),
     );
 
-    const isDenied = this.config.scopeBoundaries.denied.some(
-      denied => component.toLowerCase().includes(denied.toLowerCase())
+    const isDenied = this.config.scopeBoundaries.denied.some((denied) =>
+      component.toLowerCase().includes(denied.toLowerCase()),
     );
 
     if (isDenied) {
       const violation: ScopeViolation = {
-        type: 'scope_boundary',
+        type: "scope_boundary",
         description: `Component '${component}' is outside allowed scope boundaries`,
         location: `${component}:${action}`,
-        severity: 'high',
+        severity: "high",
         timestamp: new Date(),
-        recommendedAction: 'Remove component or request scope expansion approval'
+        recommendedAction:
+          "Remove component or request scope expansion approval",
       };
 
       this.recordViolation(violation);
@@ -150,12 +151,13 @@ export class ScopeEnforcementService {
 
     if (!isAllowed) {
       const violation: ScopeViolation = {
-        type: 'scope_boundary',
+        type: "scope_boundary",
         description: `Component '${component}' is not explicitly in allowed scope`,
         location: `${component}:${action}`,
-        severity: 'medium',
+        severity: "medium",
         timestamp: new Date(),
-        recommendedAction: 'Add component to allowed scope or remove if not needed'
+        recommendedAction:
+          "Add component to allowed scope or remove if not needed",
       };
 
       this.recordViolation(violation);
@@ -171,18 +173,19 @@ export class ScopeEnforcementService {
   detectMockImplementation(code: string, location: string): boolean {
     if (!this.isEnabled) return false;
 
-    const mockDetected = this.config.mockPatterns.some(pattern => 
-      code.toLowerCase().includes(pattern.toLowerCase())
+    const mockDetected = this.config.mockPatterns.some((pattern) =>
+      code.toLowerCase().includes(pattern.toLowerCase()),
     );
 
     if (mockDetected) {
       const violation: ScopeViolation = {
-        type: 'mock_implementation',
+        type: "mock_implementation",
         description: `Mock implementation detected in code at ${location}`,
         location,
-        severity: 'critical',
+        severity: "critical",
         timestamp: new Date(),
-        recommendedAction: 'Replace mock implementation with real implementation'
+        recommendedAction:
+          "Replace mock implementation with real implementation",
       };
 
       this.recordViolation(violation);
@@ -198,19 +201,21 @@ export class ScopeEnforcementService {
   validateSyntheticData(dataSource: string, dataType: string): boolean {
     if (!this.isEnabled) return true;
 
-    const isSynthetic = this.config.mockPatterns.some(pattern => 
-      dataSource.toLowerCase().includes(pattern.toLowerCase()) ||
-      dataType.toLowerCase().includes(pattern.toLowerCase())
+    const isSynthetic = this.config.mockPatterns.some(
+      (pattern) =>
+        dataSource.toLowerCase().includes(pattern.toLowerCase()) ||
+        dataType.toLowerCase().includes(pattern.toLowerCase()),
     );
 
     if (isSynthetic) {
       const violation: ScopeViolation = {
-        type: 'synthetic_data',
+        type: "synthetic_data",
         description: `Synthetic data detected: ${dataSource} (${dataType})`,
         location: `${dataSource}:${dataType}`,
-        severity: 'high',
+        severity: "high",
         timestamp: new Date(),
-        recommendedAction: 'Use real data sources or properly licensed synthetic data'
+        recommendedAction:
+          "Use real data sources or properly licensed synthetic data",
       };
 
       this.recordViolation(violation);
@@ -226,19 +231,20 @@ export class ScopeEnforcementService {
   validateHardwareInteraction(interaction: string, component: string): boolean {
     if (!this.isEnabled) return true;
 
-    const isSimulated = this.config.mockPatterns.some(pattern => 
-      interaction.toLowerCase().includes(pattern.toLowerCase()) ||
-      component.toLowerCase().includes(pattern.toLowerCase())
+    const isSimulated = this.config.mockPatterns.some(
+      (pattern) =>
+        interaction.toLowerCase().includes(pattern.toLowerCase()) ||
+        component.toLowerCase().includes(pattern.toLowerCase()),
     );
 
     if (isSimulated) {
       const violation: ScopeViolation = {
-        type: 'simulated_hardware',
+        type: "simulated_hardware",
         description: `Simulated hardware interaction detected: ${interaction} in ${component}`,
         location: `${component}:${interaction}`,
-        severity: 'critical',
+        severity: "critical",
         timestamp: new Date(),
-        recommendedAction: 'Use real hardware interactions only'
+        recommendedAction: "Use real hardware interactions only",
       };
 
       this.recordViolation(violation);
@@ -253,10 +259,10 @@ export class ScopeEnforcementService {
    */
   private recordViolation(violation: ScopeViolation): void {
     this.violations.push(violation);
-    
+
     // Log violation based on config level
     this.logViolation(violation);
-    
+
     // Fail if configured to do so
     if (this.config.failOnViolation) {
       throw new Error(`Scope violation: ${violation.description}`);
@@ -268,26 +274,28 @@ export class ScopeEnforcementService {
    */
   private logViolation(violation: ScopeViolation): void {
     const logMessage = `[SCOPE VIOLATION] ${violation.type.toUpperCase()}: ${violation.description} at ${violation.location}`;
-    
+
     switch (this.config.logLevel) {
-      case 'debug':
+      case "debug":
         console.debug(logMessage);
         break;
-      case 'info':
+      case "info":
         console.info(logMessage);
         break;
-      case 'warn':
+      case "warn":
         console.warn(logMessage);
         break;
-      case 'error':
+      case "error":
         console.error(logMessage);
         break;
     }
 
     // Additional logging for critical violations
-    if (violation.severity === 'critical') {
+    if (violation.severity === "critical") {
       console.error(`[CRITICAL] ${logMessage}`);
-      console.error(`[CRITICAL] Recommended action: ${violation.recommendedAction}`);
+      console.error(
+        `[CRITICAL] Recommended action: ${violation.recommendedAction}`,
+      );
     }
   }
 
@@ -301,15 +309,17 @@ export class ScopeEnforcementService {
   /**
    * Get violations by type
    */
-  getViolationsByType(type: ScopeViolation['type']): ScopeViolation[] {
-    return this.violations.filter(v => v.type === type);
+  getViolationsByType(type: ScopeViolation["type"]): ScopeViolation[] {
+    return this.violations.filter((v) => v.type === type);
   }
 
   /**
    * Get violations by severity
    */
-  getViolationsBySeverity(severity: ScopeViolation['severity']): ScopeViolation[] {
-    return this.violations.filter(v => v.severity === severity);
+  getViolationsBySeverity(
+    severity: ScopeViolation["severity"],
+  ): ScopeViolation[] {
+    return this.violations.filter((v) => v.severity === severity);
   }
 
   /**
@@ -330,16 +340,22 @@ export class ScopeEnforcementService {
     isCompliant: boolean;
   } {
     const totalViolations = this.violations.length;
-    
-    const violationsByType = this.violations.reduce((acc, v) => {
-      acc[v.type] = (acc[v.type] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
 
-    const violationsBySeverity = this.violations.reduce((acc, v) => {
-      acc[v.severity] = (acc[v.severity] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const violationsByType = this.violations.reduce(
+      (acc, v) => {
+        acc[v.type] = (acc[v.type] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    const violationsBySeverity = this.violations.reduce(
+      (acc, v) => {
+        acc[v.severity] = (acc[v.severity] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // Calculate compliance score (0-100)
     const criticalViolations = violationsBySeverity.critical || 0;
@@ -349,9 +365,9 @@ export class ScopeEnforcementService {
 
     let complianceScore = 100;
     complianceScore -= criticalViolations * 25; // Critical violations heavily penalize
-    complianceScore -= highViolations * 15;     // High violations significantly penalize
-    complianceScore -= mediumViolations * 10;   // Medium violations moderately penalize
-    complianceScore -= lowViolations * 5;       // Low violations slightly penalize
+    complianceScore -= highViolations * 15; // High violations significantly penalize
+    complianceScore -= mediumViolations * 10; // Medium violations moderately penalize
+    complianceScore -= lowViolations * 5; // Low violations slightly penalize
 
     complianceScore = Math.max(0, complianceScore); // Ensure score doesn't go below 0
 
@@ -362,7 +378,7 @@ export class ScopeEnforcementService {
       violationsByType,
       violationsBySeverity,
       complianceScore,
-      isCompliant
+      isCompliant,
     };
   }
 
@@ -378,18 +394,18 @@ export class ScopeEnforcementService {
       return {
         compliant: true,
         violations: [],
-        report: { message: 'Scope enforcement disabled' }
+        report: { message: "Scope enforcement disabled" },
       };
     }
 
     // This would typically scan the entire codebase
     // For now, we'll return the current state
     const report = this.generateComplianceReport();
-    
+
     return {
       compliant: report.isCompliant,
       violations: this.violations,
-      report
+      report,
     };
   }
 
@@ -432,6 +448,9 @@ export function validateData(dataSource: string, dataType: string): boolean {
   return scopeEnforcement.validateSyntheticData(dataSource, dataType);
 }
 
-export function validateHardware(interaction: string, component: string): boolean {
+export function validateHardware(
+  interaction: string,
+  component: string,
+): boolean {
   return scopeEnforcement.validateHardwareInteraction(interaction, component);
 }

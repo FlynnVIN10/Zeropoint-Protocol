@@ -135,7 +135,7 @@ export class RAGController {
     try {
       const document = await this.ragService.addLegalDocument({
         ...request,
-        relevance: 0.8 // Default relevance score
+        relevance: 0.8, // Default relevance score
       });
 
       return {
@@ -159,7 +159,7 @@ export class RAGController {
     try {
       const document = await this.ragService.addManufacturingDocument({
         ...request,
-        relevance: 0.8 // Default relevance score
+        relevance: 0.8, // Default relevance score
       });
 
       return {

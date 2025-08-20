@@ -185,7 +185,7 @@ export class KeyRotationService {
       const now = Date.now();
       const expirationTime = key.createdAt.getTime() + 30 * 24 * 60 * 60 * 1000; // 30 days validity
       const timeUntilExpiration = expirationTime - now;
-      
+
       // Check if key is expiring soon
       return timeUntilExpiration < 0;
     };

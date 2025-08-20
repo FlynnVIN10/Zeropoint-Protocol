@@ -214,7 +214,7 @@ export class MultiLLMService {
       if (perplexityKey) {
         this.providers.set(
           LLMProvider.PERPLEXITY,
-          null as any // Temporarily set to null since Perplexity is commented out
+          null as any, // Temporarily set to null since Perplexity is commented out
         );
         this.logger.log("Perplexity provider initialized");
       }
@@ -495,7 +495,10 @@ export class MultiLLMService {
       status.lastCheck = new Date();
     }
 
-    return Object.fromEntries(this.providerStatus) as Record<LLMProvider, ProviderStatus>;
+    return Object.fromEntries(this.providerStatus) as Record<
+      LLMProvider,
+      ProviderStatus
+    >;
   }
 
   async getProviderCosts(): Promise<

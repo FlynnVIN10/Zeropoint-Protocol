@@ -178,14 +178,14 @@ describe("StreamController", () => {
 
       // Mock OpenAI failure
       mockMultiLLMService.processRequest.mockRejectedValueOnce(
-        new Error("OpenAI API error")
+        new Error("OpenAI API error"),
       );
 
       await controller.streamGeneration(request, mockResponse);
 
       // Should attempt failover to Anthropic
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"type":"provider_switch"')
+        expect.stringContaining('"type":"provider_switch"'),
       );
     });
 
@@ -208,7 +208,7 @@ describe("StreamController", () => {
       await controller.streamGeneration(request, mockResponse);
 
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"type":"token"')
+        expect.stringContaining('"type":"token"'),
       );
     });
   });
@@ -216,7 +216,7 @@ describe("StreamController", () => {
   describe("provider routing and failover", () => {
     it("should select optimal provider based on health status", async () => {
       const providers = await controller.getProviderStatus();
-      
+
       expect(providers).toHaveProperty("openai");
       expect(providers).toHaveProperty("anthropic");
       expect(providers).toHaveProperty("perplexity");
@@ -253,7 +253,7 @@ describe("StreamController", () => {
 
       // Should include bias checks in routing
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"bias_check":"passed"')
+        expect.stringContaining('"bias_check":"passed"'),
       );
     });
   });
@@ -261,7 +261,7 @@ describe("StreamController", () => {
   describe("load testing capabilities", () => {
     it("should handle 500 concurrent connections", async () => {
       const connections = [];
-      
+
       // Simulate 500 concurrent connections
       for (let i = 0; i < 500; i++) {
         const mockRes = {
@@ -271,18 +271,21 @@ describe("StreamController", () => {
           status: jest.fn().mockReturnThis(),
           json: jest.fn(),
         } as unknown as Response & { on: jest.Mock };
-        
+
         connections.push(mockRes);
-        
+
         // Start streaming
-        controller.streamEvents(mockRes, { prompt: "test", provider: "auto" as const });
+        controller.streamEvents(mockRes, {
+          prompt: "test",
+          provider: "auto" as const,
+        });
       }
 
       // All connections should be established
       expect(connections.length).toBe(500);
-      
+
       // Verify all connections are active
-      connections.forEach(conn => {
+      connections.forEach((conn) => {
         expect(conn.writeHead).toHaveBeenCalled();
       });
     });
@@ -297,11 +300,14 @@ describe("StreamController", () => {
       } as unknown as Response & { on: jest.Mock };
 
       // Simulate long-running connection
-      const connection = controller.streamEvents(mockRes, { prompt: "test", provider: "auto" as const });
-      
+      const connection = controller.streamEvents(mockRes, {
+        prompt: "test",
+        provider: "auto" as const,
+      });
+
       // Should maintain connection for extended period
       expect(mockRes.write).toHaveBeenCalledWith(
-        expect.stringContaining('"type":"heartbeat"')
+        expect.stringContaining('"type":"heartbeat"'),
       );
     });
   });
@@ -324,7 +330,7 @@ describe("StreamController", () => {
         expect.objectContaining({
           "X-Provider-Router": "active",
           "X-Security-Level": expect.any(String),
-        })
+        }),
       );
     });
 
@@ -341,7 +347,7 @@ describe("StreamController", () => {
 
       // Should include fairness checks
       expect(mockResponse.write).toHaveBeenCalledWith(
-        expect.stringContaining('"fairness_check":"passed"')
+        expect.stringContaining('"fairness_check":"passed"'),
       );
     });
   });

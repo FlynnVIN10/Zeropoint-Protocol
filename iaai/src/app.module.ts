@@ -64,9 +64,9 @@ import { ApplianceStatusController } from "./controllers/appliance-status.contro
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ 
+    ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ['.env.local', '.env']
+      envFilePath: [".env.local", ".env"],
     }),
     HttpModule,
     TypeOrmModule.forRootAsync({

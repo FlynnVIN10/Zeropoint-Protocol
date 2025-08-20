@@ -51,7 +51,10 @@ export class StreamController {
       failoverCount: number;
     }
   >();
-  private rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+  private rateLimitMap = new Map<
+    string,
+    { count: number; resetTime: number }
+  >();
   private readonly RATE_LIMIT = 100; // requests per minute
   private readonly RATE_LIMIT_WINDOW = 60000; // 1 minute in milliseconds
 
@@ -182,8 +185,10 @@ export class StreamController {
 
     try {
       // Select optimal provider with failover logic
-      const selectedProvider = await this.selectProvider(request.provider || "auto");
-      
+      const selectedProvider = await this.selectProvider(
+        request.provider || "auto",
+      );
+
       // Send provider selection event
       res.write(
         `data: ${JSON.stringify({
@@ -204,14 +209,16 @@ export class StreamController {
         response = await this.generateWithProvider(request, selectedProvider);
       } catch (error) {
         // Failover to backup provider
-        this.logger.warn(`Primary provider ${selectedProvider} failed, attempting failover`);
-        
+        this.logger.warn(
+          `Primary provider ${selectedProvider} failed, attempting failover`,
+        );
+
         const backupProvider = this.getBackupProvider(selectedProvider);
         if (backupProvider) {
           try {
             response = await this.generateWithProvider(request, backupProvider);
             providerUsed = backupProvider;
-            
+
             // Send failover event
             res.write(
               `data: ${JSON.stringify({
@@ -224,7 +231,9 @@ export class StreamController {
               })}\n\n`,
             );
           } catch (failoverError) {
-            throw new Error(`Both primary and backup providers failed: ${error.message}, ${failoverError.message}`);
+            throw new Error(
+              `Both primary and backup providers failed: ${error.message}, ${failoverError.message}`,
+            );
           }
         } else {
           throw error;
@@ -236,14 +245,14 @@ export class StreamController {
         `data: ${JSON.stringify({
           type: "complete",
           timestamp: new Date().toISOString(),
-          content: response.content || response.response || "Generation completed",
+          content:
+            response.content || response.response || "Generation completed",
           provider: providerUsed,
           latency: Date.now() - startTime,
           bias_check: "passed",
           fairness_check: "passed",
         })}\n\n`,
       );
-
     } catch (error) {
       // Send error event
       res.write(
@@ -277,35 +286,40 @@ export class StreamController {
     if (preferredProvider === "auto") {
       // Auto-select based on health and performance
       const providers = Array.from(this.providerHealth.entries());
-      const healthyProviders = providers.filter(([_, status]) => status.status === "healthy");
-      
+      const healthyProviders = providers.filter(
+        ([_, status]) => status.status === "healthy",
+      );
+
       if (healthyProviders.length === 0) {
         throw new Error("No healthy providers available");
       }
-      
+
       // Select provider with lowest failover count
-      const bestProvider = healthyProviders.reduce((best, current) => 
-        current[1].failoverCount < best[1].failoverCount ? current : best
+      const bestProvider = healthyProviders.reduce((best, current) =>
+        current[1].failoverCount < best[1].failoverCount ? current : best,
       );
-      
+
       return bestProvider[0];
     }
-    
+
     return preferredProvider;
   }
 
   private getBackupProvider(primaryProvider: string): string | null {
     const backupMap = {
-      "openai": "anthropic",
-      "anthropic": "openai",
-      "perplexity": "openai",
-      "grok": "anthropic",
+      openai: "anthropic",
+      anthropic: "openai",
+      perplexity: "openai",
+      grok: "anthropic",
     };
-    
+
     return backupMap[primaryProvider] || null;
   }
 
-  private async generateWithProvider(request: StreamRequest, provider: string): Promise<any> {
+  private async generateWithProvider(
+    request: StreamRequest,
+    provider: string,
+  ): Promise<any> {
     // This would integrate with the actual MultiLLMService
     // For now, return a mock response
     return {
@@ -333,9 +347,9 @@ export class StreamController {
 
   private getOverallHealth(): "healthy" | "degraded" | "down" {
     const providers = Array.from(this.providerHealth.values());
-    const healthyCount = providers.filter(p => p.status === "healthy").length;
+    const healthyCount = providers.filter((p) => p.status === "healthy").length;
     const totalCount = providers.length;
-    
+
     if (healthyCount === totalCount) return "healthy";
     if (healthyCount > totalCount / 2) return "degraded";
     return "down";
@@ -348,7 +362,10 @@ export class StreamController {
 
   private calculateFailoverRate(): number {
     const providers = Array.from(this.providerHealth.values());
-    const totalFailovers = providers.reduce((sum, p) => sum + p.failoverCount, 0);
+    const totalFailovers = providers.reduce(
+      (sum, p) => sum + p.failoverCount,
+      0,
+    );
     const totalRequests = providers.length * 100; // Mock total requests
     return totalRequests > 0 ? totalFailovers / totalRequests : 0;
   }
@@ -385,7 +402,7 @@ export class StreamController {
   private checkRateLimit(clientId: string): boolean {
     const now = Date.now();
     const clientData = this.rateLimitMap.get(clientId);
-    
+
     if (!clientData || now > clientData.resetTime) {
       // Reset rate limit for this client
       this.rateLimitMap.set(clientId, {
@@ -394,11 +411,11 @@ export class StreamController {
       });
       return true;
     }
-    
+
     if (clientData.count >= this.RATE_LIMIT) {
       return false;
     }
-    
+
     clientData.count++;
     return true;
   }

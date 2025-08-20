@@ -1,5 +1,5 @@
 export interface FinetuneConfig {
-  modelSize: '8B' | '13B';
+  modelSize: "8B" | "13B";
   baseModel: string;
   targetTasks: string[];
   mixedPrecision: boolean;
@@ -18,7 +18,7 @@ export interface FinetuneConfig {
 
 export interface MixedPrecisionConfig {
   enabled: boolean;
-  dtype: 'float16' | 'bfloat16';
+  dtype: "float16" | "bfloat16";
   lossScaling: number;
   dynamicScaling: boolean;
   initialScale: number;
@@ -44,7 +44,7 @@ export interface ModelArchitecture {
 
 export interface RecipeTemplate {
   name: string;
-  modelSize: '8B' | '13B';
+  modelSize: "8B" | "13B";
   config: FinetuneConfig;
   requirements: {
     gpuMemory: string;
@@ -59,7 +59,7 @@ export interface RecipeTemplate {
 export interface TrainingRun {
   id: string;
   recipeId: string;
-  status: 'running' | 'completed' | 'failed' | 'interrupted';
+  status: "running" | "completed" | "failed" | "interrupted";
   startTime: string;
   endTime?: string;
   currentEpoch: number;
@@ -132,7 +132,7 @@ export interface RunLog {
 }
 
 export interface TrainingStatus {
-  status: 'running' | 'completed' | 'failed' | 'interrupted' | 'paused';
+  status: "running" | "completed" | "failed" | "interrupted" | "paused";
   progress: number;
   currentEpoch: number;
   currentStep: number;

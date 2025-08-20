@@ -126,7 +126,7 @@ export class PetalsService {
         cycleId,
         requestId: request.id,
         agentId: request.agentId,
-        status: 'completed',
+        status: "completed",
         progress: 100,
         startTime: new Date(Date.now() - duration),
         endTime: new Date(),

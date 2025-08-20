@@ -67,7 +67,7 @@ export interface PeerHealth {
 
 export interface PeerStatus {
   address: string;
-  status: 'active' | 'idle' | 'disconnected' | 'unhealthy';
+  status: "active" | "idle" | "disconnected" | "unhealthy";
   lastSeen: string;
   responseTime: number;
   uptime: number;
@@ -81,7 +81,7 @@ export interface PortStatus {
 }
 
 export interface ClientLog {
-  level: 'info' | 'warn' | 'error' | 'debug';
+  level: "info" | "warn" | "error" | "debug";
   message: string;
   timestamp: string;
   component: string;
@@ -120,7 +120,7 @@ export interface PeerConnection {
   fingerprint: string;
   connectedAt: string;
   lastSeen: string;
-  status: 'active' | 'idle' | 'disconnected' | 'unhealthy';
+  status: "active" | "idle" | "disconnected" | "unhealthy";
   bandwidth: number;
   latency: number;
 }
@@ -141,10 +141,14 @@ export interface RateLimitStatus {
 }
 
 export interface SecurityEvent {
-  type: 'peer_rejected' | 'bandwidth_exceeded' | 'rate_limit_exceeded' | 'unauthorized_access';
+  type:
+    | "peer_rejected"
+    | "bandwidth_exceeded"
+    | "rate_limit_exceeded"
+    | "unauthorized_access";
   timestamp: string;
   source: string;
   details: string;
   action: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
 }

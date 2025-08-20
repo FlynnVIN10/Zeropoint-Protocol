@@ -1,0 +1,111 @@
+name: AI Development Task
+description: Template for AI-generated development tasks
+title: "[AI TASK] "
+labels: ["ai-generated", "enhancement"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        # AI Development Task Template
+        
+        This template is for AI-generated development tasks. All AI tasks require human approval and must pass all CI checks.
+        
+        **Zeroth Principle:** Only with good intent and a good heart does the system function.
+        
+  - type: textarea
+    id: task-description
+    attributes:
+      label: Task Description
+      description: Describe the development task to be completed
+      placeholder: "Describe what needs to be implemented, fixed, or enhanced..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: technical-requirements
+    attributes:
+      label: Technical Requirements
+      description: List specific technical requirements and constraints
+      placeholder: "- Performance requirements\n- Security considerations\n- Compatibility requirements\n- Testing requirements"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: Define clear acceptance criteria for the task
+      placeholder: "- [ ] Feature X is implemented\n- [ ] Tests pass\n- [ ] Documentation updated\n- [ ] Performance benchmarks met"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - "Low - Nice to have"
+        - "Medium - Should have"
+        - "High - Must have"
+        - "Critical - Blocking"
+    validations:
+      required: true
+      
+  - type: dropdown
+    id: complexity
+    attributes:
+      label: Complexity
+      options:
+        - "Simple - 1-2 hours"
+        - "Easy - 4-8 hours"
+        - "Medium - 1-2 days"
+        - "Hard - 3-5 days"
+        - "Complex - 1+ weeks"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: ai-approach
+    attributes:
+      label: AI Approach
+      description: Describe how AI will approach this task
+      placeholder: "Explain the AI's planned approach, algorithms, or methods..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: safety-considerations
+    attributes:
+      label: Safety & Ethics Considerations
+      description: Identify any safety, security, or ethical considerations
+      placeholder: "Describe potential risks, mitigation strategies, and ethical implications..."
+    validations:
+      required: true
+      
+  - type: textarea
+    id: testing-strategy
+    attributes:
+      label: Testing Strategy
+      description: Outline the testing approach for this task
+      placeholder: "- Unit tests\n- Integration tests\n- Performance tests\n- Security tests\n- User acceptance tests"
+    validations:
+      required: true
+      
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies
+      description: List any dependencies or prerequisites
+      placeholder: "List any required libraries, services, or other tasks that must be completed first..."
+    validations:
+      required: false
+      
+  - type: textarea
+    id: additional-notes
+    attributes:
+      label: Additional Notes
+      description: Any other relevant information
+      placeholder: "Additional context, resources, or notes..."
+    validations:
+      required: false

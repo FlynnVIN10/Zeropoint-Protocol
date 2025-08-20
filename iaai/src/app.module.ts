@@ -3,6 +3,7 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 import { AppController } from "./app.controller.js";
 import { AppService } from "./app.service.js";
 import { AuthController } from "./controllers/auth.controller.js";
@@ -52,13 +53,13 @@ import { TelemetryService } from "./services/telemetry.service.js";
 import { ConsensusEngineService } from "./services/consensus-engine.service.js";
 import { DashboardService } from "./services/dashboard.service.js";
 import { GenerateService } from "./services/generate.service.js";
-// import { MultiLLMService } from './services/multi-llm.service.js';
+import { MultiLLMService } from "./services/multi-llm.service.js";
 import { UserRoleService } from "./services/user-role.service.js";
 import { ConsensusService } from "./services/consensus.service.js";
 import { AgentService } from "./services/agent.service.js";
 import { RAGService } from "./services/rag.service.js";
 import { PerformanceMonitorService } from "./services/performance-monitor.service.js";
-import { MultiLLMService } from "./services/multi-llm.service.js";
+import { PetalsConnector } from "./petals/petals-connector.js";
 import { StreamController } from "./controllers/stream.controller.js";
 import { ApplianceStatusController } from "./controllers/appliance-status.controller.js";
 
@@ -120,19 +121,20 @@ import { ApplianceStatusController } from "./controllers/appliance-status.contro
         limit: 3,
       },
     ]),
+    EventEmitterModule.forRoot(),
   ],
   controllers: [
     AppController,
-    AuthController,
+    // AuthController, // TEMPORARILY DISABLED - AuthService not available
     HealthController,
     AgentStateController,
     UIController,
     ChatController,
-    PetalsController,
+    // PetalsController, // TEMPORARILY DISABLED - ProposalService dependency issue
     DashboardController,
     GenerateController,
     UserRoleController,
-    ConsensusController,
+    // ConsensusController, // TEMPORARILY DISABLED - ProposalService dependency issue
     AgentController,
     SandboxController,
     RAGController,
@@ -165,6 +167,7 @@ import { ApplianceStatusController } from "./controllers/appliance-status.contro
     AgentService,
     RAGService,
     PerformanceMonitorService,
+    PetalsConnector,
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,

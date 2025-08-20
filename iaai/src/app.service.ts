@@ -2,10 +2,10 @@
 
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { createHelia } from "helia";
-import { unixfs } from "@helia/unixfs";
+// import { createHelia } from "helia"; // TEMPORARILY DISABLED
+// import { unixfs } from "@helia/unixfs"; // TEMPORARILY DISABLED
+// import { CID } from "multiformats/cid"; // TEMPORARILY DISABLED
 import { checkIntent } from "./guards/synthient.guard.js";
-import { CID } from "multiformats/cid";
 import { HttpService } from "@nestjs/axios";
 import { Counter, Registry, Histogram, Gauge } from "prom-client";
 // import { Repository } from 'typeorm';
@@ -178,8 +178,8 @@ export class AppService {
   }
 
   private async init() {
-    this.helia = await createHelia();
-    this.fs = unixfs(this.helia);
+    // this.helia = await createHelia(); // TEMPORARILY DISABLED
+    // this.fs = unixfs(this.helia); // TEMPORARILY DISABLED
     this.logger.log("AppService initialized with IPFS and metrics");
   }
 
@@ -400,18 +400,18 @@ export class AppService {
     const startTime = Date.now();
 
     try {
-      const helia = await createHelia();
-      const fs = unixfs(helia);
+      // const helia = await createHelia(); // TEMPORARILY DISABLED
+      // const fs = unixfs(helia); // TEMPORARILY DISABLED
 
       const entries: DirectoryEntry[] = [];
-      for await (const entry of fs.ls(CID.parse(cid))) {
-        entries.push({
-          name: entry.name,
-          cid: entry.cid.toString(),
-          size: Number(entry.size),
-          type: entry.type,
-        });
-      }
+      // for await (const entry of fs.ls(CID.parse(cid))) { // TEMPORARILY DISABLED
+      //   entries.push({
+      //     name: entry.name,
+      //     cid: entry.cid.toString(),
+      //     size: Number(entry.size),
+      //     type: entry.type,
+      //   });
+      // }
 
       const duration = (Date.now() - startTime) / 1000;
       apiRequestDuration.observe(

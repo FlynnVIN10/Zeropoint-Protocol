@@ -2,13 +2,13 @@
 
 // src/agents/soulchain/soulchain.ledger.ts
 
-// Zeropoint Protocol Soulchain: v12 IPFS DAG XP Ledger Protocol
 // Zeroth Principle: Only with good intent and a good heart does the system function.
-// Ledger entries gated, immutable, distributed for post-singularity symbiosis.
+// All operations embed ethical gating; misalignment halts recursion.
 
-import { unixfs } from "@helia/unixfs";
-import { createHelia } from "helia";
-import { CID } from "multiformats/cid";
+// import { unixfs } from "@helia/unixfs"; // TEMPORARILY DISABLED
+// import { createHelia } from "helia"; // TEMPORARILY DISABLED
+// import { soulchain } from "./soulchain.types.js";
+// import { CID } from "multiformats/cid"; // TEMPORARILY DISABLED
 import { checkIntent } from "../../guards/synthient.guard.js"; // Ethical firewall
 import { generateTagSet, TagBundle } from "../../core/identity/tags.meta.js"; // Tag injection
 import { AgentMeta } from "../train/train.loop.js"; // AgentMeta import
@@ -40,8 +40,8 @@ class SoulchainLedger {
   }
 
   private async init() {
-    this.helia = await createHelia();
-    this.fs = unixfs(this.helia);
+    // this.helia = await createHelia(); // TEMPORARILY DISABLED
+    // this.fs = unixfs(this.helia); // TEMPORARILY DISABLED
   }
 
   async addXPTransaction(transaction: XPTransaction): Promise<string> {
@@ -67,23 +67,26 @@ class SoulchainLedger {
     transaction.tags = generateTagSet(agentMeta);
 
     const data = Buffer.from(JSON.stringify(transaction));
-    const cid = await this.fs.addBytes(data);
+    // const cid = await this.fs.addBytes(data); // TEMPORARILY DISABLED
 
-    return cid.toString();
+    return "stub-cid"; // TEMPORARILY DISABLED
   }
 
   async getXPChain(startCid: string): Promise<XPTransaction[]> {
     await this.ready;
-    let currentCid = CID.parse(startCid);
+    // let currentCid = CID.parse(startCid); // TEMPORARILY DISABLED
+    let currentCid = startCid; // TEMPORARILY DISABLED
     const chain = [];
 
     while (currentCid) {
-      const data = await this.fs.cat(currentCid);
-      const transaction = JSON.parse(data.toString());
+      // const data = await this.fs.cat(currentCid); // TEMPORARILY DISABLED
+      // const transaction = JSON.parse(data.toString()); // TEMPORARILY DISABLED
+      const transaction = { agentId: "stub", amount: 0, rationale: "stub", timestamp: new Date().toISOString(), previousCid: null, tags: {} }; // TEMPORARILY DISABLED
       chain.push(transaction);
-      currentCid = transaction.previousCid
-        ? CID.parse(transaction.previousCid)
-        : null;
+      // currentCid = transaction.previousCid
+      //   ? CID.parse(transaction.previousCid)
+      //   : null; // TEMPORARILY DISABLED
+      currentCid = transaction.previousCid || null; // TEMPORARILY DISABLED
     }
 
     return chain;
@@ -99,9 +102,9 @@ class SoulchainLedger {
     );
     if (!checkIntent("Persisting Soulchain ledger to IPFS"))
       throw new Error("Zeroth violation: Ledger persist blocked.");
-    const cid = await this.fs.addBytes(ledgerData);
+    // const cid = await this.fs.addBytes(ledgerData); // TEMPORARILY DISABLED
     ledgerPersistCounter.inc();
-    return cid.toString();
+    return "stub-cid"; // TEMPORARILY DISABLED
   }
 
   async getLedgerMetrics(): Promise<string> {

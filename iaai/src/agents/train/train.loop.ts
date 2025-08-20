@@ -6,7 +6,7 @@
 // Zeroth Principle: Only with good intent and a good heart does the system function.
 // All operations embed ethical gating; misalignment halts recursion.
 
-import { parse } from "@typescript-eslint/parser"; // AST parser for codebase scanning
+// import { parse } from "@typescript-eslint/parser"; // AST parser for codebase scanning - TEMPORARILY DISABLED
 import { CodeProposal, PetalsResponse } from "./petals.bridge.js"; // Shared types and bridge
 import { generateTagSet, TagBundle } from "../../core/identity/tags.meta.js"; // Tag injection
 import { checkIntent } from "../../guards/synthient.guard.js"; // Ethical firewall import
@@ -36,17 +36,17 @@ export class TrainLoop {
   async reflect(agentId: string): Promise<string[]> {
     // Stub: Fetch agent codebase
     const codebase = `// Sample agent code\n function outdatedFn() { /* inefficient loop */ for(let i=0; i<100000; i++) {} }\n function efficientFn() { /* optimized */ }`;
-    const ast = parse(codebase, { sourceType: "module" });
+    // const ast = parse(codebase, { sourceType: "module" }); // This line was commented out
 
     const flagged: string[] = [];
-    ast.body.forEach((node: any) => {
-      if (
-        node.type === "FunctionDeclaration" &&
-        node.body.body.some((stmt: any) => stmt.type === "ForStatement")
-      ) {
-        flagged.push(node.id.name);
-      }
-    });
+    // ast.body.forEach((node: any) => { // This block was commented out
+    //   if (
+    //     node.type === "FunctionDeclaration" &&
+    //     node.body.body.some((stmt: any) => stmt.type === "ForStatement")
+    //   ) {
+    //     flagged.push(node.id.name);
+    //   }
+    // });
     return flagged;
   }
 

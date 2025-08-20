@@ -51,16 +51,27 @@ export class KeyRotationService {
 
       // Load existing keys or create new ones
       if (fs.existsSync(this.keysFile)) {
-        this.keys = JSON.parse(fs.readFileSync(this.keysFile, "utf8"));
+        const keysData = JSON.parse(fs.readFileSync(this.keysFile, "utf8"));
+        // Ensure dates are properly parsed
+        this.keys = keysData.map((key: any) => ({
+          ...key,
+          createdAt: new Date(key.createdAt),
+          expiresAt: new Date(key.expiresAt)
+        }));
       } else {
         await this.generateNewKeyPair();
       }
 
       // Load rotation log
       if (fs.existsSync(this.rotationLogFile)) {
-        this.rotationLog = JSON.parse(
+        const logData = JSON.parse(
           fs.readFileSync(this.rotationLogFile, "utf8"),
         );
+        // Ensure dates are properly parsed
+        this.rotationLog = logData.map((log: any) => ({
+          ...log,
+          timestamp: new Date(log.timestamp)
+        }));
       }
 
       // Check if key rotation is needed

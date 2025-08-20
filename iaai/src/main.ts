@@ -13,6 +13,7 @@ import { LoggingInterceptor } from "./interceptors/logging.interceptor.js";
 import { winstonConfig } from "./config/winston.config.js";
 import helmet from "helmet";
 import cors from "cors";
+import { v4 as uuidv4 } from "uuid";
 
 async function runAgentLifecycle(agentIds: string[]) {
   const introspect = new IntrospectCore();
@@ -82,6 +83,30 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: winstonConfig,
   });
+
+  // Structured logging with request_id
+  app.use((req, res, next) => {
+    req.request_id = uuidv4();
+    console.log(`[${req.request_id}] ${req.method} ${req.url} - Request started`);
+    next();
+  });
+
+  // Sentry integration with DSN fallback
+  if (process.env.SENTRY_DSN) {
+    try {
+      const Sentry = require('@sentry/node');
+      Sentry.init({
+        dsn: process.env.SENTRY_DSN,
+        environment: process.env.NODE_ENV || 'development',
+        tracesSampleRate: 1.0,
+      });
+      console.log('✅ Sentry initialized with DSN');
+    } catch (error) {
+      console.log('⚠️ Sentry DSN provided but initialization failed:', error.message);
+    }
+  } else {
+    console.log('ℹ️ No Sentry DSN provided - error capture disabled');
+  }
 
   // Security middleware
   app.use(helmet());

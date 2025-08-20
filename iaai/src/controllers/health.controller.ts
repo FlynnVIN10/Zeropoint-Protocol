@@ -101,6 +101,23 @@ export class HealthController {
     }
   }
 
+  @Get("livez")
+  async livenessCheck(@Res() res: Response) {
+    try {
+      res.status(HttpStatus.OK).json({
+        status: "ok",
+        timestamp: new Date().toISOString(),
+        uptime: Date.now() - this.startTime,
+      });
+    } catch (error) {
+      res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        status: "error",
+        timestamp: new Date().toISOString(),
+        error: error.message,
+      });
+    }
+  }
+
   @Get("status/version.json")
   async versionInfo(@Res() res: Response) {
     try {

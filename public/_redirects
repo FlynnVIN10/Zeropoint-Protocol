@@ -6,5 +6,9 @@
 # Ensure JSON files are served with correct content type
 /api/*.json /api/*.json 200
 
-# Fallback for SPA routing
-/* /index.html 200
+# Handle specific routes that exist
+/consensus/proposals /consensus/proposals/index.html 200
+/status/version.json /status/version.json 200
+
+# Only fallback to index.html for non-existent routes
+/* /index.html 404

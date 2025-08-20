@@ -13,6 +13,10 @@ jobs:
   probes:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Verify production endpoints
         run: |
           set -e
@@ -22,6 +26,23 @@ jobs:
           jq -e 'type=="object"' readyz.json >/dev/null
           curl -sS -D - https://zeropointprotocol.ai/robots.txt | head -n1 | grep -qi '200'
           curl -sS -D - https://zeropointprotocol.ai/sitemap.xml | head -n1 | grep -qi '200'
+
+      - name: Persist commit to /status/version.json
+        run: |
+          echo "## Commit Persistence 📝" >> $GITHUB_STEP_SUMMARY
+          echo "**Current Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          
+          # Update version.json with current commit
+          if [ -f "public/status/version.json" ]; then
+            # Update the commit field
+            jq --arg commit "${{ github.sha }}" '.commit = $commit' public/status/version.json > version_updated.json
+            mv version_updated.json public/status/version.json
+            
+            echo "✅ Updated /status/version.json with commit ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ /status/version.json not found" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
 
       - uses: actions/upload-artifact@v4
         if: always()

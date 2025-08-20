@@ -1,0 +1,9 @@
+{
+  "build": {
+    "command": "echo 'Static site - no build required'",
+    "output_dir": "public"
+  },
+  "deployment": {
+    "environment": "production"
+  }
+}

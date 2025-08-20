@@ -1,7 +1,8 @@
 name = "zeropoint-protocol"
 compatibility_date = "2024-01-01"
 
-# Static site - no build required
+# Cloudflare Pages configuration
+pages_build_output_dir = "public"
 
 [site]
 bucket = "public"

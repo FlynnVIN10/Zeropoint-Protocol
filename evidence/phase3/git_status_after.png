@@ -1,0 +1,25 @@
+On branch feature/phase3-cleanup
+Your branch is up to date with 'origin/feature/phase3-cleanup'.
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+	modified:   PM_STATUS_REPORT.md
+	modified:   evidence/phase3/commit_log.png
+	modified:   evidence/phase3/git_status_before.png
+	modified:   evidence/phase3/lighthouse/lhci-report.html
+	modified:   evidence/phase3/lighthouse/summary.json
+	modified:   evidence/phase3/smoke/build.log
+	modified:   evidence/phase3/smoke/healthz.json
+	modified:   evidence/phase3/smoke/proposals_ui.png
+	modified:   evidence/phase3/smoke/readyz.json
+	modified:   evidence/phase3/smoke/robots_headers.txt
+	modified:   evidence/phase3/smoke/sitemap_headers.txt
+	modified:   evidence/phase3/smoke/start.log
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	server.log
+	simple-server.cjs
+
+no changes added to commit (use "git add" and/or "git commit -a")

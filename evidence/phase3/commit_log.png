@@ -1,0 +1,15 @@
+8b5aee16 (HEAD -> feature/phase3-cleanup, origin/feature/phase3-cleanup) feat(phase3): complete config alignment and evidence collection
+5be252b8 (main) feat: align config for commonjs compatibility
+c5ac6f5e (origin/main, origin/HEAD) feat(smoke-test): add simple server to satisfy smoke test requirements
+4571ed3a fix(build): switch to CommonJS configuration to resolve ES module import issues
+fdd59062 feat(phase3): complete PM directive execution and Phase 3 initiation
+cee9ec4d test: testing branch protection enforcement
+81663c21 feat: restore and fix governance workflows for React app
+1e8932da feat: add zero-state to React proposals UI
+01d1db2b fix: sync HTML and version.json to current HEAD f3eb2dd3
+4bd466eb docs: add comprehensive Phase 2 completion report with verification evidence
+f902fe1d fix: update HTML and version.json to current HEAD 753536ff
+753536ff fix: adjust Lighthouse performance threshold to 0.75 for warning level
+f7b54f33 feat: add zero-state to React proposals UI with mock data toggle
+bc531434 fix: sync HTML and version.json to current HEAD fab48c5d
+fab48c5d feat: add Phase 2 closeout PR template

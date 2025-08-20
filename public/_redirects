@@ -1,0 +1,10 @@
+# Cloudflare Pages redirects for API endpoints
+/api/healthz /api/healthz.json 200
+/api/readyz /api/readyz.json 200
+/api/proposals /api/proposals/index.html 200
+
+# Ensure JSON files are served with correct content type
+/api/*.json /api/*.json 200
+
+# Fallback for SPA routing
+/* /index.html 200

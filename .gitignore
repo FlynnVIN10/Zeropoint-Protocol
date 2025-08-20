@@ -34,6 +34,8 @@ dist/
 .coverage
 htmlcov/
 .pytest_cache/
+*.tsbuildinfo
+tsconfig.build.tsbuildinfo
 
 # IDE files
 .vscode/

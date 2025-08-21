@@ -18,5 +18,11 @@
 /status/health /status/health.html 200
 /status/ready /status/ready.html 200
 
+# Force HTML content type for status pages
+/status/health /status/health.html 200
+Content-Type: text/html
+/status/ready /status/ready.html 200
+Content-Type: text/html
+
 # Only fallback to index.html for non-existent routes
 /* /index.html 404

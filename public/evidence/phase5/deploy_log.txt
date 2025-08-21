@@ -197,3 +197,39 @@ alt-svc: h3=":443"; ma=86400
 
 {"commit":"6185c88b","buildTime":"2025-08-21T18:13:54.061Z","env":"prod"}2025-08-21T19:48:03.3NZ - Daily analyst probe: 200 healthz, 200 version
 2025-08-21T20:04:45.3NZ - P2 Issue Resolution: /status/version.json now shows current HEAD SHA 38925d68, build time updated
+
+=== VERIFICATION CURL BLOCKS ===
+
+curl -i https://zeropointprotocol.ai/api/healthz
+HTTP/2 200 
+date: Thu, 21 Aug 2025 20:13:10 GMT
+content-type: application/json; charset=utf-8
+content-length: 55
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=iZ6sTAiIt67tvfiiiq%2B0DLdEkxISJdtD%2FbAKCD0zS3GRU6O1AIlWXYtOffZMTAEETEcoh1ThEWmCFWyMZlULPdrTqDKGb7E4NTUKb8BIAz6ro5xbAgy1XXoNx3gMlHR%2B"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972cca1dfb3753ad-CDG
+alt-svc: h3=":443"; ma=86400
+
+curl -i https://zeropointprotocol.ai/status/version.json
+HTTP/2 200 
+date: Thu, 21 Aug 2025 20:13:12 GMT
+content-type: application/json; charset=utf-8
+content-length: 73
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=SgPPkk%2FjNL%2Fdz0mc5mVmSKncxPV3lvZlISC%2BIATjY6X%2BeexiIj6GpWdI4ENakqJIyLAWwXU%2BTt18JFbmEau0awvjPya5RFpkOIZD2OMcREoFRYpTsv0%2B0Pbr%2B%2FwwOQx9"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972cca28d9f70341-MAD
+alt-svc: h3=":443"; ma=86400

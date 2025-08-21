@@ -1,8 +1,9 @@
-export async function onRequest() {
+export async function onRequest(context) {
+  const { env } = context;
   return new Response(JSON.stringify({
     status: "ok",
-    uptime: Math.floor(process.uptime()),
-    commit: process.env.__BUILD_SHA__ || "unknown"
+    uptime: Math.floor(performance.now() / 1000),
+    commit: env.__BUILD_SHA__ || "unknown"
   }), {
     headers: {
       "content-type": "application/json; charset=utf-8",

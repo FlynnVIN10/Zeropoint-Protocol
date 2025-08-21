@@ -1,4 +1,4 @@
-export async function onRequest() {
+export async function onRequest(context) {
   return new Response(JSON.stringify({
     training: true,
     epoch: 1,

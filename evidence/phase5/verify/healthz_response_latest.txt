@@ -1,0 +1,12 @@
+HTTP/2 500 
+date: Thu, 21 Aug 2025 16:46:55 GMT
+content-type: text/plain; charset=UTF-8
+content-length: 16
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+expires: Thu, 01 Jan 1970 00:00:01 GMT
+referrer-policy: same-origin
+x-frame-options: SAMEORIGIN
+server: cloudflare
+cf-ray: 972b9bfb6810504f-DFW
+
+error code: 1101

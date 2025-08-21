@@ -1,0 +1,42 @@
+name: Workflow Failure Alerts
+
+on:
+  workflow_run:
+    workflows: ["Phase 5 Verification", "daily-probe", "CI", "Build", "Test"]
+    types: [completed]
+
+jobs:
+  alert-on-failure:
+    if: ${{ github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'timed_out' || github.event.workflow_run.conclusion == 'cancelled' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create issue for failed run
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REPO="${{ github.repository }}"
+          TITLE="[ALERT] Workflow failed: ${{ github.event.workflow_run.name }} (#${{ github.event.workflow_run.id }})"
+          BODY=$(cat <<'EOF'
+          A workflow run failed.
+
+          - Name: ${{ github.event.workflow_run.name }}
+          - Status: ${{ github.event.workflow_run.status }}
+          - Conclusion: ${{ github.event.workflow_run.conclusion }}
+          - Event: ${{ github.event.workflow_run.event }}
+          - Run URL: ${{ github.event.workflow_run.html_url }}
+          - Head SHA: ${{ github.event.workflow_run.head_sha }}
+          - Branch: ${{ github.event.workflow_run.head_branch }}
+
+          Please investigate within SLA.
+          EOF
+          )
+          gh issue create --repo "$REPO" --title "$TITLE" --body "$BODY" --label "analyst-finding,P1"
+
+      - name: Notify Slack (optional)
+        if: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          payload=$(jq -n --arg text "Workflow failed: ${{ github.event.workflow_run.name }}. See ${{ github.event.workflow_run.html_url }}" '{text: $text}')
+          curl -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
+

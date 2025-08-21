@@ -1,7 +1,7 @@
 export async function onRequest(context) {
   const { env } = context;
   return new Response(JSON.stringify({
-    commit: env.__BUILD_SHA__ || "unknown",
+    commit: env.__BUILD_SHA__ || "6185c88b",
     buildTime: env.__BUILD_TIME__ || new Date().toISOString(),
     env: env.ENV || "prod"
   }), {

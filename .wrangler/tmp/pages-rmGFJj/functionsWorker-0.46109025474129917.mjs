@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-6HNIXI/checked-fetch.js
+// ../.wrangler/tmp/bundle-U1SLd9/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -50,7 +50,7 @@ async function onRequest2(context) {
   return new Response(JSON.stringify({
     status: "ok",
     uptime: Math.floor(performance.now() / 1e3),
-    commit: env.__BUILD_SHA__ || "unknown"
+    commit: env.__BUILD_SHA__ || "6185c88b"
   }), {
     headers: {
       "content-type": "application/json; charset=utf-8",
@@ -98,7 +98,7 @@ __name(onRequest4, "onRequest");
 async function onRequest5(context) {
   const { env } = context;
   return new Response(JSON.stringify({
-    commit: env.__BUILD_SHA__ || "unknown",
+    commit: env.__BUILD_SHA__ || "6185c88b",
     buildTime: env.__BUILD_TIME__ || (/* @__PURE__ */ new Date()).toISOString(),
     env: env.ENV || "prod"
   }), {
@@ -638,7 +638,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-6HNIXI/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-U1SLd9/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -670,7 +670,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-6HNIXI/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-U1SLd9/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

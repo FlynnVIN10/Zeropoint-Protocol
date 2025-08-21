@@ -163,4 +163,36 @@ server: cloudflare
 cf-ray: 972b9f42af33710b-DFW
 alt-svc: h3=":443"; ma=86400
 
-{"commit":"unknown","buildTime":"2025-08-21T16:49:09.572Z","env":"prod"}
+{"commit":"unknown","buildTime":"2025-08-21T16:49:09.572Z","env":"prod"}HTTP/2 200 
+date: Thu, 21 Aug 2025 18:50:30 GMT
+content-type: application/json; charset=utf-8
+content-length: 55
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=NZhxJOc03qc7Q2UY8z8dz3h232IouJrYcwUA7aa4EJPJ1pjIL0QGToid0yBMDi%2BRcH16tepfRveNDRaGBGkJY8dQOSdPU76FNjtmYhvYdjVWgZS8%2Fxs0fHmPQDlQ3HyJ"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972c5106fd37c8bb-FRA
+alt-svc: h3=":443"; ma=86400
+
+{"status":"ok","uptime":1755802230,"commit":"6185c88b"}HTTP/2 200 
+date: Thu, 21 Aug 2025 18:50:31 GMT
+content-type: application/json; charset=utf-8
+content-length: 73
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=vaGe%2BngkpLKd4UvjPCo3W5kXEcm3LJdNQcKhWebtlmNM4UfqANYm7e0pZbiNia0wB5jBu%2Fb24u5SomeWzJXLGa%2BhK2QDQWIHhd93ooQF%2BeKMlXAldWE01ViERWhmKe9F"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972c510ab9aaafea-FRA
+alt-svc: h3=":443"; ma=86400
+
+{"commit":"6185c88b","buildTime":"2025-08-21T18:13:54.061Z","env":"prod"}

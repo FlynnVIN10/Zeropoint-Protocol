@@ -16,7 +16,7 @@
   - [Evidence Index](https://zeropointprotocol.ai/public/evidence/phase5/)
   - [Deploy Log](https://zeropointprotocol.ai/public/evidence/phase5/deploy_log.txt)
   - [Verification Reports](https://zeropointprotocol.ai/public/evidence/phase5/verify/)
-- **Open Analyst Findings**: 0 P0, 0 P1, 1 P2 (stale commit SHA)
+- **Open Analyst Findings**: 0 P0, 0 P1, 0 P2 (stale commit resolved)
 
 ---
 

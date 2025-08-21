@@ -196,3 +196,4 @@ cf-ray: 972c510ab9aaafea-FRA
 alt-svc: h3=":443"; ma=86400
 
 {"commit":"6185c88b","buildTime":"2025-08-21T18:13:54.061Z","env":"prod"}2025-08-21T19:48:03.3NZ - Daily analyst probe: 200 healthz, 200 version
+2025-08-21T20:04:45.3NZ - P2 Issue Resolution: /status/version.json now shows current HEAD SHA 38925d68, build time updated

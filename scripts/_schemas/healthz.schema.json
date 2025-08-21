@@ -3,7 +3,7 @@
   "title": "Health Check Schema",
   "description": "Schema for /api/healthz endpoint",
   "type": "object",
-  "required": ["status", "uptime", "commit"],
+  "required": ["status", "commit"],
   "properties": {
     "status": {
       "type": "string",

@@ -3,7 +3,7 @@
   "title": "Status Version Schema",
   "description": "Schema for /status/version.json endpoint",
   "type": "object",
-  "required": ["commit", "buildTime", "env"],
+  "required": ["commit", "buildTime"],
   "properties": {
     "commit": {
       "type": "string",
@@ -37,5 +37,5 @@
       "description": "Version string (optional)"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": true
 }

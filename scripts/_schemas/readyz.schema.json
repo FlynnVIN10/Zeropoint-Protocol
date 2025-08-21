@@ -3,7 +3,7 @@
   "title": "Readiness Check Schema",
   "description": "Schema for /api/readyz endpoint",
   "type": "object",
-  "required": ["ready", "db", "cache"],
+  "required": ["ready"],
   "properties": {
     "ready": {
       "type": "boolean",

@@ -1,36 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Consensus Proposals - Zeropoint Protocol</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { border-collapse: collapse; width: 100%; max-width: 800px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consensus Proposals - Zeropoint Protocol</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        
+        th, td {
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px;
+            text-align: left;
+            color: white;
+        }
+        
+        th {
+            background-color: rgba(255,255,255,0.1);
+        }
+    </style>
 </head>
 <body>
-  <h1>Consensus Proposals</h1>
-  <table>
-    <thead>
-      <tr><th>ID</th><th>Title</th><th>State</th></tr>
-    </thead>
-    <tbody id="proposals"></tbody>
-  </table>
-  <script>
-    fetch('/consensus/proposals')
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.getElementById('proposals');
-        tbody.innerHTML = '';
-        data.forEach(p => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td>${p.id}</td><td>${p.title}</td><td>${p.state}</td>`;
-          tbody.appendChild(tr);
-        })
-      }).catch(err => console.error(err));
-  </script>
+    <div class="container">
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/status/health/" class="nav-link">Health Check</a>
+            <a href="/status/ready/" class="nav-link">Ready Check</a>
+            <a href="/status/version/" class="nav-link">Version Check</a>
+            <a href="/consensus/proposals/" class="nav-link">Consensus Proposals</a>
+        </div>
+        
+        <h1>Consensus Proposals</h1>
+        
+        <table>
+            <thead>
+                <tr><th>ID</th><th>Title</th><th>State</th></tr>
+            </thead>
+            <tbody id="proposals"></tbody>
+        </table>
+        
+        <script>
+            const tbody = document.getElementById('proposals');
+            fetch('/consensus/proposals')
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    data.forEach(proposal => {
+                        const row = document.createElement('tr');
+                        const idTd = document.createElement('td');
+                        idTd.textContent = proposal.id ?? 'n/a';
+                        row.appendChild(idTd);
+                        const titleTd = document.createElement('td');
+                        titleTd.textContent = proposal.title ?? 'n/a';
+                        row.appendChild(titleTd);
+                        const stateTd = document.createElement('td');
+                        stateTd.textContent = proposal.state ?? 'n/a';
+                        row.appendChild(stateTd);
+                        tbody.appendChild(row);
+                    });
+                })
+                .catch(err => {
+                    console.error('Fetch error:', err);
+                    const row = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = 3;
+                    td.textContent = 'Error loading proposals';
+                    row.appendChild(td);
+                    tbody.appendChild(row);
+                });
+        </script>
+    </div>
 </body>
 </html>

@@ -1,31 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Status - Zeropoint Protocol</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    table { border-collapse: collapse; width: 100%; max-width: 600px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-    th { background-color: #f2f2f2; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Status - Zeropoint Protocol</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        
+        th, td {
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 8px;
+            text-align: left;
+            color: white;
+        }
+        
+        th {
+            background-color: rgba(255,255,255,0.1);
+        }
+    </style>
 </head>
 <body>
-  <h1>Health Status</h1>
-  <table>
-    <tr><th>Status</th><td id="status"></td></tr>
-    <tr><th>Uptime</th><td id="uptime"></td></tr>
-    <tr><th>Commit</th><td id="commit"></td></tr>
-  </table>
-  <script>
-    fetch('/api/healthz')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('status').textContent = data.status;
-        document.getElementById('uptime').textContent = data.uptime ?? 'n/a';
-        document.getElementById('commit').textContent = data.commit ?? 'n/a';
-      }).catch(err => console.error(err));
-  </script>
+    <div class="container">
+        <div class="nav-links">
+            <a href="/" class="nav-link">Home</a>
+            <a href="/status/health/" class="nav-link">Health Check</a>
+            <a href="/status/ready/" class="nav-link">Ready Check</a>
+            <a href="/status/version/" class="nav-link">Version Check</a>
+            <a href="/consensus/proposals/" class="nav-link">Consensus Proposals</a>
+        </div>
+        
+        <h1>Health Status</h1>
+        
+        <table>
+            <tr><th>Status</th><td id="status">Loading...</td></tr>
+            <tr><th>Uptime</th><td id="uptime">Loading...</td></tr>
+            <tr><th>Commit</th><td id="commit">Loading...</td></tr>
+        </table>
+        
+        <script>
+            fetch('/api/healthz')
+                .then(res => {
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById('status').textContent = data.status ?? 'n/a';
+                    document.getElementById('uptime').textContent = data.uptime ?? 'n/a';
+                    document.getElementById('commit').textContent = data.commit ?? 'n/a';
+                })
+                .catch(err => {
+                    console.error('Fetch error:', err);
+                    document.getElementById('status').textContent = 'Error';
+                    document.getElementById('uptime').textContent = 'Error';
+                    document.getElementById('commit').textContent = 'Error';
+                });
+        </script>
+    </div>
 </body>
 </html>

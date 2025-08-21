@@ -1,8 +1,8 @@
 export async function onRequest() {
   return new Response(JSON.stringify({
-    commit: (globalThis as any).__BUILD_SHA__ || "unknown",
-    buildTime: new Date().toISOString(),
-    env: "prod"
+    commit: process.env.__BUILD_SHA__ || "unknown",
+    buildTime: process.env.__BUILD_TIME__ || new Date().toISOString(),
+    env: process.env.ENV || "prod"
   }), {
     headers: {
       "content-type": "application/json; charset=utf-8",

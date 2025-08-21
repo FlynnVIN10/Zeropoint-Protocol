@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Health Status - Zeropoint Protocol</title>
+  <title>Version Status - Zeropoint Protocol</title>
   <style>
     body { font-family: Arial, sans-serif; margin: 20px; }
     table { border-collapse: collapse; width: 100%; max-width: 600px; }
@@ -12,19 +12,19 @@
   </style>
 </head>
 <body>
-  <h1>Health Status</h1>
+  <h1>Version Status</h1>
   <table>
-    <tr><th>Status</th><td id="status"></td></tr>
-    <tr><th>Uptime</th><td id="uptime"></td></tr>
     <tr><th>Commit</th><td id="commit"></td></tr>
+    <tr><th>Build Time</th><td id="buildTime"></td></tr>
+    <tr><th>Environment</th><td id="env"></td></tr>
   </table>
   <script>
-    fetch('/api/healthz')
+    fetch('/status/version.json')
       .then(res => res.json())
       .then(data => {
-        document.getElementById('status').textContent = data.status;
-        document.getElementById('uptime').textContent = data.uptime ?? 'n/a';
-        document.getElementById('commit').textContent = data.commit ?? 'n/a';
+        document.getElementById('commit').textContent = data.commit;
+        document.getElementById('buildTime').textContent = data.buildTime;
+        document.getElementById('env').textContent = data.env ?? 'prod';
       }).catch(err => console.error(err));
   </script>
 </body>

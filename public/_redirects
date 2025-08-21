@@ -1,19 +1,6 @@
-# Cloudflare Pages redirects for API endpoints
-/api/healthz /api/healthz.json 200
-/api/readyz /api/readyz.json 200
-/api/training/status /api/training/status.json 200
-/api/proposals /api/proposals/index.html 200
-
-# Ensure JSON files are served with correct content type
-/api/*.json /api/*.json 200
-
-# Handle specific routes that exist - JSON endpoints take precedence
-# /consensus/proposals/ will automatically serve index.html from the directory
-/status/version.json /status/version.json 200
-
-
-
-
-
-# Only fallback to index.html for non-existent routes
-/* /index.html 404
+/status                 /status/                    308!
+/status/health          /status/health/             308!
+/status/ready           /status/ready/              308!
+/status/version         /status/version/            308!
+/consensus              /consensus/                 308!
+/consensus/proposals    /consensus/proposals/       308!

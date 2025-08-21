@@ -5,12 +5,12 @@
   <h1>Readiness Check</h1>
   <p><a href="/api/readyz">View JSON</a></p>
   <noscript>
-    <table>
-      <tr><th>Ready</th><td>true</td></tr>
-      <tr><th>DB</th><td>true</td></tr>
-      <tr><th>Cache</th><td>true</td></tr>
-    </table>
-  </noscript>
+<table>
+  <tr><th>Ready</th><td>true</td></tr>
+  <tr><th>DB</th><td>true</td></tr>
+  <tr><th>Cache</th><td>true</td></tr>
+</table>
+</noscript>
   <pre id="out">loading…</pre>
 </main>
 <script>fetch("/api/readyz").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>

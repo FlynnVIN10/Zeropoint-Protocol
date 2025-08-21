@@ -1,3 +1,57 @@
 === PLACEHOLDER ===
 This log will be appended by PR #2 with curl -i blocks and verification artifacts for v19.
 
+
+=== 2025-08-21T23:38:57Z ===
+/api/healthz
+HTTP/2 200 
+date: Thu, 21 Aug 2025 23:38:58 GMT
+content-type: application/json; charset=utf-8
+content-length: 46
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=W1kiyC4Vs2oG%2BUe8nAutTcXqM4nshY9x3sx4qAhXIA2PfUlxHNclQ87DNC8YTXRGds4PIG68HOQMRTDQflsU5iuSFh3s0uRWn82yfjlmVR%2F15Y5MnsspVlp9fp%2FB1w%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972df7961b54cff4-MAD
+alt-svc: h3=":443"; ma=86400
+
+/api/readyz
+HTTP/2 200 
+date: Thu, 21 Aug 2025 23:38:59 GMT
+content-type: application/json; charset=utf-8
+content-length: 37
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=c88LCbROzhG57KbV0qfEKggpu8%2BnLHV%2BgSXDRRsC%2F5rJ%2BltV6Jew5DoKJPOhyCMfr%2BncE6wCukZIuXE1YQv9cU%2BiD2a35%2Fd%2BMDjW79NrPS8zpbMYHxPngb541AU0iw%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972df79ae9930383-MAD
+alt-svc: h3=":443"; ma=86400
+
+/status/version.json
+HTTP/2 200 
+date: Thu, 21 Aug 2025 23:39:00 GMT
+content-type: application/json; charset=utf-8
+content-length: 69
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=sVjZcRk96yorj4eL3IM7BNiBfR7wnwomOfBQ66rblID3TKPzzMD1czFcuL4WUd1UNXz04pKeDrfUDHHindLB%2FJ2DfbZ2C%2FBtIDkoBM4Pm10RLLIwFDJnUGadEX3CvFn4"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972df79ecc9f6695-MAD
+alt-svc: h3=":443"; ma=86400
+
+Lighthouse: see lighthouse_report.html (summary appended separately)

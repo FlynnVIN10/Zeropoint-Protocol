@@ -32,7 +32,7 @@ const ENDPOINTS = [
   { path: '/api/readyz', name: 'Readiness Check', schema: 'readyz' },
   { path: '/status/version.json', name: 'Version Status', schema: 'status-version' },
   { path: '/api/training/status', name: 'Training Status', schema: 'training-status' },
-  { path: '/consensus/proposals', name: 'Consensus Proposals', schema: 'consensus-proposals' }
+  { path: '/consensus/proposals.json', name: 'Consensus Proposals', schema: 'consensus-proposals' }
 ];
 
 async function runVerificationGate() {

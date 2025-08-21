@@ -17,8 +17,11 @@
     },
     "commit": {
       "type": "string",
-      "pattern": "^[a-f0-9]{7,40}$",
-      "description": "Git commit SHA"
+      "oneOf": [
+        {"pattern": "^[a-f0-9]{7,40}$"},
+        {"const": "unknown"}
+      ],
+      "description": "Git commit SHA or unknown"
     },
     "buildTime": {
       "type": "string",

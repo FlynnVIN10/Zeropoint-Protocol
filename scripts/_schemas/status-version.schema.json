@@ -7,8 +7,11 @@
   "properties": {
     "commit": {
       "type": "string",
-      "description": "Git commit SHA",
-      "pattern": "^[a-f0-9]{7,40}$"
+      "oneOf": [
+        {"pattern": "^[a-f0-9]{7,40}$"},
+        {"const": "unknown"}
+      ],
+      "description": "Git commit SHA or unknown"
     },
     "buildTime": {
       "type": "string",

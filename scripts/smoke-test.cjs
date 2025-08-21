@@ -17,7 +17,7 @@ const ENDPOINTS = [
   { path: '/api/readyz', name: 'Readiness Check' },
   { path: '/status/version.json', name: 'Version Status' },
   { path: '/api/training/status', name: 'Training Status' },
-  { path: '/consensus/proposals', name: 'Consensus Proposals' }
+  { path: '/consensus/proposals.json', name: 'Consensus Proposals' }
 ];
 
 async function runSmokeTest() {

@@ -91,7 +91,7 @@
         
         <script>
             const tbody = document.getElementById('proposals');
-            fetch('/consensus/proposals')
+            fetch('/consensus/proposals.json')
                 .then(res => {
                     if (!res.ok) throw new Error('Network response was not ok');
                     return res.json();

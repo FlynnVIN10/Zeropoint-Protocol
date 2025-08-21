@@ -7,8 +7,9 @@
 # Ensure JSON files are served with correct content type
 /api/*.json /api/*.json 200
 
-# Handle specific routes that exist
+# Handle specific routes that exist - JSON endpoints take precedence
 /consensus/proposals /consensus/proposals.json 200
+/consensus/proposals/ /consensus/proposals.json 200
 /status/version.json /status/version.json 200
 
 # Only fallback to index.html for non-existent routes

@@ -1,35 +1,32 @@
-## Phase 2 — Petals/TinyGrad Integration (Closeout)
+## Description
+Brief description of changes made.
 
-**Zeroth Principle:** Good intent and good heart, or the system does not function. (Built-in firewall enforced)
+## Type of Change
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation update
 
-### Changes
-- Petals client/training (`/iaai/petals/*`)
-- Proposal pipeline (`/iaai/petals/proposals/*`)
-- API endpoints (`/api/proposals`, `/api/proposals/{id}/consensus`, `/stats`, `/health`)
-- SvelteKit UI (`/consensus/proposals/+page.svelte`, `ConsensusReview.svelte`)
-- TinyGrad scaffolding (`/iaai/tinygrad/*`)
-- Tests: 11/11 passing (Jest/Pytest, ≥80% coverage)
-- Docs: `/docs/phase2/tinygrad-overview.md`
+## Testing
+- [ ] Tests pass locally
+- [ ] Added tests for new functionality
+- [ ] Manual testing completed
 
-### Verification (Pre-Merge)
-- Build/test: ✅
-- Smoke (preview): `/consensus/proposals`, `/robots.txt`, `/sitemap.xml`, `/api/healthz`, `/api/readyz` → 200 ✅
-- Consensus flow (mock scenarios): ✅ logs in `/evidence/proposals/`
+## Evidence
+- [ ] Link to verification artifacts (verify/smoke/deploy_log): 
+- [ ] Analyst review: [ ] Approved  (paste link to analyst comment)
 
-### Governance — Blocking Gates
-- [ ] **Dual Consensus** (required to merge)
-  - Agentic Synthiant: **pass**
-  - CEO Human (via site UI): **pass**
-- [ ] **Lighthouse ≥80** (Perf, A11y, BP, SEO) — CI enforced
-- [ ] **Rollback Validation** — CI enforced
+## Security & Ethics
+- [ ] Security impact assessed
+- [ ] No dark patterns introduced
+- [ ] Privacy implications reviewed
 
-### Evidence Pack
-- Commit: `3cf34e67`
-- CI run URLs: (to be populated by GitHub Actions)
-- Lighthouse artifacts: `/evidence/lighthouse/`
-- Rollback artifacts: `/evidence/rollback/`
-- Consensus logs: `/evidence/proposals/`
-- Rollback plan: `git reset --hard 317a220a`
-- Screenshots: `/evidence/screenshots/`
+## Checklist
+- [ ] Code follows project style guidelines
+- [ ] Self-review completed
+- [ ] Documentation updated if needed
+- [ ] No console.log or debug code left in production
+- [ ] Commits are tagged appropriately (e.g., [PHASE5])
 
-**Status:** Pending Dual Consensus and CI hard gates.
+## Zeroth Principle
+- [ ] Changes align with good intent and good heart principles

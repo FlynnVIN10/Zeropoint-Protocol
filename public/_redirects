@@ -8,21 +8,12 @@
 /api/*.json /api/*.json 200
 
 # Handle specific routes that exist - JSON endpoints take precedence
-/consensus/proposals /consensus/proposals.json 200
-/consensus/proposals/ /consensus/proposals.json 200
+# /consensus/proposals/ will automatically serve index.html from the directory
 /status/version.json /status/version.json 200
 
 
 
-# Handle status pages with proper content type
-/status/health /status/health.html 200
-/status/ready /status/ready.html 200
 
-# Force HTML content type for status pages
-/status/health /status/health.html 200
-Content-Type: text/html
-/status/ready /status/ready.html 200
-Content-Type: text/html
 
 # Only fallback to index.html for non-existent routes
 /* /index.html 404

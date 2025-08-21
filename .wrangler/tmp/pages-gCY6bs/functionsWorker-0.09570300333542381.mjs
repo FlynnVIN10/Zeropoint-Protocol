@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-0SdJYC/checked-fetch.js
+// ../.wrangler/tmp/bundle-1k1Rid/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -46,13 +46,13 @@ async function onRequest(context) {
 __name(onRequest, "onRequest");
 
 // api/healthz.ts
-async function onRequest2(context) {
-  const { env } = context;
-  return new Response(JSON.stringify({
+var onRequest2 = /* @__PURE__ */ __name(async (ctx) => {
+  const body = JSON.stringify({
     status: "ok",
-    uptime: Math.floor(performance.now() / 1e3),
-    commit: env.__BUILD_SHA__ || "unknown"
-  }), {
+    uptime: Math.floor((Date.now() - globalThis.__start || 0) / 1e3),
+    commit: ctx.env.__BUILD_SHA__ || "unknown"
+  });
+  return new Response(body, {
     headers: {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store",
@@ -61,26 +61,18 @@ async function onRequest2(context) {
       "access-control-allow-origin": "*"
     }
   });
-}
-__name(onRequest2, "onRequest");
+}, "onRequest");
 
 // api/readyz.ts
-async function onRequest3(context) {
-  return new Response(JSON.stringify({
-    ready: true,
-    db: true,
-    cache: true
-  }), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff",
-      "content-disposition": "inline",
-      "access-control-allow-origin": "*"
-    }
-  });
-}
-__name(onRequest3, "onRequest");
+var onRequest3 = /* @__PURE__ */ __name(async () => new Response(JSON.stringify({ ready: true, db: true, cache: true }), {
+  headers: {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "x-content-type-options": "nosniff",
+    "content-disposition": "inline",
+    "access-control-allow-origin": "*"
+  }
+}), "onRequest");
 
 // consensus/proposals.json.ts
 async function onRequest4(context) {
@@ -99,23 +91,19 @@ async function onRequest4(context) {
 __name(onRequest4, "onRequest");
 
 // status/version.json.ts
-async function onRequest5(context) {
-  const { env } = context;
-  return new Response(JSON.stringify({
-    commit: env.__BUILD_SHA__ || "unknown",
-    buildTime: env.__BUILD_TIME__ || (/* @__PURE__ */ new Date()).toISOString(),
-    env: env.ENV || "prod"
-  }), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff",
-      "content-disposition": "inline",
-      "access-control-allow-origin": "*"
-    }
-  });
-}
-__name(onRequest5, "onRequest");
+var onRequest5 = /* @__PURE__ */ __name(async (ctx) => new Response(JSON.stringify({
+  commit: ctx.env.__BUILD_SHA__ || "unknown",
+  buildTime: ctx.env.BUILD_TIME || (/* @__PURE__ */ new Date()).toISOString(),
+  env: "prod"
+}), {
+  headers: {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "x-content-type-options": "nosniff",
+    "content-disposition": "inline",
+    "access-control-allow-origin": "*"
+  }
+}), "onRequest");
 
 // ../.wrangler/tmp/pages-gCY6bs/functionsRoutes-0.1565593244712039.mjs
 var routes = [
@@ -643,7 +631,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-0SdJYC/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-1k1Rid/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -675,7 +663,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-0SdJYC/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-1k1Rid/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

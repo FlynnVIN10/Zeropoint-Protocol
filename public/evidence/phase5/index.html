@@ -1,70 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phase 5 Evidence Index - Zeropoint Protocol</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: white; }
-    .container { max-width: 800px; margin: 0 auto; background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(10px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
-    h1 { color: #fff; text-align: center; margin-bottom: 30px; font-size: 2.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-    h2 { color: #fff; border-bottom: 2px solid rgba(255,255,255,0.3); padding-bottom: 10px; margin-top: 30px; }
-    .metadata { background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; margin-bottom: 30px; }
-    .metadata p { margin: 10px 0; font-family: 'Courier New', monospace; font-size: 1.1em; }
-    ul { list-style-type: none; padding: 0; }
-    li { margin: 15px 0; }
-    a { color: #90cdf4; text-decoration: none; font-weight: 500; padding: 8px 12px; border-radius: 6px; transition: all 0.3s ease; display: inline-block; background: rgba(255,255,255,0.1); }
-    a:hover { text-decoration: none; background: rgba(255,255,255,0.2); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-    .status { text-align: center; margin-top: 30px; padding: 20px; background: rgba(34, 197, 94, 0.2); border-radius: 10px; border: 1px solid rgba(34, 197, 94, 0.3); }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>Phase 5 Evidence Index</h1>
-    
-    <div class="metadata">
-      <p><strong>Commit:</strong> 25622eb9</p>
-      <p><strong>Build Time:</strong> 2025-08-21T20:05:00Z</p>
-      <p><strong>Phase Status:</strong> VERIFICATION COMPLETE</p>
-      <p><strong>Analyst Integration:</strong> OPERATIONAL</p>
-    </div>
-
-    <h2>Verification Artifacts</h2>
-    <ul>
-      <li><a href="/evidence/phase5/verify/pm_actions.json">PM Actions Report</a></li>
-      <li><a href="/evidence/phase5/verify/analyst_actions.json">Analyst Actions Report</a></li>
-      <li><a href="/evidence/phase5/verify/dev_actions.json">Dev Actions Report</a></li>
-    </ul>
-
-    <h2>Smoke Test Reports</h2>
-    <ul>
-      <li><a href="/evidence/phase5/smoke/smoke-2025-08-21T14-41-46-006Z.json">Latest Smoke Test</a></li>
-      <li><a href="/evidence/phase5/smoke/smoke-2025-08-21T14-38-06-986Z.json">Previous Smoke Test</a></li>
-    </ul>
-
-    <h2>Deployment Evidence</h2>
-    <ul>
-      <li><a href="/evidence/phase5/deploy_log.txt">Deployment Log</a></li>
-      <li><a href="/evidence/phase5/lighthouse_report.html">Lighthouse Report</a></li>
-    </ul>
-
-    <h2>CI/CD Evidence</h2>
-    <ul>
-      <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol/actions">GitHub Actions</a></li>
-      <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol/commits/main">Commit History</a></li>
-    </ul>
-
-    <h2>Compliance Documentation</h2>
-    <ul>
-      <li><a href="/evidence/compliance/2025-08-21/report.md">Baseline Compliance Report</a></li>
-      <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol/blob/main/docs/weekly-audit-schedule.md">Weekly Audit Schedule</a></li>
-      <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol/blob/main/.github/workflows/daily-probe.yml">Daily Probe Workflow</a></li>
-    </ul>
-
-    <div class="status">
-      <p><strong>✅ Phase 5 Complete</strong></p>
-      <p>All verification gates passed • Analyst interface operational • Evidence trail complete</p>
-    </div>
-  </div>
-</body>
-</html>
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phase 5 Evidence Index · Zeropoint Protocol</title>
+<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:920px;margin:40px auto;padding:24px}</style>
+<main>
+  <h1>Phase 5 Evidence</h1>
+  <p>Commit: <code id="sha">__BUILD_SHA__</code> · Build: <time id="bt">__BUILD_TIME__</time></p>
+  <ul>
+    <li><a href="/public/evidence/phase5/verify/">verify/</a></li>
+    <li><a href="/public/evidence/phase5/smoke/">smoke/</a></li>
+    <li><a href="/public/evidence/phase5/deploy_log.txt">deploy_log.txt</a></li>
+    <li><a href="/public/evidence/phase5/lighthouse_report.html">lighthouse_report.html</a></li>
+    <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol/actions">CI runs</a></li>
+  </ul>
+</main>

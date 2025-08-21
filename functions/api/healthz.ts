@@ -1,10 +1,10 @@
-export async function onRequest(context) {
-  const { env } = context;
-  return new Response(JSON.stringify({
+export const onRequest = async (ctx: any) => {
+  const body = JSON.stringify({
     status: "ok",
-    uptime: Math.floor(performance.now() / 1000),
-    commit: env.__BUILD_SHA__ || "unknown"
-  }), {
+    uptime: Math.floor((Date.now() - (globalThis as any).__start || 0)/1000),
+    commit: ctx.env.__BUILD_SHA__ || "unknown"
+  });
+  return new Response(body, {
     headers: {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store",
@@ -13,4 +13,4 @@ export async function onRequest(context) {
       "access-control-allow-origin": "*"
     }
   });
-}
+};

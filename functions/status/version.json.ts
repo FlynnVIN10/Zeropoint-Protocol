@@ -1,9 +1,8 @@
-export async function onRequest(context) {
-  const { env } = context;
-  return new Response(JSON.stringify({
-    commit: env.__BUILD_SHA__ || "unknown",
-    buildTime: env.__BUILD_TIME__ || new Date().toISOString(),
-    env: env.ENV || "prod"
+export const onRequest = async (ctx: any) =>
+  new Response(JSON.stringify({
+    commit: ctx.env.__BUILD_SHA__ || "unknown",
+    buildTime: ctx.env.BUILD_TIME || new Date().toISOString(),
+    env: "prod"
   }), {
     headers: {
       "content-type": "application/json; charset=utf-8",
@@ -13,4 +12,3 @@ export async function onRequest(context) {
       "access-control-allow-origin": "*"
     }
   });
-}

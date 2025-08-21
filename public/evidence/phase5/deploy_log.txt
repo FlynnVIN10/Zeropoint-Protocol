@@ -234,3 +234,37 @@ cf-cache-status: DYNAMIC
 cf-ray: 972cca28d9f70341-MAD
 alt-svc: h3=":443"; ma=86400
 2025-08-21T20:14:23.3NZ - VERIFICATION GATE GAPS RESOLVED: Evidence index shows Phase-5, deploy_log.txt MIME correct, APIs with CORS headers
+
+=== 2025-08-21T20:40:21Z ===
+/api/healthz
+HTTP/2 200 
+date: Thu, 21 Aug 2025 20:40:22 GMT
+content-type: application/json; charset=utf-8
+cf-cache-status: DYNAMIC
+server: cloudflare
+vary: Accept-Encoding
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=e7qeeolaJKudzABzdiZkfEyoY%2BYtHkny9QZ8wz59cUUU682f8SrUJ%2FTfzn4mi3SNgYkWQ0%2BiYkfDx37IH8pT4x6Qk3rs7IWJg%2BpymxuAooYhoe6uhrwenAhdRxQljCjquvaB7PSWgY%2FKPkiqK6iYVbae6g%3D%3D"}],"group":"cf-nel","max_age":604800}
+nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
+cf-ray: 972cf1f2192dc46a-CDG
+
+{"status":"ok","uptime":1755808822,"commit":"38925d68"}
+/status/version.json
+HTTP/2 200 
+date: Thu, 21 Aug 2025 20:40:22 GMT
+content-type: application/json; charset=utf-8
+content-length: 73
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=14Hfwo2AETq3cbK6zaF0TfCrdQY8aJcRTaFzeTFAL%2F68AU4auTZmxPL79Z2FYV2bsUI%2Fs2Vw8BCO4xOcqXppHUIkAdLnkPJXkZUr%2B2LtnzO50%2BsPaone709iytCX4lGq"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 972cf1f59b05556d-CDG
+alt-svc: h3=":443"; ma=86400

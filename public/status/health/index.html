@@ -1,120 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Health Status - Zeropoint Protocol</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .container {
-            text-align: center;
-            color: white;
-            max-width: 800px;
-            padding: 2rem;
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .nav-link {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .nav-link:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-        
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            max-width: 800px;
-            margin: 2rem auto;
-        }
-        
-        th, td {
-            border: 1px solid rgba(255,255,255,0.3);
-            padding: 8px;
-            text-align: left;
-            color: white;
-        }
-        
-        th {
-            background-color: rgba(255,255,255,0.1);
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="nav-links">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/status/health/" class="nav-link">Health Check</a>
-            <a href="/status/ready/" class="nav-link">Ready Check</a>
-            <a href="/status/version/" class="nav-link">Version Check</a>
-            <a href="/consensus/proposals/" class="nav-link">Consensus Proposals</a>
-        </div>
-        
-        <h1>Health Status</h1>
-        
-        <table>
-            <tr><th>Status</th><td id="status">Loading...</td></tr>
-            <tr><th>Uptime</th><td id="uptime">Loading...</td></tr>
-            <tr><th>Commit</th><td id="commit">Loading...</td></tr>
-        </table>
-        
-        <noscript>
-          <table>
-            <tr><th>Status</th><td>ok</td></tr>
-            <tr><th>Uptime</th><td>1755795104</td></tr>
-            <tr><th>Commit</th><td>27acbf39</td></tr>
-          </table>
-        </noscript>
-        <a href="/api/healthz">View JSON</a>
-        
-        <script>
-            fetch('/api/healthz')
-                .then(res => {
-                    if (!res.ok) throw new Error('Network response was not ok');
-                    return res.json();
-                })
-                .then(data => {
-                    document.getElementById('status').textContent = data.status ?? 'n/a';
-                    document.getElementById('uptime').textContent = data.uptime ?? 'n/a';
-                    document.getElementById('commit').textContent = data.commit ?? 'n/a';
-                })
-                .catch(err => {
-                    console.error('Fetch error:', err);
-                    document.getElementById('status').textContent = 'Error';
-                    document.getElementById('uptime').textContent = 'Error';
-                    document.getElementById('commit').textContent = 'Error';
-                });
-        </script>
-    </div>
-</body>
-</html>
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Status · Health</title>
+<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:880px;margin:40px auto;padding:24px}table{border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 12px}</style>
+<main>
+  <h1>Health Check</h1>
+  <p><a href="/api/healthz">View JSON</a></p>
+  <noscript>
+    <table>
+      <tr><th>Status</th><td>ok</td></tr>
+      <tr><th>Uptime</th><td>0</td></tr>
+      <tr><th>Commit</th><td>__BUILD_SHA__</td></tr>
+    </table>
+  </noscript>
+  <pre id="out">loading…</pre>
+</main>
+<script>fetch("/api/healthz").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>

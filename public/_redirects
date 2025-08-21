@@ -6,3 +6,4 @@
 /consensus/proposals    /consensus/proposals/       308!
 /public/evidence/*   /evidence/:splat   308!
 /evidence/phase5     /evidence/phase5/  308!
+/evidence/v19        /evidence/v19/     308!

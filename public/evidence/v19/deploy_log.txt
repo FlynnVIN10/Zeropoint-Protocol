@@ -1,0 +1,3 @@
+=== PLACEHOLDER ===
+This log will be appended by PR #2 with curl -i blocks and verification artifacts for v19.
+

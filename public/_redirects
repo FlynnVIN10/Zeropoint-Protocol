@@ -14,5 +14,9 @@
 
 
 
+# Handle status pages with proper content type
+/status/health /status/health.html 200
+/status/ready /status/ready.html 200
+
 # Only fallback to index.html for non-existent routes
 /* /index.html 404

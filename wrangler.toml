@@ -9,3 +9,7 @@ pages_build_output_dir = "public"
 
 [env.production]
 name = "zeropoint-protocol"
+
+[env.production.vars]
+__BUILD_SHA__ = "6185c88b"
+__BUILD_TIME__ = "2025-08-21T18:13:54.061Z"

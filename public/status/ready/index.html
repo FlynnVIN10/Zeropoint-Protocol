@@ -88,6 +88,15 @@
             <tr><th>Cache</th><td id="cache">Loading...</td></tr>
         </table>
         
+        <noscript>
+          <table>
+            <tr><th>Ready</th><td>true</td></tr>
+            <tr><th>DB</th><td>true</td></tr>
+            <tr><th>Cache</th><td>true</td></tr>
+          </table>
+        </noscript>
+        <a href="/api/readyz">View JSON</a>
+        
         <script>
             fetch('/api/readyz')
                 .then(res => {

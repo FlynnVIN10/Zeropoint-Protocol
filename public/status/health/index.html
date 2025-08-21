@@ -88,6 +88,15 @@
             <tr><th>Commit</th><td id="commit">Loading...</td></tr>
         </table>
         
+        <noscript>
+          <table>
+            <tr><th>Status</th><td>ok</td></tr>
+            <tr><th>Uptime</th><td>1755795104</td></tr>
+            <tr><th>Commit</th><td>27acbf39</td></tr>
+          </table>
+        </noscript>
+        <a href="/api/healthz">View JSON</a>
+        
         <script>
             fetch('/api/healthz')
                 .then(res => {

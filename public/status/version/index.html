@@ -88,6 +88,15 @@
             <tr><th>Environment</th><td id="env">Loading...</td></tr>
         </table>
         
+        <noscript>
+          <table>
+            <tr><th>Commit</th><td>27acbf39</td></tr>
+            <tr><th>Build Time</th><td>2025-08-21T23:50:00Z</td></tr>
+            <tr><th>Env</th><td>prod</td></tr>
+          </table>
+        </noscript>
+        <a href="/status/version.json">View JSON</a>
+        
         <script>
             fetch('/status/version.json')
                 .then(res => {

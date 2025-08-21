@@ -89,6 +89,14 @@
             <tbody id="proposals"></tbody>
         </table>
         
+        <noscript>
+          <table>
+            <tr><th>ID</th><th>Title</th><th>State</th></tr>
+            <tr><td>p-001</td><td>Sample</td><td>open</td></tr>
+          </table>
+        </noscript>
+        <a href="/consensus/proposals">View JSON</a>
+        
         <script>
             const tbody = document.getElementById('proposals');
             fetch('/consensus/proposals.json')

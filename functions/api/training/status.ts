@@ -8,7 +8,8 @@ export async function onRequest(context) {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store",
       "x-content-type-options": "nosniff",
-      "content-disposition": "inline"
+      "content-disposition": "inline",
+      "access-control-allow-origin": "*"
     }
   });
 }

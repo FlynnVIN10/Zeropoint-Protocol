@@ -1,0 +1,29 @@
+name: Daily Compliance Probe
+
+on:
+  schedule:
+    # Daily at 09:00 CDT (14:00 UTC)
+    - cron: '0 14 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  compliance-probe:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run compliance probes
+      run: |
+        echo "$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ") - Daily analyst probe: $(curl -s -o /dev/null -w '%{http_code}' https://zeropointprotocol.ai/api/healthz) healthz, $(curl -s -o /dev/null -w '%{http_code}' https://zeropointprotocol.ai/status/version.json) version" >> public/evidence/phase5/deploy_log.txt
+        
+    - name: Commit probe results
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add public/evidence/phase5/deploy_log.txt
+        git commit -m "[PHASE5] Daily compliance probe - $(date -u +%Y-%m-%d)" || exit 0
+        git push
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -11,12 +11,12 @@
 ✅ **PHASE 5 VERIFICATION GATE 100% COMPLETE** - All verification gaps closed, analyst interface operationalized. Evidence links validated, CI guardrails implemented, baseline compliance framework ready.
 
 ## **ANALYST INTEGRATION STATUS**
-- **Analyst Report Link**: /evidence/compliance/2025-08-21/report.md (pending baseline)
+- **Analyst Report Link**: [Baseline Compliance Report](https://zeropointprotocol.ai/evidence/compliance/2025-08-21/report.md)
 - **Verification Gate Artifact Links**: 
   - [Evidence Index](https://zeropointprotocol.ai/public/evidence/phase5/)
   - [Deploy Log](https://zeropointprotocol.ai/public/evidence/phase5/deploy_log.txt)
   - [Verification Reports](https://zeropointprotocol.ai/public/evidence/phase5/verify/)
-- **Open Analyst Findings**: 0 P0, 0 P1, 0 P2 (baseline pending)
+- **Open Analyst Findings**: 0 P0, 0 P1, 1 P2 (stale commit SHA)
 
 ---
 

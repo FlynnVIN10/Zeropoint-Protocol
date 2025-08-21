@@ -21,12 +21,11 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const core = require('@actions/core'), ctx = context, gh = github;
             let prNumber=null, sha=null;
-            if (ctx.eventName==='pull_request'){ prNumber=ctx.payload.number; sha=ctx.payload.pull_request.head.sha; }
-            else { const wr=ctx.payload.workflow_run; sha=wr.head_sha;
-              const res = await gh.rest.search.issuesAndPullRequests({
-                q:`repo:${ctx.repo.owner}/${ctx.repo.repo} is:pr sha:${sha}`});
+            if (context.eventName==='pull_request'){ prNumber=context.payload.number; sha=context.payload.pull_request.head.sha; }
+            else { const wr=context.payload.workflow_run; sha=wr.head_sha;
+              const res = await github.rest.search.issuesAndPullRequests({
+                q:`repo:${context.repo.owner}/${context.repo.repo} is:pr sha:${sha}`});
               if(res.data.items.length) prNumber=res.data.items[0].number;
             }
             if(!prNumber||!sha){ core.setFailed('No PR context'); return; }
@@ -34,22 +33,24 @@ jobs:
 
       - id: metrics
         uses: actions/github-script@v7
+        env:
+          PR: ${{ steps.ctx.outputs.pr }}
+          SHA: ${{ steps.ctx.outputs.sha }}
         with:
           script: |
-            const core=require('@actions/core'), ctx=context, gh=github;
-            const pr=Number(core.getInput('pr')), sha=core.getInput('sha');
+            const pr=Number(process.env.PR), sha=process.env.SHA;
             const need=JSON.parse(process.env.REQUIRED_WORKFLOWS||'[]');
             let pass=0;
             for(const name of need){
-              const {data}=await gh.rest.actions.listWorkflowRunsForRepo({
-                owner:ctx.repo.owner, repo:ctx.repo.repo, workflow_id:name, per_page:50});
+              const {data}=await github.rest.actions.listWorkflowRunsForRepo({
+                owner:context.repo.owner, repo:context.repo.repo, workflow_id:name, per_page:50});
               const run=data.workflow_runs.find(r=>r.head_sha===sha);
               if(run && run.conclusion==='success') pass++;
             }
             const synth = Math.round((pass/Math.max(1,need.length))*100);
 
-            const {data: revs}=await gh.rest.pulls.listReviews({
-              owner:ctx.repo.owner, repo:ctx.repo.repo, pull_number:pr});
+            const {data: revs}=await github.rest.pulls.listReviews({
+              owner:context.repo.owner, repo:context.repo.repo, pull_number:pr});
             const approvals=new Set(revs.filter(r=>r.state==='APPROVED').map(r=>r.user.login)).size;
             const req = Math.max(1, Number(process.env.REQUIRED_APPROVALS||1));
             const human = Math.min(100, Math.round((approvals/req)*100));
@@ -59,13 +60,17 @@ jobs:
             core.setOutput('d', String(div));
 
       - uses: actions/github-script@v7
+        env:
+          PR: ${{ steps.ctx.outputs.pr }}
+          S: ${{ steps.metrics.outputs.s }}
+          H: ${{ steps.metrics.outputs.h }}
+          D: ${{ steps.metrics.outputs.d }}
         with:
           script: |
-            const core=require('@actions/core'), ctx=context, gh=github;
-            const pr=Number(core.getInput('pr')), s=core.getInput('s'), h=core.getInput('h'), d=core.getInput('d');
+            const pr=Number(process.env.PR), s=process.env.S, h=process.env.H, d=process.env.D;
             const line = `Alignment: {Synthiant:${s}% | Human:${h}% | Divergence:${d}%} (live)`;
-            const {data} = await gh.rest.pulls.get({owner:ctx.repo.owner, repo:ctx.repo.repo, pull_number:pr});
+            const {data} = await github.rest.pulls.get({owner:context.repo.owner, repo:context.repo.repo, pull_number:pr});
             const pattern=new RegExp(process.env.ALIGNMENT_PATTERN,'i');
             let body=data.body||'';
             body = pattern.test(body) ? body.replace(pattern,line) : (body ? `${line}\n\n${body}` : line);
-            await gh.rest.pulls.update({owner:ctx.repo.owner, repo:ctx.repo.repo, pull_number:pr, body});
+            await github.rest.pulls.update({owner:context.repo.owner, repo:context.repo.repo, pull_number:pr, body});

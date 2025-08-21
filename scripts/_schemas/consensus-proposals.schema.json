@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Consensus Proposals Schema",
+  "description": "Schema for /consensus/proposals endpoint",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["id", "title", "state"],
+    "properties": {
+      "id": {
+        "type": "string",
+        "pattern": "^p-[0-9]{3}$",
+        "description": "Proposal identifier"
+      },
+      "title": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 200,
+        "description": "Proposal title"
+      },
+      "state": {
+        "type": "string",
+        "enum": ["open", "closed", "approved", "rejected", "pending"],
+        "description": "Proposal state"
+      },
+      "description": {
+        "type": "string",
+        "description": "Proposal description (optional)"
+      },
+      "created": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Creation timestamp (optional)"
+      },
+      "updated": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Last update timestamp (optional)"
+      },
+      "votes": {
+        "type": "object",
+        "description": "Vote counts (optional)",
+        "properties": {
+          "for": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "against": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "abstain": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    },
+    "additionalProperties": false
+  },
+  "minItems": 0
+}

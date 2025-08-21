@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Status Version Schema",
+  "description": "Schema for /status/version.json endpoint",
+  "type": "object",
+  "required": ["commit", "buildTime", "env"],
+  "properties": {
+    "commit": {
+      "type": "string",
+      "description": "Git commit SHA",
+      "pattern": "^[a-f0-9]{7,40}$"
+    },
+    "buildTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 build timestamp"
+    },
+    "env": {
+      "type": "string",
+      "enum": ["dev", "staging", "prod"],
+      "description": "Environment identifier"
+    },
+    "phase": {
+      "type": "string",
+      "description": "Phase identifier (optional)"
+    },
+    "status": {
+      "type": "string",
+      "description": "Status description (optional)"
+    },
+    "service": {
+      "type": "string",
+      "description": "Service name (optional)"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version string (optional)"
+    }
+  },
+  "additionalProperties": false
+}

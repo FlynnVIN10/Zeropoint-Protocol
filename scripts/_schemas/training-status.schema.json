@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Training Status Schema",
+  "description": "Schema for /api/training/status endpoint",
+  "type": "object",
+  "required": ["training", "epoch", "loss"],
+  "properties": {
+    "training": {
+      "type": "boolean",
+      "description": "Training status"
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Current training epoch"
+    },
+    "loss": {
+      "type": "number",
+      "description": "Current training loss"
+    },
+    "accuracy": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Current training accuracy (optional)"
+    },
+    "framework": {
+      "type": "string",
+      "enum": ["tinygrad", "pytorch"],
+      "description": "Training framework (optional)"
+    },
+    "model": {
+      "type": "string",
+      "description": "Model identifier (optional)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp (optional)"
+    }
+  },
+  "additionalProperties": false
+}

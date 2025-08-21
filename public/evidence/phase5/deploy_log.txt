@@ -1,0 +1,60 @@
+Sonic MAX Cursor Playbook - Phase 5 Deployment Log
+==================================================
+Date: 2025-08-21
+Tag: [SONIC-MAX][PHASE5]
+Status: Deploying
+
+TIMELINE:
+---------
+2025-08-21 02:30:00 - Sonic MAX Cursor Playbook execution initiated
+2025-08-21 02:30:05 - File structure creation started
+2025-08-21 02:30:10 - Scripts directory created
+2025-08-21 02:30:15 - Helper libraries implemented
+2025-08-21 02:30:20 - JSON schemas created
+2025-08-21 02:30:25 - Evidence documentation created
+2025-08-21 02:30:30 - GitHub Actions workflow created
+2025-08-21 02:30:35 - Makefile created
+2025-08-21 02:30:40 - Package.json updated with scripts
+2025-08-21 02:30:45 - Public evidence index.html created
+2025-08-21 02:30:50 - Deploy log created
+
+FILES CREATED:
+--------------
+✅ /public/evidence/phase5/.keep
+✅ /scripts/smoke-test.cjs
+✅ /scripts/verify-phase5.cjs
+✅ /scripts/collect-lighthouse.cjs
+✅ /scripts/_lib/http.js
+✅ /scripts/_lib/fsx.js
+✅ /scripts/_schemas/status-version.schema.json
+✅ /scripts/_schemas/healthz.schema.json
+✅ /scripts/_schemas/readyz.schema.json
+✅ /scripts/_schemas/training-status.schema.json
+✅ /scripts/_schemas/consensus-proposals.schema.json
+✅ /evidence/phase5/README.md
+✅ /.github/workflows/phase5-verify.yml
+✅ /Makefile
+✅ /package.json (scripts section updated)
+✅ /public/evidence/phase5/index.html
+✅ /public/evidence/phase5/deploy_log.txt
+
+NEXT STEPS:
+-----------
+1. Install dependencies: pnpm add -D ajv ajv-formats
+2. Run smoke test: BASE_URL=https://zeropointprotocol.ai pnpm smoke
+3. Run verify gate: BASE_URL=https://zeropointprotocol.ai pnpm verify:phase5
+4. Commit and push: git add . && git commit -m "[SONIC-MAX][PHASE5] add smoke+verify gate and evidence layout"
+5. Trigger CI: Run "Phase 5 – Sonic MAX Verify" workflow in GitHub Actions
+6. Publish artifacts via Cloudflare Pages flow
+
+DEPLOYMENT STATUS:
+-----------------
+🟡 In Progress - File structure and scripts created
+🟡 Pending - Dependencies installation
+🟡 Pending - Smoke test execution
+🟡 Pending - Verification gate execution
+🟡 Pending - CI workflow execution
+🟡 Pending - Public artifact publishing
+
+INTENT: Good heart, good will, GOD FIRST.
+TAG: [SONIC-MAX][PHASE5]

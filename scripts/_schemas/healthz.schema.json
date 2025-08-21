@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Health Check Schema",
+  "description": "Schema for /api/healthz endpoint",
+  "type": "object",
+  "required": ["status", "uptime", "commit"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["ok", "error", "degraded"],
+      "description": "Health status"
+    },
+    "uptime": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Service uptime in seconds"
+    },
+    "commit": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{7,40}$",
+      "description": "Git commit SHA"
+    },
+    "buildTime": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 build timestamp (optional)"
+    },
+    "service": {
+      "type": "string",
+      "description": "Service name (optional)"
+    },
+    "phase": {
+      "type": "string",
+      "description": "Phase identifier (optional)"
+    },
+    "version": {
+      "type": "string",
+      "description": "Version string (optional)"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,103 @@
+name: Phase 5 - Sonic MAX Verify
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'scripts/**'
+      - 'public/evidence/**'
+      - 'evidence/phase5/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'scripts/**'
+      - 'public/evidence/**'
+      - 'evidence/phase5/**'
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: 'Base URL for testing'
+        required: true
+        default: 'https://zeropointprotocol.ai'
+        type: string
+
+jobs:
+  verify-phase5:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20.11, 21]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: true
+        
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        
+    - name: Install pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: 9
+        
+    - name: Install dependencies
+      run: |
+        pnpm install
+        pnpm add -D ajv ajv-formats
+        
+    - name: Run smoke test
+      run: |
+        BASE_URL=${{ github.event.inputs.base_url || 'https://zeropointprotocol.ai' }} pnpm smoke
+      env:
+        BASE_URL: ${{ github.event.inputs.base_url || 'https://zeropointprotocol.ai' }}
+        
+    - name: Run verification gate
+      run: |
+        BASE_URL=${{ github.event.inputs.base_url || 'https://zeropointprotocol.ai' }} pnpm verify:phase5
+      env:
+        BASE_URL: ${{ github.event.inputs.base_url || 'https://zeropointprotocol.ai' }}
+        
+    - name: Collect Lighthouse
+      run: |
+        pnpm lighthouse:collect
+        
+    - name: Upload smoke test artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: smoke-test-results
+        path: evidence/phase5/smoke/
+        
+    - name: Upload verification artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: verification-results
+        path: evidence/phase5/verify/
+        
+    - name: Upload Lighthouse artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: lighthouse-results
+        path: evidence/phase5/lighthouse/
+        
+    - name: Update evidence tree
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add evidence/phase5/
+        git commit -m "[SONIC-MAX][PHASE5] update evidence tree from CI run" || echo "No changes to commit"
+        
+    - name: Phase 5 verification status
+      run: |
+        echo "## Phase 5 - Sonic MAX Verification Gate" >> $GITHUB_STEP_SUMMARY
+        echo "**Status:** Running verification gate" >> $GITHUB_STEP_SUMMARY
+        echo "**Base URL:** ${{ github.event.inputs.base_url || 'https://zeropointprotocol.ai' }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Node Version:** ${{ matrix.node-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Artifacts Generated:" >> $GITHUB_STEP_SUMMARY
+        echo "- Smoke test results: evidence/phase5/smoke/" >> $GITHUB_STEP_SUMMARY
+        echo "- Verification results: evidence/phase5/verify/" >> $GITHUB_STEP_SUMMARY
+        echo "- Lighthouse results: evidence/phase5/lighthouse/" >> $GITHUB_STEP_SUMMARY

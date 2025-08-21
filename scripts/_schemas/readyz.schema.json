@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Readiness Check Schema",
+  "description": "Schema for /api/readyz endpoint",
+  "type": "object",
+  "required": ["ready", "db", "cache"],
+  "properties": {
+    "ready": {
+      "type": "boolean",
+      "description": "Overall readiness status"
+    },
+    "db": {
+      "type": "boolean",
+      "description": "Database readiness status"
+    },
+    "cache": {
+      "type": "boolean",
+      "description": "Cache readiness status"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO8601 timestamp (optional)"
+    },
+    "services": {
+      "type": "object",
+      "description": "Service-specific readiness (optional)",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["ready", "not_ready", "degraded"]
+      }
+    },
+    "phase": {
+      "type": "string",
+      "description": "Phase identifier (optional)"
+    },
+    "status": {
+      "type": "string",
+      "description": "Status description (optional)"
+    }
+  },
+  "additionalProperties": false
+}

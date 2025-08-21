@@ -1,0 +1,41 @@
+[
+  {
+    "id": "p-001",
+    "title": "Phase 5 Sonic MAX Implementation",
+    "state": "open",
+    "description": "Implementation of Sonic MAX Cursor Playbook for Phase 5 verification gate",
+    "created": "2025-08-21T14:30:00.000Z",
+    "updated": "2025-08-21T14:30:00.000Z",
+    "votes": {
+      "for": 5,
+      "against": 0,
+      "abstain": 0
+    }
+  },
+  {
+    "id": "p-002",
+    "title": "Comprehensive Smoke Testing Framework",
+    "state": "approved",
+    "description": "Implementation of comprehensive smoke testing with 100% success rate",
+    "created": "2025-08-21T14:00:00.000Z",
+    "updated": "2025-08-21T14:25:00.000Z",
+    "votes": {
+      "for": 7,
+      "against": 0,
+      "abstain": 0
+    }
+  },
+  {
+    "id": "p-003",
+    "title": "GitHub Actions Deprecation Fix",
+    "state": "approved",
+    "description": "Update deprecated GitHub Actions to current versions",
+    "created": "2025-08-21T14:20:00.000Z",
+    "updated": "2025-08-21T14:22:00.000Z",
+    "votes": {
+      "for": 6,
+      "against": 0,
+      "abstain": 0
+    }
+  }
+]

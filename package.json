@@ -6,10 +6,19 @@
 	"type": "module",
 	"scripts": {
 		"test": "echo 'Platform tests to be implemented'",
-		"start": "echo 'Platform startup to be implemented'"
+		"start": "echo 'Platform startup to be implemented'",
+		"smoke": "node ./scripts/smoke-test.cjs",
+		"verify:phase5": "node ./scripts/verify-phase5.cjs",
+		"lighthouse:collect": "node ./scripts/collect-lighthouse.cjs",
+		"evidence:publish": "git add public/evidence/phase5 evidence/phase5 && git commit -m \"[SONIC-MAX][PHASE5] publish evidence\"",
+		"smoke:npm": "node ./scripts/smoke-test.cjs",
+		"verify:phase5:npm": "node ./scripts/verify-phase5.cjs",
+		"lighthouse:collect:npm": "node ./scripts/collect-lighthouse.cjs"
 	},
-	"dependencies": {},
-	"devDependencies": {},
+	"devDependencies": {
+		"ajv": "^8.17.1",
+		"ajv-formats": "^3.0.1"
+	},
 	"engines": {
 		"node": ">=18.0.0"
 	}

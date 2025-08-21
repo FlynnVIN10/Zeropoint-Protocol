@@ -12,9 +12,7 @@
 /consensus/proposals/ /consensus/proposals.json 200
 /status/version.json /status/version.json 200
 
-# Handle status pages
-/status/health /status/health.html 200
-/status/ready /status/ready.html 200
+
 
 # Only fallback to index.html for non-existent routes
 /* /index.html 404

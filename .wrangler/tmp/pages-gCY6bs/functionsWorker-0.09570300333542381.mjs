@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-ZTl894/checked-fetch.js
+// ../.wrangler/tmp/bundle-po02Cp/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -50,7 +50,7 @@ var onRequest2 = /* @__PURE__ */ __name(async (ctx) => {
   const body = JSON.stringify({
     status: "ok",
     uptime: Math.floor((Date.now() - globalThis.__start || 0) / 1e3),
-    commit: ctx.env.__BUILD_SHA__ || "unknown"
+    commit: "57f32a3a"
   });
   return new Response(body, {
     headers: {
@@ -92,8 +92,8 @@ __name(onRequest4, "onRequest");
 
 // status/version.json.ts
 var onRequest5 = /* @__PURE__ */ __name(async (ctx) => new Response(JSON.stringify({
-  commit: ctx.env.__BUILD_SHA__ || "unknown",
-  buildTime: ctx.env.BUILD_TIME || (/* @__PURE__ */ new Date()).toISOString(),
+  commit: "57f32a3a",
+  buildTime: "2025-08-21T21:53:57Z",
   env: "prod"
 }), {
   headers: {
@@ -631,7 +631,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-ZTl894/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-po02Cp/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -663,7 +663,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-ZTl894/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-po02Cp/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

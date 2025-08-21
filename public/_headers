@@ -11,6 +11,6 @@
   Content-Type: text/html; charset=utf-8
   Cache-Control: public, max-age=60
 
-/evidence/phase5/deploy_log.txt
+/public/evidence/phase5/deploy_log.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=60

@@ -4,5 +4,5 @@
 /status/version         /status/version/            308!
 /consensus              /consensus/                 308!
 /consensus/proposals    /consensus/proposals/       308!
-/public/evidence/*   /evidence/:splat   308!
-/evidence/phase5     /evidence/phase5/  308!
+/public/evidence/*   /evidence/:splat    308!
+/evidence/phase5     /evidence/phase5/   308!

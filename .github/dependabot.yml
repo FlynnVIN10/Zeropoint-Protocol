@@ -1,0 +1,251 @@
+version: 2
+updates:
+  # Enable version updates for npm
+  - package-ecosystem: "npm"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "security"
+      - "automated"
+    ignore:
+      # Ignore major version updates for critical packages
+      - dependency-name: "@nestjs/core"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@nestjs/common"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+    # Group minor and patch updates together
+    groups:
+      nestjs-packages:
+        patterns:
+          - "@nestjs/*"
+        update-types:
+          - "minor"
+          - "patch"
+      typescript-packages:
+        patterns:
+          - "@types/*"
+          - "typescript"
+        update-types:
+          - "minor"
+          - "patch"
+      security-updates:
+        patterns:
+          - "*"
+        update-types:
+          - "security"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+
+  # Enable version updates for Docker
+  - package-ecosystem: "docker"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "docker"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automated"
+    # Group Docker updates
+    groups:
+      database-images:
+        patterns:
+          - "postgres:*"
+          - "redis:*"
+        update-types:
+          - "minor"
+          - "patch"
+      monitoring-images:
+        patterns:
+          - "prom/prometheus:*"
+          - "grafana/grafana:*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # Enable version updates for Python (if applicable)
+  - package-ecosystem: "pip"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "python"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "python"
+      - "automated"
+    # Group Python updates
+    groups:
+      ai-packages:
+        patterns:
+          - "tinygrad"
+          - "torch"
+          - "torchvision"
+          - "torchaudio"
+        update-types:
+          - "minor"
+          - "patch"
+      security-packages:
+        patterns:
+          - "*"
+        update-types:
+          - "security"
+
+  # Enable version updates for Composer (if applicable)
+  - package-ecosystem: "composer"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "composer"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "php"
+      - "automated"
+
+  # Enable version updates for Maven (if applicable)
+  - package-ecosystem: "maven"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "maven"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "java"
+      - "automated"
+
+  # Enable version updates for Gradle (if applicable)
+  - package-ecosystem: "gradle"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "gradle"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "java"
+      - "automated"
+
+  # Enable version updates for NuGet (if applicable)
+  - package-ecosystem: "nuget"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "nuget"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "dotnet"
+      - "automated"
+
+  # Enable version updates for Terraform (if applicable)
+  - package-ecosystem: "terraform"
+    directory: "/iaai"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Chicago"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "FlynnVIN10"
+    assignees:
+      - "FlynnVIN10"
+    commit-message:
+      prefix: "terraform"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "infrastructure"
+      - "automated"

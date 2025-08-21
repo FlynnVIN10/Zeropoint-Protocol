@@ -24,12 +24,35 @@ This repository is provided for **VIEW-ONLY** purposes. All contribution and acc
 5. **Human Review:** Human maintainer reviews and approves
 6. **Merge:** Only after human approval and CI success
 
-### **AI Contribution Standards**
-- **Code Quality:** Must meet all existing quality standards
-- **Testing:** Comprehensive test coverage required
-- **Documentation:** Clear documentation and comments
-- **Safety:** Ethical and safety considerations documented
-- **Performance:** Performance benchmarks must be met
+### **AI Development Guidelines - Phase 5**
+
+#### **AI Development Workflow**
+1. **Task Planning**: Use AI task templates for development planning
+2. **Implementation**: AI generates code following established patterns
+3. **Code Review**: Human maintainer reviews all AI-generated code
+4. **Testing**: Comprehensive test coverage and validation
+5. **Documentation**: Clear documentation and inline comments
+6. **Security**: Threat modeling and harms checklist completion
+7. **Performance**: Performance benchmarks and optimization
+8. **Deployment**: CI/CD pipeline validation and deployment
+
+#### **AI Development Standards**
+- **Code Quality**: Must meet all existing quality standards
+- **Testing**: Comprehensive test coverage required (TDD approach)
+- **Documentation**: Clear documentation and inline comments
+- **Safety**: Ethical and safety considerations documented
+- **Performance**: Performance benchmarks must be met
+- **Security**: Threat models and security reviews required
+- **Accessibility**: Code must be accessible and maintainable
+- **Compliance**: All licensing and legal requirements met
+
+#### **AI Development Tools**
+- **Task Templates**: Standardized templates for development tasks
+- **Code Generation**: AI-assisted code generation with human oversight
+- **Testing Framework**: Automated testing and validation
+- **Documentation**: Automated documentation generation
+- **Security Scanning**: Automated security and vulnerability scanning
+- **Performance Monitoring**: Real-time performance tracking
 
 ### **AI Contribution Sign-off**
 All AI contributions must include this sign-off line:

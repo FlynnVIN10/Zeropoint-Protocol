@@ -60,8 +60,10 @@ import { AgentService } from "./services/agent.service.js";
 import { RAGService } from "./services/rag.service.js";
 import { PerformanceMonitorService } from "./services/performance-monitor.service.js";
 import { PetalsConnector } from "./petals/petals-connector.js";
+import { TrainingService } from "./services/training.service.js";
 import { StreamController } from "./controllers/stream.controller.js";
 import { ApplianceStatusController } from "./controllers/appliance-status.controller.js";
+import { TrainingController } from "./controllers/training.controller.js";
 
 @Module({
   imports: [
@@ -142,6 +144,7 @@ import { ApplianceStatusController } from "./controllers/appliance-status.contro
     PerformanceController,
     StreamController,
     ApplianceStatusController,
+    TrainingController,
   ],
   providers: [
     AppService,
@@ -168,6 +171,7 @@ import { ApplianceStatusController } from "./controllers/appliance-status.contro
     RAGService,
     PerformanceMonitorService,
     PetalsConnector,
+    TrainingService,
     {
       provide: APP_GUARD,
       useClass: CustomThrottlerGuard,

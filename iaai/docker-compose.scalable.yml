@@ -1,0 +1,248 @@
+version: '3.8'
+
+networks:
+  zeropoint-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-postgres: &postgres-config
+  image: postgres:15-alpine
+  restart: unless-stopped
+  environment:
+    - POSTGRES_USER=zeropoint
+    - POSTGRES_PASSWORD=zeropointpass
+    - POSTGRES_DB=zeropointdb
+    - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    - PGDATA=/var/lib/postgresql/data/pgdata
+    - POSTGRES_MAX_CONNECTIONS=200
+    - POSTGRES_SHARED_BUFFERS=256MB
+    - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+    - POSTGRES_WORK_MEM=4MB
+    - POSTGRES_MAINTENANCE_WORK_MEM=64MB
+  networks:
+    - zeropoint-network
+  volumes:
+    - postgres_data:/var/lib/postgresql/data
+    - ./src/scripts/database-setup.sql:/docker-entrypoint-initdb.d/01-setup.sql:ro
+  healthcheck:
+    test: ["CMD-SHELL", "pg_isready -U zeropoint -d zeropointdb"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 30s
+  security_opt:
+    - no-new-privileges:true
+  logging: *default-logging
+
+x-redis: &redis-config
+  image: redis:7-alpine
+  restart: unless-stopped
+  command: >
+    redis-server 
+    --appendonly yes 
+    --requirepass redispass
+    --maxmemory 512mb
+    --maxmemory-policy allkeys-lru
+    --save 900 1
+    --save 300 10
+    --save 60 10000
+  networks:
+    - zeropoint-network
+  volumes:
+    - redis_data:/data
+  healthcheck:
+    test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+    interval: 10s
+    timeout: 5s
+    retries: 5
+    start_period: 10s
+  logging: *default-logging
+
+services:
+  # PostgreSQL Database with Auto-scaling
+  postgres-primary:
+    <<: *postgres-config
+    container_name: zeropoint-postgres-primary
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=zeropoint
+      - POSTGRES_PASSWORD=zeropointpass
+      - POSTGRES_DB=zeropointdb
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_MAX_CONNECTIONS=200
+      - POSTGRES_SHARED_BUFFERS=256MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+      - POSTGRES_WORK_MEM=4MB
+      - POSTGRES_MAINTENANCE_WORK_MEM=64MB
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  postgres-replica-1:
+    <<: *postgres-config
+    container_name: zeropoint-postgres-replica-1
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=zeropoint
+      - POSTGRES_PASSWORD=zeropointpass
+      - POSTGRES_DB=zeropointdb
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_MAX_CONNECTIONS=200
+      - POSTGRES_SHARED_BUFFERS=256MB
+      - POSTGRES_EFFECTIVE_CACHE_SIZE=1GB
+      - POSTGRES_WORK_MEM=4MB
+      - POSTGRES_MAINTENANCE_WORK_MEM=64MB
+    depends_on:
+      postgres-primary:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  # Redis Cache with Auto-scaling
+  redis-primary:
+    <<: *redis-config
+    container_name: zeropoint-redis-primary
+    ports:
+      - "6379:6379"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  redis-replica-1:
+    <<: *redis-config
+    container_name: zeropoint-redis-replica-1
+    ports:
+      - "6380:6379"
+    command: >
+      redis-server 
+      --appendonly yes 
+      --requirepass redispass
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+      --replicaof redis-primary 6379
+    depends_on:
+      redis-primary:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+        reservations:
+          memory: 256M
+          cpus: '0.1'
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  # Load Balancer for Database Connections
+  haproxy:
+    image: haproxy:2.8-alpine
+    container_name: zeropoint-haproxy
+    restart: unless-stopped
+    ports:
+      - "5434:5434"  # PostgreSQL load balancer
+      - "6381:6381"  # Redis load balancer
+    networks:
+      - zeropoint-network
+    volumes:
+      - ./config/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      - postgres-primary
+      - postgres-replica-1
+      - redis-primary
+      - redis-replica-1
+    healthcheck:
+      test: ["CMD", "haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg", "-c"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.1'
+        reservations:
+          memory: 64M
+          cpus: '0.05'
+
+  # Auto-scaling Manager
+  scaler:
+    image: alpine:latest
+    container_name: zeropoint-scaler
+    restart: unless-stopped
+    networks:
+      - zeropoint-network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./scripts/auto-scaling.sh:/auto-scaling.sh:ro
+    command: ["/bin/sh", "-c", "apk add --no-cache docker-cli && chmod +x /auto-scaling.sh && /auto-scaling.sh"]
+    depends_on:
+      - postgres-primary
+      - redis-primary
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.1'
+        reservations:
+          memory: 64M
+          cpus: '0.05'
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

@@ -1,49 +1,77 @@
-# Tinygrad Training Configuration - Phase X Task 1
-# Real LLM training with Apple Silicon Metal backend
+# Synthiant Training Configuration - Phase 5
+# Zeropoint Protocol AI Training Pipeline
 
-# Training hyperparameters
-hyperparams:
-  model_size: "8B"  # 8-13B parameter range as specified
-  epochs: 10
-  batch_size: 32
-  learning_rate: 0.001
-  weight_decay: 0.01
-  warmup_steps: 1000
-  max_steps: 10000
+training:
+  # Framework selection
+  framework: "auto"  # auto, tinygrad, pytorch
+  fallback_framework: "pytorch"
   
-# Model configuration
-model:
-  type: "transformer"
-  hidden_size: 4096
-  num_layers: 32
-  num_attention_heads: 32
-  intermediate_size: 16384
-  vocab_size: 50257
-  
-# Dataset configuration
-dataset:
-  path: "datasets/training_data.txt"
-  format: "text"
-  max_length: 2048
-  tokenizer: "gpt2"
-  
-# Hardware configuration
-hardware:
-  device: "metal"  # Apple Silicon Metal backend
-  precision: "float16"
-  memory_efficient: true
-  
-# Training schedule
-schedule:
-  gradient_accumulation_steps: 4
-  save_checkpoint_every: 1000
-  eval_every: 500
-  
-# Logging and monitoring
-logging:
-  log_every: 100
-  save_metrics: true
-  tensorboard: false
-  
-# Seed for reproducibility
-seed: 42
+  # Model architecture
+  model:
+    type: "feedforward"
+    input_size: 64
+    hidden_size: 128
+    output_size: 32
+    layers: 3
+    activation: "relu"
+    
+  # Training parameters
+  training:
+    epochs: 100
+    batch_size: 32
+    learning_rate: 0.001
+    optimizer: "adam"
+    loss_function: "mse"
+    
+  # Data configuration
+  data:
+    train_split: 0.8
+    validation_split: 0.1
+    test_split: 0.1
+    augmentation: true
+    normalization: true
+    
+  # Hardware optimization
+  hardware:
+    use_gpu: true
+    mixed_precision: true
+    num_workers: 4
+    
+  # Monitoring and logging
+  monitoring:
+    log_interval: 10
+    save_interval: 50
+    metrics:
+      - "loss"
+      - "accuracy"
+      - "learning_rate"
+      - "epoch_time"
+      
+  # Output configuration
+  output:
+    save_dir: "artifacts/train"
+    model_format: "onnx"  # onnx, torchscript, tinygrad
+    save_optimizer: true
+    save_config: true
+    
+  # CI/CD integration
+  ci:
+    run_on_push: true
+    run_on_pr: true
+    matrix_testing: true
+    artifact_upload: true
+    evidence_update: true
+    
+  # Security and ethics
+  security:
+    threat_model: true
+    harms_checklist: true
+    data_privacy: true
+    model_explainability: true
+    
+  # Performance targets
+  performance:
+    target_accuracy: 0.95
+    max_training_time: 3600  # seconds
+    memory_limit: "8GB"
+    gpu_memory_limit: "4GB"

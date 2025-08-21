@@ -13,8 +13,8 @@
 ## **ANALYST INTEGRATION STATUS**
 - **Analyst Report Link**: [Baseline Compliance Report](https://zeropointprotocol.ai/evidence/compliance/2025-08-21/report.md)
 - **Verification Gate Artifact Links**: 
-  - [Evidence Index](https://zeropointprotocol.ai/public/evidence/phase5/)
-  - [Deploy Log](https://zeropointprotocol.ai/public/evidence/phase5/deploy_log.txt)
+  - [Evidence Index](https://zeropointprotocol.ai/evidence/v19/)
+  - [Deploy Log](https://zeropointprotocol.ai/evidence/v19/deploy_log.txt)
   - [Verification Reports](https://zeropointprotocol.ai/public/evidence/phase5/verify/)
 - **Open Analyst Findings**: 0 P0, 0 P1, 0 P2 (stale commit resolved)
 

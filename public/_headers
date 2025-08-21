@@ -14,3 +14,7 @@
 /evidence/phase5/deploy_log.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=60
+
+/evidence/v19/deploy_log.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=60

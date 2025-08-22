@@ -1,27 +1,16 @@
 export async function onRequest(context) {
   try {
-    const latest = await fetch("https://zeropointprotocol.ai/evidence/training/metrics/latest.json", { cf: { cacheTtl: 0 } });
-    if (!latest.ok) throw new Error("Fetch failed");
-    const body = await latest.text();
-    return new Response(body, {
+    const latestRun = context.env.LATEST_TRAIN_RUN || '2025-08-22T20:30:45Z'; // KV or env for latest TS
+    const metrics = await fetch(`https://zeropointprotocol.ai/evidence/training/run-${latestRun}/metrics.json`).then(r => r.json());
+    return new Response(JSON.stringify(metrics), {
       headers: {
         "content-type": "application/json; charset=utf-8",
         "cache-control": "no-store",
         "x-content-type-options": "nosniff",
-        "content-disposition": "inline",
         "access-control-allow-origin": "*"
       }
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: "metrics_unavailable", message: e.message }), {
-      status: 503,
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-store",
-        "x-content-type-options": "nosniff",
-        "content-disposition": "inline",
-        "access-control-allow-origin": "*"
-      }
-    });
+    return new Response(JSON.stringify({error: e.message}), {status: 503, headers: {...}});
   }
-};
+}

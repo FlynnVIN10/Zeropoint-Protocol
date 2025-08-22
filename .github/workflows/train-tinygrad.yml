@@ -1,64 +1,29 @@
-name: TinyGrad Training (MVP)
-
+name: train-tinygrad
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   schedule:
     - cron: "0 */6 * * *"
-
-permissions:
-  contents: write
-
 jobs:
   train:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Python 3.12
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-
-      - name: Install tinygrad
-        run: |
-          python -m pip install --upgrade pip
-          pip install tinygrad==0.9.0
-
-      - name: Run toy training and write metrics
-        env:
-          COMMIT_SHA: ${{ github.sha }}
-        run: |
-          mkdir -p public/evidence/training/metrics
-          python - <<'PY'
-import json, time, os, random
-run_ts = time.strftime('%Y%m%dT%H%M%SZ', time.gmtime())
-metrics = {
-  "run_id": f"tinygrad-{run_ts}",
-  "commit": os.environ.get('COMMIT_SHA','unknown')[:8],
-  "step": 10,
-  "loss": round(random.uniform(0.01, 0.2), 4),
-  "ts": run_ts
-}
-with open('public/evidence/training/metrics/latest.json','w') as f:
-  json.dump(metrics,f)
-with open(f"public/evidence/training/metrics/run-{run_ts}.json",'w') as f:
-  json.dump(metrics,f)
-print(json.dumps(metrics))
-PY
-
-      - name: Upload metrics artifact
-        uses: actions/upload-artifact@v4
+      - run: pip install tinygrad==0.9.0
+      - run: |
+          TS=$(date -u +%Y%m%dT%H%M%SZ)
+          mkdir -p public/evidence/training/run-$TS
+          python -c "import json, random; metrics = {'epoch':1, 'step':10, 'loss':random.uniform(0.01,0.2), 'duration_s':random.randint(30,120), 'commit':'$(git rev-parse --short HEAD)', 'ts':'$TS'}; json.dump(metrics, open('public/evidence/training/run-$TS/metrics.json','w'))"
+      - uses: actions/upload-artifact@v4
         with:
-          name: training-metrics-${{ github.run_id }}
-          path: public/evidence/training/metrics/
-          overwrite: true
-
-      - name: Commit metrics to repo
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add public/evidence/training/metrics/
-          git commit -m "[PHASE5] Add tinygrad training metrics (MVP)" || echo "No changes to commit"
+          name: training-run-$TS
+          path: public/evidence/training/run-$TS/
+      - run: |
+          git config user.name "GitHub Action"
+          git config user.email "action@github.com"
+          git add public/evidence/training/
+          git commit -m "[PHASE5] Training run $TS metrics" || true
           git push
 

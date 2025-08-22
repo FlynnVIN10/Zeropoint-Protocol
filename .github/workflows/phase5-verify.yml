@@ -83,19 +83,19 @@ jobs:
     - name: Upload smoke test artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: smoke-test-results
+        name: smoke-test-results-${{ matrix.node-version }}
         path: evidence/phase5/smoke/
         
     - name: Upload verification artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: verification-results
+        name: verification-results-${{ matrix.node-version }}
         path: evidence/phase5/verify/
         
     - name: Upload Lighthouse artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: lighthouse-results
+        name: lighthouse-results-${{ matrix.node-version }}
         path: evidence/phase5/lighthouse/
         
     - name: Update evidence tree

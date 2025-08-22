@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// ../.wrangler/tmp/bundle-v1jqXJ/checked-fetch.js
+// ../.wrangler/tmp/bundle-nfbLKn/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -29,19 +29,31 @@ globalThis.fetch = new Proxy(globalThis.fetch, {
 
 // api/training/status.ts
 async function onRequest(context) {
-  return new Response(JSON.stringify({
-    training: true,
-    epoch: 1,
-    loss: 0.123
-  }), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff",
-      "content-disposition": "inline",
-      "access-control-allow-origin": "*"
-    }
-  });
+  try {
+    const latest = await fetch("https://zeropointprotocol.ai/evidence/training/metrics/latest.json", { cf: { cacheTtl: 0 } });
+    if (!latest.ok) throw new Error("Fetch failed");
+    const body = await latest.text();
+    return new Response(body, {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "content-disposition": "inline",
+        "access-control-allow-origin": "*"
+      }
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({ error: "metrics_unavailable", message: e.message }), {
+      status: 503,
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "content-disposition": "inline",
+        "access-control-allow-origin": "*"
+      }
+    });
+  }
 }
 __name(onRequest, "onRequest");
 
@@ -90,12 +102,34 @@ async function onRequest4(context) {
 }
 __name(onRequest4, "onRequest");
 
+// petals/status.json.ts
+var onRequest5 = /* @__PURE__ */ __name(async () => new Response(JSON.stringify({ configured: true, lastContact: (/* @__PURE__ */ new Date()).toISOString(), notes: "Stub for Petals status" }), {
+  headers: {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "x-content-type-options": "nosniff",
+    "content-disposition": "inline",
+    "access-control-allow-origin": "*"
+  }
+}), "onRequest");
+
 // status/version.json.ts
-var onRequest5 = /* @__PURE__ */ __name(async (ctx) => new Response(JSON.stringify({
+var onRequest6 = /* @__PURE__ */ __name(async (ctx) => new Response(JSON.stringify({
   commit: ctx.env.__BUILD_SHA__ || "unknown",
   buildTime: ctx.env.BUILD_TIME || (/* @__PURE__ */ new Date()).toISOString(),
   env: "prod"
 }), {
+  headers: {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "x-content-type-options": "nosniff",
+    "content-disposition": "inline",
+    "access-control-allow-origin": "*"
+  }
+}), "onRequest");
+
+// wondercraft/status.json.ts
+var onRequest7 = /* @__PURE__ */ __name(async () => new Response(JSON.stringify({ configured: true, lastContact: (/* @__PURE__ */ new Date()).toISOString(), notes: "Stub for Wondercraft status" }), {
   headers: {
     "content-type": "application/json; charset=utf-8",
     "cache-control": "no-store",
@@ -136,11 +170,25 @@ var routes = [
     modules: [onRequest4]
   },
   {
+    routePath: "/petals/status.json",
+    mountPath: "/petals",
+    method: "",
+    middlewares: [],
+    modules: [onRequest5]
+  },
+  {
     routePath: "/status/version.json",
     mountPath: "/status",
     method: "",
     middlewares: [],
-    modules: [onRequest5]
+    modules: [onRequest6]
+  },
+  {
+    routePath: "/wondercraft/status.json",
+    mountPath: "/wondercraft",
+    method: "",
+    middlewares: [],
+    modules: [onRequest7]
   }
 ];
 
@@ -631,7 +679,7 @@ var jsonError = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "jsonError");
 var middleware_miniflare3_json_error_default = jsonError;
 
-// ../.wrangler/tmp/bundle-v1jqXJ/middleware-insertion-facade.js
+// ../.wrangler/tmp/bundle-nfbLKn/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default,
   middleware_miniflare3_json_error_default
@@ -663,7 +711,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// ../.wrangler/tmp/bundle-v1jqXJ/middleware-loader.entry.ts
+// ../.wrangler/tmp/bundle-nfbLKn/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;

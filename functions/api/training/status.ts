@@ -1,6 +1,7 @@
-export const onRequest = async () => {
+export async function onRequest(context) {
   try {
     const latest = await fetch("https://zeropointprotocol.ai/evidence/training/metrics/latest.json", { cf: { cacheTtl: 0 } });
+    if (!latest.ok) throw new Error("Fetch failed");
     const body = await latest.text();
     return new Response(body, {
       headers: {
@@ -12,7 +13,7 @@ export const onRequest = async () => {
       }
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: "metrics_unavailable" }), {
+    return new Response(JSON.stringify({ error: "metrics_unavailable", message: e.message }), {
       status: 503,
       headers: {
         "content-type": "application/json; charset=utf-8",
@@ -24,18 +25,3 @@ export const onRequest = async () => {
     });
   }
 };
-export async function onRequest(context) {
-  return new Response(JSON.stringify({
-    training: true,
-    epoch: 1,
-    loss: 0.123
-  }), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff",
-      "content-disposition": "inline",
-      "access-control-allow-origin": "*"
-    }
-  });
-}

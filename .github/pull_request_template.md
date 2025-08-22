@@ -30,3 +30,13 @@ Brief description of changes made.
 
 ## Zeroth Principle
 - [ ] Changes align with good intent and good heart principles
+
+## Verification Gate
+- [ ] CI `verification-gate` passed (link to run)
+- [ ] Evidence committed under `/evidence/compliance/<YYYY-MM-DD>/` or artifacts attached
+- [ ] Version JSON returns version/commit/build_time/source_repo
+- [ ] Security headers present (`nosniff`, `no-store` for JSON)
+
+## Rollback
+- [ ] Last known good deploy SHA:
+- [ ] Manual rollback steps verified:

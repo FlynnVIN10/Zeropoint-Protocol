@@ -1,7 +1,7 @@
 # PM Status Report - Phase 5
 
-- v19 Evidence URL: https://zeropointprotocol.ai/evidence/v19/
-- Timestamp: 2025-08-22T20:30:45Z
+- v19 Gate Status: PASS (Run ID: [LATEST_ID]; Artifacts: verification-artifacts)
+- Evidence Pack: https://zeropointprotocol.ai/evidence/v19/ (deploy_log.txt, lighthouse_report.html, curl/*.http)
 
 ---
 

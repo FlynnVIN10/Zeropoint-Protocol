@@ -11,6 +11,13 @@ export async function onRequest(context) {
       }
     });
   } catch (e) {
-    return new Response(JSON.stringify({error: e.message}), {status: 503, headers: {...}});
+    return new Response(JSON.stringify({error: e.message}), {
+      status: 503, 
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff"
+      }
+    });
   }
 }

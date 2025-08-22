@@ -15,16 +15,12 @@ jobs:
           cache-dependency-path: iaai/package-lock.json
       
       - name: Install dependencies
-        run: |
-          cd iaai
-          npm ci
+        run: npm ci
       
-      - name: Run linting and type checking
-        run: |
-          cd iaai
-          npm run lint -- --max-warnings=0 --ignore-pattern test --ignore-pattern "**/test/**" --ignore-pattern "**/*.spec.ts" && npm run typecheck || true
+      - name: Lint and Typecheck
+        run: npm run lint -- --max-warnings=0 --ignore-path .gitignore --ignore-pattern "test/**" --ignore-pattern "**/*.spec.ts" && npm run typecheck || true
       
-      - name: Run tests
+      - name: Test
         continue-on-error: true
         run: |
           cd iaai

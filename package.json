@@ -5,6 +5,7 @@
 	"description": "Zeropoint Protocol Dual Consensus Agentic AI Platform",
 	"type": "module",
 	"scripts": {
+		"predeploy:inject": "BUILD_SHA=$(git rev-parse --short HEAD) BUILD_TIME=$(date -u +\"%Y-%m-%dT%H:%M:%SZ\") && sed -i '' -e \"s/__BUILD_SHA__/${BUILD_SHA}/g\" -e \"s/__BUILD_TIME__/${BUILD_TIME}/g\" public/evidence/v19/index.html public/status/version/index.html public/status/ready/index.html",
 		"test": "echo 'Platform tests to be implemented'",
 		"start": "echo 'Platform startup to be implemented'",
 		"smoke": "node ./scripts/smoke-test.cjs",

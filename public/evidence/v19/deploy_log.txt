@@ -1,1 +1,69 @@
 Deploy Log - SHA: fa2c432b, Cloudflare ID: example-deploy-id-20250822T200644Z
+
+=== 2025-08-22T20:56:59Z === /api/healthz
+HTTP/2 200 
+date: Fri, 22 Aug 2025 20:57:00 GMT
+content-type: application/json; charset=utf-8
+content-length: 46
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=S0AvnoQsLysEg8ghKmqJ02KwjFUSWR5TQPd0jw3bbFsvRTgEia6oX%2Byrpd4aLJp2bclpf%2FROYjtsxlCuwVzpMVZYhHutpfUxOBZe6OHdk50KkjvJMBXH39%2B98OgB5g%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 973547b19c923cd5-CDG
+alt-svc: h3=":443"; ma=86400
+
+/api/readyz
+HTTP/2 200 
+date: Fri, 22 Aug 2025 20:57:00 GMT
+content-type: application/json; charset=utf-8
+content-length: 37
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=3amfN%2FfPFRc2b2t9VI%2FXEtBHxrubCz4fRIeNLzvv1CZYYKQIT1qgwvsGRN8%2F8N5v2xd%2BvBQcG0U6MRZOo46jUnVDk8nYN%2F6e2bKgIfZJoJerbr%2FTP66oS7L9mLgeCRcQ"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 973547b4e8386f39-CDG
+alt-svc: h3=":443"; ma=86400
+
+/status/version.json
+HTTP/2 200 
+date: Fri, 22 Aug 2025 20:57:01 GMT
+content-type: application/json; charset=utf-8
+content-length: 69
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=tZaaEQfFflmnhoUCrLCAPwQ%2Bjs%2FvTBfoeSH%2F9eHLO2P3t89tLHQyL%2Bmkzo8fbtQ71ZFHsNWNBTtMWVQLXPmlwqTrIHrTJmZ2G5KCSQAlEp5VSbszmm0LMuNftBFDSA%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 973547b84c6f99f4-CDG
+alt-svc: h3=":443"; ma=86400
+
+/api/training/status
+HTTP/2 200 
+date: Fri, 22 Aug 2025 20:57:02 GMT
+content-type: application/json; charset=utf-8
+content-length: 3
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=OcuOeDU5fNncjxFqnMtoVj%2FHuZuciCkdKiUtVT%2B8RLZShR95F0LiFKAFecm3%2BUEmImroDl%2BklOgZMhuqMs8iEOJxTONjXGPAeM4SKoWjDJ%2B1znMw03m9JqmywRfHxQ%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 973547bc0b6c046b-CDG
+alt-svc: h3=":443"; ma=86400

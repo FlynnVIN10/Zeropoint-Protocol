@@ -1,0 +1,8 @@
+name: weekly-audit
+on:
+  schedule:
+    - cron: "0 14 * * 1"  # 09:00 America/Chicago = 14:00 UTC (non-DST adjust as needed)
+jobs:
+  audit:
+    uses: ./.github/workflows/verification-gate.yml
+    secrets: inherit

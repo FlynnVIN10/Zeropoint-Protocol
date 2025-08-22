@@ -4,6 +4,7 @@ on:
   workflow_run:
     workflows: ["Phase 5 - Sonic MAX Verify", "daily-probe", "Simple Validation (Static Files + API)", "Post-Merge Production Verification", "Push Validation (Direct to Main)"]
     types: [completed]
+  workflow_dispatch: {}
 
 jobs:
   alert-on-failure:

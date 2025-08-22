@@ -1,18 +1,17 @@
 HTTP/2 200 
-date: Fri, 22 Aug 2025 19:36:12 GMT
+date: Fri, 22 Aug 2025 20:29:53 GMT
 content-type: text/html; charset=utf-8
+cf-cache-status: DYNAMIC
+server: cloudflare
+vary: Accept-Encoding
 access-control-allow-origin: *
 cache-control: public, max-age=60
 referrer-policy: no-referrer
 x-content-type-options: nosniff
 x-frame-options: DENY
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=phijnqa%2BL9zzWG%2FSCSNqSA4ZMBliThc1kz%2Fy3VzsaLXtTb1ptpH4eiyLfL5d7wYs%2Fv95yVk4Z8%2F87czaBh7zcBTD7ucxxz%2Fqf4DUus4QArotQflc"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-cache-status: DYNAMIC
-cf-ray: 9734d156d9a26ec0-CDG
-alt-svc: h3=":443"; ma=86400
+report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=IgA7OHret%2Fv%2FZzAwA8KjuMjMdRpt84EO3Nf4yj%2FA4xYh4sJ8ViEmq4MLqJW8VX8LiDgTr0dRTlaldW9lSLdb%2FKwSzoiRX9cp%2BpAq6X62oEzZ0%2BF8T2qRL642Y4rAr2R%2B%2FwlZJbqeJw%3D%3D"}],"group":"cf-nel","max_age":604800}
+nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
+cf-ray: 97351ffb5ec93858-LHR
 
 <!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Status · Ready</title>
@@ -25,9 +24,14 @@ alt-svc: h3=":443"; ma=86400
   <tr><th>Ready</th><td>true</td></tr>
   <tr><th>DB</th><td>true</td></tr>
   <tr><th>Cache</th><td>true</td></tr>
-  <tr><th>Commit</th><td>630c0c57</td></tr>
+  <tr><th>Commit</th><td id="commit">loading...</td></tr>
 </table>
 </noscript>
   <pre id="out">loading…</pre>
 </main>
-<script>fetch("/api/readyz").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>
+<script>
+  fetch("/api/readyz").then(r => r.json()).then(j => {
+    document.getElementById("commit").textContent = j.commit || 'unknown';
+    out.textContent = JSON.stringify(j, null, 2);
+  }).catch(e => out.textContent = String(e));
+</script>

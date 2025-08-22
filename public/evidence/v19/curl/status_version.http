@@ -1,0 +1,33 @@
+HTTP/2 200 
+date: Fri, 22 Aug 2025 19:36:13 GMT
+content-type: text/html; charset=utf-8
+access-control-allow-origin: *
+cache-control: public, max-age=60
+referrer-policy: no-referrer
+x-content-type-options: nosniff
+x-frame-options: DENY
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=vX%2BSXUPMH9tL7VhQW6rFYf0riLRva18z5d%2BX15ojlFAcrReDrHa7LfJrcCq8YCOLYpeMwLQndWFwVTVD0k%2B%2FJ%2FELMdwJdREMcEhYnLBEOVPMrg%3D%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9734d1591c75ec92-MAD
+alt-svc: h3=":443"; ma=86400
+
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Status · Version</title>
+<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:880px;margin:40px auto;padding:24px}table{border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 12px}</style>
+<main>
+  <h1>Version Information</h1>
+  <p><a href="/status/version.json">View JSON</a></p>
+  <noscript>
+    <table>
+      <tr><th>Commit</th><td>630c0c57</td></tr>
+      <tr><th>Build Time</th><td>2025-08-22T00:21:29Z</td></tr>
+      <tr><th>Env</th><td>prod</td></tr>
+    </table>
+    <p><a href="/status/version.json">View JSON</a></p>
+  </noscript>
+  <pre id="out">loading…</pre>
+</main>
+<script>fetch("/status/version.json").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>

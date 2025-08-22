@@ -2,13 +2,26 @@
 <title>Evidence v19 Index · Zeropoint Protocol</title>
 <style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:920px;margin:40px auto;padding:24px}ul{line-height:1.9}</style>
 <main>
-  <h1>Evidence v19</h1>
-  <p>Commit: <code>630c0c57</code> · Build: <time>2025-08-22T00:21:29Z</time></p>
+  <h1>Evidence v19 - Verification Gate Artifacts</h1>
+  <p>Commit: <span id="commit">loading...</span></p>
+  <p>Build Time: <span id="buildTime">loading...</span></p>
   <ul>
-    <li><a href="/evidence/v19/deploy_log.txt">deploy_log.txt</a></li>
-    <li><a href="/evidence/v19/lighthouse_report.html">lighthouse_report.html</a></li>
-    <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol/actions">CI runs</a></li>
+    <li><a href="deploy_log.txt">Deploy Log</a></li>
+    <li><a href="lighthouse_report.html">Lighthouse Report</a></li>
+    <li>Curl Probes:
+      <ul>
+        <li><a href="curl/healthz.http">healthz</a></li>
+        <li><a href="curl/readyz.http">readyz</a></li>
+        <li><a href="curl/version_json.http">version.json</a></li>
+      </ul>
+    </li>
   </ul>
+  <script>
+    fetch("/status/version.json").then(r => r.json()).then(j => {
+      document.getElementById("commit").textContent = j.commit;
+      document.getElementById("buildTime").textContent = j.build_time;
+    });
+  </script>
 </main>
 
 

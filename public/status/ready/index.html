@@ -9,9 +9,14 @@
   <tr><th>Ready</th><td>true</td></tr>
   <tr><th>DB</th><td>true</td></tr>
   <tr><th>Cache</th><td>true</td></tr>
-  <tr><th>Commit</th><td>630c0c57</td></tr>
+  <tr><th>Commit</th><td id="commit">loading...</td></tr>
 </table>
 </noscript>
   <pre id="out">loading…</pre>
 </main>
-<script>fetch("/api/readyz").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>
+<script>
+  fetch("/api/readyz").then(r => r.json()).then(j => {
+    document.getElementById("commit").textContent = j.commit || 'unknown';
+    out.textContent = JSON.stringify(j, null, 2);
+  }).catch(e => out.textContent = String(e));
+</script>

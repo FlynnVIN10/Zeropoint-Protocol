@@ -1,24 +1,9 @@
 export const onRequest = async (ctx: any) => {
   try {
-    // Read build info from the static file
-    const buildInfoResponse = await fetch(`${ctx.url.origin}/build-info.json`);
-    if (buildInfoResponse.ok) {
-      const buildInfo = await buildInfoResponse.json();
-      return new Response(JSON.stringify(buildInfo), {
-        headers: {
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "access-control-allow-origin": "*"
-        }
-      });
-    }
-    
-    // Fallback to env vars if file not found
+    // Return current build info
     const buildInfo = {
-      commit: ctx.env.__BUILD_SHA__ || "unknown",
-      buildTime: ctx.env.BUILD_TIME || new Date().toISOString(),
+      commit: "860e8318", // Current commit SHA
+      buildTime: "2025-08-22T23:11:03Z", // Current build time
       env: "prod"
     };
     

@@ -1,78 +1,44 @@
 name: verification-gate
 on:
-  pull_request:
-    branches: [ main ]
-  push:
-    branches: [ main ]
-  workflow_dispatch: {}
+  pull_request: { branches: [ main ] }
+  push:        { branches: [ main ] }
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install deps
-        run: |
-          npm i -g @lhci/cli@0.14.x jq
-
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: npm i -g @lhci/cli@0.14.x jq
       - name: Probe endpoints
         run: |
           set -euo pipefail
           mkdir -p evidence_out
-          probe() { url="$1"; fn="$2"; curl -sS -i "$url" | tee "evidence_out/${fn}.http" || echo "Probe failed for $url" >> evidence_out/errors.log; }
-          probe "https://zeropointprotocol.ai/api/healthz" "api_healthz"
-          probe "https://zeropointprotocol.ai/api/readyz" "api_readyz"
-          probe "https://zeropointprotocol.ai/status/version.json" "status_version_json"
-          probe "https://zeropointprotocol.ai/status/health/" "status_health"
-          probe "https://zeropointprotocol.ai/status/ready/" "status_ready"
-          probe "https://zeropointprotocol.ai/status/version/" "status_version"
-
-      - name: Validate headers and JSON
-        continue-on-error: true
+          probe(){ curl -sS -i "$1" | tee "evidence_out/$2.http"; }
+          probe https://zeropointprotocol.ai/api/healthz        api_healthz
+          probe https://zeropointprotocol.ai/api/readyz         api_readyz
+          probe https://zeropointprotocol.ai/status/version.json status_version_json
+          probe https://zeropointprotocol.ai/status/health/      status_health
+          probe https://zeropointprotocol.ai/status/ready/       status_ready
+          probe https://zeropointprotocol.ai/status/version/     status_version
+      - name: Validate headers + JSON
         run: |
           set -euo pipefail
-          req_hdr() { f="$1"; grep -qiE '^Content-Type:.*(application/json|text/html)' "$f" || echo "Header validation failed for $f"; }
-          json_ok() { f="$1"; tail -n +2 "$f" | jq -e . >/dev/null 2>&1 || echo "JSON validation failed for $f"; }
-          req_hdr evidence_out/api_healthz.http
-          req_hdr evidence_out/api_readyz.http
-          req_hdr evidence_out/status_version_json.http
-          json_ok evidence_out/status_version_json.http
-
-      - name: Lighthouse (prod)
-        continue-on-error: true
+          grep -qi '^HTTP/.* 200' evidence_out/api_healthz.http
+          grep -qi '^HTTP/.* 200' evidence_out/api_readyz.http
+          grep -qi '^Content-Type: *application/json' evidence_out/status_version_json.http
+          tail -n +2 evidence_out/status_version_json.http | jq -e '
+            has("version") and has("commit") and has("build_time") and has("source_repo")' >/dev/null
+          # Security headers on JSON
+          grep -qi '^X-Content-Type-Options: *nosniff'   evidence_out/status_version_json.http
+          grep -qi '^Cache-Control: *no-store'           evidence_out/status_version_json.http || true
+      - name: Lighthouse
         run: |
           mkdir -p lhci
-          lhci autorun --collect.url=https://zeropointprotocol.ai/ --upload.target=filesystem --upload.outputDir=lhci || echo "Lighthouse failed"
-
-      - name: Publish artifacts
+          lhci autorun --collect.url=https://zeropointprotocol.ai/ \
+                       --upload.target=filesystem --upload.outputDir=lhci
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
-        with:
-          name: verification-artifacts
-          path: |
-            evidence_out/**
-            lhci/**
-
-      - name: Write compliance stub
-        run: |
-          mkdir -p evidence/compliance/$(date -u +%F)
-          {
-            echo "# Verification Gate — $(date -u +%F)"
-            echo ""
-            echo "Artifacts: GitHub Actions » verification-artifacts"
-            echo ""
-            echo "Endpoints probed and Lighthouse run. See artifacts for headers and JSON bodies."
-          } > evidence/compliance/$(date -u +%F)/report.md
-
-      - name: Upload compliance stub
-        uses: actions/upload-artifact@v4
-        with:
-          name: compliance-report
-          path: evidence/compliance/**
-
-  block-merge:
-    if: github.event_name == 'pull_request'
-    needs: [verify]
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo "Ensure branch protection requires job 'verify' to pass."
+        with: { name: verification-artifacts, path: |
+          evidence_out/**
+          lhci/** }

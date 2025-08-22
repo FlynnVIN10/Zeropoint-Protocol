@@ -18,3 +18,8 @@
 /evidence/v19/deploy_log.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=60
+
+/status/version.json
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-store
+  Access-Control-Allow-Origin: *

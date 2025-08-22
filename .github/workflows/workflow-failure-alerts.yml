@@ -18,15 +18,17 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           REPO="${{ github.repository }}"
-          TITLE="[ALERT] Workflow failed: ${{ github.event.workflow_run.name }} (#${{ github.event.workflow_run.id }})"
-          BODY=$(cat <<'EOF'
+          RUN_ID="${{ github.event.workflow_run.id }}"
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${RUN_ID}"
+          TITLE="[ALERT] Workflow failed: ${{ github.event.workflow_run.name }} (#${RUN_ID})"
+          BODY=$(cat <<EOF
           A workflow run failed.
 
           - Name: ${{ github.event.workflow_run.name }}
           - Status: ${{ github.event.workflow_run.status }}
           - Conclusion: ${{ github.event.workflow_run.conclusion }}
           - Event: ${{ github.event.workflow_run.event }}
-          - Run URL: ${{ github.event.workflow_run.html_url }}
+          - Run URL: ${RUN_URL}
           - Head SHA: ${{ github.event.workflow_run.head_sha }}
           - Branch: ${{ github.event.workflow_run.head_branch }}
 
@@ -40,6 +42,8 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          payload=$(jq -n --arg text "Workflow failed: ${{ github.event.workflow_run.name }}. See ${{ github.event.workflow_run.html_url }}" '{text: $text}')
+          RUN_ID="${{ github.event.workflow_run.id }}"
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${RUN_ID}"
+          payload=$(jq -n --arg text "Workflow failed: ${{ github.event.workflow_run.name }}. See ${RUN_URL}" '{text: $text}')
           curl -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
 

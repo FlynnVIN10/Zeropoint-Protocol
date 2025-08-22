@@ -42,6 +42,9 @@ jobs:
   verify-phase5:
     runs-on: ubuntu-latest
     needs: analyst-gate
+    concurrency:
+      group: phase5-verify-${{ github.ref }}-${{ matrix.node-version }}
+      cancel-in-progress: true
     strategy:
       matrix:
         node-version: [20.11, 21]
@@ -83,20 +86,23 @@ jobs:
     - name: Upload smoke test artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: smoke-test-results
+        name: smoke-test-results-${{ matrix.node-version }}-${{ github.run_id }}
         path: evidence/phase5/smoke/
+        overwrite: true
         
     - name: Upload verification artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: verification-results
+        name: verification-results-${{ matrix.node-version }}-${{ github.run_id }}
         path: evidence/phase5/verify/
+        overwrite: true
         
     - name: Upload Lighthouse artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: lighthouse-results
+        name: lighthouse-results-${{ matrix.node-version }}-${{ github.run_id }}
         path: evidence/phase5/lighthouse/
+        overwrite: true
         
     - name: Update evidence tree
       run: |

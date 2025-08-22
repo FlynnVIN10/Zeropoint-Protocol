@@ -37,9 +37,18 @@ jobs:
         run: |
           mkdir -p lhci
           lhci autorun --collect.url=https://zeropointprotocol.ai/ \
-                       --upload.target=filesystem --upload.outputDir=lhci
-      - name: Upload artifacts
+                       --upload.target=filesystem --upload.outputDir=lhci || true
+
+      - name: Upload artifacts (always)
+        if: always()
         uses: actions/upload-artifact@v4
-        with: { name: verification-artifacts, path: |
-          evidence_out/**
-          lhci/** }
+        with:
+          name: verification-artifacts
+          path: |
+            evidence_out/**
+            lhci/**
+          if-no-files-found: warn
+
+      - name: List artifact names
+        if: always()
+        run: echo "artifact=verification-artifacts"

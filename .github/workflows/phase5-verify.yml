@@ -86,21 +86,21 @@ jobs:
     - name: Upload smoke test artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: smoke-test-results-${{ matrix.node-version }}-${{ github.run_id }}
+        name: smoke-test-results-${{ matrix.node-version }}-${{ github.run_id }}-${{ github.run_id }}
         path: evidence/phase5/smoke/
         overwrite: true
         
     - name: Upload verification artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: verification-results-${{ matrix.node-version }}-${{ github.run_id }}
+        name: verification-results-${{ matrix.node-version }}-${{ github.run_id }}-${{ github.run_id }}
         path: evidence/phase5/verify/
         overwrite: true
         
     - name: Upload Lighthouse artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: lighthouse-results-${{ matrix.node-version }}-${{ github.run_id }}
+        name: lighthouse-results-${{ matrix.node-version }}-${{ github.run_id }}-${{ github.run_id }}
         path: evidence/phase5/lighthouse/
         overwrite: true
         

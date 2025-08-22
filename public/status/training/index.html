@@ -1,0 +1,19 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Status · Training</title>
+<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:880px;margin:40px auto;padding:24px}table{border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 12px}</style>
+<main>
+  <h1>Training Status</h1>
+  <p><a href="/api/training/status">View JSON</a></p>
+  <noscript>
+    <table>
+      <tr><th>Run</th><td>tinygrad-__BUILD_TIME__</td></tr>
+      <tr><th>Commit</th><td>__BUILD_SHA__</td></tr>
+      <tr><th>Step</th><td>10</td></tr>
+      <tr><th>Loss</th><td>0.1234</td></tr>
+      <tr><th>Time</th><td>__BUILD_TIME__</td></tr>
+    </table>
+  </noscript>
+  <pre id="out">loading…</pre>
+</main>
+<script>fetch("/api/training/status").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>
+

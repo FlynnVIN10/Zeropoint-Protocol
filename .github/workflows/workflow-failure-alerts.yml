@@ -39,12 +39,14 @@ jobs:
           gh issue create --repo "$REPO" --title "$TITLE" --body "$BODY" --label "analyst-finding,P1"
 
       - name: Notify Slack (optional)
-        if: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         run: |
-          RUN_ID="${{ github.event.workflow_run.id }}"
-          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${RUN_ID}"
-          payload=$(jq -n --arg text "Workflow failed: ${{ github.event.workflow_run.name }}. See ${RUN_URL}" '{text: $text}')
-          curl -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
-
+          if [ -n "$SLACK_WEBHOOK_URL" ]; then
+            RUN_ID="${{ github.event.workflow_run.id }}"
+            RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${RUN_ID}"
+            payload=$(jq -n --arg text "Workflow failed: ${{ github.event.workflow_run.name }}. See ${RUN_URL}" '{text: $text}')
+            curl -X POST -H 'Content-type: application/json' --data "$payload" "$SLACK_WEBHOOK_URL"
+          else
+            echo "SLACK_WEBHOOK_URL not set, skipping Slack notification"
+          fi

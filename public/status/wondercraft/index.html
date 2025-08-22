@@ -1,0 +1,16 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Status · Wondercraft</title>
+<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:880px;margin:40px auto;padding:24px}table{border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 12px}</style>
+<main>
+  <h1>Wondercraft Status</h1>
+  <p><a href="/wondercraft/status.json">View JSON</a></p>
+  <noscript>
+    <table>
+      <tr><th>Configured</th><td>true</td></tr>
+      <tr><th>Last Contact</th><td>__BUILD_TIME__</td></tr>
+      <tr><th>Notes</th><td>Stub for Wondercraft status</td></tr>
+    </table>
+  </noscript>
+  <pre id="out">loading…</pre>
+</main>
+<script>fetch("/wondercraft/status.json").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>

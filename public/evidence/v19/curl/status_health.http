@@ -1,5 +1,5 @@
 HTTP/2 200 
-date: Fri, 22 Aug 2025 20:29:53 GMT
+date: Fri, 22 Aug 2025 20:57:39 GMT
 content-type: text/html; charset=utf-8
 access-control-allow-origin: *
 cache-control: public, max-age=60
@@ -7,11 +7,11 @@ referrer-policy: no-referrer
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=d6VPU6BjvwDxxpKzwx%2B0%2BLtf0wrKACm9lRatdsu7H1zDNid5SiH96b0edb8wVVwcjKtPRitI11NB5UycDhQYYrZpaXjmmlI%2B7cB3mOQmu27XM2a0"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Qp0e2mtof1h557J0W%2B11wD%2BEsr99nkN6JPWRZKSghgHq8rUIGEqKI2v8RGj2I0bMnQHocu3pdPIBAk0Ks1Yv1MunxfevcQd5Bq7CS4xb3XGrBZ6U"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 97351ff83e068072-AMS
+cf-ray: 973548a6bfa92f56-LAX
 alt-svc: h3=":443"; ma=86400
 
 <!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

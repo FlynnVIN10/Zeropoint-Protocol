@@ -1,19 +1,70 @@
-<!doctype html>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Wondercraft Status</title>
-<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:880px;margin:40px auto;padding:24px}table{border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 12px}</style>
-<main>
-  <h1>Wondercraft Status</h1>
-  <p><a href="/wondercraft/status.json">View JSON</a></p>
-  <noscript>
-    <table>
-      <tr><th>Configured</th><td>true</td></tr>
-      <tr><th>Active</th><td>true</td></tr>
-      <tr><th>Last Contact</th><td>2025-08-22T20:45:00Z</td></tr>
-      <tr><th>Notes</th><td>Operational</td></tr>
-    </table>
-  </noscript>
-  <pre id="out">loading…</pre>
-</main>
-<script>fetch("/wondercraft/status.json").then(r=>r.json()).then(j=>out.textContent=JSON.stringify(j,null,2)).catch(e=>out.textContent=String(e))</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wondercraft Status - Zeropoint Protocol</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .status { margin: 20px 0; }
+        .noscript { background: #f5f5f5; padding: 20px; border-radius: 5px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .json-link { margin: 20px 0; }
+        .json-link a { color: #0066cc; text-decoration: none; }
+        .json-link a:hover { text-decoration: underline; }
+        .status-indicator { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; }
+        .status-active { background-color: #4CAF50; }
+        .status-inactive { background-color: #f44336; }
+    </style>
+</head>
+<body>
+    <h1>Wondercraft Status</h1>
+    
+    <div class="json-link">
+        <a href="/wondercraft/status.json">View JSON</a>
+    </div>
+    
+    <div class="status" id="status">
+        <p>Loading Wondercraft status...</p>
+    </div>
+    
+    <noscript>
+        <div class="noscript">
+            <h3>Wondercraft Status (JavaScript Disabled)</h3>
+            <table>
+                <tr><th>Configured</th><td>true</td></tr>
+                <tr><th>Active</th><td>false</td></tr>
+                <tr><th>Notes</th><td>not connected</td></tr>
+                <tr><th>Timestamp</th><td>2025-08-23T01:25:00Z</td></tr>
+            </table>
+        </div>
+    </noscript>
+
+    <script>
+        fetch('/wondercraft/status.json')
+            .then(response => response.json())
+            .then(data => {
+                const statusClass = data.active ? 'status-active' : 'status-inactive';
+                const statusText = data.active ? 'Active' : 'Inactive';
+                
+                document.getElementById('status').innerHTML = `
+                    <h3>Live Wondercraft Status</h3>
+                    <table>
+                        <tr><th>Configured</th><td>${data.configured}</td></tr>
+                        <tr><th>Status</th><td><span class="status-indicator ${statusClass}"></span>${statusText}</td></tr>
+                        <tr><th>Notes</th><td>${data.notes}</td></tr>
+                        <tr><th>Timestamp</th><td>${data.ts}</td></tr>
+                    </table>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('status').innerHTML = `
+                    <p style="color: red;">Error loading Wondercraft status: ${error.message}</p>
+                `;
+                console.error('Error:', error);
+            });
+    </script>
+</body>
+</html>

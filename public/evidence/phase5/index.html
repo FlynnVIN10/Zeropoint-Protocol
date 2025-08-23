@@ -1,14 +1,132 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Phase 5 Evidence Index · Zeropoint Protocol</title>
-<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:920px;margin:40px auto;padding:24px}</style>
-<main>
-  <h1>Phase 5 Evidence</h1>
-  <p>Commit: <code id="sha">__BUILD_SHA__</code> · Build: <time id="bt">__BUILD_TIME__</time></p>
-  <ul>
-    <li><a href="/public/evidence/phase5/verify/">verify/</a></li>
-    <li><a href="/public/evidence/phase5/smoke/">smoke/</a></li>
-    <li><a href="/public/evidence/phase5/deploy_log.txt">deploy_log.txt</a></li>
-    <li><a href="/public/evidence/phase5/lighthouse_report.html">lighthouse_report.html</a></li>
-    <li><a href="https://github.com/FlynnVIN10/Zeropoint-Protocol/actions">CI runs</a></li>
-  </ul>
-</main>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phase 5 Evidence - Zeropoint Protocol</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .header { background: #f5f5f5; padding: 20px; border-radius: 5px; margin-bottom: 20px; }
+        .milestone { background: #fff; border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .milestone h3 { margin-top: 0; color: #333; }
+        .milestone.complete { border-left: 5px solid #4CAF50; }
+        .milestone.in-progress { border-left: 5px solid #FF9800; }
+        .milestone.pending { border-left: 5px solid #9E9E9E; }
+        .milestone a { color: #0066cc; text-decoration: none; }
+        .milestone a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Phase 5 Evidence - Evidence Canonicalization and Noscript Token Injection</h1>
+    
+    <div class="header">
+        <h2>Phase 5 Build Information</h2>
+        <table>
+            <tr><th>Commit</th><td>__BUILD_SHA__</td></tr>
+            <tr><th>Build Time</th><td>__BUILD_TIME__</td></tr>
+            <tr><th>Environment</th><td>Production</td></tr>
+            <tr><th>Phase</th><td>Phase 5 - Evidence Canonicalization</td></tr>
+        </table>
+    </div>
+    
+    <div class="milestone complete">
+        <h3>✅ M1 - Evidence Canonicalization and Noscript Token Injection</h3>
+        <p><strong>Status:</strong> Complete</p>
+        <p><strong>Description:</strong> Implement evidence canonicalization with live commit tracking and noscript token injection</p>
+        <p><strong>Components:</strong></p>
+        <ul>
+            <li>Repository structure and documentation (PR-0)</li>
+            <li>Evidence redirects and headers (PR-A)</li>
+            <li>Noscript tables with build tokens</li>
+            <li>Build injection script for deployment</li>
+        </ul>
+        <p><strong>Evidence:</strong> <a href="/evidence/v19/">v19 Evidence Index</a></p>
+    </div>
+    
+    <div class="milestone in-progress">
+        <h3>🔄 M2 - Training Endpoint Non-Mock</h3>
+        <p><strong>Status:</strong> In Progress</p>
+        <p><strong>Description:</strong> Implement live training metrics and status endpoints</p>
+        <p><strong>Components:</strong></p>
+        <ul>
+            <li>TinyGrad training workflow</li>
+            <li>Training metrics collection</li>
+            <li>Training status API endpoint</li>
+            <li>Training status UI page</li>
+        </ul>
+        <p><strong>Next:</strong> PR-B implementation</p>
+    </div>
+    
+    <div class="milestone in-progress">
+        <h3>🔄 M3 - Petals + Wondercraft Status</h3>
+        <p><strong>Status:</strong> In Progress</p>
+        <p><strong>Description:</strong> Implement real service status checks and UI pages</p>
+        <p><strong>Components:</strong></p>
+        <ul>
+            <li>Petals status endpoint and UI</li>
+            <li>Wondercraft status endpoint and UI</li>
+            <li>Service health monitoring</li>
+            <li>Status page noscript support</li>
+        </ul>
+        <p><strong>Next:</strong> PR-B implementation</p>
+    </div>
+    
+    <div class="milestone pending">
+        <h3>⏳ M4 - API Verifiability Re-Check</h3>
+        <p><strong>Status:</strong> Pending</p>
+        <p><strong>Description:</strong> Verify all API endpoints return correct headers and responses</p>
+        <p><strong>Components:</strong></p>
+        <ul>
+            <li>Header compliance verification</li>
+            <li>Response format validation</li>
+            <li>Evidence collection</li>
+            <li>Compliance reporting</li>
+        </ul>
+        <p><strong>Next:</strong> Post-PR-B verification</p>
+    </div>
+    
+    <div class="milestone pending">
+        <h3>⏳ M5 - Verification Gate Re-Run + Evidence Pack</h3>
+        <p><strong>Status:</strong> Pending</p>
+        <p><strong>Description:</strong> Execute verification gate and collect evidence</p>
+        <p><strong>Components:</strong></p>
+        <ul>
+            <li>Verification gate execution</li>
+            <li>Evidence collection</li>
+            <li>Lighthouse audits</li>
+            <li>Compliance reporting</li>
+        </ul>
+        <p><strong>Next:</strong> Post-PR-B execution</p>
+    </div>
+    
+    <div class="milestone">
+        <h3>📋 Pull Request Status</h3>
+        <table>
+            <tr><th>PR</th><th>Status</th><th>Description</th></tr>
+            <tr><td>PR-0</td><td>✅ Complete</td><td>Repo hygiene and README realignment</td></tr>
+            <tr><td>PR-A</td><td>🔄 In Progress</td><td>Evidence canonicalization and token injection</td></tr>
+            <tr><td>PR-B</td><td>⏳ Pending</td><td>Training metrics and status endpoints</td></tr>
+        </table>
+    </div>
+    
+    <div class="milestone">
+        <h3>🔗 Related Links</h3>
+        <ul>
+            <li><a href="/evidence/v19/">Evidence v19 Index</a></li>
+            <li><a href="/status/health/">Health Status</a></li>
+            <li><a href="/status/ready/">Ready Status</a></li>
+            <li><a href="/status/version/">Version Status</a></li>
+            <li><a href="/evidence/v19/deploy_log.txt">Deploy Log</a></li>
+        </ul>
+    </div>
+    
+    <div class="milestone">
+        <h3>Navigation</h3>
+        <p><a href="/">← Back to Home</a></p>
+        <p><a href="/evidence/">← Back to Evidence Index</a></p>
+    </div>
+</body>
+</html>

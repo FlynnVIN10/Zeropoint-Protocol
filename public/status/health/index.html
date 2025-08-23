@@ -1,21 +1,61 @@
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Status · Health</title>
-<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:880px;margin:40px auto;padding:24px}table{border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 12px}</style>
-<main>
-  <h1>Health Check</h1>
-  <p><a href="/api/healthz">View JSON</a></p>
-  <noscript>
-    <table>
-      <tr><th>Status</th><td>ok</td></tr>
-      <tr><th>Uptime</th><td>0</td></tr>
-      <tr><th>Commit</th><td id="commit">loading...</td></tr>
-    </table>
-  </noscript>
-  <pre id="out">loading…</pre>
-</main>
-<script>
-  fetch("/api/healthz").then(r => r.json()).then(j => {
-    document.getElementById("commit").textContent = j.commit;
-    out.textContent = JSON.stringify(j, null, 2);
-  }).catch(e => out.textContent = String(e));
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Status - Zeropoint Protocol</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .status { margin: 20px 0; }
+        .noscript { background: #f5f5f5; padding: 20px; border-radius: 5px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .json-link { margin: 20px 0; }
+        .json-link a { color: #0066cc; text-decoration: none; }
+        .json-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Health Status</h1>
+    
+    <div class="json-link">
+        <a href="/api/healthz">View JSON</a>
+    </div>
+    
+    <div class="status" id="status">
+        <p>Loading status...</p>
+    </div>
+    
+    <noscript>
+        <div class="noscript">
+            <h3>Status (JavaScript Disabled)</h3>
+            <table>
+                <tr><th>Status</th><td>ok</td></tr>
+                <tr><th>Commit</th><td>__BUILD_SHA__</td></tr>
+                <tr><th>Build Time</th><td>__BUILD_TIME__</td></tr>
+            </table>
+        </div>
+    </noscript>
+
+    <script>
+        fetch('/api/healthz')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').innerHTML = `
+                    <h3>Live Status</h3>
+                    <table>
+                        <tr><th>Status</th><td>${data.status}</td></tr>
+                        <tr><th>Uptime</th><td>${data.uptime}s</td></tr>
+                        <tr><th>Commit</th><td>${data.commit}</td></tr>
+                    </table>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('status').innerHTML = `
+                    <p style="color: red;">Error loading status: ${error.message}</p>
+                `;
+            });
+    </script>
+</body>
+</html>

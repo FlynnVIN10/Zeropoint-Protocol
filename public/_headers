@@ -1,25 +1,22 @@
-/*
-  X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY
-  Referrer-Policy: no-referrer
+# Headers for Zeropoint Protocol
 
-/status/*
-  Content-Type: text/html; charset=utf-8
-  Cache-Control: public, max-age=60
-
-/consensus/*
-  Content-Type: text/html; charset=utf-8
-  Cache-Control: public, max-age=60
-
-/evidence/phase5/deploy_log.txt
+# Evidence files
+/evidence/*/deploy_log.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=60
 
-/evidence/v19/deploy_log.txt
-  Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=60
-
-/status/version.json
+# API endpoints
+/api/*
   X-Content-Type-Options: nosniff
   Cache-Control: no-store
-  Access-Control-Allow-Origin: *
+
+# Status pages
+/status/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=300
+
+# Security headers for all pages
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

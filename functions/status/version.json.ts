@@ -2,8 +2,8 @@ export const onRequest = async (ctx: any) => {
   try {
     // Return current build info
     const buildInfo = {
-      commit: "afaeda9c", // Current commit SHA
-      buildTime: "2025-08-23T01:22:25Z", // Current build time
+      commit: "33dbbd99", // Current commit SHA
+      buildTime: "2025-08-23T22:15:00Z", // Current build time
       env: "prod"
     };
     

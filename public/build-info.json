@@ -1,5 +1,6 @@
 {
-  "commit": "7a2f4ce6",
-  "buildTime": "2025-08-22T22:57:13Z",
-  "env": "prod"
+  "commit": "33dbbd99",
+  "buildTime": "2025-08-23T21:04:27.102Z",
+  "env": "prod",
+  "injectedAt": "2025-08-23T21:04:27.235Z"
 }

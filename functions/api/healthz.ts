@@ -3,7 +3,7 @@ export const onRequest = async (ctx: any) => {
     const body = JSON.stringify({
       status: "ok",
       uptime: Math.floor((Date.now() - (globalThis as any).__start || 0)/1000),
-      commit: "860e8318" // Current commit SHA
+      commit: "afaeda9c" // Current commit SHA
     });
     
     return new Response(body, {

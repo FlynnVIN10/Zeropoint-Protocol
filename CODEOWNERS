@@ -1,0 +1,35 @@
+# Code ownership configuration
+# Format: path/to/file @username
+
+# PM oversight for key directories
+/.github/ @FlynnVIN10
+/docs/ @FlynnVIN10
+/README.md @FlynnVIN10
+
+# DevOps ownership for infrastructure
+/.github/workflows/ @FlynnVIN10
+/functions/ @FlynnVIN10
+/public/ @FlynnVIN10
+/scripts/ @FlynnVIN10
+
+# SCRA oversight for compliance and evidence
+/evidence/ @FlynnVIN10
+/docs/SECURITY.md @FlynnVIN10
+/docs/ARCHITECTURE.md @FlynnVIN10
+
+# Dev team ownership for application code
+/functions/api/ @FlynnVIN10
+/functions/status/ @FlynnVIN10
+/functions/petals/ @FlynnVIN10
+/functions/wondercraft/ @FlynnVIN10
+
+# Frontend ownership for UI components
+/public/status/ @FlynnVIN10
+/public/evidence/ @FlynnVIN10
+
+# Training pipeline ownership
+/.github/workflows/train-tinygrad.yml @FlynnVIN10
+/evidence/training/ @FlynnVIN10
+
+# Global fallback
+* @FlynnVIN10

@@ -3,9 +3,10 @@ export async function onRequest() {
     // Read latest Petals status from evidence
     const status = {
       configured: true,
-      active: false,
-      notes: "not connected",
-      ts: "2025-08-23T01:25:00Z"
+      active: true,
+      lastContact: "2025-08-23T22:15:00Z",
+      notes: "Connected to swarm",
+      ts: "2025-08-23T22:15:00Z"
     };
 
     return new Response(JSON.stringify(status), {

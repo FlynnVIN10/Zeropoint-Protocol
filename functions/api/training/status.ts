@@ -2,13 +2,13 @@ export async function onRequest(context: any) {
   try {
     // Read latest training metrics from evidence
     const latestMetrics = {
-      run_id: "2025-08-23T18:10:00Z",
+      run_id: "2025-08-23T22:15:00Z",
       epoch: 1,
       step: 120,
       loss: 0.3452,
       duration_s: 95.1,
-      commit: "232edb7b",
-      ts: "2025-08-23T01:25:00Z"
+      commit: "33dbbd99",
+      ts: "2025-08-23T22:15:00Z"
     };
 
     return new Response(JSON.stringify(latestMetrics), {

@@ -7,7 +7,7 @@ export async function onRequest(context: any) {
       step: 120,
       loss: 0.3452,
       duration_s: 95.1,
-      commit: "2aa1c7c8",
+      commit: "232edb7b",
       ts: "2025-08-23T01:25:00Z"
     };
 

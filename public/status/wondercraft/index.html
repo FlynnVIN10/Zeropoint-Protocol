@@ -35,9 +35,9 @@
             <h3>Wondercraft Status (JavaScript Disabled)</h3>
             <table>
                 <tr><th>Configured</th><td>true</td></tr>
-                <tr><th>Active</th><td>true</td></tr>
-                <tr><th>Last Contact</th><td>2025-08-23T01:25:00Z</td></tr>
-                <tr><th>Notes</th><td>Wondercraft AI model service - operational status</td></tr>
+                <tr><th>Active</th><td>false</td></tr>
+                <tr><th>Notes</th><td>not connected</td></tr>
+                <tr><th>Timestamp</th><td>2025-08-23T01:25:00Z</td></tr>
             </table>
         </div>
     </noscript>
@@ -54,8 +54,8 @@
                     <table>
                         <tr><th>Configured</th><td>${data.configured}</td></tr>
                         <tr><th>Status</th><td><span class="status-indicator ${statusClass}"></span>${statusText}</td></tr>
-                        <tr><th>Last Contact</th><td>${data.lastContact}</td></tr>
                         <tr><th>Notes</th><td>${data.notes}</td></tr>
+                        <tr><th>Timestamp</th><td>${data.ts}</td></tr>
                     </table>
                 `;
             })

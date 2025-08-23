@@ -3,9 +3,9 @@ export async function onRequest() {
     // Read latest Wondercraft status from evidence
     const status = {
       configured: true,
-      active: true,
-      lastContact: "2025-08-23T01:25:00Z",
-      notes: "Wondercraft AI model service - operational status"
+      active: false,
+      notes: "not connected",
+      ts: "2025-08-23T01:25:00Z"
     };
 
     return new Response(JSON.stringify(status), {

@@ -1,40 +1,78 @@
 HTTP/2 200 
-date: Sat, 23 Aug 2025 18:55:41 GMT
+date: Sat, 23 Aug 2025 20:08:51 GMT
 content-type: text/html; charset=utf-8
 access-control-allow-origin: *
-cache-control: public, max-age=60
-referrer-policy: no-referrer
+cache-control: public, max-age=300
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=gZ62BIyfoR%2BjBkgr85sXHEJtK8CyRf77YDvpNJwQGtM6oBX4sDt1N04x20zHDlU6zXSGQZXSLgMrGVhl4JjJc7ZPYktHuk31v5PhKa%2BHmGee3x9F"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=jbRnc4dsCDFgG17dheyfeKpzsH2w3T3Adp%2BE0icAu8F89dDxvtFdQUYporQ0m%2BrjU%2F9k17y4nrVww0Ki7Iu4TSADZDohXcYrVWYDbX0Xj0rgx717"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 973cd35ca93c49c1-EWR
+cf-ray: 973d3e8bfda4f92b-ORD
 alt-svc: h3=":443"; ma=86400
 
-<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Status · Version</title>
-<style>body{font:16px system-ui;background:#0b0f14;color:#e5e7eb;margin:0}main{max-width:880px;margin:40px auto;padding:24px}table{border-collapse:collapse}th,td{border:1px solid #1f2937;padding:8px 12px}</style>
-<main>
-  <h1>Version Information</h1>
-  <p><a href="/status/version.json">View JSON</a></p>
-  <noscript>
-    <table>
-      <tr><th>Commit</th><td id="commit">loading...</td></tr>
-      <tr><th>Build Time</th><td id="buildTime">loading...</td></tr>
-      <tr><th>Env</th><td id="env">loading...</td></tr>
-    </table>
-    <p><a href="/status/version.json">View JSON</a></p>
-  </noscript>
-  <pre id="out">loading…</pre>
-</main>
-<script>
-  fetch("/status/version.json").then(r => r.json()).then(j => {
-    document.getElementById("commit").textContent = j.commit;
-    document.getElementById("buildTime").textContent = j.build_time;
-    document.getElementById("env").textContent = j.env;
-    out.textContent = JSON.stringify(j, null, 2);
-  }).catch(e => out.textContent = String(e));
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Version Status - Zeropoint Protocol</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .status { margin: 20px 0; }
+        .noscript { background: #f5f5f5; padding: 20px; border-radius: 5px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .json-link { margin: 20px 0; }
+        .json-link a { color: #0066cc; text-decoration: none; }
+        .json-link a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>Version Status</h1>
+    
+    <div class="json-link">
+        <a href="/status/version.json">View JSON</a>
+    </div>
+    
+    <div class="status" id="status">
+        <p>Loading status...</p>
+    </div>
+    
+    <noscript>
+        <div class="noscript">
+            <h3>Status (JavaScript Disabled)</h3>
+            <table>
+                <tr><th>Commit</th><td>__BUILD_SHA__</td></tr>
+                <tr><th>Build Time</th><td>__BUILD_TIME__</td></tr>
+                <tr><th>Environment</th><td>prod</td></tr>
+            </table>
+        </div>
+    </noscript>
+
+    <script>
+        fetch('/status/version.json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('status').innerHTML = `
+                    <h3>Live Status</h3>
+                    <table>
+                        <tr><th>Commit</th><td>${data.commit}</td></tr>
+                        <tr><th>Build Time</th><td>${data.buildTime}</td></tr>
+                        <tr><th>Environment</th><td>${data.env}</td></tr>
+                    </table>
+                `;
+            })
+            .catch(error => {
+                document.getElementById('status').innerHTML = `
+                    <p style="color: red;">Error loading status: ${error.message}</p>
+                `;
+            });
+    </script>
+</body>
+</html>

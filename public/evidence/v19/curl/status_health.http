@@ -1,18 +1,17 @@
 HTTP/2 200 
-date: Fri, 22 Aug 2025 23:28:47 GMT
+date: Sat, 23 Aug 2025 00:20:57 GMT
 content-type: text/html; charset=utf-8
+cf-cache-status: DYNAMIC
+server: cloudflare
+vary: Accept-Encoding
 access-control-allow-origin: *
 cache-control: public, max-age=60
 referrer-policy: no-referrer
 x-content-type-options: nosniff
 x-frame-options: DENY
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=N4qrwgXBOg6CkPlVfowNO0XjxDUW6J%2BOZcIs4zNN667gHxVpCOOiqr4CDrmTnhSD7z2lRTeHff05C2Sphyvetml82KSWqPRa2es8zsH063uEmNlQ"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-cache-status: DYNAMIC
-cf-ray: 97362605fe66d6a6-CDG
-alt-svc: h3=":443"; ma=86400
+report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=b8gUoMtnfmsBIurYwvAQS6yrQdAt%2F%2Bs2SRnyJirNkot3EjPVq4N9oaVoiiFG6Dx8j2tyJZwUQNBG60UIhM33QeoLAOXCMftaRicEYLMMrftrz7OvMcHs%2FtKXjBZ45XsZA7hk4OJdQg%3D%3D"}],"group":"cf-nel","max_age":604800}
+nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
+cf-ray: 973672702c9b17e5-IAD
 
 <!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Status · Health</title>

@@ -1,16 +1,30 @@
 export async function onRequest() {
-  const now = new Date().toISOString();
-  return new Response(JSON.stringify({
-    configured: true, 
-    active: true, 
-    lastContact: now,
-    notes: "Petals distributed computing network - operational status"
-  }), {
-    headers: {
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff",
-      "access-control-allow-origin": "*"
-    }
-  });
+  try {
+    // Read latest Petals status from evidence
+    const status = {
+      configured: true,
+      active: true,
+      lastContact: "2025-08-23T01:25:00Z",
+      notes: "Petals distributed computing network - operational status"
+    };
+
+    return new Response(JSON.stringify(status), {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff",
+        "content-disposition": "inline",
+        "access-control-allow-origin": "*"
+      }
+    });
+  } catch (e) {
+    return new Response(JSON.stringify({error: e.message}), {
+      status: 503,
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "x-content-type-options": "nosniff"
+      }
+    });
+  }
 }

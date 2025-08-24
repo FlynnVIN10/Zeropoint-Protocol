@@ -1,12 +1,25 @@
-export async function onRequest() {
+export async function onRequest(context: any) {
   try {
     // Read latest Wondercraft status from evidence
-    const status = {
-      configured: true,
-      active: false,
-      notes: "not connected",
-      ts: "2025-08-23T01:25:00Z"
-    };
+    let status;
+    
+    try {
+      const response = await context.env.ASSETS.fetch('/evidence/wondercraft/status.json');
+      if (response.ok) {
+        status = await response.json();
+      } else {
+        throw new Error(`Failed to fetch evidence: ${response.status}`);
+      }
+    } catch (fetchError) {
+      // Fallback to default values if evidence file cannot be read
+      console.warn('Evidence file read failed, using fallback:', fetchError.message);
+      status = {
+        configured: true,
+        active: false,
+        notes: "not connected",
+        ts: "2025-08-24T20:04:33.598Z"
+      };
+    }
 
     return new Response(JSON.stringify(status), {
       headers: {

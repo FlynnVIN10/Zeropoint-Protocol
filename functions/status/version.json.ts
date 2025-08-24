@@ -1,13 +1,12 @@
-export const onRequest = async (ctx: any) => {
+export async function onRequest() {
   try {
-    // Return current build info
-    const buildInfo = {
-      commit: "33dbbd99", // Current commit SHA
-      buildTime: "2025-08-23T22:15:00Z", // Current build time
+    const versionInfo = {
+      commit: "8ac7004b",
+      buildTime: "2025-08-24T20:20:15.372Z",
       env: "prod"
     };
-    
-    return new Response(JSON.stringify(buildInfo), {
+
+    return new Response(JSON.stringify(versionInfo), {
       headers: {
         "content-type": "application/json; charset=utf-8",
         "cache-control": "no-store",
@@ -16,12 +15,8 @@ export const onRequest = async (ctx: any) => {
         "access-control-allow-origin": "*"
       }
     });
-  } catch (error) {
-    return new Response(JSON.stringify({
-      commit: "unknown",
-      buildTime: new Date().toISOString(),
-      env: "prod"
-    }), {
+  } catch (e) {
+    return new Response(JSON.stringify({error: e.message}), {
       status: 500,
       headers: {
         "content-type": "application/json; charset=utf-8",
@@ -30,4 +25,4 @@ export const onRequest = async (ctx: any) => {
       }
     });
   }
-};
+}

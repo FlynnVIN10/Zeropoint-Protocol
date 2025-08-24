@@ -1,0 +1,22 @@
+# Headers for Zeropoint Protocol
+
+# Evidence files
+/evidence/*/deploy_log.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=60
+
+# API endpoints
+/api/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-store
+
+# Status pages
+/status/*
+  X-Content-Type-Options: nosniff
+  Cache-Control: public, max-age=300
+
+# Security headers for all pages
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

@@ -1,0 +1,10 @@
+# Zeropoint Protocol Robots.txt
+# Commit: 8aed0117fe5f035d0c839bd4b3445bb97560e503
+# Phase: 4 - Phase 4 Implementation Complete
+# Build: 2025-08-20T19:16:25.875Z
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://zeropointprotocol.ai/sitemap.xml

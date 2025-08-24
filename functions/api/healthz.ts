@@ -1,12 +1,12 @@
-export const onRequest = async (ctx: any) => {
+export async function onRequest() {
   try {
-    const body = JSON.stringify({
+    const healthInfo = {
       status: "ok",
-      uptime: Math.floor((Date.now() - (globalThis as any).__start || 0)/1000),
-      commit: "33dbbd99" // Current commit SHA
-    });
-    
-    return new Response(body, {
+      uptime: 0,
+      commit: "8ac7004b"
+    };
+
+    return new Response(JSON.stringify(healthInfo), {
       headers: {
         "content-type": "application/json; charset=utf-8",
         "cache-control": "no-store",
@@ -15,12 +15,8 @@ export const onRequest = async (ctx: any) => {
         "access-control-allow-origin": "*"
       }
     });
-  } catch (error) {
-    return new Response(JSON.stringify({
-      status: "error",
-      uptime: 0,
-      commit: "unknown"
-    }), {
+  } catch (e) {
+    return new Response(JSON.stringify({error: e.message}), {
       status: 500,
       headers: {
         "content-type": "application/json; charset=utf-8",
@@ -29,4 +25,4 @@ export const onRequest = async (ctx: any) => {
       }
     });
   }
-};
+}

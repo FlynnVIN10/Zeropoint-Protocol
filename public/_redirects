@@ -5,6 +5,10 @@
 /evidence/phase5 /evidence/phase5/ 308!
 /evidence/v19 /evidence/v19/ 308!
 
+# Evidence files - allow direct access
+/evidence/*.json 200
+/evidence/*/*.json 200
+
 # API redirects
 /api/* /api/:splat 200
 

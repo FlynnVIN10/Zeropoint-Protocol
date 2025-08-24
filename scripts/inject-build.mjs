@@ -7,7 +7,7 @@
  */
 
 import { execSync } from 'child_process';
-import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync, readdirSync, statSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -127,9 +127,6 @@ async function main() {
   console.log(`::set-output name=build_time::${buildTime}`);
   console.log(`::set-output name=out_dir::${outDir}`);
 }
-
-// Import required modules
-import { readdirSync, statSync, existsSync } from 'fs';
 
 // Run main function
 main().catch(error => {

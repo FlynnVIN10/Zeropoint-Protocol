@@ -11,8 +11,8 @@ export async function onRequest(context: any) {
         throw new Error(`Failed to fetch evidence: ${response.status}`);
       }
     } catch (fetchError) {
-      // Fallback to default values if evidence file cannot be read
-      console.warn('Evidence file read failed, using fallback:', fetchError.message);
+      // Fallback to current evidence values if evidence file cannot be read
+      console.warn('Evidence file read failed, using current fallback:', fetchError.message);
       latestMetrics = {
         run_id: "2025-08-24T20:20:15.372Z",
         epoch: 1,

@@ -11,8 +11,8 @@ export async function onRequest(context: any) {
         throw new Error(`Failed to fetch evidence: ${response.status}`);
       }
     } catch (fetchError) {
-      // Fallback to default values if evidence file cannot be read
-      console.warn('Evidence file read failed, using fallback:', fetchError.message);
+      // Fallback to current evidence values if evidence file cannot be read
+      console.warn('Evidence file read failed, using current fallback:', fetchError.message);
       statusData = {
         configured: true,
         active: true,

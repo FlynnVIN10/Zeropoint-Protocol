@@ -1,28 +1,28 @@
 export async function onRequest(context: any) {
   try {
     // Read latest Petals status from evidence at runtime
-    let status;
+    let statusData;
     
     try {
       const response = await context.env.ASSETS.fetch('/evidence/petals/status.json');
       if (response.ok) {
-        status = await response.json();
+        statusData = await response.json();
       } else {
         throw new Error(`Failed to fetch evidence: ${response.status}`);
       }
     } catch (fetchError) {
       // Fallback to default values if evidence file cannot be read
       console.warn('Evidence file read failed, using fallback:', fetchError.message);
-      status = {
+      statusData = {
         configured: true,
         active: true,
-        lastContact: "2025-08-23T22:15:00Z",
+        lastContact: "2025-08-24T20:20:15.372Z",
         notes: "Connected to swarm",
-        ts: "2025-08-23T22:15:00Z"
+        ts: "2025-08-24T20:20:15.372Z"
       };
     }
 
-    return new Response(JSON.stringify(status), {
+    return new Response(JSON.stringify(statusData), {
       headers: {
         "content-type": "application/json; charset=utf-8",
         "cache-control": "no-store",
@@ -33,7 +33,7 @@ export async function onRequest(context: any) {
     });
   } catch (e) {
     return new Response(JSON.stringify({error: e.message}), {
-      status: 503,
+      status: 500,
       headers: {
         "content-type": "application/json; charset=utf-8",
         "cache-control": "no-store",

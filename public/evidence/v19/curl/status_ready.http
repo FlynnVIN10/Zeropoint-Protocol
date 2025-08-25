@@ -1,6 +1,7 @@
-HTTP/2 200 
-date: Mon, 25 Aug 2025 18:43:26 GMT
-content-type: text/html; charset=utf-8
+HTTP/2 308 
+date: Mon, 25 Aug 2025 19:08:43 GMT
+content-length: 0
+location: /status/ready
 access-control-allow-origin: *
 cache-control: public, max-age=300
 referrer-policy: strict-origin-when-cross-origin
@@ -8,71 +9,10 @@ x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=anoqRRiGMNgcJ7cVlEJq9jioC6dW2K685UdgPXYHmlBk5G5RWAGKTr8IQgkmsiGokkDzKmoeGS3AyvExS%2BAcNJXQ5ep8yTCjE4Ap6Ea%2F7MpHMf%2BU"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=FIWvzhxFPJAz7jkSf5vqORk6KPI5PDqEp3p7GRGSzSrdy%2FstrvfyVZPWB53CIe7gE%2Ft3o1fXTfT40ITiijSBu94st6eEXDm8JeCqaAfXC45bfGze"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 974d3c2a78ae989b-LHR
+cf-ray: 974d61351bddd085-CDG
 alt-svc: h3=":443"; ma=86400
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ready Status - Zeropoint Protocol</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .status { margin: 20px 0; }
-        .noscript { background: #f5f5f5; padding: 20px; border-radius: 5px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .json-link { margin: 20px 0; }
-        .json-link a { color: #0066cc; text-decoration: none; }
-        .json-link a:hover { text-decoration: underline; }
-    </style>
-</head>
-<body>
-    <h1>Ready Status</h1>
-    
-    <div class="json-link">
-        <a href="/api/readyz">View JSON</a>
-    </div>
-    
-    <div class="status" id="status">
-        <p>Loading status...</p>
-    </div>
-    
-    <noscript>
-        <div class="noscript">
-            <h3>Status (JavaScript Disabled)</h3>
-            <table>
-                <tr><th>Status</th><td>ready</td></tr>
-                <tr><th>Commit</th><td>33dbbd99</td></tr>
-                <tr><th>Build Time</th><td>2025-08-23T21:04:27.102Z</td></tr>
-            </table>
-        </div>
-    </noscript>
-
-    <script>
-        fetch('/api/readyz')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('status').innerHTML = `
-                    <h3>Live Status</h3>
-                    <table>
-                        <tr><th>Ready</th><td>${data.ready}</td></tr>
-                        <tr><th>Database</th><td>${data.db}</td></tr>
-                        <tr><th>Cache</th><td>${data.cache}</td></tr>
-                    </table>
-                `;
-            })
-            .catch(error => {
-                document.getElementById('status').innerHTML = `
-                    <p style="color: red;">Error loading status: ${error.message}</p>
-                `;
-            });
-    </script>
-</body>
-</html>

@@ -1,16 +1,17 @@
 HTTP/2 200 
-date: Sun, 24 Aug 2025 21:50:22 GMT
+date: Mon, 25 Aug 2025 01:08:07 GMT
 content-type: application/json; charset=utf-8
 content-length: 37
-cf-cache-status: DYNAMIC
-vary: Accept-Encoding
-server: cloudflare
 access-control-allow-origin: *
 cache-control: no-store
 content-disposition: inline
 x-content-type-options: nosniff
-report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=ET3jFJ40pdQMcrghlgd8hHX3lmgxChyOxbBk%2FG3%2B1Vckt%2BGOU55im4W5XMuoxWOGNgGx8UWnQQ7ojbw5Db7%2FcDM8UQO6ZwNBkWKxj0IBuk0c181jiwHxZB3zGtlEFgcMYeKpYUKsng%3D%3D"}],"group":"cf-nel","max_age":604800}
-nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
-cf-ray: 9746109ea8aca13a-IAD
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=BCzUIyER9QZe%2BmvPIQxUCWLNBRQWOZeMLMLaHzbNI2eMOTRtl8IfRqBq%2Fzif18QdYc6BvfnHYUXUWvOcVQUEItHjpjITygQOHqoK26LU1vY%2BrIzH"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9747324c3bff63dc-LHR
+alt-svc: h3=":443"; ma=86400
 
 {"ready":true,"db":true,"cache":true}

@@ -1,0 +1,20 @@
+{
+  "synthiant_id": "synthiant_1756087577",
+  "run_id": "2025-08-25T02:06:17.774658+00:00",
+  "ts": "2025-08-25T02:06:17.774658+00:00",
+  "loss": 0.16911409176288913,
+  "epoch": 3,
+  "step": 150,
+  "duration_s": 0.29927611351013184,
+  "commit": "825f89a9",
+  "device": "macOS-15.6.1",
+  "source": "local",
+  "notes": "TinyGrad toy run with 3 epochs, 50 steps/epoch, lr=0.01",
+  "hyperparameters": {
+    "learning_rate": 0.01,
+    "epochs": 3,
+    "steps_per_epoch": 50,
+    "optimizer": "SGD",
+    "loss_function": "MSE"
+  }
+}

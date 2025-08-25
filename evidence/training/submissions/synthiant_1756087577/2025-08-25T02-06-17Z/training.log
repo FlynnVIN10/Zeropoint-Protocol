@@ -1,0 +1,12 @@
+TinyGrad Toy Training Run - 2025-08-24T21:06:17.776708
+==================================================
+
+Synthiant ID: synthiant_1756087577
+Run ID: 2025-08-25T02:06:17.774658+00:00
+Device: macOS-15.6.1
+Commit: 825f89a9
+Final Loss: 0.1691
+Duration: 0.3s
+Epochs: 3
+Total Steps: 150
+Notes: TinyGrad toy run with 3 epochs, 50 steps/epoch, lr=0.01

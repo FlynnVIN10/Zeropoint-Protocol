@@ -3,7 +3,7 @@ export const onRequest = async (ctx: any) => {
     const body = JSON.stringify({
       status: "ok",
       uptime: Math.floor((Date.now() - (globalThis as any).__start || 0)/1000),
-      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "b3e02953" // Dynamic commit from Cloudflare Pages
+      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "09d884e7" // Dynamic commit from Cloudflare Pages
     });
     
     return new Response(body, {

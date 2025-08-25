@@ -1,9 +1,9 @@
 export const onRequest = async (ctx: any) => {
   try {
-    // Return current build info
+    // Return current build info with dynamic values
     const buildInfo = {
-      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "08150336", // Dynamic commit from Cloudflare Pages
-      buildTime: "2025-08-25T15:37:45.000Z", // Current build time
+      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown", // Dynamic commit from Cloudflare Pages
+      buildTime: new Date().toISOString(), // Dynamic current timestamp
       env: "prod"
     };
     

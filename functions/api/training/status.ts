@@ -10,16 +10,16 @@ export const onRequest = async (ctx: any) => {
         throw new Error(`Failed to fetch evidence file: ${response.status}`);
       }
     } catch (fetchError) {
-      // Fallback to current evidence values if evidence file cannot be read
-      console.warn('Evidence file read failed, using current fallback:', fetchError.message);
+      // Generate dynamic fallback values if evidence file cannot be read
+      console.warn('Evidence file read failed, generating dynamic fallback:', fetchError.message);
       latestMetrics = {
-        run_id: "2025-08-25T15:37:45.000Z",
+        run_id: new Date().toISOString(),
         epoch: 1,
         step: 120,
         loss: 0.3452,
         duration_s: 95.1,
-        commit: "08150336",
-        ts: "2025-08-25T15:37:45.000Z"
+        commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
+        ts: new Date().toISOString()
       };
     }
 

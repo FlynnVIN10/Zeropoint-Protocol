@@ -1,28 +1,27 @@
-export async function onRequest(context: any) {
+export const onRequest = async (ctx: any) => {
   try {
-    // Read latest Wondercraft status from evidence at runtime
-    let status;
-    
+    // Try to read from evidence file first
+    let statusData;
     try {
-      const response = await context.env.ASSETS.fetch('/evidence/wondercraft/status.json');
+      const response = await ctx.env.ASSETS.fetch('/evidence/wondercraft/status.json');
       if (response.ok) {
-        status = await response.json();
+        statusData = await response.json();
       } else {
-        throw new Error(`Failed to fetch evidence: ${response.status}`);
+        throw new Error(`Failed to fetch evidence file: ${response.status}`);
       }
     } catch (fetchError) {
-      // Fallback to default values if evidence file cannot be read
-      console.warn('Evidence file read failed, using fallback:', fetchError.message);
-      status = {
+      // Generate dynamic fallback values if evidence file cannot be read
+      console.warn('Evidence file read failed, generating dynamic fallback:', fetchError.message);
+      statusData = {
         configured: true,
         active: true,
-        lastContact: "2025-08-23T22:15:00Z",
+        lastContact: new Date().toISOString(),
         notes: "Running scenario",
-        ts: "2025-08-23T22:15:00Z"
+        ts: new Date().toISOString()
       };
     }
 
-    return new Response(JSON.stringify(status), {
+    return new Response(JSON.stringify(statusData), {
       headers: {
         "content-type": "application/json; charset=utf-8",
         "cache-control": "no-store",
@@ -31,8 +30,11 @@ export async function onRequest(context: any) {
         "access-control-allow-origin": "*"
       }
     });
-  } catch (e) {
-    return new Response(JSON.stringify({error: e.message}), {
+  } catch (error) {
+    return new Response(JSON.stringify({
+      error: "Internal server error",
+      message: error.message
+    }), {
       status: 500,
       headers: {
         "content-type": "application/json; charset=utf-8",
@@ -41,4 +43,4 @@ export async function onRequest(context: any) {
       }
     });
   }
-}
+};

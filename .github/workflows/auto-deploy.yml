@@ -26,6 +26,12 @@ jobs:
           cache: npm
           cache-dependency-path: iaai/package-lock.json
 
+      - name: Build Dynamic Evidence
+        run: |
+          echo "Building dynamic evidence files..."
+          node scripts/build-dynamic-evidence.mjs
+          echo "Dynamic evidence build completed"
+
       - name: Skip build (static files only)
         run: |
           echo "Skipping build - deploying static files only"

@@ -1,12 +1,29 @@
 {
-  "generated_at": "2025-08-25T01:55:11.396Z",
-  "total_submissions": 0,
-  "valid_submissions": 0,
-  "top_submissions": [],
+  "generated_at": "2025-08-25T01:57:44.868Z",
+  "total_submissions": 1,
+  "valid_submissions": 1,
+  "top_submissions": [
+    {
+      "synthiant_id": "sample_synthiant",
+      "run_id": "2025-08-24T00:00:00.000Z",
+      "ts": "2025-08-24T00:00:00.000Z",
+      "loss": 0.3452,
+      "epoch": 1,
+      "step": 120,
+      "duration_s": 95.1,
+      "commit": "8ac7004b",
+      "device": "macOS-14.0",
+      "source": "local",
+      "notes": "Sample submission for SCP v1 validation",
+      "file_path": "/evidence/training/submissions/sample/2025-08-24T00-00Z/metrics.json"
+    }
+  ],
   "summary": {
-    "best_loss": null,
-    "worst_loss": null,
-    "average_loss": null,
-    "by_source": {}
+    "best_loss": 0.3452,
+    "worst_loss": 0.3452,
+    "average_loss": 0.3452,
+    "by_source": {
+      "local": 1
+    }
   }
 }

@@ -1,41 +1,25 @@
 {
   "summary": {
-    "total_submissions": 2,
-    "unique_synthiants": 1,
-    "sources": {
-      "local": 1,
-      "tinygrad": 1
+    "total_submissions": 1,
+    "unique_models": 1,
+    "datasets": {
+      "wikitext-103": 1
     },
-    "best_loss": 0.3452,
-    "average_loss": 0.3452,
-    "generated_at": "2025-08-25T15:12:49.749Z"
+    "best_loss": 0.234,
+    "average_loss": 0.234,
+    "generated_at": "2025-08-25T17:10:00.994Z"
   },
   "submissions": [
     {
-      "synthiant_id": "sample_synthiant",
-      "run_id": "2025-08-24T00:00:00.000Z",
-      "ts": "2025-08-24T00:00:00.000Z",
-      "loss": 0.3452,
-      "source": "local",
-      "epoch": 1,
-      "step": 120,
-      "duration_s": 95.1,
-      "commit": "8ac7004b",
-      "device": "macOS-14.0",
-      "notes": "Sample submission for SCP v1 validation"
-    },
-    {
-      "synthiant_id": "sample_synthiant",
-      "run_id": "2025-08-25T04:00:00.000Z",
-      "ts": "2025-08-25T04:00:00.000Z",
-      "loss": 0.3452,
-      "source": "tinygrad",
-      "epoch": 1,
-      "step": 120,
-      "duration_s": 95.1,
-      "commit": "09d884e7",
-      "device": "macOS-14.0",
-      "notes": "Sample submission for SCP v1 validation and testing"
+      "run_id": "run_2025_08_25_001",
+      "model": "gpt-3.5-turbo",
+      "started_at": "2025-08-25T16:15:00Z",
+      "ended_at": "2025-08-25T16:20:00Z",
+      "dataset": "wikitext-103",
+      "loss": 0.234,
+      "accuracy": 0.876,
+      "notes": "Sample submission for SCP v1 validation and testing",
+      "file_path": "/evidence/training/submissions/sample/2025-08-25T16-15-00Z/metrics.json"
     }
   ]
 }

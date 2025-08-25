@@ -13,14 +13,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Schema validation function
-function validateMetrics(metrics, schema) {
-  // Basic validation - in production, use a proper JSON schema validator
-  const required = ['synthiant_id', 'run_id', 'epoch', 'step', 'loss', 'duration_s', 'commit', 'ts', 'source'];
-  return required.every(field => metrics.hasOwnProperty(field) && metrics[field] !== null && metrics[field] !== undefined);
+function validateMetrics(metrics) {
+  const required = ['run_id', 'model', 'started_at', 'ended_at', 'dataset', 'metrics'];
+  const metricsRequired = ['loss', 'accuracy'];
+  
+  // Check required fields
+  if (!required.every(field => metrics.hasOwnProperty(field) && metrics[field] !== null && metrics[field] !== undefined)) {
+    return false;
+  }
+  
+  // Check metrics object
+  if (!metrics.metrics || !metricsRequired.every(field => metrics.metrics.hasOwnProperty(field))) {
+    return false;
+  }
+  
+  return true;
 }
 
-// Recursively find all metrics.json files
-function findMetricsFiles(dir, files = []) {
+// Recursively find all submission files
+function findSubmissionFiles(dir, files = []) {
   const items = readdirSync(dir);
   
   for (const item of items) {
@@ -28,43 +39,40 @@ function findMetricsFiles(dir, files = []) {
     const stat = statSync(fullPath);
     
     if (stat.isDirectory()) {
-      findMetricsFiles(fullPath, files);
-    } else if (item === 'metrics.json') {
+      findSubmissionFiles(fullPath, files);
+    } else if (item.endsWith('.json')) {
       files.push(fullPath);
     }
   }
-  
   return files;
 }
 
-// Build leaderboard from metrics files
+// Build leaderboard from submission files
 function buildLeaderboard() {
   try {
     const submissionsDir = join(__dirname, '..', 'evidence', 'training', 'submissions');
-    const metricsFiles = findMetricsFiles(submissionsDir);
+    const submissionFiles = findSubmissionFiles(submissionsDir);
     
-    console.log(`Found ${metricsFiles.length} metrics files`);
+    console.log(`Found ${submissionFiles.length} submission files`);
     
     const submissions = [];
     
-    for (const file of metricsFiles) {
+    for (const file of submissionFiles) {
       try {
         const content = readFileSync(file, 'utf8');
         const metrics = JSON.parse(content);
         
         if (validateMetrics(metrics)) {
           submissions.push({
-            synthiant_id: metrics.synthiant_id,
             run_id: metrics.run_id,
-            ts: metrics.ts,
-            loss: metrics.loss,
-            source: metrics.source,
-            epoch: metrics.epoch,
-            step: metrics.step,
-            duration_s: metrics.duration_s,
-            commit: metrics.commit,
-            device: metrics.device || 'unknown',
-            notes: metrics.notes || ''
+            model: metrics.model,
+            started_at: metrics.started_at,
+            ended_at: metrics.ended_at,
+            dataset: metrics.dataset,
+            loss: metrics.metrics.loss,
+            accuracy: metrics.metrics.accuracy,
+            notes: metrics.notes || '',
+            file_path: file.replace(join(__dirname, '..'), '')
           });
         } else {
           console.warn(`Invalid metrics in ${file}`);
@@ -83,9 +91,9 @@ function buildLeaderboard() {
     // Generate summary statistics
     const summary = {
       total_submissions: submissions.length,
-      unique_synthiants: new Set(submissions.map(s => s.synthiant_id)).size,
-      sources: submissions.reduce((acc, s) => {
-        acc[s.source] = (acc[s.source] || 0) + 1;
+      unique_models: new Set(submissions.map(s => s.model)).size,
+      datasets: submissions.reduce((acc, s) => {
+        acc[s.dataset] = (acc[s.dataset] || 0) + 1;
         return acc;
       }, {}),
       best_loss: submissions.length > 0 ? submissions[0].loss : null,
@@ -104,7 +112,7 @@ function buildLeaderboard() {
     
     console.log(`✅ Leaderboard built successfully:`);
     console.log(`   - Total submissions: ${summary.total_submissions}`);
-    console.log(`   - Unique synthiants: ${summary.unique_synthiants}`);
+    console.log(`   - Unique models: ${summary.unique_models}`);
     console.log(`   - Best loss: ${summary.best_loss}`);
     console.log(`   - Output: ${outputPath}`);
     

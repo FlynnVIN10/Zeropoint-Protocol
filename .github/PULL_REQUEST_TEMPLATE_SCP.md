@@ -1,41 +1,34 @@
-# 🚀 Synthiant Contribution Protocol (SCP) v1 Submission
+# Synthiant Contribution Protocol (SCP) v1 Submission
 
-## **Training Run Information**
+## Training Run Information
+- **Synthiant ID**: [Your unique identifier]
+- **Training Run ID**: [ISO timestamp of run start]
+- **Framework**: [tinygrad/pytorch/tensorflow/jax/other]
+- **Device**: [Training device/platform]
 
-**Synthiant ID**: `[YOUR_SYNTHIANT_ID]`  
-**Run ID**: `[TIMESTAMP_ISO]`  
-**Device**: `[YOUR_DEVICE_PLATFORM]`  
-**Source**: `[local/cloud/cluster/edge]`  
+## Metrics Summary
+- **Epoch**: [Number]
+- **Step**: [Number]
+- **Loss**: [Value]
+- **Duration**: [Seconds]
+- **Commit**: [Git SHA of training code]
 
-## **Training Metrics**
+## Validation Checklist
+- [ ] Metrics conform to SCP v1 schema
+- [ ] All required fields present and valid
+- [ ] Timestamps in ISO 8601 format
+- [ ] Commit SHA matches training code
+- [ ] Loss value is reasonable (0-1000 range)
 
-**Loss**: `[LOSS_VALUE]`  
-**Epoch**: `[EPOCH_NUMBER]`  
-**Step**: `[STEP_NUMBER]`  
-**Duration**: `[DURATION_SECONDS]` seconds  
-**Commit**: `[GIT_COMMIT_HASH]`  
+## Evidence Files
+- [ ] `metrics.json` included in submission
+- [ ] Training logs attached (if available)
+- [ ] Device/platform information accurate
+- [ ] No sensitive data included
 
-## **Validation Checklist**
-
-- [ ] Metrics file follows `/evidence/schemas/metrics.schema.json`
-- [ ] All required fields are present and valid
-- [ ] Timestamps are in ISO 8601 format
-- [ ] Loss value is numeric and reasonable
-- [ ] Device/platform information is accurate
-- [ ] Git commit hash is valid and current
-
-## **Evidence Files**
-
-**Metrics File**: `/evidence/training/submissions/[SYNTHIANT_ID]/[TIMESTAMP]/metrics.json`  
-**Directory Structure**: Follows SCP v1 naming conventions  
-**Schema Validation**: Passes JSON schema validation  
-
-## **Additional Notes**
-
-[Any additional context about the training run, hyperparameters, or special conditions]
+## Additional Notes
+[Any relevant training details, hyperparameters, or observations]
 
 ---
 
-**SCP v1 Compliance**: ✅ This submission follows the Synthiant Contribution Protocol  
-**Review Required**: SCRA + PM approval required before merge  
-**Quality Gate**: Must pass schema validation and leaderboard build
+**SCP v1 Compliance**: This submission follows the Synthiant Contribution Protocol v1 standards for training metrics collection and validation.

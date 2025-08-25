@@ -1,41 +1,35 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Synthiant Training Metrics Schema",
-  "description": "Schema for validating training run metrics submissions in SCP v1",
+  "description": "Schema for validating Synthiant training metrics submissions",
   "type": "object",
-  "required": ["synthiant_id", "run_id", "ts", "loss", "epoch", "step", "duration_s", "commit", "device", "source"],
+  "required": ["synthiant_id", "run_id", "epoch", "step", "loss", "duration_s", "commit", "ts", "source"],
   "properties": {
     "synthiant_id": {
       "type": "string",
-      "description": "Unique identifier for the Synthiant contributor",
-      "pattern": "^[a-zA-Z0-9_-]{3,32}$",
-      "examples": ["synthiant_001", "ai_researcher_alpha"]
+      "description": "Unique identifier for the Synthiant",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "minLength": 3,
+      "maxLength": 50
     },
     "run_id": {
       "type": "string",
-      "description": "Unique identifier for this training run",
-      "format": "date-time",
-      "examples": ["2025-08-24T20:20:15.372Z"]
-    },
-    "ts": {
-      "type": "string",
-      "description": "Timestamp when metrics were recorded",
+      "description": "ISO 8601 timestamp of training run start",
       "format": "date-time"
-    },
-    "loss": {
-      "type": "number",
-      "description": "Training loss value (lower is better)",
-      "minimum": 0,
-      "maximum": 1000
     },
     "epoch": {
       "type": "integer",
-      "description": "Current training epoch",
-      "minimum": 0
+      "description": "Training epoch number",
+      "minimum": 1
     },
     "step": {
       "type": "integer",
-      "description": "Current training step within epoch",
+      "description": "Training step within epoch",
+      "minimum": 1
+    },
+    "loss": {
+      "type": "number",
+      "description": "Training loss value",
       "minimum": 0
     },
     "duration_s": {
@@ -45,30 +39,28 @@
     },
     "commit": {
       "type": "string",
-      "description": "Git commit hash for the training code",
-      "pattern": "^[a-f0-9]{7,40}$",
-      "examples": ["8ac7004b", "33dbbd99"]
+      "description": "Git commit SHA of training code",
+      "pattern": "^[a-f0-9]{7,40}$"
     },
-    "device": {
+    "ts": {
       "type": "string",
-      "description": "Device/platform used for training",
-      "examples": ["macOS-14.0", "Linux-5.15", "Windows-11"]
+      "description": "ISO 8601 timestamp of metrics collection",
+      "format": "date-time"
     },
     "source": {
       "type": "string",
-      "description": "Source of the training run",
-      "enum": ["local", "cloud", "cluster", "edge"],
-      "default": "local"
+      "description": "Training framework/source identifier",
+      "enum": ["tinygrad", "pytorch", "tensorflow", "jax", "other"]
+    },
+    "device": {
+      "type": "string",
+      "description": "Training device identifier (optional)",
+      "maxLength": 100
     },
     "notes": {
       "type": "string",
-      "description": "Optional notes about the training run",
+      "description": "Additional training notes (optional)",
       "maxLength": 500
-    },
-    "hyperparameters": {
-      "type": "object",
-      "description": "Optional hyperparameters used in training",
-      "additionalProperties": true
     }
   },
   "additionalProperties": false

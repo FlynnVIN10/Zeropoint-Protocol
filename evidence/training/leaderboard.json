@@ -1,29 +1,41 @@
 {
-  "generated_at": "2025-08-25T01:57:44.868Z",
-  "total_submissions": 1,
-  "valid_submissions": 1,
-  "top_submissions": [
+  "summary": {
+    "total_submissions": 2,
+    "unique_synthiants": 1,
+    "sources": {
+      "local": 1,
+      "tinygrad": 1
+    },
+    "best_loss": 0.3452,
+    "average_loss": 0.3452,
+    "generated_at": "2025-08-25T15:12:49.749Z"
+  },
+  "submissions": [
     {
       "synthiant_id": "sample_synthiant",
       "run_id": "2025-08-24T00:00:00.000Z",
       "ts": "2025-08-24T00:00:00.000Z",
       "loss": 0.3452,
+      "source": "local",
       "epoch": 1,
       "step": 120,
       "duration_s": 95.1,
       "commit": "8ac7004b",
       "device": "macOS-14.0",
-      "source": "local",
-      "notes": "Sample submission for SCP v1 validation",
-      "file_path": "/evidence/training/submissions/sample/2025-08-24T00-00Z/metrics.json"
+      "notes": "Sample submission for SCP v1 validation"
+    },
+    {
+      "synthiant_id": "sample_synthiant",
+      "run_id": "2025-08-25T04:00:00.000Z",
+      "ts": "2025-08-25T04:00:00.000Z",
+      "loss": 0.3452,
+      "source": "tinygrad",
+      "epoch": 1,
+      "step": 120,
+      "duration_s": 95.1,
+      "commit": "09d884e7",
+      "device": "macOS-14.0",
+      "notes": "Sample submission for SCP v1 validation and testing"
     }
-  ],
-  "summary": {
-    "best_loss": 0.3452,
-    "worst_loss": 0.3452,
-    "average_loss": 0.3452,
-    "by_source": {
-      "local": 1
-    }
-  }
+  ]
 }

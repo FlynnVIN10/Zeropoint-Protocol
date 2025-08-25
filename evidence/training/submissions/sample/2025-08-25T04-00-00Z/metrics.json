@@ -1,0 +1,13 @@
+{
+  "synthiant_id": "sample_synthiant",
+  "run_id": "2025-08-25T04:00:00.000Z",
+  "epoch": 1,
+  "step": 120,
+  "loss": 0.3452,
+  "duration_s": 95.1,
+  "commit": "09d884e7",
+  "ts": "2025-08-25T04:00:00.000Z",
+  "source": "tinygrad",
+  "device": "macOS-14.0",
+  "notes": "Sample submission for SCP v1 validation and testing"
+}

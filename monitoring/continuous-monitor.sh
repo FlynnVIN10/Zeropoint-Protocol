@@ -5,13 +5,23 @@
 
 set -e
 
-LOG_FILE="monitoring/operational-logs.txt"
-STATUS_FILE="monitoring/operational-status.md"
+# Get the script directory and project root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+LOG_FILE="$PROJECT_ROOT/monitoring/operational-logs.txt"
+STATUS_FILE="$PROJECT_ROOT/monitoring/operational-status.md"
 ALERT_THRESHOLD=3
 FAILURE_COUNT=0
 
+# Ensure monitoring directories exist
+mkdir -p "$PROJECT_ROOT/monitoring/logs"
+mkdir -p "$PROJECT_ROOT/monitoring/alerts"
+mkdir -p "$PROJECT_ROOT/monitoring/reports"
+
 echo "🔍 Zeropoint Protocol - Continuous Monitoring Started"
 echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" | tee -a "$LOG_FILE"
+echo "Project Root: $PROJECT_ROOT" | tee -a "$LOG_FILE"
 
 # Function to test endpoint
 test_endpoint() {
@@ -66,8 +76,9 @@ test_response_time "https://zeropointprotocol.ai/api/readyz" "Ready Check"
 test_response_time "https://zeropointprotocol.ai/status/version.json" "Version Check"
 
 echo "" | tee -a "$LOG_FILE"
-echo "�� Testing SCP v1 system..." | tee -a "$LOG_FILE"
+echo "🔍 Testing SCP v1 system..." | tee -a "$LOG_FILE"
 
+cd "$PROJECT_ROOT"
 if node scripts/build-leaderboard.mjs > /dev/null 2>&1; then
     echo "✅ SCP v1 Leaderboard Builder: Operational" | tee -a "$LOG_FILE"
 else
@@ -108,11 +119,11 @@ echo "---" | tee -a "$LOG_FILE"
 
 # Update status file
 if [ $FAILURE_COUNT -eq 0 ]; then
-    sed -i '' 's/Platform Status:.*/Platform Status: 🟢 OPERATIONAL EXCELLENCE/' "$STATUS_FILE"
-    sed -i '' 's/Last Updated:.*/Last Updated: '"$(date -u +"%Y-%m-%d %H:%M UTC")"'/' "$STATUS_FILE"
+    sed -i '' 's/Platform Status:.*/Platform Status: 🟢 OPERATIONAL EXCELLENCE/' "$STATUS_FILE" 2>/dev/null || true
+    sed -i '' 's/Last Updated:.*/Last Updated: '"$(date -u +"%Y-%m-%d %H:%M UTC")"'/' "$STATUS_FILE" 2>/dev/null || true
 else
-    sed -i '' 's/Platform Status:.*/Platform Status: 🟡 DEGRADED PERFORMANCE/' "$STATUS_FILE"
-    sed -i '' 's/Last Updated:.*/Last Updated: '"$(date -u +"%Y-%m-%d %H:%M UTC")"'/' "$STATUS_FILE"
+    sed -i '' 's/Platform Status:.*/Platform Status: 🟡 DEGRADED PERFORMANCE/' "$STATUS_FILE" 2>/dev/null || true
+    sed -i '' 's/Last Updated:.*/Last Updated: '"$(date -u +"%Y-%m-%d %H:%M UTC")"'/' "$STATUS_FILE" 2>/dev/null || true
 fi
 
 exit $FAILURE_COUNT

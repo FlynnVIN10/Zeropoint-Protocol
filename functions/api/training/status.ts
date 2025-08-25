@@ -14,13 +14,13 @@ export async function onRequest(context: any) {
       // Fallback to default values if evidence file cannot be read
       console.warn('Evidence file read failed, using fallback:', fetchError.message);
       latestMetrics = {
-        run_id: "2025-08-24T20:20:15.372Z",
+        run_id: "2025-08-25T03:51:25.3NZ",
         epoch: 1,
         step: 120,
         loss: 0.3452,
         duration_s: 95.1,
-        commit: "8ac7004b",
-        ts: "2025-08-24T20:20:15.372Z"
+        commit: "b3e02953",
+        ts: "2025-08-25T03:51:25.3NZ"
       };
     }
 

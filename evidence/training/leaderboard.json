@@ -1,13 +1,14 @@
 {
   "summary": {
-    "total_submissions": 1,
-    "unique_models": 1,
+    "total_submissions": 2,
+    "unique_models": 2,
     "datasets": {
-      "wikitext-103": 1
+      "wikitext-103": 1,
+      "toy-dataset": 1
     },
     "best_loss": 0.234,
-    "average_loss": 0.234,
-    "generated_at": "2025-08-25T17:04:40.618Z"
+    "average_loss": 0.267,
+    "generated_at": "2025-08-25T18:36:06.911Z"
   },
   "submissions": [
     {
@@ -20,6 +21,17 @@
       "accuracy": 0.876,
       "notes": "Sample submission for SCP v1 validation and testing",
       "file_path": "/evidence/training/submissions/sample/2025-08-25T16-10-00Z/metrics.json"
+    },
+    {
+      "run_id": "run_20250825_133550",
+      "model": "tinygrad-toy-model",
+      "started_at": "2025-08-25T18:35:50.874786+00:00",
+      "ended_at": "2025-08-25T18:35:50.876417+00:00",
+      "dataset": "toy-dataset",
+      "loss": 0.3,
+      "accuracy": 0.84,
+      "notes": "TinyGrad toy training run with 3 epochs, 100 steps per epoch",
+      "file_path": "/evidence/training/submissions/test-run/metrics.json"
     }
   ]
 }

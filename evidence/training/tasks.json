@@ -1,0 +1,139 @@
+{
+  "generated_at": "2025-08-24T22:00:00.000Z",
+  "version": "1.0",
+  "status": "active",
+  "tasks": [
+    {
+      "id": "task_001",
+      "title": "Implement Basic Neural Network Training",
+      "description": "Create and train a simple neural network using the SCP v1 protocol",
+      "difficulty": "beginner",
+      "estimated_hours": 2,
+      "requirements": [
+        "Basic Python knowledge",
+        "Access to training data",
+        "SCP v1 compliance"
+      ],
+      "acceptance_criteria": [
+        "Training run completes successfully",
+        "Metrics file validates against schema",
+        "Loss decreases over training epochs",
+        "PR submitted and approved"
+      ],
+      "reward": "Leaderboard recognition",
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-24T22:00:00.000Z",
+      "deadline": "2025-08-31T23:59:59.000Z"
+    },
+    {
+      "id": "task_002", 
+      "title": "Optimize Hyperparameters for Better Loss",
+      "description": "Experiment with different learning rates, batch sizes, and architectures to improve training performance",
+      "difficulty": "intermediate",
+      "estimated_hours": 4,
+      "requirements": [
+        "Completed task_001",
+        "Understanding of hyperparameter tuning",
+        "Access to multiple training runs"
+      ],
+      "acceptance_criteria": [
+        "Achieve loss < 0.3",
+        "Document hyperparameter changes",
+        "Submit multiple valid runs",
+        "Demonstrate improvement trend"
+      ],
+      "reward": "Top 10 leaderboard position",
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-24T22:00:00.000Z",
+      "deadline": "2025-09-07T23:59:59.000Z"
+    },
+    {
+      "id": "task_003",
+      "title": "Implement Advanced Training Techniques",
+      "description": "Apply advanced techniques like learning rate scheduling, data augmentation, and regularization",
+      "difficulty": "advanced",
+      "estimated_hours": 6,
+      "requirements": [
+        "Completed task_002",
+        "Knowledge of advanced ML techniques",
+        "Access to larger datasets"
+      ],
+      "acceptance_criteria": [
+        "Achieve loss < 0.2",
+        "Implement at least 2 advanced techniques",
+        "Document methodology and results",
+        "Achieve top 5 leaderboard position"
+      ],
+      "reward": "Top 5 leaderboard position + recognition",
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-24T22:00:00.000Z",
+      "deadline": "2025-09-14T23:59:59.000Z"
+    },
+    {
+      "id": "task_004",
+      "title": "Cross-Platform Training Validation",
+      "description": "Validate training results across different platforms and devices",
+      "difficulty": "intermediate",
+      "estimated_hours": 3,
+      "requirements": [
+        "Access to multiple platforms",
+        "Completed at least one training run",
+        "Understanding of platform differences"
+      ],
+      "acceptance_criteria": [
+        "Train on at least 2 different platforms",
+        "Compare performance metrics",
+        "Document platform-specific optimizations",
+        "Submit valid metrics for each platform"
+      ],
+      "reward": "Multi-platform expertise recognition",
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-24T22:00:00.000Z",
+      "deadline": "2025-09-21T23:59:59.000Z"
+    },
+    {
+      "id": "task_005",
+      "title": "Create Training Tutorial and Documentation",
+      "description": "Develop comprehensive tutorials and documentation for new SCP v1 contributors",
+      "difficulty": "intermediate",
+      "estimated_hours": 5,
+      "requirements": [
+        "Experience with SCP v1",
+        "Good technical writing skills",
+        "Understanding of common pitfalls"
+      ],
+      "acceptance_criteria": [
+        "Create step-by-step tutorial",
+        "Document common issues and solutions",
+        "Include best practices guide",
+        "Get approval from SCRA and PM"
+      ],
+      "reward": "Documentation contributor recognition",
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-24T22:00:00.000Z",
+      "deadline": "2025-09-28T23:59:59.000Z"
+    }
+  ],
+  "statistics": {
+    "total_tasks": 5,
+    "open_tasks": 5,
+    "assigned_tasks": 0,
+    "completed_tasks": 0,
+    "difficulty_distribution": {
+      "beginner": 1,
+      "intermediate": 3,
+      "advanced": 1
+    }
+  },
+  "metadata": {
+    "last_updated": "2025-08-24T22:00:00.000Z",
+    "schema_version": "1.0",
+    "maintainer": "SCRA Team",
+    "contact": "scra@zeropointprotocol.ai"
+  }
+}

@@ -2,8 +2,8 @@ export const onRequest = async (ctx: any) => {
   try {
     // Return current build info
     const buildInfo = {
-      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "09d884e7", // Dynamic commit from Cloudflare Pages
-      buildTime: "2025-08-25T04:02:13.3NZ", // Current build time
+      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "08150336", // Dynamic commit from Cloudflare Pages
+      buildTime: "2025-08-25T15:37:45.000Z", // Current build time
       env: "prod"
     };
     
@@ -19,7 +19,7 @@ export const onRequest = async (ctx: any) => {
   } catch (error) {
     return new Response(JSON.stringify({
       commit: "unknown",
-      buildTime: new Date().toISOString(),
+      buildTime: "unknown",
       env: "prod"
     }), {
       status: 500,

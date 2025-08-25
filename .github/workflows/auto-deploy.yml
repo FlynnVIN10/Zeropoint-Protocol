@@ -64,11 +64,17 @@ jobs:
           fi
           
           echo "✅ All evidence files validated successfully"
-
-      - name: Skip build (static files only)
+      - name: Validate evidence and build leaderboard
         run: |
-          echo "Skipping build - deploying static files only"
-          echo "Static files are pre-built and ready for deployment"
+          echo "🔍 Validating evidence files..."
+          node scripts/build-dynamic-evidence.mjs --validate || exit 1
+          echo "🔍 Building leaderboard..."
+          node scripts/build-leaderboard.mjs || exit 1
+          echo "🔍 Checking for placeholders..."
+          if grep -R "__BUILD_" -n public evidence; then
+            echo "❌ Placeholders detected"; exit 1; fi
+          echo "✅ Evidence validation complete"
+
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@v1

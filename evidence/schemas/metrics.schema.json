@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Synthiant Training Metrics Schema",
+  "description": "Schema for validating training run metrics submissions in SCP v1",
+  "type": "object",
+  "required": ["synthiant_id", "run_id", "ts", "loss", "epoch", "step", "duration_s", "commit", "device", "source"],
+  "properties": {
+    "synthiant_id": {
+      "type": "string",
+      "description": "Unique identifier for the Synthiant contributor",
+      "pattern": "^[a-zA-Z0-9_-]{3,32}$",
+      "examples": ["synthiant_001", "ai_researcher_alpha"]
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for this training run",
+      "format": "date-time",
+      "examples": ["2025-08-24T20:20:15.372Z"]
+    },
+    "ts": {
+      "type": "string",
+      "description": "Timestamp when metrics were recorded",
+      "format": "date-time"
+    },
+    "loss": {
+      "type": "number",
+      "description": "Training loss value (lower is better)",
+      "minimum": 0,
+      "maximum": 1000
+    },
+    "epoch": {
+      "type": "integer",
+      "description": "Current training epoch",
+      "minimum": 0
+    },
+    "step": {
+      "type": "integer",
+      "description": "Current training step within epoch",
+      "minimum": 0
+    },
+    "duration_s": {
+      "type": "number",
+      "description": "Training duration in seconds",
+      "minimum": 0
+    },
+    "commit": {
+      "type": "string",
+      "description": "Git commit hash for the training code",
+      "pattern": "^[a-f0-9]{7,40}$",
+      "examples": ["8ac7004b", "33dbbd99"]
+    },
+    "device": {
+      "type": "string",
+      "description": "Device/platform used for training",
+      "examples": ["macOS-14.0", "Linux-5.15", "Windows-11"]
+    },
+    "source": {
+      "type": "string",
+      "description": "Source of the training run",
+      "enum": ["local", "cloud", "cluster", "edge"],
+      "default": "local"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional notes about the training run",
+      "maxLength": 500
+    },
+    "hyperparameters": {
+      "type": "object",
+      "description": "Optional hyperparameters used in training",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

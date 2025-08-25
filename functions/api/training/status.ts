@@ -3,11 +3,30 @@ export const onRequest = async (ctx: any) => {
     // Try to read from evidence file first
     let statusData;
     try {
-      const response = await ctx.env.ASSETS.fetch('/evidence/training/latest.json');
-      if (response.ok) {
-        statusData = await response.json();
-      } else {
-        throw new Error(`Failed to fetch evidence file: ${response.status}`);
+      // Try multiple possible paths for the evidence file
+      const possiblePaths = [
+        '/evidence/training/latest.json',
+        'evidence/training/latest.json',
+        '/training/latest.json'
+      ];
+      
+      let evidenceFound = false;
+      for (const path of possiblePaths) {
+        try {
+          const response = await ctx.env.ASSETS.fetch(path);
+          if (response.ok) {
+            statusData = await response.json();
+            console.log(`✅ Evidence file read successfully from: ${path}`);
+            evidenceFound = true;
+            break;
+          }
+        } catch (pathError) {
+          console.log(`❌ Failed to read from ${path}:`, pathError.message);
+        }
+      }
+      
+      if (!evidenceFound) {
+        throw new Error('All evidence file paths failed');
       }
     } catch (fetchError) {
       // Generate dynamic fallback values if evidence file cannot be read

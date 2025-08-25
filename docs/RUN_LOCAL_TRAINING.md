@@ -1,420 +1,377 @@
-# 🚀 Running Local Training - SCP v1
+# Running Local Training - SCP v1 Guide
 
-**Version**: 1.0  
-**Last Updated**: 2025-08-24  
-**Status**: Active  
-**Scope**: Local Training Execution for SCP v1  
+This guide provides step-by-step instructions for running local training and submitting results to the Zeropoint Protocol platform using the Synthiant Contribution Protocol (SCP) v1.
 
----
+## Prerequisites
 
-## **Overview**
+### System Requirements
+- **macOS**: 10.15+ (Catalina) or newer
+- **Python**: 3.8+ with pip
+- **Git**: For commit hash tracking
+- **Terminal**: Built-in Terminal.app or iTerm2
 
-This document provides step-by-step instructions for running local training runs and submitting results to the Zeropoint Protocol platform using the Synthiant Contribution Protocol (SCP) v1.
-
----
-
-## **Prerequisites**
-
-### **System Requirements**
-- **Operating System**: macOS 14.0+, Linux, or Windows
-- **Python**: Python 3.8+ with pip
-- **Git**: Git 2.0+ for version control
-- **Node.js**: Node.js 16+ for leaderboard updates
-
-### **Software Installation**
+### Software Installation
 ```bash
-# Install Python dependencies
-pip3 install --user pathlib
+# Install Python (if not already installed)
+brew install python
 
-# Verify installations
+# Verify Python installation
 python3 --version
-git --version
-node --version
+
+# Install required packages
+pip3 install pathlib
 ```
 
----
+## Quick Start (macOS)
 
-## **Quick Start (macOS)**
-
-### **1. Clone and Setup Repository**
+### 1. Clone the Repository
 ```bash
-# Clone the repository
 git clone https://github.com/FlynnVIN10/Zeropoint-Protocol.git
 cd Zeropoint-Protocol
-
-# Ensure you're on the main branch
-git checkout main
-git pull origin main
 ```
 
-### **2. Run Training Example**
+### 2. Make Scripts Executable
 ```bash
-# Make scripts executable
 chmod +x scripts/synthiant_runner_example.sh
 chmod +x scripts/tinygrad_toy_run.py
-
-# Run the example training script
-./scripts/synthiant_runner_example.sh
 ```
 
-### **3. Verify Results**
+### 3. Run the Example
 ```bash
-# Check generated files
-ls -la evidence/training/submissions/*/*/
-
-# View metrics
-cat evidence/training/submissions/*/*/metrics.json
-
-# Check leaderboard
-cat evidence/training/leaderboard.json
-```
-
----
-
-## **Detailed Training Process**
-
-### **Step 1: Environment Preparation**
-```bash
-# Set your Synthiant ID (optional)
+# Set your Synthiant ID
 export SYNTHIANT_ID="my_ai_agent"
 
-# Verify git status
-git status
-git log --oneline -1
-```
-
-### **Step 2: Execute Training Run**
-```bash
-# Run with default parameters
+# Run the training script
 ./scripts/synthiant_runner_example.sh
-
-# Or run with custom parameters
-./scripts/synthiant_runner_example.sh --synthiant-id custom_name
-
-# For verbose output, modify the script or run Python directly
-python3 scripts/tinygrad_toy_run.py \
-    --synthiant-id "my_agent" \
-    --epochs 5 \
-    --steps-per-epoch 100 \
-    --learning-rate 0.005 \
-    --output-dir evidence/training/submissions/my_agent/$(date -u +"%Y-%m-%dT%H-%M-%SZ") \
-    --verbose
 ```
 
-### **Step 3: Validate Results**
+## Detailed Process
+
+### Step 1: Environment Setup
 ```bash
-# Check metrics file structure
-ls -la evidence/training/submissions/*/*/
+# Navigate to project directory
+cd /path/to/Zeropoint-Protocol
 
-# Validate JSON format
-python3 -m json.tool evidence/training/submissions/*/*/metrics.json
+# Verify you're in the right location
+ls -la scripts/
+# Should show: synthiant_runner_example.sh, tinygrad_toy_run.py
 
-# Verify required fields
-python3 -c "
-import json
-with open('evidence/training/submissions/*/*/metrics.json') as f:
-    data = json.load(f)
-    required = ['synthiant_id', 'run_id', 'ts', 'loss', 'epoch', 'step', 'duration_s', 'commit', 'device', 'source']
-    for field in required:
-        if field not in data:
-            print(f'Missing: {field}')
-        else:
-            print(f'✓ {field}: {data[field]}')
-"
+# Check Python availability
+python3 --version
+# Should show: Python 3.8.x or higher
+
+# Check Git availability
+git --version
+# Should show: git version 2.x.x
 ```
 
----
-
-## **Example Training Run**
-
-### **Input Command**
+### Step 2: Configure Your Run
 ```bash
-./scripts/synthiant_runner_example.sh --synthiant-id example_agent
+# Set your unique Synthiant ID
+export SYNTHIANT_ID="your_unique_identifier"
+
+# Examples:
+export SYNTHIANT_ID="researcher_alpha"
+export SYNTHIANT_ID="ai_engineer_beta"
+export SYNTHIANT_ID="ml_scientist_gamma"
+
+# Verify the environment variable
+echo $SYNTHIANT_ID
 ```
 
-### **Expected Output**
+### Step 3: Execute Training
+```bash
+# Run the automated training script
+./scripts/synthiant_runner_example.sh
 ```
-🚀 Synthiant Training Runner - SCP v1
+
+The script will:
+1. ✅ Check prerequisites (Python, Git, training script)
+2. 🔍 Detect your device/platform automatically
+3. 📁 Create submission directory structure
+4. 🚀 Execute the training simulation
+5. 📊 Generate SCP v1 compliant metrics
+6. ✅ Validate the generated metrics
+7. 📝 Provide submission summary
+
+### Step 4: Review Generated Files
+```bash
+# Check what was created
+ls -la evidence/training/submissions/$SYNTHIANT_ID/
+
+# View the metrics file
+cat evidence/training/submissions/$SYNTHIANT_ID/*/metrics.json
+
+# Verify the structure
+tree evidence/training/submissions/$SYNTHIANT_ID/
+```
+
+## Example Run
+
+### Sample Output
+```
+🚀 Synthiant Runner Example - SCP v1
 =====================================
 
 [INFO] Checking prerequisites...
 [SUCCESS] Prerequisites check passed
-[INFO] Creating submission directory: /path/to/evidence/training/submissions/example_agent/2025-08-24T22-30-00Z
-[SUCCESS] Submission directory created
+[INFO] Detecting device/platform...
+[INFO] Detected device: macOS-14.0
+[INFO] Creating submission directory...
+[SUCCESS] Created directory: evidence/training/submissions/my_ai_agent/2025-08-25T04-15-00Z
 [INFO] Starting training run...
-[INFO] Git commit: 8ac7004b
-[INFO] Device: macOS-14.0
-[INFO] Start time: Sat Aug 24 22:30:00 UTC 2025
-🚀 Starting simulated training run...
-📊 Epoch 1/3
-📊 Epoch 2/3
-📊 Epoch 3/3
-✅ Training completed!
-   Final Loss: 0.2341
-   Best Loss: 0.1987
-   Duration: 2.3s
-   Total Steps: 150
-[SUCCESS] Training completed in 2s
-[INFO] Validating submission...
+[INFO] Running training script with device: macOS-14.0, commit: 09d884e7
+🚀 TinyGrad Toy Run - SCP v1
+==============================
+Synthiant ID: my_ai_agent
+Device: macOS-14.0
+Commit: 09d884e7
+Output Directory: evidence/training/submissions/my_ai_agent/2025-08-25T04-15-00Z
+Training Configuration: 3 epochs, 100 steps/epoch
+
+🔄 Simulating TinyGrad training...
+✅ Training completed in 2.3 seconds
+📊 Final loss: 0.4123
+
+📝 Generating SCP v1 metrics...
+🔍 Validating metrics...
 ✅ Metrics validation passed
-[SUCCESS] Submission validation passed
-[INFO] Updating leaderboard...
-🏆 Leaderboard built with 1 top submissions
-📁 Written to: /path/to/evidence/training/leaderboard.json
+💾 Saving metrics...
+✅ Metrics saved to: evidence/training/submissions/my_ai_agent/2025-08-25T04-15-00Z/metrics.json
 
-🥇 Top 5 Submissions:
-1. example_agent - Loss: 0.2341 (local)
+==========================================
+           SUBMISSION SUMMARY
+==========================================
+Synthiant ID: my_ai_agent
+Timestamp: 2025-08-25T04-15-00Z
+Output Directory: evidence/training/submissions/my_ai_agent/2025-08-25T04-15-00Z
+Metrics File: evidence/training/submissions/my_ai_agent/2025-08-25T04-15-00Z/metrics.json
 
-[INFO] Submission Summary
-==================
-Synthiant ID: example_agent
-Timestamp: 2025-08-24T22-30-00Z
-Submission Dir: /path/to/evidence/training/submissions/example_agent/2025-08-24T22-30-00Z
-Metrics File: /path/to/evidence/training/submissions/example_agent/2025-08-24T22-30-00Z/metrics.json
-
-Metrics Preview:
-{
-  "synthiant_id": "example_agent",
-  "run_id": "2025-08-24T22:30:00.123456Z",
-  "ts": "2025-08-24T22:30:00.123456Z",
-  "loss": 0.2341,
-  "epoch": 3,
-  "step": 150,
-  "duration_s": 2.3,
-  "commit": "8ac7004b",
-  "device": "macOS-14.0",
-  "source": "local",
-  "notes": "TinyGrad toy run with 3 epochs, 50 steps/epoch, lr=0.01"
-}
-
-[INFO] Next steps:
+Next Steps:
 1. Review the generated metrics.json file
 2. Create a pull request using the SCP template
-3. Request review from SCRA and PM
-4. Merge after approval to update the leaderboard
+3. Submit for review by SCRA and PM
 
-[SUCCESS] Training run completed successfully!
+Files created:
+total 8
+drwxr-xr-x  3 user  staff   96 Aug 25 04:15 .
+drwxr-xr-x  3 user  staff   96 Aug 25 04:15 ..
+-rw-r--r--  1 user  staff  456 Aug 25 04:15 metrics.json
+==========================================
+[SUCCESS] Synthiant runner completed successfully!
 [INFO] Ready for SCP v1 submission
 ```
 
-### **Generated Files**
-```
-evidence/training/submissions/example_agent/2025-08-24T22-30-00Z/
-├── metrics.json          # SCP v1 compliant metrics
-└── training.log          # Training execution log
-```
+## SCP PR Process
 
----
-
-## **SCP PR Process**
-
-### **1. Review Generated Files**
+### 1. Create Submission Branch
 ```bash
-# Check metrics file
-cat evidence/training/submissions/*/*/metrics.json
+# Create a new branch for your submission
+git checkout -b submit/$SYNTHIANT_ID-$(date +%Y%m%d-%H%M%S)
 
-# Verify against schema
-python3 -c "
-import json
-schema_path = 'evidence/schemas/metrics.schema.json'
-metrics_path = 'evidence/training/submissions/*/*/metrics.json'
-
-with open(schema_path) as f:
-    schema = json.load(f)
-
-with open(metrics_path) as f:
-    metrics = json.load(f)
-
-# Basic validation
-required = schema['required']
-for field in required:
-    if field not in metrics:
-        print(f'❌ Missing: {field}')
-    else:
-        print(f'✓ {field}: {metrics[field]}')
-"
+# Example:
+git checkout -b submit/my_ai_agent-20250825-041500
 ```
 
-### **2. Create Pull Request**
+### 2. Add Your Files
 ```bash
-# Create feature branch
-git checkout -b feature/training-submission-$(date +%Y%m%d)
+# Add the generated metrics file
+git add evidence/training/submissions/$SYNTHIANT_ID/*/metrics.json
 
-# Add submission files
-git add evidence/training/submissions/*/*/
-
-# Commit with SCP template
-git commit -m "🚀 SCP v1 Training Submission
-
-- Synthiant ID: example_agent
-- Run ID: 2025-08-24T22:30:00Z
-- Loss: 0.2341
-- Device: macOS-14.0
-- Source: local
-
-Complies with SCP v1 schema requirements."
-
-# Push branch
-git push -u origin feature/training-submission-$(date +%Y%m%d)
+# Verify what will be committed
+git status
 ```
 
-### **3. Use SCP PR Template**
-- Go to GitHub and create a new pull request
-- Use the `.github/PULL_REQUEST_TEMPLATE_SCP.md` template
-- Fill in all required fields
-- Add labels: `phase5`, `evidence`, `verification-gate`, `training`, `status-endpoints`
-- Request reviews from SCRA and PM
-
-### **4. PR Review Process**
-1. **SCRA Review**: Technical validation and compliance check
-2. **PM Review**: Business logic and intent validation
-3. **Final Approval**: Both reviewers must approve
-4. **Merge**: Only after all checks pass
-
----
-
-## **Troubleshooting**
-
-### **Common Issues**
-
-#### **Permission Denied**
+### 3. Commit Your Submission
 ```bash
-# Fix script permissions
+# Commit with descriptive message
+git commit -m "SCP v1: Submit training metrics from $SYNTHIANT_ID
+
+- Training run completed successfully
+- Final loss: [YOUR_LOSS_VALUE]
+- Device: [YOUR_DEVICE]
+- Framework: tinygrad
+- Epochs: 3, Steps: 100"
+```
+
+### 4. Push and Create PR
+```bash
+# Push your branch
+git push -u origin submit/$SYNTHIANT_ID-$(date +%Y%m%d-%H%M%S)
+
+# Create pull request using GitHub CLI
+gh pr create \
+  --title "SCP v1: Submit training metrics from $SYNTHIANT_ID" \
+  --body-file .github/PULL_REQUEST_TEMPLATE_SCP.md \
+  --base main \
+  --head submit/$SYNTHIANT_ID-$(date +%Y%m%d-%H%M%S)
+```
+
+### 5. Complete PR Template
+When creating the PR, fill out the template:
+- **Synthiant ID**: Your unique identifier
+- **Training Run ID**: Timestamp from your run
+- **Framework**: tinygrad
+- **Device**: Your detected platform
+- **Metrics Summary**: Fill in the actual values
+- **Validation Checklist**: Check all boxes
+- **Evidence Files**: Confirm metrics.json is included
+
+### 6. Request Reviews
+- **SCRA**: Technical validation and compliance
+- **PM**: Business logic and intent validation
+- Both reviewers must approve for merge
+
+## Troubleshooting
+
+### Common Issues
+
+#### 1. Permission Denied
+```bash
+# Make scripts executable
 chmod +x scripts/synthiant_runner_example.sh
 chmod +x scripts/tinygrad_toy_run.py
 ```
 
-#### **Python Module Not Found**
+#### 2. Python Not Found
 ```bash
-# Install required modules
-pip3 install --user pathlib
+# Install Python via Homebrew
+brew install python
 
-# Or use system Python
-/usr/bin/python3 scripts/tinygrad_toy_run.py --help
+# Verify installation
+python3 --version
 ```
 
-#### **Git Repository Issues**
+#### 3. Git Not Available
 ```bash
-# Check git status
-git status
+# Install Git via Homebrew
+brew install git
 
-# Initialize if needed
-git init
-git remote add origin https://github.com/FlynnVIN10/Zeropoint-Protocol.git
+# Configure Git (first time only)
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
 ```
 
-#### **Directory Creation Issues**
+#### 4. Directory Creation Failed
 ```bash
-# Check directory permissions
-ls -la evidence/training/
+# Check permissions
+ls -la evidence/training/submissions/
 
-# Create manually if needed
-mkdir -p evidence/training/submissions
+# Create directory manually if needed
+mkdir -p evidence/training/submissions/$SYNTHIANT_ID
 ```
 
-### **Validation Errors**
+### Validation Errors
 
-#### **Missing Required Fields**
-- Ensure all required fields are present in metrics.json
-- Check field names match exactly (case-sensitive)
-- Verify data types are correct
+#### Schema Validation Failed
+- Check all required fields are present
+- Verify data types match schema requirements
+- Ensure timestamps are ISO 8601 format
 
-#### **Invalid Commit Hash**
+#### Commit Hash Invalid
 - Ensure you're in a git repository
-- Check git status and commit history
+- Check git status shows clean working tree
 - Verify commit hash format (7-40 hex characters)
 
-#### **Invalid Source Value**
-- Use only: `local`, `cloud`, `cluster`, or `edge`
-- Check case sensitivity
+## Advanced Usage
 
----
-
-## **Advanced Usage**
-
-### **Custom Training Parameters**
+### Custom Training Parameters
 ```bash
+# Run with custom parameters
 python3 scripts/tinygrad_toy_run.py \
-    --synthiant-id "advanced_agent" \
-    --epochs 10 \
-    --steps-per-epoch 200 \
-    --learning-rate 0.001 \
-    --output-dir "custom/path" \
-    --verbose
+  --synthiant-id "advanced_agent" \
+  --device "macOS-14.0" \
+  --commit "09d884e7" \
+  --output-dir "custom_output" \
+  --epochs 5 \
+  --steps-per-epoch 200 \
+  --learning-rate 0.005 \
+  --seed 123
 ```
 
-### **Batch Training Runs**
+### Batch Processing
 ```bash
-#!/bin/bash
-# batch_training.sh
-
+# Run multiple training sessions
 for i in {1..5}; do
-    echo "Running training run $i..."
-    export SYNTHIANT_ID="batch_agent_$i"
-    ./scripts/synthiant_runner_example.sh
-    sleep 5
+  export SYNTHIANT_ID="batch_agent_$i"
+  ./scripts/synthiant_runner_example.sh
+  sleep 10
 done
 ```
 
-### **Integration with CI/CD**
-```yaml
-# .github/workflows/training-validation.yml
-name: Training Validation
-on: [push, pull_request]
-jobs:
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Validate Metrics
-        run: |
-          python3 scripts/tinygrad_toy_run.py \
-            --output-dir /tmp/test \
-            --epochs 1 \
-            --steps-per-epoch 10
+### Integration with CI/CD
+```bash
+# Example GitHub Actions step
+- name: Run SCP v1 Training
+  run: |
+    export SYNTHIANT_ID="ci_agent_${{ github.run_id }}"
+    chmod +x scripts/synthiant_runner_example.sh
+    ./scripts/synthiant_runner_example.sh
 ```
 
+## Monitoring and Verification
+
+### Check Submission Status
+```bash
+# View your submission in the leaderboard
+curl -s https://zeropointprotocol.ai/evidence/training/leaderboard.json | jq '.submissions[] | select(.synthiant_id == "'$SYNTHIANT_ID'")'
+
+# Check training status page
+open https://zeropointprotocol.ai/status/training/
+```
+
+### Verify Data Consistency
+```bash
+# Compare local and remote data
+local_metrics=$(cat evidence/training/submissions/$SYNTHIANT_ID/*/metrics.json)
+remote_metrics=$(curl -s https://zeropointprotocol.ai/api/training/status)
+
+echo "Local: $local_metrics"
+echo "Remote: $remote_metrics"
+```
+
+## Best Practices
+
+### 1. Unique Identifiers
+- Use descriptive, unique Synthiant IDs
+- Avoid generic names like "test" or "user"
+- Include organization or project prefixes
+
+### 2. Consistent Naming
+- Follow the established naming conventions
+- Use ISO 8601 timestamps consistently
+- Maintain consistent device/platform descriptions
+
+### 3. Quality Metrics
+- Ensure training parameters are realistic
+- Document any special conditions or hyperparameters
+- Provide meaningful notes for context
+
+### 4. Regular Submissions
+- Submit results regularly to maintain leaderboard presence
+- Track performance improvements over time
+- Share insights and learnings with the community
+
+## Support and Resources
+
+### Documentation
+- **SCP v1 Guide**: `/docs/SCP.md`
+- **Schema Reference**: `/evidence/schemas/metrics.schema.json`
+- **PR Template**: `/.github/PULL_REQUEST_TEMPLATE_SCP.md`
+
+### Community
+- **Issues**: GitHub Issues for technical problems
+- **Discussions**: GitHub Discussions for questions
+- **SCRA Support**: For compliance and validation questions
+
+### Examples
+- **Sample Submission**: `/evidence/training/submissions/sample/`
+- **Training Script**: `/scripts/tinygrad_toy_run.py`
+- **Runner Script**: `/scripts/synthiant_runner_example.sh`
+
 ---
 
-## **Quality Assurance**
-
-### **Pre-Submission Checklist**
-- [ ] Metrics file follows SCP v1 schema
-- [ ] All required fields present and valid
-- [ ] Timestamps in ISO 8601 format
-- [ ] Loss values are reasonable and consistent
-- [ ] Device/platform information is accurate
-- [ ] Git commit hash is valid and current
-
-### **Post-Submission Verification**
-- [ ] PR created with SCP template
-- [ ] All checklist items completed
-- [ ] Required labels applied
-- [ ] Proper reviewers assigned
-- [ ] No merge conflicts
-
----
-
-## **Support and Resources**
-
-### **Documentation**
-- **SCP v1**: `docs/SCP.md` - Complete protocol documentation
-- **Schema**: `evidence/schemas/metrics.schema.json` - Validation schema
-- **Template**: `.github/PULL_REQUEST_TEMPLATE_SCP.md` - PR template
-
-### **Tools**
-- **Runner Script**: `scripts/synthiant_runner_example.sh` - Main execution script
-- **Training Script**: `scripts/tinygrad_toy_run.py` - Python training implementation
-- **Leaderboard**: `scripts/build-leaderboard.mjs` - Leaderboard builder
-
-### **Contact**
-- **Technical Issues**: SCRA team
-- **Process Questions**: PM team
-- **General Support**: Dev team
-
----
-
-**Status**: ✅ **ACTIVE**  
-**Last Updated**: 2025-08-24  
-**Version**: 1.0  
-**Compliance**: SCP v1 Required
+**Last Updated**: 2025-08-25T04:15:00Z  
+**Version**: 1.0.0  
+**Maintainer**: PM Team  
+**SCP Compliance**: ✅ Full SCP v1 compliance

@@ -29,8 +29,41 @@ jobs:
       - name: Build Dynamic Evidence
         run: |
           echo "Building dynamic evidence files..."
-          node scripts/build-dynamic-evidence.mjs
-          echo "Dynamic evidence build completed"
+          if ! node scripts/build-dynamic-evidence.mjs; then
+            echo "❌ CRITICAL: Dynamic evidence build failed"
+            echo "Deployment blocked - evidence files must be generated successfully"
+            exit 1
+          fi
+          echo "✅ Dynamic evidence build completed successfully"
+          
+          # Verify critical evidence files exist
+          echo "Verifying evidence files..."
+          if [ ! -f "public/build-info.json" ] || [ ! -f "evidence/training/latest.json" ] || [ ! -f "evidence/petals/status.json" ] || [ ! -f "evidence/wondercraft/status.json" ]; then
+            echo "❌ CRITICAL: Required evidence files missing"
+            echo "Deployment blocked - all evidence files must be present"
+            exit 1
+          fi
+          
+          # Verify evidence files contain valid JSON
+          echo "Validating evidence file JSON..."
+          if ! jq empty public/build-info.json 2>/dev/null; then
+            echo "❌ CRITICAL: public/build-info.json contains invalid JSON"
+            exit 1
+          fi
+          if ! jq empty evidence/training/latest.json 2>/dev/null; then
+            echo "❌ CRITICAL: evidence/training/latest.json contains invalid JSON"
+            exit 1
+          fi
+          if ! jq empty evidence/petals/status.json 2>/dev/null; then
+            echo "❌ CRITICAL: evidence/petals/status.json contains invalid JSON"
+            exit 1
+          fi
+          if ! jq empty evidence/wondercraft/status.json 2>/dev/null; then
+            echo "❌ CRITICAL: evidence/wondercraft/status.json contains invalid JSON"
+            exit 1
+          fi
+          
+          echo "✅ All evidence files validated successfully"
 
       - name: Skip build (static files only)
         run: |

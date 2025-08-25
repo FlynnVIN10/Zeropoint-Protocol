@@ -5,67 +5,363 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Training Status - Zeropoint Protocol</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .status { margin: 20px 0; }
-        .noscript { background: #f5f5f5; padding: 20px; border-radius: 5px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .json-link { margin: 20px 0; }
-        .json-link a { color: #0066cc; text-decoration: none; }
-        .json-link a:hover { text-decoration: underline; }
-        .metrics { background: #e8f4fd; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1e1e1e;
+            color: #ffffff;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #6e00ff;
+            margin-bottom: 10px;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .status-card {
+            background: #2d2d2d;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        .status-card h3 {
+            color: #6e00ff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid #444;
+        }
+        .metric:last-child {
+            border-bottom: none;
+        }
+        .metric-label {
+            font-weight: 500;
+            color: #ccc;
+        }
+        .metric-value {
+            color: #fff;
+            font-family: 'Courier New', monospace;
+        }
+        .json-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 16px;
+            background: #6e00ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        .json-link:hover {
+            background: #5a00d4;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+        }
+        .task-item {
+            background: #333;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #6e00ff;
+        }
+        .task-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .task-meta {
+            font-size: 0.9em;
+            color: #ccc;
+        }
+        .priority-high { border-left-color: #ff4444; }
+        .priority-medium { border-left-color: #ffaa00; }
+        .priority-low { border-left-color: #44ff44; }
+        .noscript {
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .noscript h3 {
+            color: #6e00ff;
+            margin-top: 0;
+        }
+        .noscript table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        .noscript th, .noscript td {
+            text-align: left;
+            padding: 8px;
+            border-bottom: 1px solid #444;
+        }
+        .noscript th {
+            background: #444;
+            color: #fff;
+        }
     </style>
 </head>
 <body>
-    <h1>Training Status</h1>
-    
-    <div class="json-link">
-        <a href="/api/training/status">View JSON</a>
-    </div>
-    
-    <div class="status" id="status">
-        <p>Loading training status...</p>
-    </div>
-    
-    <noscript>
-        <div class="noscript">
-            <h3>Training Status (JavaScript Disabled)</h3>
-            <table>
-                <tr><th>Run ID</th><td>2025-08-23T22:15:00Z</td></tr>
-                <tr><th>Epoch</th><td>1</td></tr>
-                <tr><th>Step</th><td>120</td></tr>
-                <tr><th>Loss</th><td>0.3452</td></tr>
-                <tr><th>Duration</th><td>95.1s</td></tr>
-                <tr><th>Commit</th><td>33dbbd99</td></tr>
-            </table>
+    <div class="container">
+        <div class="header">
+            <h1>Training Status Dashboard</h1>
+            <p>Real-time training metrics and SCP v1 submissions</p>
         </div>
-    </noscript>
+
+        <div class="status-grid">
+            <!-- Latest Run Status -->
+            <div class="status-card">
+                <h3>Latest Training Run</h3>
+                <div id="latest-run">
+                    <div class="metric">
+                        <span class="metric-label">Run ID:</span>
+                        <span class="metric-value" id="run-id">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Epoch:</span>
+                        <span class="metric-value" id="epoch">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Step:</span>
+                        <span class="metric-value" id="step">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Loss:</span>
+                        <span class="metric-value" id="loss">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Duration:</span>
+                        <span class="metric-value" id="duration">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Commit:</span>
+                        <span class="metric-value" id="commit">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Timestamp:</span>
+                        <span class="metric-value" id="timestamp">Loading...</span>
+                    </div>
+                </div>
+                <a href="/api/training/status" class="json-link" target="_blank">View JSON</a>
+            </div>
+
+            <!-- Leaderboard Summary -->
+            <div class="status-card">
+                <h3>Leaderboard Summary</h3>
+                <div id="leaderboard-summary">
+                    <div class="metric">
+                        <span class="metric-label">Total Submissions:</span>
+                        <span class="metric-value" id="total-submissions">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Unique Models:</span>
+                        <span class="metric-value" id="unique-models">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Best Loss:</span>
+                        <span class="metric-value" id="best-loss">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Average Loss:</span>
+                        <span class="metric-value" id="avg-loss">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Generated:</span>
+                        <span class="metric-value" id="generated-at">Loading...</span>
+                    </div>
+                </div>
+                <a href="/evidence/training/leaderboard.json" class="json-link" target="_blank">View Leaderboard</a>
+            </div>
+
+            <!-- Open Tasks -->
+            <div class="status-card">
+                <h3>Open Training Tasks</h3>
+                <div id="open-tasks">
+                    <div class="metric">
+                        <span class="metric-label">Total Tasks:</span>
+                        <span class="metric-value" id="total-tasks">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">High Priority:</span>
+                        <span class="metric-value" id="high-priority">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Estimated Hours:</span>
+                        <span class="metric-value" id="estimated-hours">Loading...</span>
+                    </div>
+                </div>
+                <a href="/evidence/training/tasks.json" class="json-link" target="_blank">View Tasks</a>
+            </div>
+        </div>
+
+        <!-- Task List -->
+        <div class="status-card">
+            <h3>Task Details</h3>
+            <ul id="task-list" class="task-list">
+                <li>Loading tasks...</li>
+            </ul>
+        </div>
+
+        <!-- NoScript Support -->
+        <noscript>
+            <div class="noscript">
+                <h3>JavaScript Disabled</h3>
+                <p>Here's the latest training run data:</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Run ID</td>
+                            <td id="ns-run-id">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Epoch</td>
+                            <td id="ns-epoch">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Step</td>
+                            <td id="ns-step">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Loss</td>
+                            <td id="ns-loss">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Duration</td>
+                            <td id="ns-duration">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Commit</td>
+                            <td id="ns-commit">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Timestamp</td>
+                            <td id="ns-timestamp">Loading...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </noscript>
+    </div>
 
     <script>
-        fetch('/api/training/status')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('status').innerHTML = `
-                    <h3>Live Training Status</h3>
-                    <div class="metrics">
-                        <table>
-                            <tr><th>Run ID</th><td>${data.run_id}</td></tr>
-                            <tr><th>Epoch</th><td>${data.epoch}</td></tr>
-                            <tr><th>Step</th><td>${data.step}</td></tr>
-                            <tr><th>Loss</th><td>${data.loss}</td></tr>
-                            <tr><th>Duration</th><td>${data.duration_s}s</td></tr>
-                            <tr><th>Commit</th><td>${data.commit}</td></tr>
-                            <tr><th>Timestamp</th><td>${data.ts}</td></tr>
-                        </table>
-                    </div>
-                `;
-            })
-            .catch(error => {
-                document.getElementById('status').innerHTML = `
-                    <p style="color: red;">Error loading training status: ${error.message}</p>
-                `;
-            });
+        // Load training status
+        async function loadTrainingStatus() {
+            try {
+                const response = await fetch('/api/training/status');
+                const data = await response.json();
+                
+                // Update latest run
+                document.getElementById('run-id').textContent = data.run_id || 'N/A';
+                document.getElementById('epoch').textContent = data.epoch || 'N/A';
+                document.getElementById('step').textContent = data.step || 'N/A';
+                document.getElementById('loss').textContent = data.loss || 'N/A';
+                document.getElementById('duration').textContent = `${data.duration_s || 'N/A'}s`;
+                document.getElementById('commit').textContent = data.commit || 'N/A';
+                document.getElementById('timestamp').textContent = data.ts || 'N/A';
+                
+                // Update noscript table
+                document.getElementById('ns-run-id').textContent = data.run_id || 'N/A';
+                document.getElementById('ns-epoch').textContent = data.epoch || 'N/A';
+                document.getElementById('ns-step').textContent = data.step || 'N/A';
+                document.getElementById('ns-loss').textContent = data.loss || 'N/A';
+                document.getElementById('ns-duration').textContent = `${data.duration_s || 'N/A'}s`;
+                document.getElementById('ns-commit').textContent = data.commit || 'N/A';
+                document.getElementById('ns-timestamp').textContent = data.ts || 'N/A';
+            } catch (error) {
+                console.error('Error loading training status:', error);
+            }
+        }
+
+        // Load leaderboard summary
+        async function loadLeaderboardSummary() {
+            try {
+                const response = await fetch('/evidence/training/leaderboard.json');
+                const data = await response.json();
+                
+                document.getElementById('total-submissions').textContent = data.summary.total_submissions || 'N/A';
+                document.getElementById('unique-models').textContent = data.summary.unique_models || 'N/A';
+                document.getElementById('best-loss').textContent = data.summary.best_loss || 'N/A';
+                document.getElementById('avg-loss').textContent = data.summary.average_loss ? data.summary.average_loss.toFixed(4) : 'N/A';
+                document.getElementById('generated-at').textContent = data.summary.generated_at ? new Date(data.summary.generated_at).toLocaleString() : 'N/A';
+            } catch (error) {
+                console.error('Error loading leaderboard summary:', error);
+            }
+        }
+
+        // Load tasks
+        async function loadTasks() {
+            try {
+                const response = await fetch('/evidence/training/tasks.json');
+                const data = await response.json();
+                
+                document.getElementById('total-tasks').textContent = data.summary.total_tasks || 'N/A';
+                document.getElementById('high-priority').textContent = data.summary.high_priority || 'N/A';
+                document.getElementById('estimated-hours').textContent = data.summary.total_estimated_hours || 'N/A';
+                
+                // Update task list
+                const taskList = document.getElementById('task-list');
+                taskList.innerHTML = '';
+                
+                data.tasks.forEach(task => {
+                    const li = document.createElement('li');
+                    li.className = `task-item priority-${task.priority}`;
+                    li.innerHTML = `
+                        <div class="task-title">${task.title}</div>
+                        <div class="task-meta">
+                            <strong>Status:</strong> ${task.status} | 
+                            <strong>Priority:</strong> ${task.priority} | 
+                            <strong>Assigned:</strong> ${task.assigned_to} | 
+                            <strong>Due:</strong> ${task.due_date} | 
+                            <strong>Hours:</strong> ${task.estimated_hours}
+                        </div>
+                    `;
+                    taskList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading tasks:', error);
+            }
+        }
+
+        // Load all data
+        async function loadAllData() {
+            await Promise.all([
+                loadTrainingStatus(),
+                loadLeaderboardSummary(),
+                loadTasks()
+            ]);
+        }
+
+        // Load data on page load
+        document.addEventListener('DOMContentLoaded', loadAllData);
+        
+        // Refresh data every 30 seconds
+        setInterval(loadAllData, 30000);
     </script>
 </body>
 </html>

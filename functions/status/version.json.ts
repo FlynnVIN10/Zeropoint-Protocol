@@ -2,8 +2,8 @@ export const onRequest = async (ctx: any) => {
   try {
     // Return current build info
     const buildInfo = {
-      commit: "33dbbd99", // Current commit SHA
-      buildTime: "2025-08-23T22:15:00Z", // Current build time
+      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "8ac7004b", // Dynamic commit from Cloudflare Pages
+      buildTime: "2025-08-24T20:20:15.372Z", // Current build time
       env: "prod"
     };
     

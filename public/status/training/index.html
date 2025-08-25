@@ -121,10 +121,11 @@
             font-size: 0.8em;
             font-weight: 500;
         }
-        .source.local { background: #d4edda; color: #155724; }
-        .source.cloud { background: #d1ecf1; color: #0c5460; }
-        .source.cluster { background: #fff3cd; color: #856404; }
-        .source.edge { background: #f8d7da; color: #721c24; }
+        .source.tinygrad { background: #d4edda; color: #155724; }
+        .source.pytorch { background: #d1ecf1; color: #0c5460; }
+        .source.tensorflow { background: #fff3cd; color: #856404; }
+        .source.jax { background: #f8d7da; color: #721c24; }
+        .source.other { background: #e2e3e5; color: #383d41; }
         .tasks-grid {
             display: grid;
             gap: 20px;
@@ -155,9 +156,10 @@
             font-weight: 500;
             text-transform: uppercase;
         }
-        .difficulty.beginner { background: #d4edda; color: #155724; }
-        .difficulty.intermediate { background: #fff3cd; color: #856404; }
-        .difficulty.advanced { background: #f8d7da; color: #721c24; }
+        .difficulty.easy { background: #d4edda; color: #155724; }
+        .difficulty.medium { background: #fff3cd; color: #856404; }
+        .difficulty.hard { background: #f8d7da; color: #721c24; }
+        .difficulty.expert { background: #6f42c1; color: white; }
         .task-description {
             color: #6c757d;
             margin-bottom: 15px;
@@ -198,15 +200,32 @@
         .json-links a:hover {
             background: #5a6fd8;
         }
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            margin-right: 8px;
+        .noscript-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
-        .status.active { background: #28a745; }
-        .status.inactive { background: #dc3545; }
+        .noscript-table th,
+        .noscript-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .noscript-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        .noscript-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
         .footer {
             background: #f8f9fa;
             padding: 20px;
@@ -254,6 +273,45 @@
                         <div class="metric-label">Duration (s)</div>
                     </div>
                 </div>
+                
+                <!-- Noscript table for latest run -->
+                <noscript>
+                    <table class="noscript-table">
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Loss</td>
+                                <td id="noscript-loss">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>Epoch</td>
+                                <td id="noscript-epoch">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>Step</td>
+                                <td id="noscript-step">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>Duration</td>
+                                <td id="noscript-duration">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>Commit</td>
+                                <td id="noscript-commit">Loading...</td>
+                            </tr>
+                            <tr>
+                                <td>Timestamp</td>
+                                <td id="noscript-timestamp">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </noscript>
+                
                 <div class="json-links">
                     <h3>📄 Data Sources</h3>
                     <a href="/evidence/training/latest.json" target="_blank">Latest Run Data</a>
@@ -296,6 +354,14 @@
                     document.getElementById('latest-epoch').textContent = data.epoch;
                     document.getElementById('latest-step').textContent = data.step;
                     document.getElementById('latest-duration').textContent = data.duration_s.toFixed(1);
+                    
+                    // Update noscript table
+                    document.getElementById('noscript-loss').textContent = data.loss.toFixed(4);
+                    document.getElementById('noscript-epoch').textContent = data.epoch;
+                    document.getElementById('noscript-step').textContent = data.step;
+                    document.getElementById('noscript-duration').textContent = data.duration_s.toFixed(1);
+                    document.getElementById('noscript-commit').textContent = data.commit;
+                    document.getElementById('noscript-timestamp').textContent = data.ts;
                 }
             } catch (error) {
                 console.warn('Could not load latest run data:', error);
@@ -308,7 +374,7 @@
                 const response = await fetch('/evidence/training/leaderboard.json');
                 if (response.ok) {
                     const data = await response.json();
-                    renderLeaderboard(data.top_submissions);
+                    renderLeaderboard(data.submissions);
                 }
             } catch (error) {
                 console.warn('Could not load leaderboard data:', error);
@@ -318,7 +384,7 @@
         // Render leaderboard table
         function renderLeaderboard(submissions) {
             const container = document.getElementById('leaderboard-content');
-            if (submissions.length === 0) {
+            if (!submissions || submissions.length === 0) {
                 container.innerHTML = '<p>No submissions yet. Be the first to contribute!</p>';
                 return;
             }
@@ -348,7 +414,7 @@
                         <td>${sub.epoch}</td>
                         <td>${sub.step}</td>
                         <td><span class="source ${sub.source}">${sub.source}</span></td>
-                        <td>${sub.device}</td>
+                        <td>${sub.device || 'unknown'}</td>
                     </tr>
                 `;
             });
@@ -373,7 +439,7 @@
         // Render tasks
         function renderTasks(tasks) {
             const container = document.getElementById('tasks-content');
-            if (tasks.length === 0) {
+            if (!tasks || tasks.length === 0) {
                 container.innerHTML = '<p>No open tasks available.</p>';
                 return;
             }
@@ -388,7 +454,6 @@
                         </div>
                         <p class="task-description">${task.description}</p>
                         <div class="task-meta">
-                            <span>⏱️ ${task.estimated_hours}h</span>
                             <span>📅 ${new Date(task.deadline).toLocaleDateString()}</span>
                             <span>🏆 ${task.reward}</span>
                         </div>

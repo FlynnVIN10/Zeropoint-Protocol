@@ -1,20 +1,18 @@
 HTTP/2 200 
-date: Mon, 25 Aug 2025 20:03:31 GMT
+date: Tue, 26 Aug 2025 16:46:44 GMT
 content-type: text/html; charset=utf-8
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-cf-cache-status: DYNAMIC
 access-control-allow-origin: *
-age: 16810
 cache-control: public, max-age=300
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=bhcYXUv13BydiAlgGCjNxKrA%2FDoe3bUn7JIGKBI2nJ7T2PjGA0KVXY5rygtbAnxs3BhCMAREJPXeJbu3CrA2ij8OuTp1Fy4Uvw%2F1hbTnyR9xfdHV"}]}
-server: cloudflare
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
-x-robots-tag: noindex
 vary: accept-encoding
-cf-ray: 974db17bd8ded0a6-CDG
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=CyxENdQ2cR8k%2FFkgDnJeo7L5xXUKwbwglzxDbLal3nNhE3fLJ7yeiQiKsgDKsi1RqToBAh%2BOI2SsfHY7NC57eWZjK4naFTLRnBcSt9z%2F65sGOKul"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9754ce94db2b196c-LHR
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html>
@@ -22,59 +20,93 @@ alt-svc: h3=":443"; ma=86400
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Version Status - Zeropoint Protocol</title>
+    <title>Zeropoint Protocol - Dual Consensus Agentic AI Platform</title>
+    <meta name="description" content="Zeropoint Protocol: Dual Consensus Agentic AI Platform with Petals/TinyGrad integration">
     <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .status { margin: 20px 0; }
-        .noscript { background: #f5f5f5; padding: 20px; border-radius: 5px; }
-        table { border-collapse: collapse; width: 100%; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-        .json-link { margin: 20px 0; }
-        .json-link a { color: #0066cc; text-decoration: none; }
-        .json-link a:hover { text-decoration: underline; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            color: white;
+            max-width: 800px;
+            padding: 2rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .nav-link {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            text-decoration: none;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .nav-link:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 0.5rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 0.5rem 0;
+        }
     </style>
 </head>
 <body>
-    <h1>Version Status</h1>
-    
-    <div class="json-link">
-        <a href="/status/version.json">View JSON</a>
-    </div>
-    
-    <div class="status" id="status">
-        <p>Loading status...</p>
-    </div>
-    
-    <noscript>
-        <div class="noscript">
-            <h3>Status (JavaScript Disabled)</h3>
-            <table>
-                <tr><th>Commit</th><td>33dbbd99</td></tr>
-                <tr><th>Build Time</th><td>2025-08-23T21:04:27.102Z</td></tr>
-                <tr><th>Environment</th><td>prod</td></tr>
-            </table>
+    <div class="container">
+        <h1>Zeropoint Protocol</h1>
+        <p>Dual Consensus Agentic AI Platform</p>
+        
+        <nav>
+          <a href="/status/health/">Health Check</a>
+          <a href="/status/ready/">Ready Check</a>
+          <a href="/status/version/">Version Check</a>
+          <a href="/evidence/v19/">Evidence v19</a>
+        </nav>
+        
+        <div class="status-section">
+          <h3>System Status</h3>
+          <p><strong>Phase:</strong> v19 (see evidence)</p>
+          <p><strong>Evidence:</strong> <a href="/evidence/v19/" style="color:#fff;text-decoration:underline">/evidence/v19/</a></p>
         </div>
-    </noscript>
-
-    <script>
-        fetch('/status/version.json')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('status').innerHTML = `
-                    <h3>Live Status</h3>
-                    <table>
-                        <tr><th>Commit</th><td>${data.commit}</td></tr>
-                        <tr><th>Build Time</th><td>${data.buildTime}</td></tr>
-                        <tr><th>Environment</th><td>${data.env}</td></tr>
-                    </table>
-                `;
-            })
-            .catch(error => {
-                document.getElementById('status').innerHTML = `
-                    <p style="color: red;">Error loading status: ${error.message}</p>
-                `;
-            });
-    </script>
+    </div>
 </body>
 </html>

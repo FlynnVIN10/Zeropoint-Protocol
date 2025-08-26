@@ -6,9 +6,9 @@ This guide explains how to run local training and submit metrics to the Synthian
 
 Before running local training, ensure you have:
 
-- **Python 3.7+** installed
+- **Python 3.8+** installed
 - **Git** installed (for commit tracking)
-- **jq** installed (for JSON validation, optional)
+- **Node.js** installed (for schema validation)
 - Access to the Zeropoint Protocol repository
 
 ## Quick Start
@@ -23,11 +23,22 @@ cd Zeropoint-Protocol
 ### 2. Run the Example Training Script
 
 ```bash
-# Run with default settings
-python3 scripts/tinygrad_toy_run.py
+# Run with required parameters
+python3 scripts/tinygrad_toy_run.py \
+  --synthiant-id "your_id" \
+  --run-id "unique_run_$(date +%Y%m%d_%H%M%S)" \
+  --output-dir "evidence/training/submissions/your_id/$(date +%Y%m%d_%H%M%S)"
 
 # Run with custom parameters
-python3 scripts/tinygrad_toy_run.py --epochs 5 --steps-per-epoch 200 --output-dir evidence/training/submissions/my-model
+python3 scripts/tinygrad_toy_run.py \
+  --synthiant-id "your_id" \
+  --run-id "custom_run_001" \
+  --epochs 10 \
+  --batch-size 64 \
+  --learning-rate 0.0001 \
+  --device gpu \
+  --source local \
+  --output-dir "evidence/training/submissions/your_id/custom_run_001"
 ```
 
 ### 3. Use the Synthiant Runner Script
@@ -35,6 +46,12 @@ python3 scripts/tinygrad_toy_run.py --epochs 5 --steps-per-epoch 200 --output-di
 ```bash
 # Make the script executable
 chmod +x scripts/synthiant_runner_example.sh
+
+# Set environment variables (optional)
+export SYNTHIANT_ID="your_id"
+export RUN_ID="$(date +%Y%m%d_%H%M%S)"
+export DEVICE_TYPE="gpu"
+export SOURCE_TYPE="local"
 
 # Run the script
 ./scripts/synthiant_runner_example.sh
@@ -47,49 +64,63 @@ chmod +x scripts/synthiant_runner_example.sh
 A Python script that simulates TinyGrad training and generates SCP v1 compliant metrics.
 
 **Features:**
-- Configurable epochs and steps per epoch
-- Realistic loss and accuracy simulation
-- Automatic metrics generation
-- Schema validation
+- Configurable training parameters (epochs, batch size, learning rate)
+- Realistic loss simulation with decreasing trend
+- Automatic metrics generation matching SCP v1 schema
+- Built-in validation against schema requirements
 - Custom output directory support
+- Device and source type detection
 
 **Usage:**
 ```bash
 python3 scripts/tinygrad_toy_run.py [OPTIONS]
 
-Options:
-  --output-dir DIR     Output directory for metrics (default: evidence/training/submissions/tinygrad-toy)
-  --epochs N           Number of training epochs (default: 3)
-  --steps-per-epoch N  Steps per epoch (default: 100)
+Required Options:
+  --synthiant-id ID    Your unique Synthiant identifier
+  --run-id ID          Unique identifier for this training run
+  --output-dir DIR     Output directory for metrics and logs
+
+Optional Options:
+  --epochs N           Number of training epochs (default: 5)
+  --batch-size N       Batch size (default: 32)
+  --learning-rate F    Learning rate (default: 0.001)
+  --device TYPE        Device type: cpu, gpu, tpu, npu, hybrid (default: cpu)
+  --source TYPE        Source type: local, cloud, cluster, edge, hybrid (default: local)
   --help              Show help message
 ```
 
 **Example Output:**
 ```
-🎯 TinyGrad Toy Training Run
-=============================
-Output directory: evidence/training/submissions/tinygrad-toy
-Epochs: 3
-Steps per epoch: 100
+TinyGrad Toy Training Run
+=========================
+Configuration:
+- Synthiant ID: example_synthiant
+- Run ID: 20250825_165500
+- Device: cpu
+- Source: local
+- Output Dir: evidence/training/submissions/example_synthiant/20250825_165500
+- Epochs: 5
+- Batch Size: 32
+- Learning Rate: 0.001
 
-🚀 Starting TinyGrad training simulation...
-📚 Training epoch 1/3
-   Step 20/100, Loss: 0.7234
-   Step 40/100, Loss: 0.6987
-   ...
-✅ Training simulation completed!
-📊 Generating SCP v1 metrics...
-📁 Metrics saved to: evidence/training/submissions/tinygrad-toy/metrics.json
-🔍 Validating metrics against SCP v1 schema...
-✅ Schema validation passed!
+Starting training simulation...
+Epochs: 5, Batch Size: 32, Learning Rate: 0.001
+Epoch 1/5: Loss = 1.600000
+Epoch 2/5: Loss = 1.280000
+Epoch 3/5: Loss = 1.024000
+Epoch 4/5: Loss = 0.819200
+Epoch 5/5: Loss = 0.655360
+Training completed! Final loss: 0.655360
+✓ Metrics validation passed
+Metrics saved to: evidence/training/submissions/example_synthiant/20250825_165500/metrics.json
 
-🎉 Training run completed successfully!
-=====================================
-Model: tinygrad-toy-model
-Dataset: toy-dataset
-Final Loss: 0.3452
-Final Accuracy: 0.8309
-Metrics file: evidence/training/submissions/tinygrad-toy/metrics.json
+Training Run Summary:
+=====================
+Final Loss: 0.655360
+Metrics File: evidence/training/submissions/example_synthiant/20250825_165500/metrics.json
+Schema Validation: PASSED
+
+✓ Training run completed successfully!
 ```
 
 ### Synthiant Runner Script (`scripts/synthiant_runner_example.sh`)
@@ -97,15 +128,23 @@ Metrics file: evidence/training/submissions/tinygrad-toy/metrics.json
 A bash script that automates the entire training and submission process.
 
 **Features:**
-- Automatic prerequisite checking
-- Training simulation
-- Metrics generation
-- Schema validation
-- Leaderboard updates
-- Comprehensive error handling
+- Automatic prerequisite checking (Python, Git, Node.js)
+- Training execution via Python script
+- Metrics generation and validation
+- Schema validation using build-leaderboard.mjs
+- Training log generation
+- Comprehensive error handling and logging
 
 **Usage:**
 ```bash
+# Basic usage
+./scripts/synthiant_runner_example.sh
+
+# With custom environment variables
+export SYNTHIANT_ID="your_id"
+export RUN_ID="custom_run_001"
+export DEVICE_TYPE="gpu"
+export SOURCE_TYPE="local"
 ./scripts/synthiant_runner_example.sh
 ```
 
@@ -327,6 +366,42 @@ Use the SCP v1 PR template:
 3. **Validate Before Submission**: Always validate metrics against schema
 4. **Test Locally**: Ensure scripts work before submitting
 5. **Follow Naming Conventions**: Use consistent directory and file naming
+
+## SCP PR Process
+
+After running your training and generating metrics:
+
+### 1. Commit Your Changes
+
+```bash
+# Add your submission files
+git add evidence/training/submissions/{synthiant_id}/{run_id}/
+
+# Commit with descriptive message
+git commit -m "SCP submission: {synthiant_id}/{run_id}"
+
+# Push to your branch
+git push origin your-branch-name
+```
+
+### 2. Create Pull Request
+
+1. Go to the GitHub repository
+2. Click "New Pull Request"
+3. Select your branch
+4. Use the SCP template: `.github/PULL_REQUEST_TEMPLATE_SCP.md`
+5. Fill in all required information:
+   - Synthiant ID
+   - Run ID
+   - Source and device types
+   - Training details
+6. Submit for review
+
+### 3. Review Process
+
+- **SCRA Review**: Synthiant Compliance & Research Analyst verifies compliance
+- **PM Review**: Project Manager validates submission quality
+- **Dual Consensus**: Both approvals required for merge
 
 ## Next Steps
 

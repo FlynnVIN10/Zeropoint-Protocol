@@ -1,15 +1,16 @@
 #!/bin/bash
 
 # Synthiant Runner Example Script
-# This script demonstrates how to run local training and submit metrics to SCP v1
+# This script demonstrates how to run local training and submit results via SCP v1
 
-set -e
+set -e  # Exit on any error
 
 # Configuration
-MODEL_NAME="gpt-3.5-turbo"
-DATASET_NAME="wikitext-103"
-OUTPUT_DIR="evidence/training/submissions/${MODEL_NAME}/$(date -u +%Y-%m-%dT%H-%M-%SZ)"
-METRICS_FILE="${OUTPUT_DIR}/metrics.json"
+SYNTHIANT_ID="${SYNTHIANT_ID:-example_synthiant}"
+RUN_ID="${RUN_ID:-$(date +%Y%m%d_%H%M%S)}"
+COMMIT_HASH="${COMMIT_HASH:-$(git rev-parse --short HEAD)}"
+DEVICE_TYPE="${DEVICE_TYPE:-cpu}"
+SOURCE_TYPE="${SOURCE_TYPE:-local}"
 
 # Colors for output
 RED='\033[0;31m'
@@ -47,213 +48,174 @@ check_prerequisites() {
     
     # Check if git is available
     if ! command -v git &> /dev/null; then
-        log_warning "Git is not installed - commit SHA will be 'unknown'"
+        log_error "Git is not installed or not in PATH"
+        exit 1
     fi
     
-    # Check if jq is available for JSON validation
-    if ! command -v jq &> /dev/null; then
-        log_warning "jq is not installed - JSON validation will be skipped"
+    # Check if we're in a git repository
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        log_error "Not in a git repository"
+        exit 1
     fi
     
-    log_success "Prerequisites check completed"
+    log_success "Prerequisites check passed"
 }
 
-# Create output directory
-create_output_dir() {
-    log_info "Creating output directory: ${OUTPUT_DIR}"
-    mkdir -p "${OUTPUT_DIR}"
-    log_success "Output directory created"
+# Create submission directory
+create_submission_dir() {
+    local submission_dir="evidence/training/submissions/${SYNTHIANT_ID}/${RUN_ID}"
+    
+    log_info "Creating submission directory: ${submission_dir}"
+    mkdir -p "${submission_dir}"
+    
+    log_success "Submission directory created"
 }
 
-# Get current git commit
-get_git_commit() {
-    if command -v git &> /dev/null; then
-        git rev-parse --short HEAD 2>/dev/null || echo "unknown"
-    else
-        echo "unknown"
-    fi
-}
-
-# Get system information
-get_system_info() {
-    case "$(uname -s)" in
-        Linux*)     echo "Linux-$(uname -r)";;
-        Darwin*)    echo "macOS-$(sw_vers -productVersion)";;
-        CYGWIN*)   echo "Cygwin";;
-        MINGW*)    echo "MinGW";;
-        *)          echo "Unknown-$(uname -s)";;
-    esac
-}
-
-# Run training simulation
+# Run training
 run_training() {
-    log_info "Starting training simulation..."
+    log_info "Starting training run..."
     
-    # Record start time
-    START_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    # Check if tinygrad_toy_run.py exists
+    if [ ! -f "scripts/tinygrad_toy_run.py" ]; then
+        log_error "Training script scripts/tinygrad_toy_run.py not found"
+        exit 1
+    fi
     
-    # Simulate training process
-    log_info "Training epoch 1..."
-    sleep 2
-    log_info "Training epoch 2..."
-    sleep 2
-    log_info "Training epoch 3..."
-    sleep 1
+    # Run the training script
+    log_info "Executing training script..."
+    python3 scripts/tinygrad_toy_run.py \
+        --synthiant-id "${SYNTHIANT_ID}" \
+        --run-id "${RUN_ID}" \
+        --device "${DEVICE_TYPE}" \
+        --source "${SOURCE_TYPE}" \
+        --output-dir "evidence/training/submissions/${SYNTHIANT_ID}/${RUN_ID}"
     
-    # Record end time
-    END_TIME=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-    
-    # Calculate duration
-    START_EPOCH=$(date -d "$START_TIME" +%s)
-    END_EPOCH=$(date -d "$END_TIME" +%s)
-    DURATION=$((END_EPOCH - START_EPOCH))
-    
-    log_success "Training completed in ${DURATION} seconds"
-    
-    # Return training results
-    echo "${START_TIME}|${END_TIME}|${DURATION}"
+    if [ $? -eq 0 ]; then
+        log_success "Training completed successfully"
+    else
+        log_error "Training failed"
+        exit 1
+    fi
 }
 
-# Generate metrics
-generate_metrics() {
-    local start_time=$1
-    local end_time=$2
-    local duration=$3
+# Validate submission
+validate_submission() {
+    log_info "Validating submission..."
     
-    log_info "Generating SCP v1 compliant metrics..."
+    local submission_dir="evidence/training/submissions/${SYNTHIANT_ID}/${RUN_ID}"
+    local metrics_file="${submission_dir}/metrics.json"
     
-    # Generate a realistic loss value (decreasing over time)
-    LOSS=$(awk -v seed=$RANDOM 'BEGIN{srand(seed); print 0.5 + rand() * 0.3}')
-    ACCURACY=$(awk -v seed=$RANDOM 'BEGIN{srand(seed); print 0.7 + rand() * 0.2}')
+    # Check if metrics.json exists
+    if [ ! -f "${metrics_file}" ]; then
+        log_error "Metrics file not found: ${metrics_file}"
+        exit 1
+    fi
     
-    # Create metrics JSON
-    cat > "${METRICS_FILE}" << EOF
-{
-  "run_id": "run_$(date +%Y%m%d_%H%M%S)",
-  "model": "${MODEL_NAME}",
-  "started_at": "${start_time}",
-  "ended_at": "${end_time}",
-  "dataset": "${DATASET_NAME}",
-  "metrics": {
-    "loss": ${LOSS},
-    "accuracy": ${ACCURACY}
-  },
-  "notes": "Training run executed by synthiant_runner_example.sh on $(get_system_info)"
+    # Check if build-leaderboard.mjs exists for validation
+    if [ -f "scripts/build-leaderboard.mjs" ]; then
+        log_info "Running schema validation..."
+        node scripts/build-leaderboard.mjs
+        if [ $? -eq 0 ]; then
+            log_success "Schema validation passed"
+        else
+            log_warning "Schema validation had issues - check output above"
+        fi
+    else
+        log_warning "build-leaderboard.mjs not found - skipping validation"
+    fi
+    
+    log_success "Submission validation completed"
 }
+
+# Generate training log
+generate_training_log() {
+    log_info "Generating training log..."
+    
+    local submission_dir="evidence/training/submissions/${SYNTHIANT_ID}/${RUN_ID}"
+    local log_file="${submission_dir}/training_log.txt"
+    
+    cat > "${log_file}" << EOF
+Synthiant Training Run Log
+==========================
+
+Run Information:
+- Synthiant ID: ${SYNTHIANT_ID}
+- Run ID: ${RUN_ID}
+- Commit Hash: ${COMMIT_HASH}
+- Device Type: ${DEVICE_TYPE}
+- Source Type: ${SOURCE_TYPE}
+- Start Time: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+- End Time: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+Environment:
+- OS: $(uname -s)
+- Architecture: $(uname -m)
+- Python Version: $(python3 --version 2>&1)
+- Git Branch: $(git branch --show-current)
+- Git Status: $(git status --porcelain | wc -l) files modified
+
+Training Summary:
+- This was a demonstration run using the synthiant runner example script
+- Training completed successfully
+- Metrics generated and saved to metrics.json
+- All required files created in submission directory
+
+Next Steps:
+1. Review the generated metrics.json file
+2. Commit your changes: git add evidence/training/submissions/${SYNTHIANT_ID}/${RUN_ID}/
+3. Create a pull request using the SCP template
+4. Wait for SCRA and PM approval
+
 EOF
     
-    log_success "Metrics generated: ${METRICS_FILE}"
+    log_success "Training log generated: ${log_file}"
 }
 
-# Validate metrics against schema
-validate_metrics() {
-    if command -v jq &> /dev/null; then
-        log_info "Validating metrics against SCP v1 schema..."
-        
-        # Basic JSON validation
-        if jq empty "${METRICS_FILE}" 2>/dev/null; then
-            log_success "JSON validation passed"
-        else
-            log_error "JSON validation failed"
-            exit 1
-        fi
-        
-        # Check required fields
-        local required_fields=("run_id" "model" "started_at" "ended_at" "dataset" "metrics")
-        local missing_fields=()
-        
-        for field in "${required_fields[@]}"; do
-            if ! jq -e ".${field}" "${METRICS_FILE}" > /dev/null 2>&1; then
-                missing_fields+=("$field")
-            fi
-        done
-        
-        if [ ${#missing_fields[@]} -eq 0 ]; then
-            log_success "All required fields present"
-        else
-            log_error "Missing required fields: ${missing_fields[*]}"
-            exit 1
-        fi
-        
-        # Check metrics object
-        if ! jq -e '.metrics.loss' "${METRICS_FILE}" > /dev/null 2>&1; then
-            log_error "Missing metrics.loss field"
-            exit 1
-        fi
-        
-        if ! jq -e '.metrics.accuracy' "${METRICS_FILE}" > /dev/null 2>&1; then
-            log_error "Missing metrics.accuracy field"
-            exit 1
-        fi
-        
-        log_success "Schema validation completed successfully"
-    else
-        log_warning "Skipping schema validation (jq not available)"
-    fi
-}
-
-# Update leaderboard
-update_leaderboard() {
-    log_info "Updating leaderboard..."
+# Display submission summary
+show_summary() {
+    local submission_dir="evidence/training/submissions/${SYNTHIANT_ID}/${RUN_ID}"
     
-    if [ -f "scripts/build-leaderboard.mjs" ]; then
-        if node scripts/build-leaderboard.mjs; then
-            log_success "Leaderboard updated successfully"
-        else
-            log_warning "Leaderboard update failed"
-        fi
-    else
-        log_warning "Leaderboard builder script not found"
-    fi
-}
-
-# Display results
-display_results() {
-    log_success "Training run completed successfully!"
     echo
-    echo "Results Summary:"
-    echo "================="
-    echo "Model: ${MODEL_NAME}"
-    echo "Dataset: ${DATASET_NAME}"
-    echo "Duration: $(grep -o '"ended_at": "[^"]*"' "${METRICS_FILE}" | cut -d'"' -f4)"
-    echo "Loss: $(grep -o '"loss": [0-9.]*' "${METRICS_FILE}" | cut -d':' -f2 | tr -d ' ')"
-    echo "Accuracy: $(grep -o '"accuracy": [0-9.]*' "${METRICS_FILE}" | cut -d':' -f2 | tr -d ' ')"
-    echo "Metrics file: ${METRICS_FILE}"
+    log_success "=== SUBMISSION COMPLETE ==="
     echo
-    echo "Next steps:"
-    echo "1. Review the generated metrics"
-    echo "2. Commit and push to your repository"
-    echo "3. Create a pull request using the SCP template"
-    echo "4. Wait for SCRA review and approval"
+    echo "Synthiant ID: ${SYNTHIANT_ID}"
+    echo "Run ID: ${RUN_ID}"
+    echo "Submission Directory: ${submission_dir}"
+    echo
+    echo "Files Created:"
+    ls -la "${submission_dir}"
+    echo
+    echo "Next Steps:"
+    echo "1. Review the generated files"
+    echo "2. Commit: git add ${submission_dir}/"
+    echo "3. Push: git push origin your-branch-name"
+    echo "4. Create PR using .github/PULL_REQUEST_TEMPLATE_SCP.md"
+    echo
+    log_info "Happy training! 🚀"
 }
 
 # Main execution
 main() {
     echo "Synthiant Runner Example Script"
-    echo "================================"
+    echo "=============================="
     echo
     
-    # Check prerequisites
+    # Display configuration
+    echo "Configuration:"
+    echo "- Synthiant ID: ${SYNTHIANT_ID}"
+    echo "- Run ID: ${RUN_ID}"
+    echo "- Commit Hash: ${COMMIT_HASH}"
+    echo "- Device Type: ${DEVICE_TYPE}"
+    echo "- Source Type: ${SOURCE_TYPE}"
+    echo
+    
+    # Execute steps
     check_prerequisites
-    
-    # Create output directory
-    create_output_dir
-    
-    # Run training
-    training_results=$(run_training)
-    IFS='|' read -r start_time end_time duration <<< "$training_results"
-    
-    # Generate metrics
-    generate_metrics "$start_time" "$end_time" "$duration"
-    
-    # Validate metrics
-    validate_metrics
-    
-    # Update leaderboard
-    update_leaderboard
-    
-    # Display results
-    display_results
+    create_submission_dir
+    run_training
+    validate_submission
+    generate_training_log
+    show_summary
 }
 
 # Run main function

@@ -1,20 +1,33 @@
 #!/usr/bin/env python3
-
 """
-TinyGrad Toy Training Run
-Produces SCP v1 compliant metrics for submission
+TinyGrad Toy Run Script
+Produces training metrics that match the SCP v1 schema
 """
 
-import json
-import time
 import argparse
+import json
 import os
 import sys
-from datetime import datetime, timezone
+import time
+from datetime import datetime
 from pathlib import Path
 
+def parse_arguments():
+    """Parse command line arguments"""
+    parser = argparse.ArgumentParser(description='TinyGrad Toy Training Run')
+    parser.add_argument('--synthiant-id', required=True, help='Synthiant identifier')
+    parser.add_argument('--run-id', required=True, help='Unique run identifier')
+    parser.add_argument('--device', default='cpu', choices=['cpu', 'gpu', 'tpu', 'npu', 'hybrid'], help='Device type')
+    parser.add_argument('--source', default='local', choices=['local', 'cloud', 'cluster', 'edge', 'hybrid'], help='Source type')
+    parser.add_argument('--output-dir', required=True, help='Output directory for metrics and logs')
+    parser.add_argument('--epochs', type=int, default=5, help='Number of training epochs')
+    parser.add_argument('--batch-size', type=int, default=32, help='Batch size')
+    parser.add_argument('--learning-rate', type=float, default=0.001, help='Learning rate')
+    
+    return parser.parse_args()
+
 def get_git_commit():
-    """Get current git commit SHA"""
+    """Get current git commit hash"""
     try:
         import subprocess
         result = subprocess.run(['git', 'rev-parse', '--short', 'HEAD'], 
@@ -23,186 +36,179 @@ def get_git_commit():
     except (subprocess.CalledProcessError, FileNotFoundError):
         return "unknown"
 
-def get_system_info():
-    """Get system information"""
-    import platform
-    system = platform.system()
-    if system == "Darwin":  # macOS
-        try:
-            import subprocess
-            result = subprocess.run(['sw_vers', '-productVersion'], 
-                                  capture_output=True, text=True, check=True)
-            return f"macOS-{result.stdout.strip()}"
-        except:
-            return f"macOS-{platform.mac_ver()[0]}"
-    elif system == "Linux":
-        return f"Linux-{platform.release()}"
-    elif system == "Windows":
-        return f"Windows-{platform.release()}"
-    else:
-        return f"{system}-{platform.release()}"
+def get_device_info():
+    """Get device information"""
+    device = os.environ.get('DEVICE', 'cpu')
+    
+    # Try to detect GPU
+    try:
+        import subprocess
+        result = subprocess.run(['nvidia-smi', '--query-gpu=name', '--format=csv,noheader,nounits'], 
+                              capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            return 'gpu'
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
+    
+    return device
 
-def simulate_training():
-    """Simulate a TinyGrad training run"""
-    print("🚀 Starting TinyGrad training simulation...")
+def simulate_training(epochs, batch_size, learning_rate):
+    """Simulate a training run"""
+    print(f"Starting training simulation...")
+    print(f"Epochs: {epochs}, Batch Size: {batch_size}, Learning Rate: {learning_rate}")
     
-    # Simulate training epochs
-    epochs = 3
-    steps_per_epoch = 100
-    
-    for epoch in range(1, epochs + 1):
-        print(f"📚 Training epoch {epoch}/{epochs}")
+    # Simulate training progress
+    base_loss = 2.0
+    for epoch in range(epochs):
+        # Simulate epoch training
+        time.sleep(0.5)  # Simulate computation time
         
-        for step in range(1, steps_per_epoch + 1):
-            # Simulate training step
-            if step % 20 == 0:
-                loss = 0.5 + (0.3 * (1 - step / steps_per_epoch)) + (0.1 * (1 - epoch / epochs))
-                print(f"   Step {step}/{steps_per_epoch}, Loss: {loss:.4f}")
-            
-            # Simulate computation time
-            time.sleep(0.01)
+        # Simulate decreasing loss
+        epoch_loss = base_loss * (0.8 ** epoch) + (0.1 * (1 - epoch/epochs))
+        
+        print(f"Epoch {epoch + 1}/{epochs}: Loss = {epoch_loss:.6f}")
     
-    print("✅ Training simulation completed!")
-    return epochs, steps_per_epoch
+    final_loss = epoch_loss
+    print(f"Training completed! Final loss: {final_loss:.6f}")
+    
+    return final_loss
 
-def generate_metrics(epochs, steps_per_epoch, output_dir):
+def generate_metrics(args, final_loss):
     """Generate SCP v1 compliant metrics"""
-    print("📊 Generating SCP v1 metrics...")
+    timestamp = datetime.utcnow().isoformat() + 'Z'
+    commit_hash = get_git_commit()
+    device_type = get_device_info()
     
-    # Calculate final loss (decreasing over time)
-    final_loss = 0.3 + (0.1 * (1 - epochs / 3)) + (0.05 * (1 - steps_per_epoch / 100))
-    final_accuracy = 0.7 + (0.2 * (1 - final_loss))
-    
-    # Create metrics data
     metrics = {
-        "run_id": f"run_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
-        "model": "tinygrad-toy-model",
-        "started_at": datetime.now(timezone.utc).isoformat(),
-        "ended_at": datetime.now(timezone.utc).isoformat(),
-        "dataset": "toy-dataset",
-        "metrics": {
-            "loss": round(final_loss, 4),
-            "accuracy": round(final_accuracy, 4)
+        "synthiant_id": args.synthiant_id,
+        "run_id": args.run_id,
+        "timestamp": timestamp,
+        "loss": final_loss,
+        "source": args.source,
+        "commit": commit_hash,
+        "device": device_type,
+        "metadata": {
+            "epochs": args.epochs,
+            "batch_size": args.batch_size,
+            "learning_rate": args.learning_rate,
+            "script": "tinygrad_toy_run.py",
+            "version": "1.0"
         },
-        "notes": f"TinyGrad toy training run with {epochs} epochs, {steps_per_epoch} steps per epoch"
+        "hyperparameters": {
+            "epochs": args.epochs,
+            "batch_size": args.batch_size,
+            "learning_rate": args.learning_rate,
+            "optimizer": "sgd",
+            "loss_function": "mse"
+        }
     }
     
-    # Write metrics file
-    metrics_file = output_dir / "metrics.json"
-    with open(metrics_file, 'w') as f:
-        json.dump(metrics, f, indent=2)
-    
-    print(f"📁 Metrics saved to: {metrics_file}")
     return metrics
 
-def validate_metrics(metrics_file):
-    """Validate metrics against SCP v1 schema"""
-    print("🔍 Validating metrics against SCP v1 schema...")
+def save_metrics(metrics, output_dir):
+    """Save metrics to file"""
+    output_path = Path(output_dir) / "metrics.json"
     
+    # Ensure output directory exists
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Save metrics
+    with open(output_path, 'w') as f:
+        json.dump(metrics, f, indent=2)
+    
+    print(f"Metrics saved to: {output_path}")
+    return output_path
+
+def validate_metrics(metrics):
+    """Basic validation of metrics against SCP schema"""
+    required_fields = ['synthiant_id', 'run_id', 'timestamp', 'loss', 'source', 'commit', 'device']
+    
+    # Check required fields
+    for field in required_fields:
+        if field not in metrics:
+            print(f"ERROR: Missing required field: {field}")
+            return False
+        if not metrics[field]:
+            print(f"ERROR: Empty value for required field: {field}")
+            return False
+    
+    # Check data types
+    if not isinstance(metrics['loss'], (int, float)):
+        print("ERROR: Loss must be a number")
+        return False
+    
+    if metrics['loss'] < 0:
+        print("ERROR: Loss must be non-negative")
+        return False
+    
+    # Check enums
+    valid_sources = ['local', 'cloud', 'cluster', 'edge', 'hybrid']
+    if metrics['source'] not in valid_sources:
+        print(f"ERROR: Invalid source: {metrics['source']}")
+        return False
+    
+    valid_devices = ['cpu', 'gpu', 'tpu', 'npu', 'hybrid']
+    if metrics['device'] not in valid_devices:
+        print(f"ERROR: Invalid device: {metrics['device']}")
+        return False
+    
+    # Check timestamp format
     try:
-        with open(metrics_file, 'r') as f:
-            data = json.load(f)
-        
-        # Check required fields
-        required_fields = ["run_id", "model", "started_at", "ended_at", "dataset", "metrics"]
-        missing_fields = [field for field in required_fields if field not in data]
-        
-        if missing_fields:
-            print(f"❌ Missing required fields: {missing_fields}")
-            return False
-        
-        # Check metrics object
-        if "metrics" not in data or not isinstance(data["metrics"], dict):
-            print("❌ Missing or invalid metrics object")
-            return False
-        
-        metrics_required = ["loss", "accuracy"]
-        metrics_missing = [field for field in metrics_required if field not in data["metrics"]]
-        
-        if metrics_missing:
-            print(f"❌ Missing required metrics: {metrics_missing}")
-            return False
-        
-        # Validate data types
-        if not isinstance(data["run_id"], str):
-            print("❌ run_id must be a string")
-            return False
-        
-        if not isinstance(data["model"], str):
-            print("❌ model must be a string")
-            return False
-        
-        if not isinstance(data["metrics"]["loss"], (int, float)):
-            print("❌ loss must be a number")
-            return False
-        
-        if not isinstance(data["metrics"]["accuracy"], (int, float)):
-            print("❌ accuracy must be a number")
-            return False
-        
-        print("✅ Schema validation passed!")
-        return True
-        
-    except json.JSONDecodeError:
-        print("❌ Invalid JSON format")
+        datetime.fromisoformat(metrics['timestamp'].replace('Z', '+00:00'))
+    except ValueError:
+        print("ERROR: Invalid timestamp format")
         return False
-    except Exception as e:
-        print(f"❌ Validation error: {e}")
-        return False
+    
+    print("✓ Metrics validation passed")
+    return True
 
 def main():
-    parser = argparse.ArgumentParser(description="TinyGrad Toy Training Run")
-    parser.add_argument("--output-dir", default="evidence/training/submissions/tinygrad-toy", 
-                       help="Output directory for metrics")
-    parser.add_argument("--epochs", type=int, default=3, help="Number of training epochs")
-    parser.add_argument("--steps-per-epoch", type=int, default=100, help="Steps per epoch")
+    """Main execution function"""
+    print("TinyGrad Toy Training Run")
+    print("=========================")
     
-    args = parser.parse_args()
+    # Parse arguments
+    args = parse_arguments()
     
-    # Create output directory
-    output_dir = Path(args.output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    
-    print("🎯 TinyGrad Toy Training Run")
-    print("=============================")
-    print(f"Output directory: {output_dir}")
-    print(f"Epochs: {args.epochs}")
-    print(f"Steps per epoch: {args.steps_per_epoch}")
+    # Display configuration
+    print(f"Configuration:")
+    print(f"- Synthiant ID: {args.synthiant_id}")
+    print(f"- Run ID: {args.run_id}")
+    print(f"- Device: {args.device}")
+    print(f"- Source: {args.source}")
+    print(f"- Output Dir: {args.output_dir}")
+    print(f"- Epochs: {args.epochs}")
+    print(f"- Batch Size: {args.batch_size}")
+    print(f"- Learning Rate: {args.learning_rate}")
     print()
     
     try:
         # Run training simulation
-        epochs, steps_per_epoch = simulate_training()
+        final_loss = simulate_training(args.epochs, args.batch_size, args.learning_rate)
         
         # Generate metrics
-        metrics = generate_metrics(epochs, steps_per_epoch, output_dir)
+        metrics = generate_metrics(args, final_loss)
         
         # Validate metrics
-        metrics_file = output_dir / "metrics.json"
-        if validate_metrics(metrics_file):
-            print()
-            print("🎉 Training run completed successfully!")
-            print("=====================================")
-            print(f"Model: {metrics['model']}")
-            print(f"Dataset: {metrics['dataset']}")
-            print(f"Final Loss: {metrics['metrics']['loss']}")
-            print(f"Final Accuracy: {metrics['metrics']['accuracy']}")
-            print(f"Metrics file: {metrics_file}")
-            print()
-            print("Next steps:")
-            print("1. Review the generated metrics")
-            print("2. Commit and push to your repository")
-            print("3. Create a pull request using the SCP template")
-            print("4. Wait for SCRA review and approval")
-        else:
-            print("❌ Metrics validation failed")
+        if not validate_metrics(metrics):
+            print("ERROR: Metrics validation failed")
             sys.exit(1)
-            
-    except KeyboardInterrupt:
-        print("\n⚠️ Training interrupted by user")
-        sys.exit(1)
+        
+        # Save metrics
+        metrics_path = save_metrics(metrics, args.output_dir)
+        
+        # Display results
+        print()
+        print("Training Run Summary:")
+        print("=====================")
+        print(f"Final Loss: {final_loss:.6f}")
+        print(f"Metrics File: {metrics_path}")
+        print(f"Schema Validation: PASSED")
+        print()
+        print("✓ Training run completed successfully!")
+        
     except Exception as e:
-        print(f"❌ Training failed: {e}")
+        print(f"ERROR: Training run failed: {e}")
         sys.exit(1)
 
 if __name__ == "__main__":

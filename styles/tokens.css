@@ -1,0 +1,9 @@
+:root {
+  --matte-black: #1e1e1e;
+  --purple: #6e00ff;
+  --off-white: #f0f0f0;
+}
+
+.bg-matte-black { background-color: var(--matte-black); }
+.text-off-white { color: var(--off-white); }
+.accent-purple { color: var(--purple); }

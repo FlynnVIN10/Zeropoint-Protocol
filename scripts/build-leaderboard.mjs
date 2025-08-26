@@ -1,130 +1,201 @@
 #!/usr/bin/env node
 
-/**
- * SCP v1 Leaderboard Builder
- * Scans training submissions and builds leaderboard
- */
-
 import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join, dirname } from 'path';
+import { join, extname } from 'path';
 import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Schema validation function
-function validateMetrics(metrics) {
-  const required = ['run_id', 'model', 'started_at', 'ended_at', 'dataset', 'metrics'];
-  const metricsRequired = ['loss', 'accuracy'];
-  
-  // Check required fields
-  if (!required.every(field => metrics.hasOwnProperty(field) && metrics[field] !== null && metrics[field] !== undefined)) {
-    return false;
+// Configuration
+const SUBMISSIONS_DIR = join(__dirname, '../evidence/training/submissions');
+const SCHEMA_FILE = join(__dirname, '../evidence/schemas/metrics.schema.json');
+const LEADERBOARD_FILE = join(__dirname, '../evidence/training/leaderboard.json');
+const MAX_ENTRIES = 100;
+
+// Simple JSON schema validation
+function validateMetrics(metrics, schema) {
+  try {
+    // Check required fields
+    for (const field of schema.required) {
+      if (!(field in metrics)) {
+        return { valid: false, error: `Missing required field: ${field}` };
+      }
+    }
+
+    // Check synthiant_id pattern
+    if (!/^[a-zA-Z0-9_-]+$/.test(metrics.synthiant_id)) {
+      return { valid: false, error: 'Invalid synthiant_id format' };
+    }
+
+    // Check run_id pattern
+    if (!/^[a-zA-Z0-9_-]+$/.test(metrics.run_id)) {
+      return { valid: false, error: 'Invalid run_id format' };
+    }
+
+    // Check timestamp format
+    if (isNaN(Date.parse(metrics.timestamp))) {
+      return { valid: false, error: 'Invalid timestamp format' };
+    }
+
+    // Check loss is number and non-negative
+    if (typeof metrics.loss !== 'number' || metrics.loss < 0) {
+      return { valid: false, error: 'Loss must be a non-negative number' };
+    }
+
+    // Check source enum
+    const validSources = ['local', 'cloud', 'cluster', 'edge', 'hybrid'];
+    if (!validSources.includes(metrics.source)) {
+      return { valid: false, error: 'Invalid source value' };
+    }
+
+    // Check commit hash pattern
+    if (!/^[a-f0-9]+$/.test(metrics.commit)) {
+      return { valid: false, error: 'Invalid commit hash format' };
+    }
+
+    // Check device enum
+    const validDevices = ['cpu', 'gpu', 'tpu', 'npu', 'hybrid'];
+    if (!validDevices.includes(metrics.device)) {
+      return { valid: false, error: 'Invalid device value' };
+    }
+
+    return { valid: true };
+  } catch (error) {
+    return { valid: false, error: `Validation error: ${error.message}` };
   }
-  
-  // Check metrics object
-  if (!metrics.metrics || !metricsRequired.every(field => metrics.metrics.hasOwnProperty(field))) {
-    return false;
-  }
-  
-  return true;
 }
 
-// Recursively find all submission files
-function findSubmissionFiles(dir, files = []) {
-  const items = readdirSync(dir);
+// Recursively find all metrics.json files
+function findMetricsFiles(dir) {
+  const files = [];
   
-  for (const item of items) {
-    const fullPath = join(dir, item);
-    const stat = statSync(fullPath);
+  try {
+    const items = readdirSync(dir);
     
-    if (stat.isDirectory()) {
-      findSubmissionFiles(fullPath, files);
-    } else if (item.endsWith('.json')) {
-      files.push(fullPath);
+    for (const item of items) {
+      const fullPath = join(dir, item);
+      const stat = statSync(fullPath);
+      
+      if (stat.isDirectory()) {
+        files.push(...findMetricsFiles(fullPath));
+      } else if (item === 'metrics.json') {
+        files.push(fullPath);
+      }
     }
+  } catch (error) {
+    console.warn(`Warning: Could not read directory ${dir}: ${error.message}`);
   }
+  
   return files;
 }
 
-// Build leaderboard from submission files
+// Build leaderboard from valid submissions
 function buildLeaderboard() {
+  console.log('Building Synthiant Training Leaderboard...');
+  
   try {
-    const submissionsDir = join(__dirname, '..', 'evidence', 'training', 'submissions');
-    const submissionFiles = findSubmissionFiles(submissionsDir);
+    // Read schema
+    const schema = JSON.parse(readFileSync(SCHEMA_FILE, 'utf8'));
+    console.log('✓ Schema loaded');
     
-    console.log(`Found ${submissionFiles.length} submission files`);
+    // Find all metrics files
+    const metricsFiles = findMetricsFiles(SUBMISSIONS_DIR);
+    console.log(`✓ Found ${metricsFiles.length} metrics files`);
     
-    const submissions = [];
+    const validSubmissions = [];
+    const invalidSubmissions = [];
     
-    for (const file of submissionFiles) {
+    // Process each metrics file
+    for (const file of metricsFiles) {
       try {
-        const content = readFileSync(file, 'utf8');
-        const metrics = JSON.parse(content);
+        const metrics = JSON.parse(readFileSync(file, 'utf8'));
+        const validation = validateMetrics(metrics, schema);
         
-        if (validateMetrics(metrics)) {
-          submissions.push({
+        if (validation.valid) {
+          validSubmissions.push({
+            synthiant_id: metrics.synthiant_id,
             run_id: metrics.run_id,
-            model: metrics.model,
-            started_at: metrics.started_at,
-            ended_at: metrics.ended_at,
-            dataset: metrics.dataset,
-            loss: metrics.metrics.loss,
-            accuracy: metrics.metrics.accuracy,
-            notes: metrics.notes || '',
+            timestamp: metrics.timestamp,
+            loss: metrics.loss,
+            source: metrics.source,
+            commit: metrics.commit,
+            device: metrics.device,
             file_path: file.replace(join(__dirname, '..'), '')
           });
         } else {
-          console.warn(`Invalid metrics in ${file}`);
+          invalidSubmissions.push({
+            file: file,
+            error: validation.error
+          });
         }
       } catch (error) {
-        console.warn(`Error reading ${file}:`, error.message);
+        invalidSubmissions.push({
+          file: file,
+          error: `JSON parse error: ${error.message}`
+        });
       }
     }
     
-    // Sort by loss (ascending - lower is better)
-    submissions.sort((a, b) => a.loss - b.loss);
+    console.log(`✓ Valid submissions: ${validSubmissions.length}`);
+    if (invalidSubmissions.length > 0) {
+      console.log(`⚠ Invalid submissions: ${invalidSubmissions.length}`);
+      console.log('Invalid submissions:');
+      invalidSubmissions.forEach(sub => {
+        console.log(`  ${sub.file}: ${sub.error}`);
+      });
+    }
     
-    // Take top 100 submissions
-    const topSubmissions = submissions.slice(0, 100);
+    // Sort by loss (ascending - lower is better) and timestamp (descending - newer first)
+    validSubmissions.sort((a, b) => {
+      if (a.loss !== b.loss) {
+        return a.loss - b.loss;
+      }
+      return new Date(b.timestamp) - new Date(a.timestamp);
+    });
     
-    // Generate summary statistics
-    const summary = {
-      total_submissions: submissions.length,
-      unique_models: new Set(submissions.map(s => s.model)).size,
-      datasets: submissions.reduce((acc, s) => {
-        acc[s.dataset] = (acc[s.dataset] || 0) + 1;
-        return acc;
-      }, {}),
-      best_loss: submissions.length > 0 ? submissions[0].loss : null,
-      average_loss: submissions.length > 0 ? submissions.reduce((sum, s) => sum + s.loss, 0) / submissions.length : null,
-      generated_at: new Date().toISOString()
-    };
+    // Take top N entries
+    const leaderboard = validSubmissions.slice(0, MAX_ENTRIES);
     
-    const leaderboard = {
-      summary,
-      submissions: topSubmissions
+    // Add metadata
+    const leaderboardData = {
+      generated_at: new Date().toISOString(),
+      total_submissions: validSubmissions.length,
+      invalid_submissions: invalidSubmissions.length,
+      max_entries: MAX_ENTRIES,
+      entries: leaderboard
     };
     
     // Write leaderboard
-    const outputPath = join(__dirname, '..', 'evidence', 'training', 'leaderboard.json');
-    writeFileSync(outputPath, JSON.stringify(leaderboard, null, 2));
+    writeFileSync(LEADERBOARD_FILE, JSON.stringify(leaderboardData, null, 2));
+    console.log(`✓ Leaderboard written to ${LEADERBOARD_FILE}`);
+    console.log(`✓ Top ${leaderboard.length} entries included`);
     
-    console.log(`✅ Leaderboard built successfully:`);
-    console.log(`   - Total submissions: ${summary.total_submissions}`);
-    console.log(`   - Unique models: ${summary.unique_models}`);
-    console.log(`   - Best loss: ${summary.best_loss}`);
-    console.log(`   - Output: ${outputPath}`);
+    // Display top 10
+    if (leaderboard.length > 0) {
+      console.log('\nTop 10 Leaderboard:');
+      console.log('Rank | Synthiant ID | Loss | Source | Device | Timestamp');
+      console.log('-----|--------------|------|--------|--------|-----------');
+      leaderboard.slice(0, 10).forEach((entry, index) => {
+        const rank = index + 1;
+        const timestamp = new Date(entry.timestamp).toISOString().split('T')[0];
+        console.log(`${rank.toString().padStart(4)} | ${entry.synthiant_id.padEnd(13)} | ${entry.loss.toFixed(6)} | ${entry.source.padEnd(6)} | ${entry.device.padEnd(6)} | ${timestamp}`);
+      });
+    }
+    
+    return { success: true, validCount: validSubmissions.length, invalidCount: invalidSubmissions.length };
     
   } catch (error) {
-    console.error('❌ Error building leaderboard:', error.message);
-    process.exit(1);
+    console.error(`Error building leaderboard: ${error.message}`);
+    return { success: false, error: error.message };
   }
 }
 
 // Run if called directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  buildLeaderboard();
+  const result = buildLeaderboard();
+  process.exit(result.success ? 0 : 1);
 }
 
-export { buildLeaderboard };
+export { buildLeaderboard, validateMetrics };

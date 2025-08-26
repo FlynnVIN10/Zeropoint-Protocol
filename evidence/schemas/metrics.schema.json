@@ -1,18 +1,61 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Synthiant Training Metrics Schema",
+  "description": "Schema for validating training metrics submissions",
   "type": "object",
-  "required": ["run_id","model","started_at","ended_at","dataset","metrics"],
+  "required": ["synthiant_id", "run_id", "timestamp", "loss", "source", "commit", "device"],
   "properties": {
-    "run_id": {"type":"string"},
-    "model": {"type":"string"},
-    "started_at": {"type":"string","format":"date-time"},
-    "ended_at": {"type":"string","format":"date-time"},
-    "dataset": {"type":"string"},
-    "metrics": {
-      "type":"object",
-      "required":["loss","accuracy"],
-      "properties":{"loss":{"type":"number"},"accuracy":{"type":"number"}}
+    "synthiant_id": {
+      "type": "string",
+      "description": "Unique identifier for the Synthiant contributor",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "minLength": 3,
+      "maxLength": 50
     },
-    "notes": {"type":"string"}
-  }
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for this training run",
+      "pattern": "^[a-zA-Z0-9_-]+$",
+      "minLength": 5,
+      "maxLength": 100
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the run completed"
+    },
+    "loss": {
+      "type": "number",
+      "description": "Training loss value (lower is better)",
+      "minimum": 0
+    },
+    "source": {
+      "type": "string",
+      "description": "Source of the training run (e.g., 'local', 'cloud', 'cluster')",
+      "enum": ["local", "cloud", "cluster", "edge", "hybrid"]
+    },
+    "commit": {
+      "type": "string",
+      "description": "Git commit hash (short or full) used for this run",
+      "pattern": "^[a-f0-9]+$",
+      "minLength": 7,
+      "maxLength": 40
+    },
+    "device": {
+      "type": "string",
+      "description": "Device type used for training",
+      "enum": ["cpu", "gpu", "tpu", "npu", "hybrid"]
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata about the training run",
+      "additionalProperties": true
+    },
+    "hyperparameters": {
+      "type": "object",
+      "description": "Training hyperparameters used",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
 }

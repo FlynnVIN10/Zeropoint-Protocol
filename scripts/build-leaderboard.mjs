@@ -12,21 +12,17 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Schema validation function
-function validateMetrics(metrics) {
+const SUBMISSIONS_DIR = 'evidence/training/submissions';
+const SCHEMA_FILE = 'evidence/schemas/metrics.schema.json';
+const LEADERBOARD_FILE = 'evidence/training/leaderboard.json';
+
+function validateMetrics(data) {
+  // Simple validation for minimal schema
   const required = ['run_id', 'model', 'started_at', 'ended_at', 'dataset', 'metrics'];
-  const metricsRequired = ['loss', 'accuracy'];
-  
-  // Check required fields
-  if (!required.every(field => metrics.hasOwnProperty(field) && metrics[field] !== null && metrics[field] !== undefined)) {
-    return false;
+  for (const key of required) {
+    if (!data[key]) return false;
   }
-  
-  // Check metrics object
-  if (!metrics.metrics || !metricsRequired.every(field => metrics.metrics.hasOwnProperty(field))) {
-    return false;
-  }
-  
+  if (typeof data.metrics !== 'object' || typeof data.metrics.loss !== 'number' || typeof data.metrics.accuracy !== 'number') return false;
   return true;
 }
 
@@ -47,79 +43,25 @@ function findSubmissionFiles(dir, files = []) {
   return files;
 }
 
-// Build leaderboard from submission files
 function buildLeaderboard() {
-  try {
-    const submissionsDir = join(__dirname, '..', 'evidence', 'training', 'submissions');
-    const submissionFiles = findSubmissionFiles(submissionsDir);
-    
-    console.log(`Found ${submissionFiles.length} submission files`);
-    
-    const submissions = [];
-    
-    for (const file of submissionFiles) {
-      try {
-        const content = readFileSync(file, 'utf8');
-        const metrics = JSON.parse(content);
-        
-        if (validateMetrics(metrics)) {
-          submissions.push({
-            run_id: metrics.run_id,
-            model: metrics.model,
-            started_at: metrics.started_at,
-            ended_at: metrics.ended_at,
-            dataset: metrics.dataset,
-            loss: metrics.metrics.loss,
-            accuracy: metrics.metrics.accuracy,
-            notes: metrics.notes || '',
-            file_path: file.replace(join(__dirname, '..'), '')
-          });
-        } else {
-          console.warn(`Invalid metrics in ${file}`);
-        }
-      } catch (error) {
-        console.warn(`Error reading ${file}:`, error.message);
-      }
-    }
-    
-    // Sort by loss (ascending - lower is better)
-    submissions.sort((a, b) => a.loss - b.loss);
-    
-    // Take top 100 submissions
-    const topSubmissions = submissions.slice(0, 100);
-    
-    // Generate summary statistics
-    const summary = {
-      total_submissions: submissions.length,
-      unique_models: new Set(submissions.map(s => s.model)).size,
-      datasets: submissions.reduce((acc, s) => {
-        acc[s.dataset] = (acc[s.dataset] || 0) + 1;
-        return acc;
-      }, {}),
-      best_loss: submissions.length > 0 ? submissions[0].loss : null,
-      average_loss: submissions.length > 0 ? submissions.reduce((sum, s) => sum + s.loss, 0) / submissions.length : null,
-      generated_at: new Date().toISOString()
-    };
-    
-    const leaderboard = {
-      summary,
-      submissions: topSubmissions
-    };
-    
-    // Write leaderboard
-    const outputPath = join(__dirname, '..', 'evidence', 'training', 'leaderboard.json');
-    writeFileSync(outputPath, JSON.stringify(leaderboard, null, 2));
-    
-    console.log(`✅ Leaderboard built successfully:`);
-    console.log(`   - Total submissions: ${summary.total_submissions}`);
-    console.log(`   - Unique models: ${summary.unique_models}`);
-    console.log(`   - Best loss: ${summary.best_loss}`);
-    console.log(`   - Output: ${outputPath}`);
-    
-  } catch (error) {
-    console.error('❌ Error building leaderboard:', error.message);
-    process.exit(1);
-  }
+  const submissions = readdirSync(SUBMISSIONS_DIR, { recursive: true })
+    .filter(file => file.endsWith('metrics.json'))
+    .map(file => {
+      const data = JSON.parse(readFileSync(join(SUBMISSIONS_DIR, file)));
+      if (validateMetrics(data)) return data;
+      return null;
+    }).filter(Boolean);
+
+  submissions.sort((a, b) => a.metrics.loss - b.metrics.loss);
+
+  const summary = {
+    total_submissions: submissions.length,
+    unique_models: new Set(submissions.map(s => s.model)).size,
+    best_loss: submissions[0]?.metrics.loss,
+    average_loss: submissions.reduce((sum, s) => sum + s.metrics.loss, 0) / submissions.length
+  };
+
+  writeFileSync(LEADERBOARD_FILE, JSON.stringify({ entries: submissions, summary }, null, 2));
 }
 
 // Run if called directly

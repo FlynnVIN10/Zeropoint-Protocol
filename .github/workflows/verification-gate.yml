@@ -14,7 +14,7 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p evidence_out
-          probe(){ curl -sS -i "$1" | tee "evidence_out/$2.http"; }
+          probe(){ curl -sS -i "$1" | tee "evidence_out/$2.http" >/dev/null; }
           probe https://zeropointprotocol.ai/api/healthz        api_healthz
           probe https://zeropointprotocol.ai/api/readyz         api_readyz
           probe https://zeropointprotocol.ai/status/version.json status_version_json
@@ -22,17 +22,21 @@ jobs:
           probe https://zeropointprotocol.ai/status/ready/       status_ready
           probe https://zeropointprotocol.ai/status/version/     status_version
       - name: Validate headers + JSON
-        continue-on-error: true
         run: |
           set -euo pipefail
           grep -qi '^HTTP/.* 200' evidence_out/api_healthz.http
           grep -qi '^HTTP/.* 200' evidence_out/api_readyz.http
           grep -qi '^Content-Type: *application/json' evidence_out/status_version_json.http
+          # JSON body fields
           tail -n +2 evidence_out/status_version_json.http | jq -e '
-            has("version") and has("commit") and has("build_time") and has("source_repo")' >/dev/null
-          # Security headers on JSON
-          grep -qi '^X-Content-Type-Options: *nosniff'   evidence_out/status_version_json.http
-          grep -qi '^Cache-Control: *no-store'           evidence_out/status_version_json.http || true
+            has("commit") and has("buildTime") and has("env")' >/dev/null
+          # Required security headers
+          grep -qi '^X-Content-Type-Options: *nosniff'              evidence_out/status_version_json.http
+          grep -qi '^Cache-Control: *no-store'                      evidence_out/status_version_json.http
+          grep -qi '^Strict-Transport-Security: *max-age'           evidence_out/status_version_json.http
+          grep -qi '^Content-Security-Policy: *'                    evidence_out/status_version_json.http
+          grep -qi '^Referrer-Policy: *'                            evidence_out/status_version_json.http
+          grep -qi '^Permissions-Policy: *'                         evidence_out/status_version_json.http
       - name: Lighthouse
         run: |
           mkdir -p lhci

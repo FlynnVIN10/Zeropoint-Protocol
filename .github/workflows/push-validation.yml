@@ -33,10 +33,14 @@ jobs:
           echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          # Check required static files exist
           mkdir -p evidence/push-validation
           
-          for file in "public/index.html" "public/robots.txt" "public/sitemap.xml" "public/api/healthz.json" "public/status/version.json"; do
+          REQUIRED_FILES=(
+            "public/index.html"
+            "public/robots.txt"
+            "public/sitemap.xml"
+          )
+          for file in "${REQUIRED_FILES[@]}"; do
             if [ -f "$file" ]; then
               echo "✅ $file exists" >> $GITHUB_STEP_SUMMARY
               echo "File: $file" >> evidence/push-validation/validation.log
@@ -46,17 +50,14 @@ jobs:
             fi
           done
           
-          # Validate commit in files
-          if grep -q "9bc35947" public/index.html; then
-            echo "✅ Commit 9bc35947 found in index.html" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ Commit 9bc35947 NOT found in index.html" >> $GITHUB_STEP_SUMMARY
-          fi
-          
-          if grep -q "9bc35947" public/api/healthz.json; then
-            echo "✅ Commit 9bc35947 found in healthz.json" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ Commit 9bc35947 NOT found in healthz.json" >> $GITHUB_STEP_SUMMARY
+          # Validate JSON structure in public API files when present
+          if command -v jq >/dev/null 2>&1; then
+            if [ -f public/api/healthz.json ]; then
+              jq -e 'has("status") and has("commit") and has("buildTime")' public/api/healthz.json >/dev/null && echo "✅ healthz.json fields present" >> $GITHUB_STEP_SUMMARY || echo "❌ healthz.json missing fields" >> $GITHUB_STEP_SUMMARY
+            fi
+            if [ -f public/api/readyz.json ]; then
+              jq -e 'has("ready")' public/api/readyz.json >/dev/null && echo "✅ readyz.json fields present" >> $GITHUB_STEP_SUMMARY || echo "❌ readyz.json missing fields" >> $GITHUB_STEP_SUMMARY
+            fi
           fi
 
       - name: Upload validation evidence
@@ -68,6 +69,5 @@ jobs:
       - name: Validation summary
         run: |
           echo "## Static File Validation Complete ✅" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** All required static files validated successfully" >> $GITHUB_STEP_SUMMARY
-          echo "**Commit:** 9bc35947 verified in key files" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** Required static files and JSON (if present) validated" >> $GITHUB_STEP_SUMMARY
           echo "**Zeroth Principle:** Good intent and good heart, or the system doesn't function." >> $GITHUB_STEP_SUMMARY

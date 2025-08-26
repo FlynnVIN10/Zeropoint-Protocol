@@ -32,7 +32,9 @@ jobs:
           grep -qi '^HTTP/.* 200' evidence_out/api_healthz.http
           grep -qi '^HTTP/.* 200' evidence_out/api_readyz.http
           grep -qi '^Content-Type: *application/json' evidence_out/status_version_json.http
-          tail -n +2 evidence_out/status_version_json.http | jq -e 'has("commit") and has("buildTime") and has("env")' >/dev/null
+          # Extract JSON body after the first blank line (handles CRLF)
+          BODY=$(awk 'BEGIN{b=0} { if(b) print; if($0=="" || $0=="\r") {b=1}}' evidence_out/status_version_json.http)
+          echo "$BODY" | jq -e 'has("commit") and has("buildTime") and has("env")' >/dev/null
           
           # Soft header checks: pass if present on live OR declared in repo public/_headers
           warn_if_missing(){

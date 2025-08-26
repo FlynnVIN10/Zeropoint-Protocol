@@ -44,7 +44,7 @@ jobs:
             exit 1
           fi
           
-          # Verify evidence files contain valid JSON
+          # Validate evidence file JSON
           echo "Validating evidence file JSON..."
           if ! jq empty public/build-info.json 2>/dev/null; then
             echo "❌ CRITICAL: public/build-info.json contains invalid JSON"
@@ -76,8 +76,18 @@ jobs:
       - name: Fail if placeholders
         run: if grep -R "__BUILD_" -n public evidence; then echo "Placeholders detected"; exit 1; fi
 
+      - name: Check Cloudflare secrets readiness
+        id: cf
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "Skipping Cloudflare deploy: secrets missing" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Deploy to Cloudflare Pages
+        if: steps.cf.outputs.ready == 'true'
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -89,7 +99,7 @@ jobs:
       - name: Deployment notification
         run: |
           echo "## Auto-Deployment Status 🚀" >> $GITHUB_STEP_SUMMARY
-          echo "**Status:** Automatically deployed to Cloudflare Pages" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** Completed (deploy step conditional on secrets)" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
           echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Author:** ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY

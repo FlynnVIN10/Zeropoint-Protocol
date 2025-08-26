@@ -1,20 +1,27 @@
 HTTP/2 200 
-date: Tue, 26 Aug 2025 22:11:20 GMT
+date: Tue, 26 Aug 2025 22:14:07 GMT
 content-type: text/html; charset=utf-8
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 cf-cache-status: DYNAMIC
 access-control-allow-origin: *
-age: 152999
+age: 151718
 cache-control: public, max-age=300
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=sIwBf1UwkGCR0eWcWJJi4hQIRUpRUXIqF1RcnVXk6lh1bzmsEReZhmjmv5WKYi0xMjElB%2ByaluT%2BgyIhj5Pqmg8wyz9TeZ%2Br5%2Bo2TA2DfQtwTg%3D%3D"}]}
+content-disposition: inline
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=0nUezsCf2FZR17yfMcn5wZEglNmCSsLjXvxMsNfejAHYcpY%2FhM8zyuJ1EZtZZAE%2FA3sLNv3zP6sVNpiscFdbmyN6xpD%2BOprcAaOPIATJMRvlkA%3D%3D"}]}
 server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains; preload, max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
 x-robots-tag: noindex
 vary: accept-encoding
-cf-ray: 9756aa15ebf3aca6-ORD
+cf-ray: 9756ae28d9a0d698-IAD
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html>

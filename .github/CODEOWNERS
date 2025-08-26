@@ -1,3 +1,8 @@
 # All files require CEO (temporary) until CTO handle is added.
 # Replace or append the CTO GitHub handle when available.
 * @FlynnVIN10
+
+evidence/** @SynthiantTeam @HumanConsensus
+docs/** @SynthiantTeam @HumanConsensus
+scripts/** @SynthiantTeam @HumanConsensus
+.github/** @SynthiantTeam @HumanConsensus

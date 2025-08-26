@@ -1,11 +1,8 @@
-# PR Title
-
-## Summary
-- What changed
-- Why
+# Summary
+- What changed / Why
 
 ## Evidence
-- Links to /evidence/v19/* additions
+- Links to /evidence/v19/*
 - Gate logs, curl blocks, screenshots
 
 ## Checks (all required)
@@ -20,7 +17,7 @@
 
 ## Risk & Rollback
 - Risk:
-- Rollback commit/steps:
+- Rollback steps:
 
 ## Approvals
 - SCRA:

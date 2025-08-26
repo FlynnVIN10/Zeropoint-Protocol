@@ -64,16 +64,17 @@ jobs:
           fi
           
           echo "✅ All evidence files validated successfully"
-      - name: Validate evidence and build leaderboard
-        run: |
-          echo "🔍 Validating evidence files..."
-          node scripts/build-dynamic-evidence.mjs --validate || exit 1
-          echo "🔍 Building leaderboard..."
-          node scripts/build-leaderboard.mjs || exit 1
-          echo "🔍 Checking for placeholders..."
-          if grep -R "__BUILD_" -n public evidence; then
-            echo "❌ Placeholders detected"; exit 1; fi
-          echo "✅ Evidence validation complete"
+      - name: Validate SCP schema presence
+        run: test -f evidence/schemas/metrics.schema.json
+
+      - name: Validate evidence
+        run: node scripts/build-dynamic-evidence.mjs --validate
+
+      - name: Build leaderboard
+        run: node scripts/build-leaderboard.mjs
+
+      - name: Fail if placeholders
+        run: if grep -R "__BUILD_" -n public evidence; then echo "Placeholders detected"; exit 1; fi
 
 
       - name: Deploy to Cloudflare Pages

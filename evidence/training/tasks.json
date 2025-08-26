@@ -1,69 +1,28 @@
 {
   "tasks": [
     {
-      "id": "task_001",
-      "title": "Implement SCP v1 Training Pipeline",
-      "description": "Create automated training pipeline that generates SCP v1 compliant metrics",
+      "id": "task-001",
+      "title": "Implement SCP v1 Validation",
+      "description": "Add schema validation to build-leaderboard script",
       "status": "open",
       "priority": "high",
-      "assigned_to": "Dev",
-      "due_date": "2025-08-27",
-      "estimated_hours": 8,
-      "tags": ["scp-v1", "training", "pipeline"]
+      "assigned_to": "dev-team",
+      "due_date": "2025-08-30"
     },
     {
-      "id": "task_002",
-      "title": "Real Training Metrics Integration",
-      "description": "Update build-dynamic-evidence.mjs to pull live training metrics from pipeline",
-      "status": "open",
-      "priority": "high",
-      "assigned_to": "Dev",
-      "due_date": "2025-08-27",
-      "estimated_hours": 6,
-      "tags": ["metrics", "integration", "pipeline"]
-    },
-    {
-      "id": "task_003",
-      "title": "SCP v1 Schema Validation",
-      "description": "Implement comprehensive schema validation for all training submissions",
+      "id": "task-002",
+      "title": "Update Status Dashboard",
+      "description": "Add noscript support to training status page",
       "status": "open",
       "priority": "medium",
-      "assigned_to": "SCRA",
-      "due_date": "2025-08-28",
-      "estimated_hours": 4,
-      "tags": ["validation", "schema", "scp-v1"]
-    },
-    {
-      "id": "task_004",
-      "title": "Leaderboard Performance Optimization",
-      "description": "Optimize leaderboard generation for large numbers of submissions",
-      "status": "open",
-      "priority": "medium",
-      "assigned_to": "Dev",
-      "due_date": "2025-08-29",
-      "estimated_hours": 4,
-      "tags": ["performance", "leaderboard", "optimization"]
-    },
-    {
-      "id": "task_005",
-      "title": "Training Status Dashboard Enhancement",
-      "description": "Enhance training status page with real-time updates and visualizations",
-      "status": "open",
-      "priority": "low",
-      "assigned_to": "Frontend",
-      "due_date": "2025-08-30",
-      "estimated_hours": 6,
-      "tags": ["dashboard", "ui", "training"]
+      "assigned_to": "frontend-dev",
+      "due_date": "2025-09-01"
     }
   ],
   "summary": {
-    "total_tasks": 5,
-    "open_tasks": 5,
+    "total_tasks": 2,
+    "open_tasks": 2,
     "completed_tasks": 0,
-    "high_priority": 2,
-    "medium_priority": 2,
-    "low_priority": 1,
-    "total_estimated_hours": 28,
-    "generated_at": "2025-08-25T16:10:00Z"
+    "generated_at": "2025-08-26T12:00:00Z"
   }
 }

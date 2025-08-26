@@ -1,69 +1,111 @@
 {
-  "tasks": [
+  "generated_at": "2025-08-25T16:55:00Z",
+  "version": "1.0",
+  "open_tasks": [
     {
-      "id": "task_001",
-      "title": "Implement SCP v1 Training Pipeline",
-      "description": "Create automated training pipeline that generates SCP v1 compliant metrics",
-      "status": "open",
+      "task_id": "TASK-001",
+      "title": "Implement TinyGrad Integration",
+      "description": "Create a working integration with TinyGrad for local training runs",
       "priority": "high",
-      "assigned_to": "Dev",
-      "due_date": "2025-08-27",
-      "estimated_hours": 8,
-      "tags": ["scp-v1", "training", "pipeline"]
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-25T10:00:00Z",
+      "deadline": "2025-08-30T23:59:59Z",
+      "requirements": [
+        "Python 3.8+",
+        "TinyGrad library",
+        "Local GPU/CPU access",
+        "Basic ML knowledge"
+      ],
+      "expected_output": "Working training script that produces valid metrics.json",
+      "reward": "Leaderboard ranking and community recognition"
     },
     {
-      "id": "task_002",
-      "title": "Real Training Metrics Integration",
-      "description": "Update build-dynamic-evidence.mjs to pull live training metrics from pipeline",
+      "task_id": "TASK-002",
+      "title": "Optimize Training Hyperparameters",
+      "description": "Find optimal hyperparameters for the current training task",
+      "priority": "medium",
       "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-25T10:00:00Z",
+      "deadline": "2025-09-05T23:59:59Z",
+      "requirements": [
+        "Access to training environment",
+        "Hyperparameter tuning experience",
+        "Patience for multiple training runs"
+      ],
+      "expected_output": "Best hyperparameter combination with validation metrics",
+      "reward": "Best loss score on leaderboard"
+    },
+    {
+      "task_id": "TASK-003",
+      "title": "Create Training Dataset",
+      "description": "Develop a new training dataset for the current model",
+      "priority": "medium",
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-25T10:00:00Z",
+      "deadline": "2025-09-10T23:59:59Z",
+      "requirements": [
+        "Data collection skills",
+        "Data cleaning experience",
+        "Understanding of current task"
+      ],
+      "expected_output": "Clean, formatted dataset with documentation",
+      "reward": "Dataset named after contributor"
+    },
+    {
+      "task_id": "TASK-004",
+      "title": "Implement Model Architecture",
+      "description": "Design and implement a new model architecture for the task",
       "priority": "high",
-      "assigned_to": "Dev",
-      "due_date": "2025-08-27",
-      "estimated_hours": 6,
-      "tags": ["metrics", "integration", "pipeline"]
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-25T10:00:00Z",
+      "deadline": "2025-09-15T23:59:59Z",
+      "requirements": [
+        "Deep learning expertise",
+        "PyTorch/TensorFlow knowledge",
+        "Architecture design skills"
+      ],
+      "expected_output": "Working model with training script",
+      "reward": "Model named after contributor"
     },
     {
-      "id": "task_003",
-      "title": "SCP v1 Schema Validation",
-      "description": "Implement comprehensive schema validation for all training submissions",
-      "status": "open",
-      "priority": "medium",
-      "assigned_to": "SCRA",
-      "due_date": "2025-08-28",
-      "estimated_hours": 4,
-      "tags": ["validation", "schema", "scp-v1"]
-    },
-    {
-      "id": "task_004",
-      "title": "Leaderboard Performance Optimization",
-      "description": "Optimize leaderboard generation for large numbers of submissions",
-      "status": "open",
-      "priority": "medium",
-      "assigned_to": "Dev",
-      "due_date": "2025-08-29",
-      "estimated_hours": 4,
-      "tags": ["performance", "leaderboard", "optimization"]
-    },
-    {
-      "id": "task_005",
-      "title": "Training Status Dashboard Enhancement",
-      "description": "Enhance training status page with real-time updates and visualizations",
-      "status": "open",
+      "task_id": "TASK-005",
+      "title": "Performance Benchmarking",
+      "description": "Benchmark current models across different hardware configurations",
       "priority": "low",
-      "assigned_to": "Frontend",
-      "due_date": "2025-08-30",
-      "estimated_hours": 6,
-      "tags": ["dashboard", "ui", "training"]
+      "status": "open",
+      "assigned_to": null,
+      "created_at": "2025-08-25T10:00:00Z",
+      "deadline": "2025-09-20T23:59:59Z",
+      "requirements": [
+        "Access to multiple hardware setups",
+        "Benchmarking experience",
+        "Systematic testing approach"
+      ],
+      "expected_output": "Comprehensive performance report",
+      "reward": "Hardware optimization guide credit"
     }
   ],
-  "summary": {
-    "total_tasks": 5,
+  "completed_tasks": [
+    {
+      "task_id": "TASK-000",
+      "title": "SCP Protocol Setup",
+      "description": "Establish the Synthiant Contribution Protocol framework",
+      "status": "completed",
+      "completed_at": "2025-08-25T16:55:00Z",
+      "completed_by": "PM",
+      "output": "Full SCP v1 implementation with schema, template, and documentation"
+    }
+  ],
+  "statistics": {
+    "total_tasks": 6,
     "open_tasks": 5,
-    "completed_tasks": 0,
+    "completed_tasks": 1,
     "high_priority": 2,
     "medium_priority": 2,
-    "low_priority": 1,
-    "total_estimated_hours": 28,
-    "generated_at": "2025-08-25T16:20:00Z"
+    "low_priority": 1
   }
 }

@@ -134,24 +134,24 @@
                 <h3>Latest Training Run</h3>
                 <div id="latest-run">
                     <div class="metric">
+                        <span class="metric-label">Synthiant ID:</span>
+                        <span class="metric-value" id="synthiant-id">Loading...</span>
+                    </div>
+                    <div class="metric">
                         <span class="metric-label">Run ID:</span>
                         <span class="metric-value" id="run-id">Loading...</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Epoch:</span>
-                        <span class="metric-value" id="epoch">Loading...</span>
-                    </div>
-                    <div class="metric">
-                        <span class="metric-label">Step:</span>
-                        <span class="metric-value" id="step">Loading...</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Loss:</span>
                         <span class="metric-value" id="loss">Loading...</span>
                     </div>
                     <div class="metric">
-                        <span class="metric-label">Duration:</span>
-                        <span class="metric-value" id="duration">Loading...</span>
+                        <span class="metric-label">Source:</span>
+                        <span class="metric-value" id="source">Loading...</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Device:</span>
+                        <span class="metric-value" id="device">Loading...</span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Commit:</span>
@@ -236,24 +236,24 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td>Synthiant ID</td>
+                            <td id="ns-synthiant-id">Loading...</td>
+                        </tr>
+                        <tr>
                             <td>Run ID</td>
                             <td id="ns-run-id">Loading...</td>
-                        </tr>
-                        <tr>
-                            <td>Epoch</td>
-                            <td id="ns-epoch">Loading...</td>
-                        </tr>
-                        <tr>
-                            <td>Step</td>
-                            <td id="ns-step">Loading...</td>
                         </tr>
                         <tr>
                             <td>Loss</td>
                             <td id="ns-loss">Loading...</td>
                         </tr>
                         <tr>
-                            <td>Duration</td>
-                            <td id="ns-duration">Loading...</td>
+                            <td>Source</td>
+                            <td id="ns-source">Loading...</td>
+                        </tr>
+                        <tr>
+                            <td>Device</td>
+                            <td id="ns-device">Loading...</td>
                         </tr>
                         <tr>
                             <td>Commit</td>
@@ -277,22 +277,22 @@
                 const data = await response.json();
                 
                 // Update latest run
+                document.getElementById('synthiant-id').textContent = data.synthiant_id || 'N/A';
                 document.getElementById('run-id').textContent = data.run_id || 'N/A';
-                document.getElementById('epoch').textContent = data.epoch || 'N/A';
-                document.getElementById('step').textContent = data.step || 'N/A';
                 document.getElementById('loss').textContent = data.loss || 'N/A';
-                document.getElementById('duration').textContent = `${data.duration_s || 'N/A'}s`;
+                document.getElementById('source').textContent = data.source || 'N/A';
+                document.getElementById('device').textContent = data.device || 'N/A';
                 document.getElementById('commit').textContent = data.commit || 'N/A';
-                document.getElementById('timestamp').textContent = data.ts || 'N/A';
+                document.getElementById('timestamp').textContent = data.timestamp || 'N/A';
                 
                 // Update noscript table
+                document.getElementById('ns-synthiant-id').textContent = data.synthiant_id || 'N/A';
                 document.getElementById('ns-run-id').textContent = data.run_id || 'N/A';
-                document.getElementById('ns-epoch').textContent = data.epoch || 'N/A';
-                document.getElementById('ns-step').textContent = data.step || 'N/A';
                 document.getElementById('ns-loss').textContent = data.loss || 'N/A';
-                document.getElementById('ns-duration').textContent = `${data.duration_s || 'N/A'}s`;
+                document.getElementById('ns-source').textContent = data.source || 'N/A';
+                document.getElementById('ns-device').textContent = data.device || 'N/A';
                 document.getElementById('ns-commit').textContent = data.commit || 'N/A';
-                document.getElementById('ns-timestamp').textContent = data.ts || 'N/A';
+                document.getElementById('ns-timestamp').textContent = data.timestamp || 'N/A';
             } catch (error) {
                 console.error('Error loading training status:', error);
             }
@@ -304,11 +304,12 @@
                 const response = await fetch('/evidence/training/leaderboard.json');
                 const data = await response.json();
                 
-                document.getElementById('total-submissions').textContent = data.summary.total_submissions || 'N/A';
-                document.getElementById('unique-models').textContent = data.summary.unique_models || 'N/A';
-                document.getElementById('best-loss').textContent = data.summary.best_loss || 'N/A';
-                document.getElementById('avg-loss').textContent = data.summary.average_loss ? data.summary.average_loss.toFixed(4) : 'N/A';
-                document.getElementById('generated-at').textContent = data.summary.generated_at ? new Date(data.summary.generated_at).toLocaleString() : 'N/A';
+                document.getElementById('total-submissions').textContent = data.total_submissions || 'N/A';
+                document.getElementById('unique-models').textContent = data.entries ? data.entries.length : 'N/A';
+                document.getElementById('best-loss').textContent = data.entries && data.entries.length > 0 ? data.entries[0].loss.toFixed(6) : 'N/A';
+                document.getElementById('avg-loss').textContent = data.entries && data.entries.length > 0 ? 
+                    (data.entries.reduce((sum, entry) => sum + entry.loss, 0) / data.entries.length).toFixed(6) : 'N/A';
+                document.getElementById('generated-at').textContent = data.generated_at ? new Date(data.generated_at).toLocaleString() : 'N/A';
             } catch (error) {
                 console.error('Error loading leaderboard summary:', error);
             }
@@ -320,15 +321,15 @@
                 const response = await fetch('/evidence/training/tasks.json');
                 const data = await response.json();
                 
-                document.getElementById('total-tasks').textContent = data.summary.total_tasks || 'N/A';
-                document.getElementById('high-priority').textContent = data.summary.high_priority || 'N/A';
-                document.getElementById('estimated-hours').textContent = data.summary.total_estimated_hours || 'N/A';
+                document.getElementById('total-tasks').textContent = data.statistics.total_tasks || 'N/A';
+                document.getElementById('high-priority').textContent = data.statistics.high_priority || 'N/A';
+                document.getElementById('estimated-hours').textContent = 'N/A'; // Not tracked in new format
                 
                 // Update task list
                 const taskList = document.getElementById('task-list');
                 taskList.innerHTML = '';
                 
-                data.tasks.forEach(task => {
+                data.open_tasks.forEach(task => {
                     const li = document.createElement('li');
                     li.className = `task-item priority-${task.priority}`;
                     li.innerHTML = `
@@ -336,9 +337,9 @@
                         <div class="task-meta">
                             <strong>Status:</strong> ${task.status} | 
                             <strong>Priority:</strong> ${task.priority} | 
-                            <strong>Assigned:</strong> ${task.assigned_to} | 
-                            <strong>Due:</strong> ${task.due_date} | 
-                            <strong>Hours:</strong> ${task.estimated_hours}
+                            <strong>Assigned:</strong> ${task.assigned_to || 'Unassigned'} | 
+                            <strong>Deadline:</strong> ${new Date(task.deadline).toLocaleDateString()} | 
+                            <strong>ID:</strong> ${task.task_id}
                         </div>
                     `;
                     taskList.appendChild(li);

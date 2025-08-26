@@ -1,0 +1,16 @@
+HTTP/2 201 
+date: Tue, 26 Aug 2025 22:28:04 GMT
+content-type: application/json; charset=utf-8
+content-length: 148
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=A156MmM1ZaSRsRNn2kdQBb5Mvi9KLY0wM0Tr2WlbZ4Z%2FV%2Bei9%2BSiKCxlFjR7wY5qAmPiIgLOToXSJ5%2FWD8ap9Pm61v%2FkwYwdVl4urtYu8%2FYKP8W%2BadChURjU0KNvqFVy"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9756c29898780010-ORD
+alt-svc: h3=":443"; ma=86400
+
+{"vote_id":"2fad6aed-7619-4f85-8eda-0f327ba921b0","proposal_id":"p-001","voter":"synthiant","vote":"approve","timestamp":"2025-08-26T22:28:04.611Z"}

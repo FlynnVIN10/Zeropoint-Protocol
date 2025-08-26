@@ -1,0 +1,20 @@
+HTTP/2 200 
+date: Tue, 26 Aug 2025 22:23:44 GMT
+content-type: text/event-stream; charset=utf-8
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=uHwOrqXH50RPKWXO%2FHjxg7nLVe20zec0WkPV07i4lM09vvzY8UMTxtq9lClx3pI1II7gxd7dqleC6wxKjax8P26F6gRDsYLs4Vu%2BfltZl%2B5mIWod61GnmsyMVp09nPD4"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9756bc3d7acd8846-IAD
+alt-svc: h3=":443"; ma=86400
+
+: alerts start
+
+event: alert
+data: {"type":"alert","level":"info","msg":"system stable","seq":1,"ts":"2025-08-26T22:23:46.281Z"}
+
+event: alert

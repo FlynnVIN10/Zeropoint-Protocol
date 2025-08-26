@@ -1,0 +1,23 @@
+{
+  "synthiant_id": "example_synthiant",
+  "run_id": "20250826_114518",
+  "timestamp": "2025-08-26T16:45:21.002950Z",
+  "loss": 0.8392000000000002,
+  "source": "local",
+  "commit": "c546d416",
+  "device": "cpu",
+  "metadata": {
+    "epochs": 5,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "script": "tinygrad_toy_run.py",
+    "version": "1.0"
+  },
+  "hyperparameters": {
+    "epochs": 5,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "optimizer": "sgd",
+    "loss_function": "mse"
+  }
+}

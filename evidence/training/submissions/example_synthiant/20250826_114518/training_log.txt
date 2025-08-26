@@ -1,0 +1,31 @@
+Synthiant Training Run Log
+==========================
+
+Run Information:
+- Synthiant ID: example_synthiant
+- Run ID: 20250826_114518
+- Commit Hash: c546d416
+- Device Type: cpu
+- Source Type: local
+- Start Time: 2025-08-26T16:45:21Z
+- End Time: 2025-08-26T16:45:21Z
+
+Environment:
+- OS: Darwin
+- Architecture: x86_64
+- Python Version: Python 3.9.6
+- Git Branch: phase5/pr-e-runner-spec
+- Git Status:        1 files modified
+
+Training Summary:
+- This was a demonstration run using the synthiant runner example script
+- Training completed successfully
+- Metrics generated and saved to metrics.json
+- All required files created in submission directory
+
+Next Steps:
+1. Review the generated metrics.json file
+2. Commit your changes: git add evidence/training/submissions/example_synthiant/20250826_114518/
+3. Create a pull request using the SCP template
+4. Wait for SCRA and PM approval
+

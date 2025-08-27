@@ -580,3 +580,4 @@ Content-Disposition: inline
 x-content-type-options: nosniff
 
 {"configured":true,"active":true,"lastContact":"2025-08-27T16:58:43.619Z","notes":"Running scenario","ts":"2025-08-27T16:58:43.619Z"}
+# Deploy Log - Zeropoint Protocol Website

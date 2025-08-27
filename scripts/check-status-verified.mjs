@@ -83,28 +83,39 @@ function checkStatusPage() {
 
 function verifyHealthEndpoints() {
   try {
-    // Check for health endpoints
+    // CF Pages Functions endpoints (not Next.js routes)
     console.log('🔍 Checking health endpoints...');
-    
-    const healthzPath = 'app/api/healthz/route.ts';
-    const readyzPath = 'app/api/readyz/route.ts';
-    
-    if (!existsSync(healthzPath) || !existsSync(readyzPath)) {
+
+    const cfHealthz = 'functions/api/healthz.ts';
+    const cfReadyz  = 'functions/api/readyz.ts';
+
+    if (!existsSync(cfHealthz) || !existsSync(cfReadyz)) {
       console.error('❌ Health endpoints not found');
-      console.error(`Expected: ${healthzPath}, ${readyzPath}`);
+      console.error(`Expected: ${cfHealthz}, ${cfReadyz}`);
       return false;
     }
-    
-    // Check that they export dynamic = 'force-dynamic'
-    const healthzContent = readFileSync(healthzPath, 'utf8');
-    const readyzContent = readFileSync(readyzPath, 'utf8');
-    
-    if (!healthzContent.includes("export const dynamic = 'force-dynamic'") || 
-        !readyzContent.includes("export const dynamic = 'force-dynamic'")) {
-      console.error('❌ Health endpoints must export dynamic = "force-dynamic"');
+
+    const healthzContent = readFileSync(cfHealthz, 'utf8');
+    const readyzContent  = readFileSync(cfReadyz, 'utf8');
+
+    const requiredHeaders = [
+      'content-type',
+      'cache-control',
+      'x-content-type-options',
+      'content-disposition',
+      'strict-transport-security',
+      'content-security-policy',
+      'referrer-policy',
+      'permissions-policy'
+    ];
+
+    const hasAll = (txt) => requiredHeaders.every(h => txt.toLowerCase().includes(h));
+
+    if (!hasAll(healthzContent) || !hasAll(readyzContent)) {
+      console.error('❌ Health endpoints missing required headers');
       return false;
     }
-    
+
     console.log('✅ Health endpoints properly configured');
     return true;
   } catch (error) {

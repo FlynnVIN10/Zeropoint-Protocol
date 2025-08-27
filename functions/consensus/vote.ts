@@ -10,6 +10,13 @@ export async function onRequest(context: any) {
   }
 
   const result = { vote_id: crypto.randomUUID(), proposal_id: body.proposal_id, voter: body.voter, vote: body.vote, timestamp: new Date().toISOString() };
+  try {
+    const kv = (context as any).env?.SOULCHAIN;
+    if (kv && typeof kv.put === 'function') {
+      const key = `vote:${result.vote_id}`;
+      await kv.put(key, JSON.stringify(result));
+    }
+  } catch {}
   return new Response(JSON.stringify(result), { status: 201, headers: jsonHeaders() });
 }
 

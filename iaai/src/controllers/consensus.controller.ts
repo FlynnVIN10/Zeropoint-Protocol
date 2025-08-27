@@ -1,3 +1,4 @@
+export const placeholder = true;
 import {
   Controller,
   Post,

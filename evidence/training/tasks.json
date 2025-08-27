@@ -6,8 +6,7 @@
       "description": "Add schema validation to build-leaderboard script",
       "status": "open",
       "priority": "high",
-      "assigned_to": "dev-team",
-      "due_date": "2025-08-30"
+      "assigned_to": "dev-team"
     },
     {
       "id": "task-002",
@@ -15,14 +14,13 @@
       "description": "Add noscript support to training status page",
       "status": "open",
       "priority": "medium",
-      "assigned_to": "frontend-dev",
-      "due_date": "2025-09-01"
+      "assigned_to": "frontend-dev"
     }
   ],
   "summary": {
     "total_tasks": 2,
     "open_tasks": 2,
     "completed_tasks": 0,
-    "generated_at": "2025-08-26T12:00:00Z"
+    "generated_at": ""
   }
 }

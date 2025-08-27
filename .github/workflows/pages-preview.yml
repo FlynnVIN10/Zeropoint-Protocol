@@ -1,0 +1,29 @@
+name: Cloudflare Pages Preview
+
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build evidence and validate
+        run: |
+          node scripts/build-dynamic-evidence.mjs || exit 1
+          node scripts/build-leaderboard.mjs || exit 1
+          if grep -R "Loading\\.\\.\\." -n app public | grep -v README; then echo "Placeholder text found"; exit 1; fi
+      - name: Deploy Preview (if secrets present)
+        if: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: zeropoint-protocol
+          directory: public
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+

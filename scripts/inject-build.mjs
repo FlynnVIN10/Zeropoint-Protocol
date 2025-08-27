@@ -123,9 +123,9 @@ async function main() {
   console.log(`Build time: ${buildTime}`);
   
   // Output for CI/CD
-  console.log(`::set-output name=commit::${commit}`);
-  console.log(`::set-output name=build_time::${buildTime}`);
-  console.log(`::set-output name=out_dir::${outDir}`);
+  console.log(`commit=${commit}`);
+  console.log(`build_time=${buildTime}`);
+  console.log(`out_dir=${outDir}`);
 }
 
 // Import required modules

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wondercraft Status - Zeropoint Protocol</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 20px; background: #1e1e1e; color: #ffffff; }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { color: #6e00ff; }
+    .card { background: #2d2d2d; border: 1px solid #444; border-radius: 8px; padding: 20px; }
+    .json-link { display: inline-block; margin-top: 15px; padding: 8px 16px; background: #6e00ff; color: white; text-decoration: none; border-radius: 4px; font-weight: 500; }
+    .json-link:hover { background: #5a00d4; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #444; }
+    th { background: #444; color: #fff; }
+  </style>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests">
+</head>
+<body>
+  <div class="container">
+    <h1>Wondercraft Status</h1>
+    <div class="card">
+      <p>Integration state for Wondercraft audio generation.</p>
+      <a class="json-link" href="/wondercraft/status.json" target="_blank">View JSON</a>
+    </div>
+
+    <noscript>
+      <div class="card" style="margin-top: 20px;">
+        <h3>JavaScript Disabled</h3>
+        <table>
+          <thead>
+            <tr><th>Field</th><th>Value</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Configured</td><td id="ns-configured"></td></tr>
+            <tr><td>Active</td><td id="ns-active"></td></tr>
+            <tr><td>Notes</td><td id="ns-notes"></td></tr>
+            <tr><td>Timestamp</td><td id="ns-ts"></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </noscript>
+  </div>
+
+  <script>
+    async function load() {
+      try {
+        const r = await fetch('/wondercraft/status.json');
+        const d = await r.json();
+        document.getElementById('ns-configured') && (document.getElementById('ns-configured').textContent = String(d.configured));
+        document.getElementById('ns-active') && (document.getElementById('ns-active').textContent = String(d.active));
+        document.getElementById('ns-notes') && (document.getElementById('ns-notes').textContent = d.notes || '');
+        document.getElementById('ns-ts') && (document.getElementById('ns-ts').textContent = d.ts || '');
+      } catch (e) { console.error(e); }
+    }
+    document.addEventListener('DOMContentLoaded', load);
+  </script>
+</body>
+</html>
+
+

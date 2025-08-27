@@ -4,6 +4,8 @@
 iaai/runtime/
 iaai/petals/
 iaai/tinygrad/
+iaai/artifacts/**
+!iaai/artifacts/.gitkeep
 python-tests/
 requirements.txt
 requirements.txt.backup

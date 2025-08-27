@@ -1,3 +1,4 @@
+export const placeholder = true;
 /**
  * Proposal Service - Data layer for proposals with SQLite store
  *

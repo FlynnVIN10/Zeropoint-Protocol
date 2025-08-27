@@ -1,68 +1,56 @@
 export const onRequest = async (ctx: any) => {
   try {
-    // Try to read from evidence file first
-    let statusData;
+    let statusData: any | undefined;
+
+    // Try fetching from the static asset via origin URL (works in local dev)
     try {
-      // Try multiple possible paths for the evidence file
+      const originUrl = new URL('/evidence/training/latest.json', ctx.request.url);
+      const r = await fetch(originUrl.toString());
+      if (r.ok) {
+        statusData = await r.json();
+      }
+    } catch {}
+
+    // Fallback: fetch from ASSETS binding (works on Pages deploy)
+    if (!statusData) {
       const possiblePaths = [
         '/evidence/training/latest.json',
         'evidence/training/latest.json',
         '/training/latest.json'
       ];
-      
-      let evidenceFound = false;
       for (const path of possiblePaths) {
         try {
           const response = await ctx.env.ASSETS.fetch(path);
-          if (response.ok) {
+          if (response && (response as any).ok) {
             statusData = await response.json();
-            console.log(`✅ Evidence file read successfully from: ${path}`);
-            evidenceFound = true;
             break;
           }
-        } catch (pathError) {
-          console.log(`❌ Failed to read from ${path}:`, pathError.message);
-        }
+        } catch {}
       }
-      
-      if (!evidenceFound) {
-        throw new Error('All evidence file paths failed');
-      }
-    } catch (fetchError) {
-      // Generate dynamic fallback values if evidence file cannot be read
-      console.warn('Evidence file read failed, generating dynamic fallback:', fetchError.message);
-      const now = new Date();
-      statusData = {
-        run_id: now.toISOString(),
-        epoch: Math.floor(Math.random() * 50) + 1,
-        step: Math.floor(Math.random() * 1000) + 100,
-        loss: parseFloat((0.1 + Math.random() * 0.4).toFixed(4)),
-        duration_s: parseFloat((60 + Math.random() * 300).toFixed(1)),
-        commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
-        ts: now.toISOString()
-      };
     }
 
-    return new Response(JSON.stringify(statusData), {
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-store",
-        "x-content-type-options": "nosniff",
-        "content-disposition": "inline",
-        "access-control-allow-origin": "*"
-      }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({
-      error: "Internal server error",
-      message: error.message
-    }), {
-      status: 500,
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-store",
-        "x-content-type-options": "nosniff"
-      }
-    });
+    if (!statusData) {
+      const defaultData = { run_id: 'none', epoch: 0, step: 0, loss: 0, duration_s: 0, commit: '', ts: new Date().toISOString() };
+      return new Response(JSON.stringify(defaultData), { headers: jsonHeaders() });
+    }
+
+    return new Response(JSON.stringify(statusData), { headers: jsonHeaders() });
+  } catch (error: any) {
+    return new Response(JSON.stringify({ error: 'internal', message: error.message }), { status: 500, headers: jsonHeaders() });
   }
 };
+
+function jsonHeaders() {
+  return {
+    "content-type": "application/json; charset=utf-8",
+    "cache-control": "no-store",
+    "x-content-type-options": "nosniff",
+    "content-disposition": "inline",
+    "access-control-allow-origin": "*",
+    // Security headers aligned with Gate requirements
+    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+    "content-security-policy": "default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "permissions-policy": "accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
+  } as Record<string, string>;
+}

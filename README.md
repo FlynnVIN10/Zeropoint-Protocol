@@ -7,6 +7,12 @@ A secure, ethical AI ecosystem built on the Zeroth Principle: **"Only with good 
 ### How to Run TinyGrad Locally
 See [docs/RUN_LOCAL_TRAINING.md](docs/RUN_LOCAL_TRAINING.md) for complete setup and training instructions.
 
+Quick toy run (writes to evidence):
+
+```bash
+python3 scripts/tinygrad_toy_run.py > evidence/training/latest.json
+```
+
 ### Development Quickstart
 1. Clone the repository
 2. Install dependencies: `npm install`

@@ -135,31 +135,31 @@
                 <div id="latest-run">
                     <div class="metric">
                         <span class="metric-label">Run ID:</span>
-                        <span class="metric-value" id="run-id">Loading...</span>
+                        <span class="metric-value" id="run-id"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Epoch:</span>
-                        <span class="metric-value" id="epoch">Loading...</span>
+                        <span class="metric-value" id="epoch"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Step:</span>
-                        <span class="metric-value" id="step">Loading...</span>
+                        <span class="metric-value" id="step"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Loss:</span>
-                        <span class="metric-value" id="loss">Loading...</span>
+                        <span class="metric-value" id="loss"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Duration:</span>
-                        <span class="metric-value" id="duration">Loading...</span>
+                        <span class="metric-value" id="duration"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Commit:</span>
-                        <span class="metric-value" id="commit">Loading...</span>
+                        <span class="metric-value" id="commit"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Timestamp:</span>
-                        <span class="metric-value" id="timestamp">Loading...</span>
+                        <span class="metric-value" id="timestamp"></span>
                     </div>
                 </div>
                 <a href="/api/training/status" class="json-link" target="_blank">View JSON</a>
@@ -171,23 +171,23 @@
                 <div id="leaderboard-summary">
                     <div class="metric">
                         <span class="metric-label">Total Submissions:</span>
-                        <span class="metric-value" id="total-submissions">Loading...</span>
+                        <span class="metric-value" id="total-submissions"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Unique Models:</span>
-                        <span class="metric-value" id="unique-models">Loading...</span>
+                        <span class="metric-value" id="unique-models"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Best Loss:</span>
-                        <span class="metric-value" id="best-loss">Loading...</span>
+                        <span class="metric-value" id="best-loss"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Average Loss:</span>
-                        <span class="metric-value" id="avg-loss">Loading...</span>
+                        <span class="metric-value" id="avg-loss"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">Generated:</span>
-                        <span class="metric-value" id="generated-at">Loading...</span>
+                        <span class="metric-value" id="generated-at"></span>
                     </div>
                 </div>
                 <a href="/evidence/training/leaderboard.json" class="json-link" target="_blank">View Leaderboard</a>
@@ -199,16 +199,13 @@
                 <div id="open-tasks">
                     <div class="metric">
                         <span class="metric-label">Total Tasks:</span>
-                        <span class="metric-value" id="total-tasks">Loading...</span>
+                        <span class="metric-value" id="total-tasks"></span>
                     </div>
                     <div class="metric">
                         <span class="metric-label">High Priority:</span>
-                        <span class="metric-value" id="high-priority">Loading...</span>
+                        <span class="metric-value" id="high-priority"></span>
                     </div>
-                    <div class="metric">
-                        <span class="metric-label">Estimated Hours:</span>
-                        <span class="metric-value" id="estimated-hours">Loading...</span>
-                    </div>
+                    
                 </div>
                 <a href="/evidence/training/tasks.json" class="json-link" target="_blank">View Tasks</a>
             </div>
@@ -218,7 +215,7 @@
         <div class="status-card">
             <h3>Task Details</h3>
             <ul id="task-list" class="task-list">
-                <li>Loading tasks...</li>
+                <li id="task-loading-state"></li>
             </ul>
         </div>
 
@@ -237,31 +234,31 @@
                     <tbody>
                         <tr>
                             <td>Run ID</td>
-                            <td id="ns-run-id">Loading...</td>
+                            <td id="ns-run-id"></td>
                         </tr>
                         <tr>
                             <td>Epoch</td>
-                            <td id="ns-epoch">Loading...</td>
+                            <td id="ns-epoch"></td>
                         </tr>
                         <tr>
                             <td>Step</td>
-                            <td id="ns-step">Loading...</td>
+                            <td id="ns-step"></td>
                         </tr>
                         <tr>
                             <td>Loss</td>
-                            <td id="ns-loss">Loading...</td>
+                            <td id="ns-loss"></td>
                         </tr>
                         <tr>
                             <td>Duration</td>
-                            <td id="ns-duration">Loading...</td>
+                            <td id="ns-duration"></td>
                         </tr>
                         <tr>
                             <td>Commit</td>
-                            <td id="ns-commit">Loading...</td>
+                            <td id="ns-commit"></td>
                         </tr>
                         <tr>
                             <td>Timestamp</td>
-                            <td id="ns-timestamp">Loading...</td>
+                            <td id="ns-timestamp"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -273,7 +270,8 @@
         // Load training status
         async function loadTrainingStatus() {
             try {
-                const response = await fetch('/api/training/status');
+                const response = await fetch('/api/training/status', { cache: 'no-store' });
+                if (!response.ok) throw new Error(String(response.status));
                 const data = await response.json();
                 
                 // Update latest run
@@ -295,13 +293,21 @@
                 document.getElementById('ns-timestamp').textContent = data.ts || 'N/A';
             } catch (error) {
                 console.error('Error loading training status:', error);
+                document.getElementById('run-id').textContent = 'No data';
+                document.getElementById('epoch').textContent = '';
+                document.getElementById('step').textContent = '';
+                document.getElementById('loss').textContent = '';
+                document.getElementById('duration').textContent = '';
+                document.getElementById('commit').textContent = '';
+                document.getElementById('timestamp').textContent = '';
             }
         }
 
         // Load leaderboard summary
         async function loadLeaderboardSummary() {
             try {
-                const response = await fetch('/evidence/training/leaderboard.json');
+                const response = await fetch('/evidence/training/leaderboard.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error(String(response.status));
                 const data = await response.json();
                 
                 document.getElementById('total-submissions').textContent = data.summary.total_submissions || 'N/A';
@@ -311,13 +317,19 @@
                 document.getElementById('generated-at').textContent = data.summary.generated_at ? new Date(data.summary.generated_at).toLocaleString() : 'N/A';
             } catch (error) {
                 console.error('Error loading leaderboard summary:', error);
+                document.getElementById('total-submissions').textContent = 'No data';
+                document.getElementById('unique-models').textContent = '';
+                document.getElementById('best-loss').textContent = '';
+                document.getElementById('avg-loss').textContent = '';
+                document.getElementById('generated-at').textContent = '';
             }
         }
 
         // Load tasks
         async function loadTasks() {
             try {
-                const response = await fetch('/evidence/training/tasks.json');
+                const response = await fetch('/evidence/training/tasks.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error(String(response.status));
                 const data = await response.json();
                 
                 document.getElementById('total-tasks').textContent = data.summary.total_tasks || 'N/A';
@@ -337,14 +349,18 @@
                             <strong>Status:</strong> ${task.status} | 
                             <strong>Priority:</strong> ${task.priority} | 
                             <strong>Assigned:</strong> ${task.assigned_to} | 
-                            <strong>Due:</strong> ${task.due_date} | 
-                            <strong>Hours:</strong> ${task.estimated_hours}
+                            
                         </div>
                     `;
                     taskList.appendChild(li);
                 });
             } catch (error) {
                 console.error('Error loading tasks:', error);
+                const taskList = document.getElementById('task-list');
+                taskList.innerHTML = '';
+                const li = document.createElement('li');
+                li.textContent = 'No data';
+                taskList.appendChild(li);
             }
         }
 

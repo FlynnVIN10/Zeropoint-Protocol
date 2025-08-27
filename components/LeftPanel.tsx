@@ -12,6 +12,8 @@ export default function LeftPanel() {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [stateFilter, setStateFilter] = useState('pending');
   const [actionMsg, setActionMsg] = useState('');
+  const [approvedCount, setApprovedCount] = useState<number | null>(null);
+  const [vetoedCount, setVetoedCount] = useState<number | null>(null);
 
   const loadProposals = async (state = 'pending') => {
     try {
@@ -23,8 +25,32 @@ export default function LeftPanel() {
     }
   };
 
+  const loadHistory = async () => {
+    try {
+      const r = await fetch('/consensus/history').then(x => x.json());
+      if (typeof r?.approved === 'number' && typeof r?.vetoed === 'number') {
+        setApprovedCount(r.approved);
+        setVetoedCount(r.vetoed);
+        return;
+      }
+    } catch {}
+    // fallback using list queries
+    try {
+      const [a, v] = await Promise.all([
+        fetch('/consensus/proposals?state=approved').then(r => r.json()).catch(() => []),
+        fetch('/consensus/proposals?state=vetoed').then(r => r.json()).catch(() => [])
+      ]);
+      setApprovedCount(Array.isArray(a) ? a.length : 0);
+      setVetoedCount(Array.isArray(v) ? v.length : 0);
+    } catch {
+      setApprovedCount(0);
+      setVetoedCount(0);
+    }
+  };
+
   useEffect(() => {
     loadProposals(stateFilter);
+    loadHistory();
   }, [stateFilter]);
 
   const vote = async (proposal_id: string, vote: 'approve' | 'veto') => {
@@ -38,6 +64,7 @@ export default function LeftPanel() {
       if (res.ok) {
         setActionMsg(`${vote.toUpperCase()} recorded: ${data.vote_id}`);
         loadProposals(stateFilter);
+        loadHistory();
       } else {
         setActionMsg(`Error: ${data.error || 'vote failed'}`);
       }
@@ -62,7 +89,10 @@ export default function LeftPanel() {
                   <option value="vetoed">vetoed</option>
                 </select>
               </label>
-              <button onClick={() => loadProposals(stateFilter)}>Refresh</button>
+              <button onClick={() => { loadProposals(stateFilter); loadHistory(); }}>Refresh</button>
+            </div>
+            <div style={{marginTop: 8}}>
+              <small>History: approved {approvedCount ?? '-'} • vetoed {vetoedCount ?? '-'}</small>
             </div>
             <ul>
               {proposals.map(p => (

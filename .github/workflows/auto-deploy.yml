@@ -76,6 +76,12 @@ jobs:
       - name: Fail if placeholders
         run: if grep -R "__BUILD_" -n public evidence; then echo "Placeholders detected"; exit 1; fi
 
+      - name: Fail if perpetual placeholders
+        run: |
+          if grep -R "Loading\\.\\.\\." -n app public | grep -v README; then \
+            echo "Placeholder text found — replace with SSR or explicit error."; exit 1; \
+          fi
+
       - name: Check Cloudflare secrets readiness
         id: cf
         run: |

@@ -3,28 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zeropoint Protocol — GPT‑Style SPA</title>
-    <meta name="description" content="Zeropoint Protocol: Single‑page GPT‑style interface with Synthiant + Human consensus.">
-    <link rel="preconnect" href="https://zeropointprotocol.ai">
+    <title>Zeropoint Protocol</title>
+    <meta name="description" content="Zeropoint Protocol: Dual-Consensus Agentic AI Platform with ethical governance and verified evidence.">
     <style>
       :root { --bg:#1e1e1e; --fg:#f0f0f0; --accent:#6e00ff; }
-      html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-      #spa-root{height:100vh;display:flex;align-items:stretch}
-      a{color:var(--fg)}
-      .fallback{display:flex;gap:16px;flex-direction:column;align-items:center;justify-content:center;width:100%}
+      html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+      .container{max-width:960px;margin:0 auto;padding:48px 24px}
+      h1{margin:0 0 8px 0}
+      p{opacity:.9}
+      .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
       .btn{border:1px solid var(--accent);padding:10px 14px;border-radius:8px;color:var(--fg);text-decoration:none}
+      .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
+      .card{border:1px solid #333;border-radius:10px;padding:16px;background:#111}
+      .muted{color:#bbb;font-size:.9em}
     </style>
 </head>
 <body>
-  <div id="spa-root">
-    <div class="fallback">
-      <h1>Launching Zeropoint GPT‑Style Interface…</h1>
-      <p>If the SPA bundle is not yet active, use the links below:</p>
-      <div>
-        <a class="btn" href="/status/training/">Status / Training</a>
-        <a class="btn" href="/evidence/v19/">Evidence v19</a>
-      </div>
+  <div class="container" style="padding:0">
+    <div id="top-ticker" style="white-space:nowrap; overflow:hidden; border-bottom:1px solid #333; padding:8px 12px"></div>
+    <div style="display:flex; min-height:calc(100vh - 80px)">
+      <aside style="width:280px; border-right:1px solid #333; padding:16px">
+        <h3 style="margin-top:0">Left Panel</h3>
+        <div id="consensus-queue" class="muted">Synthiant proposals will appear here.</div>
+      </aside>
+      <main style="flex:1; padding:16px">
+        <h1 style="margin-top:0">GPT Console</h1>
+        <form id="prompt-form">
+          <input id="prompt" type="text" placeholder="Ask..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #444; background:#111; color:#f0f0f0" />
+        </form>
+        <pre id="output" style="margin-top:12px; background:#111; padding:12px; border:1px solid #333; border-radius:8px; min-height:120px"></pre>
+        <div class="muted" id="telemetry"></div>
+      </main>
+      <aside style="width:380px; border-left:1px solid #333; padding:16px">
+        <h3 style="margin-top:0">Training</h3>
+        <dl>
+          <div><dt class="muted">Run ID</dt><dd id="ts-run" class="font-mono"></dd></div>
+          <div><dt class="muted">Epoch</dt><dd id="ts-epoch" class="font-mono"></dd></div>
+          <div><dt class="muted">Step</dt><dd id="ts-step" class="font-mono"></dd></div>
+          <div><dt class="muted">Loss</dt><dd id="ts-loss" class="font-mono"></dd></div>
+          <div><dt class="muted">Commit</dt><dd id="ts-commit" class="font-mono"></dd></div>
+          <div><dt class="muted">Timestamp</dt><dd id="ts-ts" class="font-mono"></dd></div>
+        </dl>
+      </aside>
     </div>
+    <div id="bottom-ticker" style="white-space:nowrap; overflow:hidden; border-top:1px solid #333; padding:8px 12px"></div>
   </div>
+
+  <script>
+    // SSE Tickers
+    function marquee(el, text) {
+      const span = document.createElement('span');
+      span.textContent = ' ' + text + ' ';
+      span.style.paddingRight = '24px';
+      el.appendChild(span);
+      el.scrollLeft = el.scrollWidth; // keep right-to-left effect
+    }
+    try {
+      const top = new EventSource('/api/events/consensus');
+      top.addEventListener('consensus', (e) => {
+        const d = JSON.parse(e.data);
+        marquee(document.getElementById('top-ticker'), `[consensus] ${d.state} #${d.seq} ${d.ts}`);
+      });
+    } catch {}
+    try {
+      const bottom = new EventSource('/api/events/synthiant');
+      bottom.addEventListener('tick', (e) => {
+        const d = JSON.parse(e.data);
+        marquee(document.getElementById('bottom-ticker'), `[synthiant] ${d.msg} #${d.seq} ${d.ts}`);
+      });
+    } catch {}
+
+    // Prompt routing
+    const form = document.getElementById('prompt-form');
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const q = document.getElementById('prompt').value.trim();
+      const r = await fetch('/api/router/exec?q=' + encodeURIComponent(q), { cache: 'no-store' });
+      const j = await r.json().catch(() => ({}));
+      document.getElementById('output').textContent = j.response || '';
+      const t = j.telemetry || {};
+      document.getElementById('telemetry').textContent = `provider=${t.provider||'unknown'} instance=${t.instance||'none'} latency=${t.latencyMs||'-'}ms`;
+    });
+
+    // Training panel fetch
+    async function loadTraining() {
+      try {
+        const r = await fetch('/api/training/status', { cache: 'no-store' });
+        if (!r.ok) throw new Error(String(r.status));
+        const d = await r.json();
+        document.getElementById('ts-run').textContent = d.run_id || 'No data';
+        document.getElementById('ts-epoch').textContent = d.epoch ?? '';
+        document.getElementById('ts-step').textContent = d.step ?? '';
+        document.getElementById('ts-loss').textContent = (d.metrics && d.metrics.loss) || d.loss || '';
+        document.getElementById('ts-commit').textContent = d.commit || '';
+        document.getElementById('ts-ts').textContent = d.ended_at || d.started_at || d.ts || '';
+      } catch (e) {
+        document.getElementById('ts-run').textContent = 'No data';
+        document.getElementById('ts-epoch').textContent = '';
+        document.getElementById('ts-step').textContent = '';
+        document.getElementById('ts-loss').textContent = '';
+        document.getElementById('ts-commit').textContent = '';
+        document.getElementById('ts-ts').textContent = '';
+      }
+    }
+    loadTraining();
+    setInterval(loadTraining, 30000);
+  </script>
 </body>
 </html>

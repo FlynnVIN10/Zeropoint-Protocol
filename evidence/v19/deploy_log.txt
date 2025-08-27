@@ -284,4 +284,299 @@ cf-cache-status: DYNAMIC
 cf-ray: 9756d2d1dfaccfe2-MAD
 alt-svc: h3=":443"; ma=86400
 
-{"configured":true,"active":true,"lastContact":"2025-08-26T22:39:09.144Z","notes":"Running scenario","ts":"2025-08-26T22:39:09.144Z"}
+{"configured":true,"active":true,"lastContact":"2025-08-26T22:39:09.144Z","notes":"Running scenario","ts":"2025-08-26T22:39:09.144Z"}=== LOCAL VERIFY RUN 2025-08-27T04:34:40Z ===
+
+>>> /api/healthz
+HTTP/1.1 200 OK
+Content-Length: 45
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"status":"ok","uptime":0,"commit":"unknown"}
+>>> /api/readyz
+HTTP/1.1 200 OK
+Content-Length: 37
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"ready":true,"db":true,"cache":true}
+>>> /status/version.json
+HTTP/1.1 200 OK
+Content-Length: 72
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"commit":"unknown","buildTime":"2025-08-27T04:34:40.731Z","env":"prod"}
+>>> /api/training/status
+HTTP/1.1 503 Service Unavailable
+Content-Length: 19
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"error":"no_data"}
+>>> /petals/status.json
+HTTP/1.1 200 OK
+Content-Length: 135
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"configured":true,"active":true,"lastContact":"2025-08-27T04:35:38.370Z","notes":"Connected to swarm","ts":"2025-08-27T04:35:38.370Z"}
+>>> /wondercraft/status.json
+HTTP/1.1 200 OK
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"configured":true,"active":true,"lastContact":"2025-08-27T04:35:38.430Z","notes":"Running scenario","ts":"2025-08-27T04:35:38.430Z"}
+>>> POST /consensus/proposals
+HTTP/1.1 201 Created
+Content-Length: 143
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"proposal_id":"32d69ab5-7bfa-4b6d-9f18-e121695d232e","prompt":"KV tally test (log)","created_at":"2025-08-27T04:44:32.086Z","state":"pending"}
+>>> POST /consensus/vote (approve)
+HTTP/1.1 201 Created
+Content-Length: 179
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"vote_id":"f0c8707f-96cb-496e-8365-6454b5ef9bd3","proposal_id":"c2dd2b89-3188-451e-bbb7-92a616566a47","voter":"synthiant","vote":"approve","timestamp":"2025-08-27T04:44:32.139Z"}
+>>> POST /consensus/vote (veto)
+HTTP/1.1 201 Created
+Content-Length: 176
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"vote_id":"74313b54-9c51-4483-af97-4f299eb428f8","proposal_id":"c2dd2b89-3188-451e-bbb7-92a616566a47","voter":"synthiant","vote":"veto","timestamp":"2025-08-27T04:44:32.188Z"}
+>>> GET /consensus/history
+HTTP/1.1 200 OK
+Content-Length: 57
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"approved":1,"vetoed":1,"ts":"2025-08-27T04:44:32.242Z"}
+>>> GET /api/router/config
+HTTP/1.1 200 OK
+Content-Length: 255
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"providers":[{"name":"GPT","weight":1},{"name":"Grok4","weight":1},{"name":"Claude","weight":1},{"name":"Petals","weight":2},{"name":"Wondercraft","weight":1},{"name":"Tinygrad","weight":1}],"strategy":"latency_sla_quota","ts":"2025-08-27T04:44:32.280Z"}
+>>> GET /api/router/instances
+HTTP/1.1 200 OK
+Content-Length: 184
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"instances":[{"id":"p1","provider":"Petals","region":"us-east","status":"healthy"},{"id":"g1","provider":"GPT","region":"us-west","status":"healthy"}],"ts":"2025-08-27T04:44:32.320Z"}
+>>> GET /api/zeroth/status
+HTTP/1.1 200 OK
+Content-Length: 188
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"zeroth":{"alignment":{"intent":"good","telemetry":"none-hidden","ethics":"enforced"},"gates":{"scp_v1":true,"consensus_dual":true,"mocks_disabled":true}},"ts":"2025-08-27T04:44:32.358Z"}
+>>> GET /consensus/proposals?state=pending
+
+>>> GET /consensus/proposals?state=pending
+HTTP/1.1 200 OK
+Content-Length: 145
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+[{"proposal_id":"32d69ab5-7bfa-4b6d-9f18-e121695d232e","prompt":"KV tally test (log)","created_at":"2025-08-27T04:44:32.086Z","state":"pending"}]
+>>> GET /consensus/proposals?state=approved
+HTTP/1.1 200 OK
+Content-Length: 2
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+[]
+>>> GET /consensus/proposals?state=vetoed
+HTTP/1.1 200 OK
+Content-Length: 2
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+[]
+>>> GET /consensus/logs
+HTTP/1.1 200 OK
+Content-Length: 992
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"entries":[{"type":"proposal","key":"proposal:c2dd2b89-3188-451e-bbb7-92a616566a47","data":{"proposal_id":"c2dd2b89-3188-451e-bbb7-92a616566a47","prompt":"KV tally test","created_at":"2025-08-27T04:44:32.015Z","state":"pending"}},{"type":"proposal","key":"proposal:32d69ab5-7bfa-4b6d-9f18-e121695d232e","data":{"proposal_id":"32d69ab5-7bfa-4b6d-9f18-e121695d232e","prompt":"KV tally test (log)","created_at":"2025-08-27T04:44:32.086Z","state":"pending"}},{"type":"vote","key":"vote:f0c8707f-96cb-496e-8365-6454b5ef9bd3","data":{"vote_id":"f0c8707f-96cb-496e-8365-6454b5ef9bd3","proposal_id":"c2dd2b89-3188-451e-bbb7-92a616566a47","voter":"synthiant","vote":"approve","timestamp":"2025-08-27T04:44:32.139Z"}},{"type":"vote","key":"vote:74313b54-9c51-4483-af97-4f299eb428f8","data":{"vote_id":"74313b54-9c51-4483-af97-4f299eb428f8","proposal_id":"c2dd2b89-3188-451e-bbb7-92a616566a47","voter":"synthiant","vote":"veto","timestamp":"2025-08-27T04:44:32.188Z"}}],"ts":"2025-08-27T04:49:21.397Z"}
+>>> GET /api/router/exec?q=hello
+HTTP/1.1 200 OK
+Content-Length: 122
+Content-Type: application/json; charset=utf-8
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"response":"Echo: hello","telemetry":{"provider":"Petals","instance":"p1","latencyMs":0},"ts":"2025-08-27T04:49:21.459Z"}
+>>> /api/healthz
+HTTP/1.1 200 OK
+Content-Length: 45
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"status":"ok","uptime":0,"commit":"unknown"}
+>>> /api/readyz
+HTTP/1.1 200 OK
+Content-Length: 37
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"ready":true,"db":true,"cache":true}
+>>> /status/version.json
+HTTP/1.1 200 OK
+Content-Length: 72
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"commit":"unknown","buildTime":"2025-08-27T05:35:20.905Z","env":"prod"}
+>>> /api/training/status
+HTTP/1.1 200 OK
+Content-Length: 136
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"run_id":"2025-08-27T04:30:43Z","epoch":3,"step":240,"loss":0.2311,"duration_s":128.5,"commit":"local-dev","ts":"2025-08-27T04:30:43Z"}=== /api/healthz ===
+=== /api/healthz ===
+=== /api/healthz ===
+HTTP/1.1 200 OK
+Content-Length: 45
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"status":"ok","uptime":0,"commit":"unknown"}=== /api/readyz ===
+HTTP/1.1 200 OK
+Content-Length: 37
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"ready":true,"db":true,"cache":true}=== /status/version.json ===
+HTTP/1.1 200 OK
+Content-Length: 72
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"commit":"unknown","buildTime":"2025-08-27T16:58:43.307Z","env":"prod"}=== /api/training/status ===
+HTTP/1.1 200 OK
+Content-Length: 136
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"run_id":"2025-08-27T04:30:43Z","epoch":3,"step":240,"loss":0.2311,"duration_s":128.5,"commit":"local-dev","ts":"2025-08-27T04:30:43Z"}=== /petals/status.json ===
+HTTP/1.1 200 OK
+Content-Length: 135
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"configured":true,"active":true,"lastContact":"2025-08-27T16:58:43.538Z","notes":"Connected to swarm","ts":"2025-08-27T16:58:43.538Z"}=== /wondercraft/status.json ===
+HTTP/1.1 200 OK
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"configured":true,"active":true,"lastContact":"2025-08-27T16:58:43.619Z","notes":"Running scenario","ts":"2025-08-27T16:58:43.619Z"}

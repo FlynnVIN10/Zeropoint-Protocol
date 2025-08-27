@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Sonic MAX Cursor Playbook - Phase 5 Lighthouse Collection
- * Placeholder script for Lighthouse HTML collection
- * Tag: [SONIC-MAX][PHASE5]
+ * Lighthouse Collection for Evidence v19
  */
 
 const { writeJSON } = require('./_lib/fsx.cjs');
@@ -11,37 +9,24 @@ const fs = require('fs');
 const path = require('path');
 
 async function collectLighthouse() {
-  console.log('🚀 Sonic MAX Cursor Playbook - Phase 5 Lighthouse Collection');
-  console.log('─'.repeat(60));
-  
+  console.log('Lighthouse Collection — Evidence v19');
   try {
-    // Check if existing Lighthouse HTML exists
     const existingLighthouse = 'lighthouse-audit.json';
-    const targetDir = 'public/evidence/phase5';
-    const targetFile = path.join(targetDir, 'lighthouse_report.html');
-    
+    const publicDir = 'public/evidence/v19/lighthouse';
+    const targetFile = path.join(publicDir, 'lighthouse_report.html');
+
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
+
     if (fs.existsSync(existingLighthouse)) {
-      console.log('📊 Found existing Lighthouse audit, copying to public evidence...');
-      
-      // Create target directory if it doesn't exist
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
-      }
-      
-      // Copy existing Lighthouse report
       const lighthouseData = JSON.parse(fs.readFileSync(existingLighthouse, 'utf8'));
-      
-      // Create HTML report from JSON data
       const htmlReport = generateLighthouseHTML(lighthouseData);
       fs.writeFileSync(targetFile, htmlReport);
-      
-      console.log(`✅ Lighthouse report copied to: ${targetFile}`);
-      
-      // Save collection metadata
-      const metadata = {
+      await writeJSON('evidence/v19/lighthouse/collection_metadata.json', {
         timestamp: new Date().toISOString(),
         source: existingLighthouse,
-        target: targetFile,
+        target: `/evidence/v19/lighthouse/lighthouse_report.html`,
         status: 'copied',
         scores: {
           performance: lighthouseData.categories?.performance?.score * 100 || 'N/A',
@@ -49,37 +34,20 @@ async function collectLighthouse() {
           bestPractices: lighthouseData.categories?.['best-practices']?.score * 100 || 'N/A',
           seo: lighthouseData.categories?.seo?.score * 100 || 'N/A'
         }
-      };
-      
-      await writeJSON('evidence/phase5/lighthouse/collection_metadata.json', metadata);
-      
+      });
+      console.log(`Wrote ${targetFile}`);
     } else {
-      console.log('⚠️  No existing Lighthouse audit found, creating placeholder...');
-      
-      // Create placeholder HTML
       const placeholderHTML = generatePlaceholderHTML();
-      
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
-      }
-      
       fs.writeFileSync(targetFile, placeholderHTML);
-      console.log(`✅ Placeholder Lighthouse report created at: ${targetFile}`);
-      
-      // Save collection metadata
-      const metadata = {
+      await writeJSON('evidence/v19/lighthouse/collection_metadata.json', {
         timestamp: new Date().toISOString(),
         status: 'placeholder_created',
-        note: 'No existing Lighthouse audit found, placeholder created'
-      };
-      
-      await writeJSON('evidence/phase5/lighthouse/collection_metadata.json', metadata);
+        note: 'No existing Lighthouse audit found'
+      });
+      console.log(`Wrote placeholder ${targetFile}`);
     }
-    
-    console.log('🎯 Lighthouse collection completed');
-    
   } catch (error) {
-    console.error('💥 Lighthouse collection failed:', error.message);
+    console.error('Lighthouse collection failed:', error.message);
     process.exit(1);
   }
 }
@@ -91,57 +59,40 @@ function generateLighthouseHTML(data) {
     bestPractices: Math.round((data.categories?.['best-practices']?.score || 0) * 100),
     seo: Math.round((data.categories?.seo?.score || 0) * 100)
   };
-  
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lighthouse Report - Zeropoint Protocol</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .score { font-size: 2em; font-weight: bold; margin: 10px 0; }
-        .good { color: green; }
-        .needs-improvement { color: orange; }
-        .poor { color: red; }
-        .metric { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lighthouse Report - Zeropoint Protocol</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; background:#111; color:#eee }
+    .score { font-size: 2em; font-weight: bold; margin: 10px 0; }
+    .good { color: #00c853; }
+    .needs-improvement { color: #ffab00; }
+    .poor { color: #d50000; }
+    .metric { margin: 20px 0; padding: 15px; border: 1px solid #333; border-radius: 5px; background:#1a1a1a }
+  </style>
 </head>
 <body>
-    <h1>🚀 Lighthouse Report - Zeropoint Protocol</h1>
-    <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
-    <p><strong>Tag:</strong> [SONIC-MAX][PHASE5]</p>
-    
-    <div class="metric">
-        <h2>Performance</h2>
-        <div class="score ${scores.performance >= 80 ? 'good' : scores.performance >= 50 ? 'needs-improvement' : 'poor'}">
-            ${scores.performance}/100
-        </div>
-    </div>
-    
-    <div class="metric">
-        <h2>Accessibility</h2>
-        <div class="score ${scores.accessibility >= 80 ? 'good' : scores.accessibility >= 50 ? 'needs-improvement' : 'poor'}">
-            ${scores.accessibility}/100
-        </div>
-    </div>
-    
-    <div class="metric">
-        <h2>Best Practices</h2>
-        <div class="score ${scores.bestPractices >= 80 ? 'good' : scores.bestPractices >= 50 ? 'needs-improvement' : 'poor'}">
-            ${scores.bestPractices}/100
-        </div>
-    </div>
-    
-    <div class="metric">
-        <h2>SEO</h2>
-        <div class="score ${scores.seo >= 80 ? 'good' : scores.seo >= 50 ? 'needs-improvement' : 'poor'}">
-            ${scores.seo}/100
-        </div>
-    </div>
-    
-    <hr>
-    <p><em>Generated by Sonic MAX Cursor Playbook - Phase 5</em></p>
+  <h1>🚀 Lighthouse Report - Zeropoint Protocol</h1>
+  <p><strong>Generated:</strong> ${new Date().toISOString()}</p>
+  <div class="metric">
+    <h2>Performance</h2>
+    <div class="score ${scores.performance >= 90 ? 'good' : scores.performance >= 50 ? 'needs-improvement' : 'poor'}">${scores.performance}/100</div>
+  </div>
+  <div class="metric">
+    <h2>Accessibility</h2>
+    <div class="score ${scores.accessibility >= 90 ? 'good' : scores.accessibility >= 50 ? 'needs-improvement' : 'poor'}">${scores.accessibility}/100</div>
+  </div>
+  <div class="metric">
+    <h2>Best Practices</h2>
+    <div class="score ${scores.bestPractices >= 90 ? 'good' : scores.bestPractices >= 50 ? 'needs-improvement' : 'poor'}">${scores.bestPractices}/100</div>
+  </div>
+  <div class="metric">
+    <h2>SEO</h2>
+    <div class="score ${scores.seo >= 90 ? 'good' : scores.seo >= 50 ? 'needs-improvement' : 'poor'}">${scores.seo}/100</div>
+  </div>
 </body>
 </html>`;
 }
@@ -150,35 +101,20 @@ function generatePlaceholderHTML() {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lighthouse Report - Zeropoint Protocol</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; }
-        .placeholder { padding: 40px; text-align: center; color: #666; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lighthouse Report - Zeropoint Protocol</title>
 </head>
 <body>
-    <div class="placeholder">
-        <h1>🚀 Lighthouse Report - Zeropoint Protocol</h1>
-        <p><strong>Status:</strong> Placeholder</p>
-        <p><strong>Generated:</strong> ${new Date().toLocaleString()}</p>
-        <p><strong>Tag:</strong> [SONIC-MAX][PHASE5]</p>
-        <hr>
-        <p>This is a placeholder Lighthouse report.</p>
-        <p>To generate a real report, run Lighthouse CI or use the browser DevTools.</p>
-        <p><em>Generated by Sonic MAX Cursor Playbook - Phase 5</em></p>
-    </div>
+  <h1>Lighthouse Report - Zeropoint Protocol</h1>
+  <p>Status: Placeholder</p>
+  <p>Generated: ${new Date().toISOString()}</p>
 </body>
 </html>`;
 }
 
-// Run if called directly
 if (require.main === module) {
-  collectLighthouse().catch(error => {
-    console.error('💥 Lighthouse collection failed:', error.message);
-    process.exit(1);
-  });
+  collectLighthouse().catch(err => { console.error(err); process.exit(1); });
 }
 
 module.exports = { collectLighthouse };

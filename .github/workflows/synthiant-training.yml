@@ -26,6 +26,12 @@ on:
           - 'stress-test'
 
 jobs:
+  guard-noop:
+    if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/heads/main') && !startsWith(github.ref, 'refs/heads/develop')
+    runs-on: ubuntu-latest
+    steps:
+      - name: No-op on non-PR and non-main/develop branches
+        run: echo "No training needed on $GITHUB_REF"
   training-pipeline:
     if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')
     runs-on: ubuntu-latest

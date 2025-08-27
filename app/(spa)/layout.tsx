@@ -1,21 +1,20 @@
-import TopTicker from '../../components/TopTicker';
-import BottomTicker from '../../components/BottomTicker';
-import LeftPanel from '../../components/LeftPanel';
-import '../../styles/tokens.css';
-import RightPanel from '../../components/RightPanel';
+import type { Metadata } from 'next'
 
-export default function Layout({ children }) {
+export const metadata: Metadata = {
+  title: 'Zeropoint Protocol',
+  description: 'Zeropoint Protocol: Dual-Consensus Agentic AI Platform with ethical governance and verified evidence.',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <body className="bg-matte-black text-off-white">
-        <TopTicker />
-        <div className="flex">
-          <LeftPanel />
-          <main className="flex-1">{children}</main>
-          <RightPanel />
-        </div>
-        <BottomTicker />
+      <body>
+        {children}
       </body>
     </html>
-  );
+  )
 }

@@ -1,61 +1,71 @@
-import { useEffect, useState } from 'react';
+'use client'
 
-interface ChatItem { user: string; response: string; meta?: any }
+import { useState, useRef, useEffect } from 'react'
 
 export default function PromptPane() {
-  const [prompt, setPrompt] = useState('');
-  const [chat, setChat] = useState<ChatItem[]>([]);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [prompt, setPrompt] = useState('')
+  const [response, setResponse] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [telemetry, setTelemetry] = useState('')
+  const responseAreaRef = useRef<HTMLDivElement>(null)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!prompt.trim()) return
+
+    setIsLoading(true)
+    setResponse('')
+    setTelemetry('Processing...')
+
+    try {
+      const res = await fetch(`/api/router/exec?q=${encodeURIComponent(prompt.trim())}`, { 
+        cache: 'no-store' 
+      })
+      
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      
+      const data = await res.json()
+      setResponse(data.response || 'No response received')
+      
+      const t = data.telemetry || {}
+      setTelemetry(`provider=${t.provider || 'unknown'} instance=${t.instance || 'none'} latency=${t.latencyMs || '-'}ms`)
+      
+      setPrompt('')
+    } catch (error: any) {
+      setResponse(`Error: ${error.message}`)
+      setTelemetry('Request failed')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const es = new EventSource('/api/events/consensus');
-    es.addEventListener('consensus', (e: MessageEvent) => {
-      setChat(prev => {
-        if (prev.length === 0) return prev;
-        const updated = [...prev];
-        updated[updated.length - 1] = { ...updated[updated.length - 1], response: e.data };
-        return updated;
-      });
-    });
-    return () => es.close();
-  }, []);
-
-  const handleSubmit = async () => {
-    const current = prompt;
-    setChat(prev => [...prev, { user: current, response: 'routing…' }]);
-    setPrompt('');
-    try {
-      await fetch('/consensus/proposals', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ prompt: current })
-      });
-    } catch {}
-  };
+    if (responseAreaRef.current) {
+      responseAreaRef.current.scrollTop = responseAreaRef.current.scrollHeight
+    }
+  }, [response])
 
   return (
-    <div className="flex flex-col h-full p-4">
-      <div className="flex-grow overflow-y-auto">
-        {chat.map((msg, i) => (
-          <div key={i}>
-            <p><strong>User:</strong> {msg.user}</p>
-            <p><strong>Response:</strong> {msg.response}</p>
-            {showAdvanced && msg.meta && (
-              <div>
-                <small>Route: {msg.meta.route?.provider} • latency {msg.meta.latencyMs}ms</small>
-                {Array.isArray(msg.meta.route?.probes) && (
-                  <div><small>Probes: {msg.meta.route.probes.map((p: any) => `${p.name}:${p.latency}ms`).join(', ')}</small></div>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
+    <main className="center-panel">
+      <h1 style={{marginTop:0}}>Zeropoint Protocol</h1>
+      
+      <div className="center-content" ref={responseAreaRef}>
+        <div className="response-text">{response}</div>
       </div>
-      <div style={{display:'flex',gap:8}}>
-        <input value={prompt} onChange={e => setPrompt(e.target.value)} />
-        <button onClick={handleSubmit}>Send</button>
-        <button onClick={() => setShowAdvanced(!showAdvanced)}>{showAdvanced ? 'Hide' : 'Show'} route</button>
+      
+      <div className="prompt-input-container">
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Ask..."
+            className="prompt-input"
+            disabled={isLoading}
+          />
+        </form>
+        <div className="muted" style={{marginTop:'8px'}}>{telemetry}</div>
       </div>
-    </div>
-  );
+    </main>
+  )
 }

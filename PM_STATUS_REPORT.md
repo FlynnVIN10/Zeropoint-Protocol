@@ -57,13 +57,15 @@
 ---
 
 ## Verification Gate — Local Validation (Real DB-fed)
-- Result: ✅ VERIFY PASS (localhost)
-- Evidence (verification): `evidence/phase5/verify/verify-*.json` (latest PASS attached)
-- Evidence (deploy log curls): `evidence/v19/deploy_log.txt`
-- Key endpoints validated: `/api/healthz`, `/api/readyz`, `/status/version.json`, `/api/training/status`, `/consensus/proposals`
+- Result: ✅ VERIFY PASS (localhost + remote)
+- Evidence Index: `/public/evidence/v19/index.html`
+- Deploy Log (six endpoints): `/public/evidence/v19/deploy_log.txt`
+- Latest Verify JSON: `/public/evidence/v19/verify/`
+- Lighthouse HTML: `/public/evidence/v19/lighthouse/lighthouse_report.html`
+- Training Status: `/api/training/status` (200, DB-fed)
 
 ## Decision
-- Proceed to v20 Global Symbiosis (multi-instance networking, Zeroth-gated, Soulchain-tracked)
+- Proceeding with v20 Global Symbiosis (multi-instance networking, Zeroth-gated, Soulchain-tracked)
 
 ---
 

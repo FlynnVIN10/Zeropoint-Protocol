@@ -16,25 +16,127 @@
       .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
       .card{border:1px solid #333;border-radius:10px;padding:16px;background:#111}
       .muted{color:#bbb;font-size:.9em}
+      
+      /* Panel Layout */
+      .panel-container {
+        display: flex;
+        min-height: calc(100vh - 80px);
+        width: 100%;
+        overflow: hidden;
+      }
+      
+      .left-panel {
+        width: 20rem;
+        border-right: 1px solid #333;
+        padding: 16px;
+        flex-shrink: 0;
+        overflow-y: auto;
+        background: #111;
+      }
+      
+      .center-panel {
+        flex: 1 1 auto;
+        padding: 16px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      
+      .right-panel {
+        width: 24rem;
+        border-left: 1px solid #333;
+        padding: 16px;
+        flex-shrink: 0;
+        overflow-y: auto;
+        background: #111;
+      }
+      
+      /* Center Panel Content */
+      .center-content {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 16px;
+        padding-right: 8px;
+      }
+      
+      .response-text {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        line-height: 1.5;
+        margin-bottom: 16px;
+        color: #f0f0f0;
+      }
+      
+      .prompt-input-container {
+        margin-top: auto;
+        padding-top: 16px;
+        border-top: 1px solid #333;
+      }
+      
+      .prompt-input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        background: #111;
+        color: #f0f0f0;
+        font-family: inherit;
+      }
+      
+      /* Scrollbar Styling */
+      .left-panel::-webkit-scrollbar,
+      .right-panel::-webkit-scrollbar,
+      .center-content::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      .left-panel::-webkit-scrollbar-track,
+      .right-panel::-webkit-scrollbar-track,
+      .center-content::-webkit-scrollbar-track {
+        background: #333;
+      }
+      
+      .left-panel::-webkit-scrollbar-thumb,
+      .right-panel::-webkit-scrollbar-thumb,
+      .center-content::-webkit-scrollbar-thumb {
+        background: #666;
+        border-radius: 4px;
+      }
+      
+      .left-panel::-webkit-scrollbar-thumb:hover,
+      .right-panel::-webkit-scrollbar-thumb:hover,
+      .center-content::-webkit-scrollbar-thumb:hover {
+        background: #888;
+      }
     </style>
 </head>
 <body>
   <div class="container" style="padding:0; width:100vw; max-width:100vw;">
     <div id="top-ticker" style="white-space:nowrap; overflow:hidden; border-bottom:1px solid #333; padding:8px 12px"></div>
-    <div style="display:flex; min-height:calc(100vh - 80px); width:100%;">
-      <aside style="width:20rem; border-right:1px solid #333; padding:16px; flex-shrink:0;">
+    
+    <div class="panel-container">
+      <aside class="left-panel">
         <h3 style="margin-top:0">Left Panel</h3>
         <div id="consensus-queue" class="muted">Synthiant proposals will appear here.</div>
       </aside>
-      <main style="flex:1 1 auto; padding:16px; min-width:0;">
+      
+      <main class="center-panel">
         <h1 style="margin-top:0">Zeropoint Protocol</h1>
-        <form id="prompt-form">
-          <input id="prompt" type="text" placeholder="Ask..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #444; background:#111; color:#f0f0f0" />
-        </form>
-        <pre id="output" style="margin-top:12px; background:#111; padding:12px; border:1px solid #333; border-radius:8px; min-height:120px"></pre>
-        <div class="muted" id="telemetry"></div>
+        
+        <div class="center-content">
+          <div id="response-area" class="response-text"></div>
+        </div>
+        
+        <div class="prompt-input-container">
+          <form id="prompt-form">
+            <input id="prompt" type="text" placeholder="Ask..." class="prompt-input" />
+          </form>
+          <div class="muted" id="telemetry" style="margin-top:8px;"></div>
+        </div>
       </main>
-      <aside style="width:24rem; border-left:1px solid #333; padding:16px; flex-shrink:0;">
+      
+      <aside class="right-panel">
         <h3 style="margin-top:0">Training</h3>
         <dl>
           <div><dt class="muted">Run ID</dt><dd id="ts-run" class="font-mono"></dd></div>
@@ -46,6 +148,7 @@
         </dl>
       </aside>
     </div>
+    
     <div id="bottom-ticker" style="white-space:nowrap; overflow:hidden; border-top:1px solid #333; padding:8px 12px"></div>
   </div>
 
@@ -78,11 +181,35 @@
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const q = document.getElementById('prompt').value.trim();
-      const r = await fetch('/api/router/exec?q=' + encodeURIComponent(q), { cache: 'no-store' });
-      const j = await r.json().catch(() => ({}));
-      document.getElementById('output').textContent = j.response || '';
-      const t = j.telemetry || {};
-      document.getElementById('telemetry').textContent = `provider=${t.provider||'unknown'} instance=${t.instance||'none'} latency=${t.latencyMs||'-'}ms`;
+      if (!q) return;
+      
+      // Clear previous response
+      document.getElementById('response-area').textContent = '';
+      
+      // Show loading indicator
+      document.getElementById('telemetry').textContent = 'Processing...';
+      
+      try {
+        const r = await fetch('/api/router/exec?q=' + encodeURIComponent(q), { cache: 'no-store' });
+        const j = await r.json().catch(() => ({}));
+        
+        // Display response in the flowing text area
+        document.getElementById('response-area').textContent = j.response || 'No response received';
+        
+        // Show telemetry
+        const t = j.telemetry || {};
+        document.getElementById('telemetry').textContent = `provider=${t.provider||'unknown'} instance=${t.instance||'none'} latency=${t.latencyMs||'-'}ms`;
+        
+        // Clear input
+        document.getElementById('prompt').value = '';
+        
+        // Scroll to bottom of response area
+        const responseArea = document.getElementById('response-area');
+        responseArea.scrollTop = responseArea.scrollHeight;
+      } catch (error) {
+        document.getElementById('response-area').textContent = 'Error: ' + error.message;
+        document.getElementById('telemetry').textContent = 'Request failed';
+      }
     });
 
     // Training panel fetch
@@ -98,7 +225,7 @@
         document.getElementById('ts-commit').textContent = d.commit || '';
         document.getElementById('ts-ts').textContent = d.ended_at || d.started_at || d.ts || '';
       } catch (e) {
-        document.getElementById('ts-run').textContent = 'No data';
+        document.getElementById('ts-run').textContent = 'Error';
         document.getElementById('ts-epoch').textContent = '';
         document.getElementById('ts-step').textContent = '';
         document.getElementById('ts-loss').textContent = '';
@@ -106,7 +233,11 @@
         document.getElementById('ts-ts').textContent = '';
       }
     }
+    
+    // Load training data on page load
     loadTraining();
+    
+    // Refresh training data every 30 seconds
     setInterval(loadTraining, 30000);
   </script>
 </body>

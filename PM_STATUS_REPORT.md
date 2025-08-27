@@ -65,6 +65,13 @@
 
 ---
 
+## v20 Kickoff — Evidence & Endpoints
+- Evidence: `evidence/v20/routing/probe.json` (updated)
+- New endpoints: `/api/router/config`, `/api/router/instances`, `/api/router/exec`, `/api/zeroth/status`, `/consensus/history`, `/consensus/logs`
+- Consensus KV: append-only logging enabled for proposals and votes; UI wired to history counts
+
+---
+
 ## Previous Status Reports
 
 ### Phase 5 Dynamic Evidence System - COMPLETED ✅
@@ -107,7 +114,6 @@
 **Deployment Status**:
 - ✅ GitHub Actions workflow integrated with dynamic evidence builder
 - ✅ Automatic deployment triggered by pushes to main branch
-- ✅ Evidence files regenerated with current commit and timestamp
 
 ---
 

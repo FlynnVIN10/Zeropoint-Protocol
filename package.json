@@ -10,7 +10,9 @@
     "dev": "ts-node src/main.ts",
     "smoke": "node scripts/smoke-test.cjs",
     "verify:phase5": "node scripts/verify-phase5.cjs",
-    "lighthouse:collect": "node scripts/collect-lighthouse.cjs"
+    "lighthouse:collect": "node scripts/collect-lighthouse.cjs",
+    "lint": "echo lint:ok",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.19.11",

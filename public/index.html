@@ -3,93 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zeropoint Protocol - Dual Consensus Agentic AI Platform</title>
-    <meta name="description" content="Zeropoint Protocol: Dual Consensus Agentic AI Platform with Petals/TinyGrad integration">
+    <title>Zeropoint Protocol — GPT‑Style SPA</title>
+    <meta name="description" content="Zeropoint Protocol: Single‑page GPT‑style interface with Synthiant + Human consensus.">
+    <link rel="preconnect" href="https://zeropointprotocol.ai">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .container {
-            text-align: center;
-            color: white;
-            max-width: 800px;
-            padding: 2rem;
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        p {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        
-        .nav-link {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            text-decoration: none;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .nav-link:hover {
-            background: rgba(255,255,255,0.3);
-            transform: translateY(-2px);
-        }
-        
-        .status {
-            margin-top: 2rem;
-            padding: 1rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 0.5rem;
-            backdrop-filter: blur(10px);
-        }
-        
-        .status-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 0.5rem 0;
-        }
+      :root { --bg:#1e1e1e; --fg:#f0f0f0; --accent:#6e00ff; }
+      html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+      #spa-root{height:100vh;display:flex;align-items:stretch}
+      a{color:var(--fg)}
+      .fallback{display:flex;gap:16px;flex-direction:column;align-items:center;justify-content:center;width:100%}
+      .btn{border:1px solid var(--accent);padding:10px 14px;border-radius:8px;color:var(--fg);text-decoration:none}
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Zeropoint Protocol</h1>
-        <p>Dual Consensus Agentic AI Platform</p>
-        
-        <nav>
-          <a href="/status/health/">Health Check</a>
-          <a href="/status/ready/">Ready Check</a>
-          <a href="/status/version/">Version Check</a>
-          <a href="/evidence/v19/">Evidence v19</a>
-        </nav>
-        
-        <div class="status-section">
-          <h3>System Status</h3>
-          <p><strong>Phase:</strong> v19 (see evidence)</p>
-          <p><strong>Evidence:</strong> <a href="/evidence/v19/" style="color:#fff;text-decoration:underline">/evidence/v19/</a></p>
-        </div>
+  <div id="spa-root">
+    <div class="fallback">
+      <h1>Launching Zeropoint GPT‑Style Interface…</h1>
+      <p>If the SPA bundle is not yet active, use the links below:</p>
+      <div>
+        <a class="btn" href="/status/training/">Status / Training</a>
+        <a class="btn" href="/evidence/v19/">Evidence v19</a>
+      </div>
     </div>
+  </div>
 </body>
 </html>

@@ -25,7 +25,7 @@ alt-svc: h3=":443"; ma=86400
     <table>
       <tr><th>Status</th><td>ok</td></tr>
       <tr><th>Uptime</th><td>0</td></tr>
-      <tr><th>Commit</th><td>__BUILD_SHA__</td></tr>
+      <tr><th>Commit</th><td>latest</td></tr>
     </table>
   </noscript>
   <pre id="out">loading…</pre>

@@ -7,6 +7,12 @@ on:
       - 'iaai/train/**'
       - 'iaai/tinygrad/**'
       - 'iaai/config/train.yaml'
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'iaai/train/**'
+      - 'iaai/tinygrad/**'
+      - 'iaai/config/train.yaml'
   workflow_dispatch:
     inputs:
       training_type:
@@ -21,13 +27,13 @@ on:
 
 jobs:
   guard-noop:
-    if: github.event_name != 'pull_request' && !startsWith(github.ref, 'refs/heads/main') && !startsWith(github.ref, 'refs/heads/develop')
+    if: github.event_name == 'push' && !(startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop'))
     runs-on: ubuntu-latest
     steps:
-      - name: No-op on non-PR and non-main/develop branches
+      - name: No-op on non-main/develop pushes
         run: echo "No training needed on $GITHUB_REF"
   training-pipeline:
-    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && (startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')))
     runs-on: ubuntu-latest
     strategy:
       matrix:

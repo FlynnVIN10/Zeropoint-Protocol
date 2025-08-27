@@ -57,7 +57,15 @@ function findUnverifiedClaims(content) {
 
 function checkStatusPage() {
   try {
-    const statusContent = readFileSync('app/status/page.tsx', 'utf8');
+    const candidatePaths = [
+      'app/status/page.tsx',
+      'app/(spa)/page.tsx'
+    ];
+    let statusContent = '';
+    for (const p of candidatePaths) {
+      if (existsSync(p)) { statusContent = readFileSync(p, 'utf8'); break; }
+    }
+    if (!statusContent) throw new Error('status page not found');
     const violations = findUnverifiedClaims(statusContent);
     
     if (violations.length > 0) {

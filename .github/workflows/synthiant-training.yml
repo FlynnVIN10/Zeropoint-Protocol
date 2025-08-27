@@ -1,12 +1,6 @@
 name: Synthiant Training Pipeline
 
 on:
-  push:
-    branches: [ main, develop ]
-    paths:
-      - 'iaai/train/**'
-      - 'iaai/tinygrad/**'
-      - 'iaai/config/train.yaml'
   pull_request:
     branches: [ main, develop ]
     paths:

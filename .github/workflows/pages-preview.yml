@@ -2,12 +2,10 @@ name: Cloudflare Pages Preview
 
 on:
   pull_request:
-  push:
-    branches-ignore:
-      - main
 
 jobs:
   preview:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

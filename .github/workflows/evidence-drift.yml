@@ -1,0 +1,25 @@
+name: evidence-drift
+
+on:
+  pull_request:
+  schedule:
+    - cron: '0 * * * *'
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci || npm i
+      - name: Verify evidence canonicalization
+        run: node scripts/check-status-verified.mjs && node scripts/build-evidence-index.mjs
+      - name: Upload evidence index
+        uses: actions/upload-artifact@v4
+        with:
+          name: evidence-index
+          path: public/evidence
+
+

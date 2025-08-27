@@ -165,3 +165,9 @@ All directives executed: SCP v1 restored, PRs reapplied, CI updated, gate passed
 ### PR Admin
 - PR-C/D/E closed as superseded (landed on main). Labels set.
 - CODEOWNERS and guardrails active; no placeholders; MOCKS_DISABLED in prod.
+
+### Gate Update — PASS (Local Validation)
+- Verify: `evidence/phase5/verify/verify-2025-08-27T05-34-48Z.json`
+- Deploy log: `evidence/v19/deploy_log.txt`
+- Evidence index: `/public/evidence/v19/index.html`
+- Headers: HSTS, CSP, Referrer-Policy, Permissions-Policy present on healthz/readyz/version

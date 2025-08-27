@@ -1,7 +1,8 @@
 import TopTicker from '../../components/TopTicker';
 import BottomTicker from '../../components/BottomTicker';
 import LeftPanel from '../../components/LeftPanel';
-import '../styles/tokens.css';
+import '../../styles/tokens.css';
+import RightPanel from '../../components/RightPanel';
 
 export default function Layout({ children }) {
   return (
@@ -10,7 +11,8 @@ export default function Layout({ children }) {
         <TopTicker />
         <div className="flex">
           <LeftPanel />
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
+          <RightPanel />
         </div>
         <BottomTicker />
       </body>

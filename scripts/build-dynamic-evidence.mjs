@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
 /**
- * Dynamic Evidence Builder
- * Generates evidence files with current commit and timestamp during build
+ * Dynamic Evidence Builder (DB-backed)
+ * Reads training metrics from local DB (simulated) and writes evidence
  */
 
-import { writeFileSync, readFileSync } from 'fs';
+import { writeFileSync, readFileSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { execSync } from 'child_process';
@@ -13,95 +13,49 @@ import { execSync } from 'child_process';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Get current git commit
 function getCurrentCommit() {
-  try {
-    return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-  } catch (error) {
-    console.warn('Failed to get git commit, using timestamp:', error.message);
-    return new Date().getTime().toString(16);
-  }
+  try { return execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim(); }
+  catch { return new Date().getTime().toString(16); }
 }
 
-// Generate realistic training metrics
-function generateTrainingMetrics() {
-  const now = new Date();
-  const runStart = new Date(now.getTime() - Math.random() * 3600000); // Random start time within last hour
-  
-  // Generate varied, realistic training metrics
-  const epoch = Math.floor(Math.random() * 50) + 1; // 1-50 epochs
-  const step = Math.floor(Math.random() * 1000) + 100; // 100-1100 steps
-  const loss = 0.1 + Math.random() * 0.4; // Loss between 0.1-0.5
-  const duration = 60 + Math.random() * 300; // Duration 60-360 seconds
-  
-  return {
-    run_id: now.toISOString(),
-    epoch: epoch,
-    step: step,
-    loss: parseFloat(loss.toFixed(4)),
-    duration_s: parseFloat(duration.toFixed(1)),
-    commit: getCurrentCommit(),
-    ts: now.toISOString()
-  };
+function readDbRuns() {
+  // Simulate DB with a local JSON file; in real env, connect to DB
+  const dbPath = join(__dirname, '../evidence/training/runs.db.json');
+  if (!existsSync(dbPath)) throw new Error('DB offline (runs.db.json missing)');
+  const raw = readFileSync(dbPath, 'utf8');
+  const data = JSON.parse(raw);
+  if (!Array.isArray(data) || data.length === 0) throw new Error('No runs found in DB');
+  return data;
 }
 
-// Generate build info
 function generateBuildInfo() {
-  const commit = getCurrentCommit();
-  const buildTime = new Date().toISOString();
-  
-  return {
-    commit: commit,
-    buildTime: buildTime,
-    env: "prod"
-  };
+  return { commit: getCurrentCommit(), buildTime: new Date().toISOString(), env: 'prod' };
 }
 
-// Generate status data
-function generateStatusData() {
-  const now = new Date();
-  return {
-    configured: true,
-    active: true,
-    lastContact: now.toISOString(),
-    notes: "Dynamic status generated",
-    ts: now.toISOString()
-  };
-}
-
-// Main execution
 async function main() {
   try {
     const commit = getCurrentCommit();
     const timestamp = new Date().toISOString();
-    
-    console.log(`Building dynamic evidence with commit: ${commit}, timestamp: ${timestamp}`);
-    
-    // Generate build info
-    const buildInfo = generateBuildInfo();
-    writeFileSync(join(__dirname, '../public/build-info.json'), JSON.stringify(buildInfo, null, 2));
-    console.log('✅ Generated: public/build-info.json');
-    
-    // Generate training latest with realistic metrics
-    const trainingMetrics = generateTrainingMetrics();
-    writeFileSync(join(__dirname, '../evidence/training/latest.json'), JSON.stringify(trainingMetrics, null, 2));
-    console.log('✅ Generated: evidence/training/latest.json');
-    
-    // Generate status files
-    const petalsStatus = generateStatusData();
-    petalsStatus.notes = "Connected to swarm";
-    writeFileSync(join(__dirname, '../evidence/petals/status.json'), JSON.stringify(petalsStatus, null, 2));
-    console.log('✅ Generated: evidence/petals/status.json');
-    
-    const wondercraftStatus = generateStatusData();
-    wondercraftStatus.notes = "Running scenario";
-    writeFileSync(join(__dirname, '../evidence/wondercraft/status.json'), JSON.stringify(wondercraftStatus, null, 2));
-    console.log('✅ Generated: evidence/wondercraft/status.json');
-    
-    console.log('🎉 Dynamic evidence build completed');
-    
+    console.log(`Building evidence from DB commit=${commit} ts=${timestamp}`);
+
+    const runs = readDbRuns();
+    // Choose the latest by ts
+    runs.sort((a, b) => new Date(b.ts).getTime() - new Date(a.ts).getTime());
+    const latest = runs[0];
+
+    // Validate fields
+    const required = ['run_id','epoch','step','loss','duration_s','commit','ts'];
+    const ok = required.every(k => latest[k] !== undefined);
+    if (!ok) throw new Error('Latest run missing required fields');
+
+    // Write outputs
+    writeFileSync(join(__dirname, '../public/build-info.json'), JSON.stringify(generateBuildInfo(), null, 2));
+    writeFileSync(join(__dirname, '../evidence/training/latest.json'), JSON.stringify(latest, null, 2));
+
+    // Forward status files unchanged (assume separate collectors)
+    console.log('🎉 Evidence build completed from DB');
   } catch (error) {
-    console.error('❌ Error building dynamic evidence:', error);
+    console.error('❌ Evidence build failed:', error.message);
     process.exit(1);
   }
 }

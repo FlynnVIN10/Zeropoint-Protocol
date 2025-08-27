@@ -511,4 +511,72 @@ Cache-Control: no-store
 Content-Disposition: inline
 x-content-type-options: nosniff
 
-{"run_id":"2025-08-27T04:30:43Z","epoch":3,"step":240,"loss":0.2311,"duration_s":128.5,"commit":"local-dev","ts":"2025-08-27T04:30:43Z"}
+{"run_id":"2025-08-27T04:30:43Z","epoch":3,"step":240,"loss":0.2311,"duration_s":128.5,"commit":"local-dev","ts":"2025-08-27T04:30:43Z"}=== /api/healthz ===
+=== /api/healthz ===
+=== /api/healthz ===
+HTTP/1.1 200 OK
+Content-Length: 45
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"status":"ok","uptime":0,"commit":"unknown"}=== /api/readyz ===
+HTTP/1.1 200 OK
+Content-Length: 37
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"ready":true,"db":true,"cache":true}=== /status/version.json ===
+HTTP/1.1 200 OK
+Content-Length: 72
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+
+{"commit":"unknown","buildTime":"2025-08-27T16:58:43.307Z","env":"prod"}=== /api/training/status ===
+HTTP/1.1 200 OK
+Content-Length: 136
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"run_id":"2025-08-27T04:30:43Z","epoch":3,"step":240,"loss":0.2311,"duration_s":128.5,"commit":"local-dev","ts":"2025-08-27T04:30:43Z"}=== /petals/status.json ===
+HTTP/1.1 200 OK
+Content-Length: 135
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"configured":true,"active":true,"lastContact":"2025-08-27T16:58:43.538Z","notes":"Connected to swarm","ts":"2025-08-27T16:58:43.538Z"}=== /wondercraft/status.json ===
+HTTP/1.1 200 OK
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Access-Control-Allow-Origin: *
+Cache-Control: no-store
+Content-Disposition: inline
+x-content-type-options: nosniff
+
+{"configured":true,"active":true,"lastContact":"2025-08-27T16:58:43.619Z","notes":"Running scenario","ts":"2025-08-27T16:58:43.619Z"}

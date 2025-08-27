@@ -52,6 +52,12 @@ async function main() {
     fs.copyFileSync(v.full, path.join(publicVerifyDir, v.name));
   }
 
+  // Smoke locations
+  const smokePhase5Dir = path.join('evidence', 'phase5', 'smoke');
+  const smoke19Dir = path.join('evidence', 'v19', 'smoke');
+  const smokePhase5 = list(smokePhase5Dir, n => n.endsWith('.json')).sort((a, b) => a.name.localeCompare(b.name));
+  const smoke19 = list(smoke19Dir, n => n.endsWith('.json')).sort((a, b) => a.name.localeCompare(b.name));
+
   // Fetch CI runs (optional)
   const ciRuns = await fetchCiRuns();
 
@@ -64,6 +70,13 @@ async function main() {
         <ul>
           ${ciRuns.map(r => `<li><a href="${r.url}">${r.name}</a> — ${r.conclusion || r.status}</li>`).join('')}
         </ul>
+      </div>` : '';
+
+  const smokeSection = (smokePhase5.length || smoke19.length) ? `
+      <div class="card">
+        <h3>Smoke Tests</h3>
+        <p><a href="/evidence/phase5/smoke/">/evidence/phase5/smoke/</a></p>
+        ${smokePhase5.length ? `<p class="muted">Latest: ${smokePhase5[smokePhase5.length - 1].name}</p>` : ''}
       </div>` : '';
 
   const html = `<!DOCTYPE html>
@@ -106,6 +119,7 @@ async function main() {
         <p><a href="/evidence/v19/lighthouse/lighthouse_report.html">/evidence/v19/lighthouse/lighthouse_report.html</a></p>
         <p class="muted">HTML report and metadata</p>
       </div>
+      ${smokeSection}
       ${ciSection}
     </div>
   </body>

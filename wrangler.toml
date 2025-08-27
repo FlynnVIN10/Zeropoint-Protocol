@@ -17,4 +17,4 @@ MOCKS_DISABLED = "1"
 
 [[kv_namespaces]]
 binding = "SOULCHAIN"
-id = "local-soulchain"
+id = ""

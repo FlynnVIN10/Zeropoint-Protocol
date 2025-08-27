@@ -8,6 +8,14 @@ export async function onRequest(context: any) {
       return new Response(JSON.stringify({ error: 'invalid prompt' }), { status: 400, headers: jsonHeaders() });
     }
     const proposal = { proposal_id: crypto.randomUUID(), prompt: body.prompt, created_at: new Date().toISOString(), state: 'pending' };
+    // Append-only Soulchain log (best-effort)
+    try {
+      const kv = (context as any).env?.SOULCHAIN;
+      if (kv && typeof kv.put === 'function') {
+        const key = `proposal:${proposal.proposal_id}`;
+        await kv.put(key, JSON.stringify(proposal));
+      }
+    } catch {}
     return new Response(JSON.stringify(proposal), { status: 201, headers: jsonHeaders() });
   }
 

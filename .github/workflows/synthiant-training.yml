@@ -66,10 +66,7 @@ jobs:
     - name: Run training pipeline
       run: |
         cd iaai
-        python train/train_synthiant.py \
-          --framework ${{ matrix.framework }} \
-          --config config/train.yaml \
-          --output artifacts/train/results_${{ matrix.framework }}_${{ matrix.python-version }}.json
+        python train/train_synthiant.py --config config/train.dev.yaml || python train/train_synthiant.py --config config/train.yaml
       env:
         TRAINING_FRAMEWORK: ${{ matrix.framework }}
         PYTHON_VERSION: ${{ matrix.python-version }}

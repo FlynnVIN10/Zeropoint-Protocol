@@ -19,49 +19,95 @@
     </style>
 </head>
 <body>
-  <main class="container">
-    <header>
-      <h1>Zeropoint Protocol</h1>
-      <p>Dual‑Consensus Agentic AI Platform. Ethical by design. Evidence‑backed.</p>
-    </header>
+  <div class="container" style="padding:0">
+    <div id="top-ticker" style="white-space:nowrap; overflow:hidden; border-bottom:1px solid #333; padding:8px 12px"></div>
+    <div style="display:flex; min-height:calc(100vh - 80px)">
+      <aside style="width:280px; border-right:1px solid #333; padding:16px">
+        <h3 style="margin-top:0">Left Panel</h3>
+        <div id="consensus-queue" class="muted">Synthiant proposals will appear here.</div>
+      </aside>
+      <main style="flex:1; padding:16px">
+        <h1 style="margin-top:0">GPT Console</h1>
+        <form id="prompt-form">
+          <input id="prompt" type="text" placeholder="Ask..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #444; background:#111; color:#f0f0f0" />
+        </form>
+        <pre id="output" style="margin-top:12px; background:#111; padding:12px; border:1px solid #333; border-radius:8px; min-height:120px"></pre>
+        <div class="muted" id="telemetry"></div>
+      </main>
+      <aside style="width:380px; border-left:1px solid #333; padding:16px">
+        <h3 style="margin-top:0">Training</h3>
+        <dl>
+          <div><dt class="muted">Run ID</dt><dd id="ts-run" class="font-mono"></dd></div>
+          <div><dt class="muted">Epoch</dt><dd id="ts-epoch" class="font-mono"></dd></div>
+          <div><dt class="muted">Step</dt><dd id="ts-step" class="font-mono"></dd></div>
+          <div><dt class="muted">Loss</dt><dd id="ts-loss" class="font-mono"></dd></div>
+          <div><dt class="muted">Commit</dt><dd id="ts-commit" class="font-mono"></dd></div>
+          <div><dt class="muted">Timestamp</dt><dd id="ts-ts" class="font-mono"></dd></div>
+        </dl>
+      </aside>
+    </div>
+    <div id="bottom-ticker" style="white-space:nowrap; overflow:hidden; border-top:1px solid #333; padding:8px 12px"></div>
+  </div>
 
-    <section class="grid">
-      <div class="card">
-        <h3>Platform Health</h3>
-        <div class="links">
-          <a class="btn" href="/status/health/">/status/health</a>
-          <a class="btn" href="/status/ready/">/status/ready</a>
-          <a class="btn" href="/status/version/">/status/version</a>
-        </div>
-        <p class="muted">Live endpoints with security headers and verified JSON.</p>
-      </div>
-      <div class="card">
-        <h3>Evidence</h3>
-        <div class="links">
-          <a class="btn" href="/evidence/v19/">Evidence v19</a>
-          <a class="btn" href="/evidence/phase5/">Phase 5 Verify</a>
-        </div>
-        <p class="muted">Proof of compliance, deploy logs, verification outputs.</p>
-      </div>
-      <div class="card">
-        <h3>Synthiant Consensus</h3>
-        <div class="links">
-          <a class="btn" href="/consensus/proposals">/consensus/proposals</a>
-          <a class="btn" href="/consensus/history">/consensus/history</a>
-          <a class="btn" href="/consensus/logs">/consensus/logs</a>
-        </div>
-        <p class="muted">AI + Human approvals with Soulchain logging.</p>
-      </div>
-      <div class="card">
-        <h3>Training & Routing</h3>
-        <div class="links">
-          <a class="btn" href="/status/training/">Status / Training</a>
-          <a class="btn" href="/api/training/status">/api/training/status</a>
-          <a class="btn" href="/api/router/config">/api/router/config</a>
-        </div>
-        <p class="muted">Live metrics, schema validation, and router telemetry.</p>
-      </div>
-    </section>
-  </main>
+  <script>
+    // SSE Tickers
+    function marquee(el, text) {
+      const span = document.createElement('span');
+      span.textContent = ' ' + text + ' ';
+      span.style.paddingRight = '24px';
+      el.appendChild(span);
+      el.scrollLeft = el.scrollWidth; // keep right-to-left effect
+    }
+    try {
+      const top = new EventSource('/api/events/consensus');
+      top.addEventListener('consensus', (e) => {
+        const d = JSON.parse(e.data);
+        marquee(document.getElementById('top-ticker'), `[consensus] ${d.state} #${d.seq} ${d.ts}`);
+      });
+    } catch {}
+    try {
+      const bottom = new EventSource('/api/events/synthiant');
+      bottom.addEventListener('tick', (e) => {
+        const d = JSON.parse(e.data);
+        marquee(document.getElementById('bottom-ticker'), `[synthiant] ${d.msg} #${d.seq} ${d.ts}`);
+      });
+    } catch {}
+
+    // Prompt routing
+    const form = document.getElementById('prompt-form');
+    form.addEventListener('submit', async (ev) => {
+      ev.preventDefault();
+      const q = document.getElementById('prompt').value.trim();
+      const r = await fetch('/api/router/exec?q=' + encodeURIComponent(q), { cache: 'no-store' });
+      const j = await r.json().catch(() => ({}));
+      document.getElementById('output').textContent = j.response || '';
+      const t = j.telemetry || {};
+      document.getElementById('telemetry').textContent = `provider=${t.provider||'unknown'} instance=${t.instance||'none'} latency=${t.latencyMs||'-'}ms`;
+    });
+
+    // Training panel fetch
+    async function loadTraining() {
+      try {
+        const r = await fetch('/api/training/status', { cache: 'no-store' });
+        if (!r.ok) throw new Error(String(r.status));
+        const d = await r.json();
+        document.getElementById('ts-run').textContent = d.run_id || 'No data';
+        document.getElementById('ts-epoch').textContent = d.epoch ?? '';
+        document.getElementById('ts-step').textContent = d.step ?? '';
+        document.getElementById('ts-loss').textContent = (d.metrics && d.metrics.loss) || d.loss || '';
+        document.getElementById('ts-commit').textContent = d.commit || '';
+        document.getElementById('ts-ts').textContent = d.ended_at || d.started_at || d.ts || '';
+      } catch (e) {
+        document.getElementById('ts-run').textContent = 'No data';
+        document.getElementById('ts-epoch').textContent = '';
+        document.getElementById('ts-step').textContent = '';
+        document.getElementById('ts-loss').textContent = '';
+        document.getElementById('ts-commit').textContent = '';
+        document.getElementById('ts-ts').textContent = '';
+      }
+    }
+    loadTraining();
+    setInterval(loadTraining, 30000);
+  </script>
 </body>
 </html>

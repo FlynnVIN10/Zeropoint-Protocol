@@ -2,7 +2,7 @@
 # Replace or append the CTO GitHub handle when available.
 * @FlynnVIN10
 
-evidence/** @SynthiantTeam @HumanConsensus
-docs/** @SynthiantTeam @HumanConsensus
-scripts/** @SynthiantTeam @HumanConsensus
-.github/** @SynthiantTeam @HumanConsensus
+evidence/** @FlynnVIN10
+docs/** @FlynnVIN10
+scripts/** @FlynnVIN10
+.github/** @FlynnVIN10

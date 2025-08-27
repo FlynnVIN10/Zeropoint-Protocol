@@ -3,28 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zeropoint Protocol — GPT‑Style SPA</title>
-    <meta name="description" content="Zeropoint Protocol: Single‑page GPT‑style interface with Synthiant + Human consensus.">
-    <link rel="preconnect" href="https://zeropointprotocol.ai">
+    <title>Zeropoint Protocol</title>
+    <meta name="description" content="Zeropoint Protocol: Dual-Consensus Agentic AI Platform with ethical governance and verified evidence.">
     <style>
       :root { --bg:#1e1e1e; --fg:#f0f0f0; --accent:#6e00ff; }
-      html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-      #spa-root{height:100vh;display:flex;align-items:stretch}
-      a{color:var(--fg)}
-      .fallback{display:flex;gap:16px;flex-direction:column;align-items:center;justify-content:center;width:100%}
+      html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
+      .container{max-width:960px;margin:0 auto;padding:48px 24px}
+      h1{margin:0 0 8px 0}
+      p{opacity:.9}
+      .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
       .btn{border:1px solid var(--accent);padding:10px 14px;border-radius:8px;color:var(--fg);text-decoration:none}
+      .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
+      .card{border:1px solid #333;border-radius:10px;padding:16px;background:#111}
+      .muted{color:#bbb;font-size:.9em}
     </style>
 </head>
 <body>
-  <div id="spa-root">
-    <div class="fallback">
-      <h1>Launching Zeropoint GPT‑Style Interface…</h1>
-      <p>If the SPA bundle is not yet active, use the links below:</p>
-      <div>
-        <a class="btn" href="/status/training/">Status / Training</a>
-        <a class="btn" href="/evidence/v19/">Evidence v19</a>
+  <main class="container">
+    <header>
+      <h1>Zeropoint Protocol</h1>
+      <p>Dual‑Consensus Agentic AI Platform. Ethical by design. Evidence‑backed.</p>
+    </header>
+
+    <section class="grid">
+      <div class="card">
+        <h3>Platform Health</h3>
+        <div class="links">
+          <a class="btn" href="/status/health/">/status/health</a>
+          <a class="btn" href="/status/ready/">/status/ready</a>
+          <a class="btn" href="/status/version/">/status/version</a>
+        </div>
+        <p class="muted">Live endpoints with security headers and verified JSON.</p>
       </div>
-    </div>
-  </div>
+      <div class="card">
+        <h3>Evidence</h3>
+        <div class="links">
+          <a class="btn" href="/evidence/v19/">Evidence v19</a>
+          <a class="btn" href="/evidence/phase5/">Phase 5 Verify</a>
+        </div>
+        <p class="muted">Proof of compliance, deploy logs, verification outputs.</p>
+      </div>
+      <div class="card">
+        <h3>Synthiant Consensus</h3>
+        <div class="links">
+          <a class="btn" href="/consensus/proposals">/consensus/proposals</a>
+          <a class="btn" href="/consensus/history">/consensus/history</a>
+          <a class="btn" href="/consensus/logs">/consensus/logs</a>
+        </div>
+        <p class="muted">AI + Human approvals with Soulchain logging.</p>
+      </div>
+      <div class="card">
+        <h3>Training & Routing</h3>
+        <div class="links">
+          <a class="btn" href="/status/training/">Status / Training</a>
+          <a class="btn" href="/api/training/status">/api/training/status</a>
+          <a class="btn" href="/api/router/config">/api/router/config</a>
+        </div>
+        <p class="muted">Live metrics, schema validation, and router telemetry.</p>
+      </div>
+    </section>
+  </main>
 </body>
 </html>

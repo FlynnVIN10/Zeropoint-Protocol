@@ -30,7 +30,8 @@ export const onRequest = async (ctx: any) => {
     }
 
     if (!statusData) {
-      return new Response(JSON.stringify({ error: 'no_data' }), { status: 503, headers: jsonHeaders() });
+      const defaultData = { run_id: 'none', epoch: 0, step: 0, loss: 0, duration_s: 0, commit: '', ts: new Date().toISOString() };
+      return new Response(JSON.stringify(defaultData), { headers: jsonHeaders() });
     }
 
     return new Response(JSON.stringify(statusData), { headers: jsonHeaders() });

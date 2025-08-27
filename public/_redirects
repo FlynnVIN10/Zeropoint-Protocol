@@ -1,15 +1,12 @@
 # Redirects for Zeropoint Protocol
 
 # Evidence redirects
-/public/evidence/* /evidence/:splat 308!
-/evidence/phase5 /evidence/phase5/ 308!
-/evidence/v19 /evidence/v19/ 308!
+/public/evidence/* /evidence/:splat 308
+/evidence/phase5 /evidence/phase5/ 308
+/evidence/v19 /evidence/v19/ 308
 
 # API redirects
 /api/* /api/:splat 200
 
 # Status redirects
 /status/* /status/:splat 200
-
-# Default redirect
-/* /index.html 200

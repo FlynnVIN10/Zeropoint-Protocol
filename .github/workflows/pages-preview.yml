@@ -2,7 +2,6 @@ name: Cloudflare Pages Preview
 
 on:
   pull_request:
-
 jobs:
   preview:
     if: github.event_name == 'pull_request'

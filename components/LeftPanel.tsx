@@ -27,6 +27,15 @@ export default function LeftPanel() {
 
   const loadHistory = async () => {
     try {
+      const r = await fetch('/consensus/history').then(x => x.json());
+      if (typeof r?.approved === 'number' && typeof r?.vetoed === 'number') {
+        setApprovedCount(r.approved);
+        setVetoedCount(r.vetoed);
+        return;
+      }
+    } catch {}
+    // fallback using list queries
+    try {
       const [a, v] = await Promise.all([
         fetch('/consensus/proposals?state=approved').then(r => r.json()).catch(() => []),
         fetch('/consensus/proposals?state=vetoed').then(r => r.json()).catch(() => [])

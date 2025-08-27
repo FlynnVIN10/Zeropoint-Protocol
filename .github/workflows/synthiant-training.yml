@@ -27,6 +27,7 @@ on:
 
 jobs:
   training-pipeline:
+    if: github.event_name == 'pull_request' || startsWith(github.ref, 'refs/heads/main') || startsWith(github.ref, 'refs/heads/develop')
     runs-on: ubuntu-latest
     strategy:
       matrix:

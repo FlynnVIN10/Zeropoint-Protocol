@@ -8,7 +8,7 @@
     <style>
       :root { --bg:#1e1e1e; --fg:#f0f0f0; --accent:#6e00ff; }
       html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
-      .container{max-width:960px;margin:0 auto;padding:48px 24px}
+      .container{max-width:100%;width:100%;margin:0;padding:0}
       h1{margin:0 0 8px 0}
       p{opacity:.9}
       .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
@@ -19,22 +19,22 @@
     </style>
 </head>
 <body>
-  <div class="container" style="padding:0">
+  <div class="container" style="padding:0; width:100vw; max-width:100vw;">
     <div id="top-ticker" style="white-space:nowrap; overflow:hidden; border-bottom:1px solid #333; padding:8px 12px"></div>
-    <div style="display:flex; min-height:calc(100vh - 80px)">
-      <aside style="width:280px; border-right:1px solid #333; padding:16px">
+    <div style="display:flex; min-height:calc(100vh - 80px); width:100%;">
+      <aside style="width:20rem; border-right:1px solid #333; padding:16px; flex-shrink:0;">
         <h3 style="margin-top:0">Left Panel</h3>
         <div id="consensus-queue" class="muted">Synthiant proposals will appear here.</div>
       </aside>
-      <main style="flex:1; padding:16px">
-        <h1 style="margin-top:0">GPT Console</h1>
+      <main style="flex:1 1 auto; padding:16px; min-width:0;">
+        <h1 style="margin-top:0">Zeropoint Protocol</h1>
         <form id="prompt-form">
           <input id="prompt" type="text" placeholder="Ask..." style="width:100%; padding:12px; border-radius:8px; border:1px solid #444; background:#111; color:#f0f0f0" />
         </form>
         <pre id="output" style="margin-top:12px; background:#111; padding:12px; border:1px solid #333; border-radius:8px; min-height:120px"></pre>
         <div class="muted" id="telemetry"></div>
       </main>
-      <aside style="width:380px; border-left:1px solid #333; padding:16px">
+      <aside style="width:24rem; border-left:1px solid #333; padding:16px; flex-shrink:0;">
         <h3 style="margin-top:0">Training</h3>
         <dl>
           <div><dt class="muted">Run ID</dt><dd id="ts-run" class="font-mono"></dd></div>

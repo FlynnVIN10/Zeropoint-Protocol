@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 function readJSON(p) {
   try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; }
@@ -11,7 +12,31 @@ function list(dir, filter = () => true) {
   return fs.readdirSync(dir).filter(filter).map(name => ({ name, full: path.join(dir, name) }));
 }
 
-function main() {
+function getRepoSlug() {
+  try {
+    const url = execSync('git config --get remote.origin.url', { encoding: 'utf8' }).trim();
+    if (url.startsWith('git@')) {
+      const m = url.match(/:(.+)\.git$/);
+      return m ? m[1] : '';
+    }
+    const u = new URL(url);
+    return u.pathname.replace(/^\//, '').replace(/\.git$/, '');
+  } catch { return process.env.GITHUB_REPOSITORY || ''; }
+}
+
+async function fetchCiRuns() {
+  const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN || '';
+  const repo = getRepoSlug();
+  if (!repo || !token) return [];
+  const res = await fetch(`https://api.github.com/repos/${repo}/actions/runs?per_page=5`, {
+    headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json' }
+  });
+  if (!res.ok) return [];
+  const data = await res.json().catch(() => ({}));
+  return (data.workflow_runs || []).map(r => ({ name: r.name, status: r.status, conclusion: r.conclusion, url: r.html_url }));
+}
+
+async function main() {
   const buildInfo = readJSON(path.join('public', 'build-info.json')) || {};
   const verifyDir = path.join('evidence', 'phase5', 'verify');
   const verify = list(verifyDir, n => n.endsWith('.json')).sort((a, b) => a.name.localeCompare(b.name));
@@ -19,8 +44,27 @@ function main() {
   const deployLogPath = path.join('evidence', 'v19', 'deploy_log.txt');
   const deployLogExists = fs.existsSync(deployLogPath);
 
+  // Mirror latest verify JSONs to public
+  const publicVerifyDir = path.join('public', 'evidence', 'v19', 'verify');
+  fs.mkdirSync(publicVerifyDir, { recursive: true });
+  const toCopy = verify.slice(-5); // last 5
+  for (const v of toCopy) {
+    fs.copyFileSync(v.full, path.join(publicVerifyDir, v.name));
+  }
+
+  // Fetch CI runs (optional)
+  const ciRuns = await fetchCiRuns();
+
   const outDir = path.join('public', 'evidence', 'v19');
   fs.mkdirSync(outDir, { recursive: true });
+
+  const ciSection = ciRuns.length ? `
+      <div class="card">
+        <h3>CI Runs</h3>
+        <ul>
+          ${ciRuns.map(r => `<li><a href="${r.url}">${r.name}</a> — ${r.conclusion || r.status}</li>`).join('')}
+        </ul>
+      </div>` : '';
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -49,7 +93,7 @@ function main() {
       </div>
       <div class="card">
         <h3>Verification</h3>
-        <p><a href="/evidence/phase5/verify/">/evidence/phase5/verify/</a></p>
+        <p><a href="/evidence/v19/verify/">/evidence/v19/verify/</a></p>
         <p class="muted">Latest: ${latestVerify || 'n/a'}</p>
       </div>
       <div class="card">
@@ -59,15 +103,16 @@ function main() {
       </div>
       <div class="card">
         <h3>Lighthouse</h3>
-        <p><a href="/evidence/v19/lighthouse/">/evidence/v19/lighthouse/</a></p>
-        <p class="muted">HTML reports</p>
+        <p><a href="/evidence/v19/lighthouse/lighthouse_report.html">/evidence/v19/lighthouse/lighthouse_report.html</a></p>
+        <p class="muted">HTML report and metadata</p>
       </div>
+      ${ciSection}
     </div>
   </body>
   </html>`;
 
   fs.writeFileSync(path.join(outDir, 'index.html'), html, 'utf8');
-  console.log('Wrote public/evidence/v19/index.html');
+  console.log('Wrote public/evidence/v19/index.html and mirrored verify JSONs');
 }
 
 main();

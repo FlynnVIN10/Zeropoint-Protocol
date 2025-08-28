@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { logAuditEvent } from '../../audit/log/route'
+import { logAuditEvent } from '../../../../services/audit'
 
 interface AIModel {
   id: string
@@ -441,7 +441,7 @@ function calculateModelStats(models: AIModel[]) {
     provider_distribution: providerDistribution,
     deployment_status_distribution: deploymentStatusDistribution,
     avg_compliance_score: Math.round(avgComplianceScore * 100) / 100,
-    total_parameters,
+    total_parameters: totalParameters,
     ethical_compliance_summary: ethicalComplianceSummary
   }
 }

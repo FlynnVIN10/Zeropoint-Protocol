@@ -21,7 +21,7 @@ interface RoutingDecision {
   fallback?: string
 }
 
-class ProviderRouter {
+export class ProviderRouter {
   private providers: Map<string, ProviderConfig> = new Map()
   private healthCheckInterval: NodeJS.Timeout | null = null
 

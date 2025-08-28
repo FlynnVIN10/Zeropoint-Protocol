@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { logAuditEvent } from '../../audit/log/route'
+import { logAuditEvent } from '../../../../services/audit'
 
 interface MLPipeline {
   id: string
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
       tags
     }
 
-    mlPipelines.set(pipeline.id, pipeline.id)
+    mlPipelines.set(pipeline.id, pipeline)
     pipelineSteps.set(pipeline.id, [])
 
     // Log audit event

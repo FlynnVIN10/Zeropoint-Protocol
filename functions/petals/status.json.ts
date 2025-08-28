@@ -11,7 +11,7 @@ export const onRequest = async (ctx: any) => {
       }
     } catch (fetchError) {
       // Generate dynamic fallback values if evidence file cannot be read
-      console.warn('Evidence file read failed, generating dynamic fallback:', fetchError.message);
+      console.warn('Evidence file read failed, generating dynamic fallback:', (fetchError as Error).message);
       statusData = {
         configured: true,
         active: true,
@@ -33,7 +33,7 @@ export const onRequest = async (ctx: any) => {
   } catch (error) {
     return new Response(JSON.stringify({
       error: "Internal server error",
-      message: error.message
+      message: (error as Error).message
     }), {
       status: 500,
       headers: {

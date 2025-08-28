@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+// Force dynamic rendering for SSE endpoint
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const encoder = new TextEncoder()
   

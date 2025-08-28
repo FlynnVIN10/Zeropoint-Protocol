@@ -75,18 +75,18 @@ class SoulchainLedger {
   async getXPChain(startCid: string): Promise<XPTransaction[]> {
     await this.ready;
     // let currentCid = CID.parse(startCid); // TEMPORARILY DISABLED
-    let currentCid = startCid; // TEMPORARILY DISABLED
+    let currentCid: string | null = startCid; // TEMPORARILY DISABLED
     const chain = [];
 
     while (currentCid) {
       // const data = await this.fs.cat(currentCid); // TEMPORARILY DISABLED
       // const transaction = JSON.parse(data.toString()); // TEMPORARILY DISABLED
-      const transaction = { agentId: "stub", amount: 0, rationale: "stub", timestamp: new Date().toISOString(), previousCid: null, tags: {} }; // TEMPORARILY DISABLED
+      const transaction = { agentId: "stub", amount: 0, rationale: "stub", timestamp: new Date().toISOString(), previousCid: null, tags: [] }; // TEMPORARILY DISABLED
       chain.push(transaction);
       // currentCid = transaction.previousCid
       //   ? CID.parse(transaction.previousCid)
       //   : null; // TEMPORARILY DISABLED
-      currentCid = transaction.previousCid || null; // TEMPORARILY DISABLED
+      currentCid = transaction.previousCid; // TEMPORARILY DISABLED
     }
 
     return chain;

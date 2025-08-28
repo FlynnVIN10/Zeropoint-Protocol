@@ -97,7 +97,7 @@ export default async function QuantumComputingDashboard() {
                 <div style={{fontSize: '11px', color: '#bbb'}}>
                   {Object.entries(quantumData.statistics.job_type_distribution).map(([type, count]) => (
                     <div key={type} style={{marginBottom: '2px'}}>
-                      {type.replace(/_/g, ' ')}: {count} jobs
+                      {type.replace(/_/g, ' ')}: {String(count)} jobs
                     </div>
                   ))}
                 </div>
@@ -111,7 +111,7 @@ export default async function QuantumComputingDashboard() {
                 <div style={{fontSize: '11px', color: '#bbb'}}>
                   {Object.entries(quantumData.statistics.backend_distribution).map(([backend, count]) => (
                     <div key={backend} style={{marginBottom: '2px'}}>
-                      {backend.replace(/_/g, ' ')}: {count} jobs
+                      {backend.replace(/_/g, ' ')}: {String(count)} jobs
                     </div>
                   ))}
                 </div>
@@ -129,7 +129,7 @@ export default async function QuantumComputingDashboard() {
                              status === 'running' ? '#fcc419' : 
                              status === 'failed' ? '#ff6b6b' : '#999'
                     }}>
-                      {status}: {count}
+                      {status}: {String(count)}
                     </span>
                   ))}
                 </div>

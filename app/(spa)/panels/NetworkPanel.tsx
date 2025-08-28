@@ -60,7 +60,7 @@ export default async function NetworkPanel() {
                 <div style={{fontSize: '11px', color: '#bbb'}}>
                   {Object.entries(networkData.network_statistics.regional_distribution).map(([region, count]) => (
                     <div key={region} style={{marginBottom: '2px'}}>
-                      {region}: {count} instances
+                      {region}: {String(count)} instances
                     </div>
                   ))}
                 </div>

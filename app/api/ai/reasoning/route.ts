@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { logAuditEvent } from '../../audit/log/route'
+import { logAuditEvent } from '../../../../services/audit'
 
 interface ReasoningTask {
   id: string

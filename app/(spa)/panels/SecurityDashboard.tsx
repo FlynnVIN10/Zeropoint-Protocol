@@ -146,7 +146,7 @@ export default async function SecurityDashboard() {
                              severity === 'high' ? '#ff922b' : 
                              severity === 'medium' ? '#fcc419' : '#51cf66'
                     }}>
-                      {severity}: {count}
+                      {severity}: {String(count)}
                     </span>
                   ))}
                 </div>

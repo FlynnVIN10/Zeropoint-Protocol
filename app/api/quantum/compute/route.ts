@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { logAuditEvent } from '../../audit/log/route'
+import { logAuditEvent } from '../../../../services/audit'
 
 interface QuantumJob {
   id: string
@@ -341,7 +341,7 @@ function generateMeasurementResults(qubits: number) {
   // Normalize probabilities
   const total = Object.values(results).reduce((sum: any, val: any) => sum + val, 0)
   Object.keys(results).forEach(key => {
-    results[key] = Math.round((results[key] / total) * 1000) / 1000
+    results[key] = Math.round((results[key] / (total as number)) * 1000) / 1000
   })
   
   return results

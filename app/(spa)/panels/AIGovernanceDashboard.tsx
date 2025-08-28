@@ -178,7 +178,7 @@ export default async function AIGovernanceDashboard() {
                   padding: '8px',
                   marginBottom: '6px',
                   background: '#0a0a0a',
-                  border: '1px solid '#222',
+                  border: '1px solid #222',
                   borderRadius: '4px',
                   fontSize: '10px'
                 }}>
@@ -232,7 +232,7 @@ export default async function AIGovernanceDashboard() {
                 <div style={{fontSize: '11px', color: '#bbb'}}>
                   {Object.entries(ethics.statistics.type_distribution).map(([type, count]) => (
                     <div key={type} style={{marginBottom: '2px'}}>
-                      {type}: {count} assessments
+                      {type}: {String(count)} assessments
                     </div>
                   ))}
                 </div>

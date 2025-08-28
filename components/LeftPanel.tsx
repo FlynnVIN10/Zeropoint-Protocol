@@ -216,7 +216,7 @@ export default function LeftPanel() {
           <h4 style={{color: '#6E00FF', marginBottom: '8px'}}>Human Approved ({getProposalsByState('human_approved').length})</h4>
           {getProposalsByState('human_approved').length > 0 ? (
             getProposalsByState('human_approved').map(proposal => (
-              <div key={proposal.id} style={{border: '1px solid '#51cf66', padding: '8px', marginBottom: '8px', borderRadius: '4px', background: 'rgba(81, 207, 102, 0.2)'}}>
+              <div key={proposal.id} style={{border: '1px solid #51cf66', padding: '8px', marginBottom: '8px', borderRadius: '4px', background: 'rgba(81, 207, 102, 0.2)'}}>
                 <p style={{fontSize: '12px', margin: '0 0 4px 0'}}><strong>{proposal.synthiant_id}</strong> ✅✅</p>
                 <p style={{fontSize: '11px', margin: '0 0 4px 0'}}>{proposal.prompt.substring(0, 60)}...</p>
                 <p style={{fontSize: '10px', color: '#51cf66'}}>Fully approved</p>
@@ -231,7 +231,7 @@ export default function LeftPanel() {
           <h4 style={{color: '#6E00FF', marginBottom: '8px'}}>Vetoed ({getProposalsByState('synthiant_vetoed').length + getProposalsByState('human_vetoed').length})</h4>
           {[...getProposalsByState('synthiant_vetoed'), ...getProposalsByState('human_vetoed')].length > 0 ? (
             [...getProposalsByState('synthiant_vetoed'), ...getProposalsByState('human_vetoed')].map(proposal => (
-              <div key={proposal.id} style={{border: '1px solid '#ff6b6b', padding: '8px', marginBottom: '8px', borderRadius: '4px', background: 'rgba(255, 107, 107, 0.1)'}}>
+              <div key={proposal.id} style={{border: '1px solid #ff6b6b', padding: '8px', marginBottom: '8px', borderRadius: '4px', background: 'rgba(255, 107, 107, 0.1)'}}>
                 <p style={{fontSize: '12px', margin: '0 0 4px 0'}}><strong>{proposal.synthiant_id}</strong> ❌</p>
                 <p style={{fontSize: '11px', margin: '0 0 4px 0'}}>{proposal.prompt.substring(0, 60)}...</p>
                 <p style={{fontSize: '10px', color: '#ff6b6b'}}>Vetoed - requires retraining</p>

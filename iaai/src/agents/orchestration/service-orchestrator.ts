@@ -311,7 +311,7 @@ export class ServiceOrchestrator {
       };
     } catch (error) {
       const processingTime = Date.now() - startTime;
-      await this.logOrchestrationError(request, error, processingTime);
+      await this.logOrchestrationError(request, error as Error, processingTime);
       throw error;
     }
   }
@@ -365,7 +365,7 @@ export class ServiceOrchestrator {
             operationId,
             type: operation.type,
             success: false,
-            error: error.message,
+            error: (error as Error).message,
             processingTime,
             trustScore: 0,
             tags: operation.tags,

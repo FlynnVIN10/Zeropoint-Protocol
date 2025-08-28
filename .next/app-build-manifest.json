@@ -1,0 +1,20 @@
+{
+  "pages": {
+    "/(spa)/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/(spa)/layout.css",
+      "static/chunks/app/(spa)/layout.js"
+    ],
+    "/(spa)/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(spa)/page.js"
+    ],
+    "/not-found": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/not-found.js"
+    ]
+  }
+}

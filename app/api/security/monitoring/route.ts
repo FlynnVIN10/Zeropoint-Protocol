@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { logAuditEvent } from '../../audit/log/route'
+import { logAuditEvent } from '../../../../services/audit'
 
 interface SecurityEvent {
   id: string
@@ -325,11 +325,11 @@ function calculateSecurityStats(events: SecurityEvent[]) {
 }
 
 // Helper function to check threat intelligence
-export function checkThreatIntelligence(ipAddress: string): ThreatIntelligence | null {
+function checkThreatIntelligence(ipAddress: string): ThreatIntelligence | null {
   return threatIntelligence.get(ipAddress) || null
 }
 
 // Helper function to add threat intelligence
-export function addThreatIntelligence(intel: ThreatIntelligence) {
+function addThreatIntelligence(intel: ThreatIntelligence) {
   threatIntelligence.set(intel.ip_address, intel)
 }

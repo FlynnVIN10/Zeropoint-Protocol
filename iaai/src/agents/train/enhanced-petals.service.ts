@@ -286,7 +286,7 @@ export class EnhancedPetalsService {
       };
     } catch (error) {
       const processingTime = Date.now() - startTime;
-      await this.logError(request, error, processingTime);
+      await this.logError(request, error as Error, processingTime);
       throw error;
     }
   }
@@ -350,7 +350,7 @@ export class EnhancedPetalsService {
       };
     } catch (error) {
       const processingTime = Date.now() - startTime;
-      await this.logBatchError(batchRequest, error, processingTime);
+      await this.logBatchError(batchRequest, error as Error, processingTime);
       throw error;
     }
   }
@@ -361,7 +361,7 @@ export class EnhancedPetalsService {
   private async makePetalsAPICall(
     request: PetalsRequest,
   ): Promise<PetalsResponse> {
-    let lastError: Error;
+    let lastError: Error | null = null;
 
     for (let attempt = 1; attempt <= this.config.retryAttempts; attempt++) {
       try {
@@ -386,9 +386,9 @@ export class EnhancedPetalsService {
           notes: [`Stub: auto-approved (attempt ${attempt})`],
         };
       } catch (error) {
-        lastError = error;
+        lastError = error as Error;
         this.logger.warn(
-          `Petals API call attempt ${attempt} failed: ${error.message}`,
+          `Petals API call attempt ${attempt} failed: ${(error as Error).message}`,
         );
 
         if (attempt < this.config.retryAttempts) {

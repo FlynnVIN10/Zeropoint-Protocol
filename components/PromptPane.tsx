@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react'
 import ChainOfThought from './ChainOfThought'
+import RoutingStrategySelector from './RoutingStrategySelector'
 
 interface ConsensusInfo {
   proposal_id: string
@@ -17,6 +18,13 @@ export default function PromptPane() {
   const [telemetry, setTelemetry] = useState('')
   const [consensusInfo, setConsensusInfo] = useState<ConsensusInfo | null>(null)
   const [showAdvanced, setShowAdvanced] = useState(false)
+  const [routingStrategy, setRoutingStrategy] = useState('hybrid')
+  const [routingPreferences, setRoutingPreferences] = useState({
+    maxLatency: 500,
+    maxCost: 0.05,
+    minQuality: 80,
+    preferredRegion: ''
+  })
   const responseAreaRef = useRef<HTMLDivElement>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +37,18 @@ export default function PromptPane() {
     setConsensusInfo(null)
 
     try {
-      const res = await fetch(`/api/router/exec?q=${encodeURIComponent(prompt.trim())}`, { 
+      // Build query parameters with routing strategy and preferences
+      const params = new URLSearchParams({
+        q: prompt.trim(),
+        strategy: routingStrategy,
+        ...Object.fromEntries(
+          Object.entries(routingPreferences)
+            .filter(([_, value]) => value !== '' && value !== 0)
+            .map(([key, value]) => [key, value.toString()])
+        )
+      })
+
+      const res = await fetch(`/api/router/exec?${params.toString()}`, { 
         cache: 'no-store' 
       })
       
@@ -39,7 +58,7 @@ export default function PromptPane() {
       setResponse(data.response || 'No response received')
       
       const t = data.telemetry || {}
-      setTelemetry(`provider=${t.provider || 'unknown'} instance=${t.instance || 'none'} latency=${t.latencyMs || '-'}ms`)
+      setTelemetry(`provider=${t.provider || 'unknown'} instance=${t.instance || 'none'} latency=${t.latencyMs || '-'}ms strategy=${routingStrategy}`)
       
       // Set consensus information
       if (data.proposal_id) {
@@ -85,19 +104,27 @@ export default function PromptPane() {
                 <p><strong>Status:</strong> {consensusInfo.consensus_status}</p>
                 <p><strong>Provider:</strong> {consensusInfo.routing?.provider || 'Unknown'}</p>
                 <p><strong>Reason:</strong> {consensusInfo.routing?.reason || 'No reason provided'}</p>
+                <p><strong>Strategy:</strong> {routingStrategy}</p>
               </div>
             )}
             
             <ChainOfThought 
               routeTrace={consensusInfo?.routing?.reason}
               toolCalls={JSON.stringify(consensusInfo?.telemetry, null, 2)}
-              summary={`Query processed through ${consensusInfo?.routing?.provider || 'unknown'} provider with ${consensusInfo?.consensus_status || 'unknown'} consensus status`}
+              summary={`Query processed through ${consensusInfo?.routing?.provider || 'unknown'} provider with ${consensusInfo?.consensus_status || 'unknown'} consensus status using ${routingStrategy} strategy`}
             />
           </div>
         )}
       </div>
       
       <div className="prompt-input-container">
+        {/* Routing Strategy Selector */}
+        <RoutingStrategySelector
+          onStrategyChange={setRoutingStrategy}
+          onPreferencesChange={setRoutingPreferences}
+          currentStrategy={routingStrategy}
+        />
+        
         <form onSubmit={handleSubmit}>
           <input
             type="text"
@@ -132,6 +159,8 @@ export default function PromptPane() {
               <p><strong>Consensus Flow:</strong> Prompt → Synthiant Review → Human Approval → Execution</p>
               <p><strong>Training Signal:</strong> Automatically generated for each query</p>
               <p><strong>Evidence Chain:</strong> Complete traceability maintained</p>
+              <p><strong>Routing Strategy:</strong> {routingStrategy} with user preferences</p>
+              <p><strong>Network Awareness:</strong> Multi-instance collaboration enabled</p>
             </div>
           )}
         </div>

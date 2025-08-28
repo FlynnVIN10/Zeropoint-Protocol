@@ -2,6 +2,7 @@ import EnhancedTrainingPanel from '../app/(spa)/panels/EnhancedTrainingPanel'
 import NetworkPanel from '../app/(spa)/panels/NetworkPanel'
 import SecurityDashboard from '../app/(spa)/panels/SecurityDashboard'
 import AIGovernanceDashboard from '../app/(spa)/panels/AIGovernanceDashboard'
+import QuantumComputingDashboard from '../app/(spa)/panels/QuantumComputingDashboard'
 
 export default function RightPanel() {
   return (
@@ -10,6 +11,7 @@ export default function RightPanel() {
       <NetworkPanel />
       <SecurityDashboard />
       <AIGovernanceDashboard />
+      <QuantumComputingDashboard />
     </aside>
   )
 }

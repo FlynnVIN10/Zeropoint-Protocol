@@ -589,7 +589,7 @@ x-content-type-options: nosniff
 - **Commit**: d0a2d48b
 - **Changes**: 
   - CTO Directive Compliance: Implemented Next.js App Router SPA
-  - Proper SSR with no "Loading..." states
+  - Proper SSR with no placeholder states
   - Complete provider architecture (GPT, Claude, Grok4, Petals, Wondercraft, TinyGrad)
   - Training panel as Server Component
   - SSE tickers for consensus and synthiant activity
@@ -707,7 +707,7 @@ alt-svc: h3=":443"; ma=86400
 4. **Top ticker** - SSE stream for synthiant consensus activity
 5. **Bottom ticker** - SSE stream for individual synthiant activity
 6. **Center prompt** - PromptPane with real LLM routing
-7. **Training/status renders real values** - No "Loading..." states, proper error handling
+7. **Training/status renders real values** - No placeholder states, proper error handling
 8. **CI guard against perpetual placeholders** - Already implemented and passing
 9. **Evidence and headers verified** - All six endpoints return 200 with required headers
 
@@ -729,7 +729,7 @@ alt-svc: h3=":443"; ma=86400
 - ✅ CI green (auto-deploy workflow passed)
 - ✅ All six endpoints return 200
 - ✅ Required security headers present
-- ✅ No "Loading..." placeholders
+- ✅ No placeholder text
 - ✅ MOCKS_DISABLED=1 enforced
 - ✅ Evidence files updated with curl headers
 

@@ -1,78 +1,159 @@
-interface TinyGradResponse {
-  response: string
-  tokens_used: number
-  model: string
-  latency: number
+// © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
+
+// providers/tinygrad.ts
+
+export interface TinygradRequest {
+  prompt: string
+  model?: string
+  maxTokens?: number
+  temperature?: number
+  stream?: boolean
 }
 
-export class TinyGradProvider {
-  private baseUrl: string
-  private model: string
+export interface TinygradResponse {
+  text: string
+  model: string
+  usage: {
+    promptTokens: number
+    completionTokens: number
+    totalTokens: number
+  }
+  latency: number
+  provider: 'tinygrad'
+}
 
-  constructor(baseUrl: string = 'http://localhost:8080', model: string = 'tinygrad-local') {
-    this.baseUrl = baseUrl
-    this.model = model
+export class TinygradProvider {
+  private baseUrl: string
+  private apiKey: string
+  private timeout: number
+
+  constructor() {
+    this.baseUrl = process.env.TINYGRAD_API_URL || 'http://localhost:8002'
+    this.apiKey = process.env.TINYGRAD_API_KEY || ''
+    this.timeout = parseInt(process.env.TINYGRAD_TIMEOUT || '30000')
   }
 
-  async generateResponse(prompt: string, maxTokens: number = 1024): Promise<{
-    response: string
-    tokensUsed: number
-    latencyMs: number
-    model: string
-  }> {
+  async generateText(request: TinygradRequest): Promise<TinygradResponse> {
     const startTime = Date.now()
-
+    
     try {
       const response = await fetch(`${this.baseUrl}/generate`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`,
+          'X-Provider': 'tinygrad'
         },
         body: JSON.stringify({
-          model: this.model,
-          prompt: prompt,
-          max_tokens: maxTokens,
-          temperature: 0.7,
-          top_p: 0.9
-        })
+          prompt: request.prompt,
+          model: request.model || 'tinygrad-v1.0',
+          max_tokens: request.maxTokens || 1000,
+          temperature: request.temperature || 0.7,
+          stream: request.stream || false
+        }),
+        signal: AbortSignal.timeout(this.timeout)
       })
 
       if (!response.ok) {
-        throw new Error(`TinyGrad API error: ${response.status} ${response.statusText}`)
+        throw new Error(`Tinygrad API error: ${response.status} ${response.statusText}`)
       }
 
-      const data: TinyGradResponse = await response.json()
+      const data = await response.json()
       const latency = Date.now() - startTime
 
       return {
-        response: data.response || 'No response content',
-        tokensUsed: data.tokens_used || 0,
-        latencyMs: latency,
-        model: data.model || this.model
+        text: data.text || data.response || '',
+        model: data.model || request.model || 'tinygrad-v1.0',
+        usage: {
+          promptTokens: data.usage?.prompt_tokens || 0,
+          completionTokens: data.usage?.completion_tokens || 0,
+          totalTokens: data.usage?.total_tokens || 0
+        },
+        latency,
+        provider: 'tinygrad'
       }
     } catch (error) {
-      throw new Error(`TinyGrad provider error: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      throw new Error(`Tinygrad provider error: ${(error as Error).message}`)
+    }
+  }
+
+  async streamText(request: TinygradRequest): Promise<ReadableStream<string>> {
+    const streamRequest = { ...request, stream: true }
+    
+    try {
+      const response = await fetch(`${this.baseUrl}/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`,
+          'X-Provider': 'tinygrad'
+        },
+        body: JSON.stringify({
+          prompt: streamRequest.prompt,
+          model: streamRequest.model || 'tinygrad-v1.0',
+          max_tokens: streamRequest.maxTokens || 1000,
+          temperature: streamRequest.temperature || 0.7,
+          stream: true
+        }),
+        signal: AbortSignal.timeout(this.timeout)
+      })
+
+      if (!response.ok) {
+        throw new Error(`Tinygrad streaming API error: ${response.status} ${response.statusText}`)
+      }
+
+      if (!response.body) {
+        throw new Error('No response body for streaming')
+      }
+
+      return response.body
+        .pipeThrough(new TextDecoderStream())
+        .pipeThrough(new TransformStream({
+          transform(chunk, controller) {
+            try {
+              const lines = chunk.split('\n')
+              for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                  const data = line.slice(6)
+                  if (data === '[DONE]') {
+                    controller.terminate()
+                    return
+                  }
+                  try {
+                    const parsed = JSON.parse(data)
+                    if (parsed.text) {
+                      controller.enqueue(parsed.text)
+                    }
+                  } catch (e) {
+                    // Skip malformed JSON
+                  }
+                }
+              }
+            } catch (error) {
+              controller.error(error)
+            }
+          }
+        }))
+    } catch (error) {
+      throw new Error(`Tinygrad streaming error: ${(error as Error).message}`)
     }
   }
 
   async healthCheck(): Promise<boolean> {
     try {
       const response = await fetch(`${this.baseUrl}/health`, {
-        method: 'GET'
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${this.apiKey}`,
+          'X-Provider': 'tinygrad'
+        },
+        signal: AbortSignal.timeout(5000)
       })
       return response.ok
     } catch {
       return false
     }
   }
-
-  async startLocalInstance(): Promise<boolean> {
-    try {
-      // This would start the local TinyGrad instance
-      // For now, just check if it's already running
-      return await this.healthCheck()
-    } catch {
-      return false
-    }
-  }
 }
+
+export default TinygradProvider

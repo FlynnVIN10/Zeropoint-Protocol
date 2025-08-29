@@ -1,259 +1,254 @@
-interface ProviderConfig {
-  name: string
-  baseUrl: string
-  apiKey?: string
-  maxTokens: number
-  costPerToken: number
-  latencyMs: number
-  health: 'healthy' | 'degraded' | 'down'
-  quota: {
-    daily: number
-    used: number
-    resetTime: string
-  }
+// © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
+
+// services/router.ts
+
+import PetalsProvider from '../providers/petals'
+import WondercraftProvider from '../providers/wondercraft'
+import TinygradProvider from '../providers/tinygrad'
+
+export interface ProviderRequest {
+  prompt: string
+  model?: string
+  maxTokens?: number
+  temperature?: number
+  stream?: boolean
 }
 
-interface RoutingDecision {
+export interface ProviderResponse {
+  text: string
+  model: string
+  usage: {
+    promptTokens: number
+    completionTokens: number
+    totalTokens: number
+  }
+  latency: number
   provider: string
-  reason: string
-  estimatedCost: number
-  estimatedLatency: number
-  fallback?: string
+}
+
+export interface ProviderHealth {
+  provider: string
+  healthy: boolean
+  latency: number
+  lastCheck: Date
 }
 
 export class ProviderRouter {
-  private providers: Map<string, ProviderConfig> = new Map()
+  private providers: Map<string, any> = new Map()
+  private healthCache: Map<string, ProviderHealth> = new Map()
   private healthCheckInterval: NodeJS.Timeout | null = null
 
   constructor() {
-    this.initializeProviders()
+    // Initialize providers
+    this.providers.set('petals', new PetalsProvider())
+    this.providers.set('wondercraft', new WondercraftProvider())
+    this.providers.set('tinygrad', new TinygradProvider())
+    
+    // Start health monitoring
     this.startHealthMonitoring()
   }
 
-  private initializeProviders() {
-    // Initialize with default providers
-    this.providers.set('gpt-4', {
-      name: 'GPT-4',
-      baseUrl: 'https://api.openai.com/v1',
-      maxTokens: 8192,
-      costPerToken: 0.00003,
-      latencyMs: 2000,
-      health: 'healthy',
-      quota: { daily: 1000000, used: 0, resetTime: new Date().toISOString() }
-    })
-
-    this.providers.set('claude-3', {
-      name: 'Claude 3',
-      baseUrl: 'https://api.anthropic.com/v1',
-      maxTokens: 100000,
-      costPerToken: 0.000015,
-      latencyMs: 1500,
-      health: 'healthy',
-      quota: { daily: 500000, used: 0, resetTime: new Date().toISOString() }
-    })
-
-    this.providers.set('grok-4', {
-      name: 'Grok 4',
-      baseUrl: 'https://api.x.ai/v1',
-      maxTokens: 128000,
-      costPerToken: 0.00001,
-      latencyMs: 1000,
-      health: 'healthy',
-      quota: { daily: 2000000, used: 0, resetTime: new Date().toISOString() }
-    })
-
-    this.providers.set('petals', {
-      name: 'Petals',
-      baseUrl: 'https://api.petals.ml',
-      maxTokens: 2048,
-      costPerToken: 0.000005,
-      latencyMs: 3000,
-      health: 'healthy',
-      quota: { daily: 5000000, used: 0, resetTime: new Date().toISOString() }
-    })
-
-    this.providers.set('wondercraft', {
-      name: 'Wondercraft',
-      baseUrl: 'https://api.wondercraft.ai',
-      maxTokens: 4096,
-      costPerToken: 0.000008,
-      latencyMs: 2500,
-      health: 'healthy',
-      quota: { daily: 1000000, used: 0, resetTime: new Date().toISOString() }
-    })
-
-    this.providers.set('tinygrad', {
-      name: 'TinyGrad Local',
-      baseUrl: 'http://localhost:8080',
-      maxTokens: 1024,
-      costPerToken: 0,
-      latencyMs: 100,
-      health: 'healthy',
-      quota: { daily: 10000000, used: 0, resetTime: new Date().toISOString() }
-    })
+  private async startHealthMonitoring() {
+    // Check health every 30 seconds
+    this.healthCheckInterval = setInterval(async () => {
+      await this.updateProviderHealth()
+    }, 30000)
+    
+    // Initial health check
+    await this.updateProviderHealth()
   }
 
-  private startHealthMonitoring() {
-    this.healthCheckInterval = setInterval(() => {
-      this.checkProviderHealth()
-    }, 30000) // Check every 30 seconds
-  }
-
-  private async checkProviderHealth() {
-    for (const [name, provider] of this.providers) {
+  private async updateProviderHealth() {
+    const healthPromises = Array.from(this.providers.entries()).map(async ([name, provider]) => {
+      const startTime = Date.now()
       try {
-        const start = Date.now()
-        const response = await fetch(`${provider.baseUrl}/health`, { 
-          method: 'GET',
-          signal: AbortSignal.timeout(5000)
-        })
-        const latency = Date.now() - start
+        const healthy = await provider.healthCheck()
+        const latency = Date.now() - startTime
         
-        if (response.ok) {
-          provider.health = 'healthy'
-          provider.latencyMs = latency
-        } else {
-          provider.health = 'degraded'
-        }
+        this.healthCache.set(name, {
+          provider: name,
+          healthy,
+          latency,
+          lastCheck: new Date()
+        })
       } catch (error) {
-        provider.health = 'down'
+        this.healthCache.set(name, {
+          provider: name,
+          healthy: false,
+          latency: -1,
+          lastCheck: new Date()
+        })
+      }
+    })
+
+    await Promise.all(healthPromises)
+  }
+
+  async getHealthyProviders(): Promise<string[]> {
+    const healthy: string[] = []
+    
+    for (const [name, health] of this.healthCache.entries()) {
+      if (health.healthy && health.latency > 0) {
+        healthy.push(name)
       }
     }
+    
+    return healthy.sort((a, b) => {
+      const healthA = this.healthCache.get(a)!
+      const healthB = this.healthCache.get(b)!
+      return healthA.latency - healthB.latency
+    })
   }
 
-  public selectProvider(query: string, maxTokens: number = 1024): RoutingDecision {
-    const availableProviders = Array.from(this.providers.values())
-      .filter(p => p.health === 'healthy' && p.maxTokens >= maxTokens)
-
-    if (availableProviders.length === 0) {
+  async routeRequest(request: ProviderRequest): Promise<ProviderResponse> {
+    const healthyProviders = await this.getHealthyProviders()
+    
+    if (healthyProviders.length === 0) {
       throw new Error('No healthy providers available')
     }
 
-    // Score providers based on multiple factors
-    const scoredProviders = availableProviders.map(provider => {
-      const latencyScore = 1 / (provider.latencyMs / 1000) // Lower latency = higher score
-      const costScore = 1 / (provider.costPerToken * maxTokens) // Lower cost = higher score
-      const quotaScore = (provider.quota.daily - provider.quota.used) / provider.quota.daily
+    // Select first healthy provider (fastest based on health check)
+    const selectedProvider = healthyProviders[0]
+    const provider = this.providers.get(selectedProvider)
+    
+    if (!provider) {
+      throw new Error(`Provider ${selectedProvider} not found`)
+    }
+
+    try {
+      const response = await provider.generateText(request)
+      return response
+    } catch (error) {
+      // If first provider fails, try others
+      for (const providerName of healthyProviders.slice(1)) {
+        try {
+          const provider = this.providers.get(providerName)
+          if (provider) {
+            const response = await provider.generateText(request)
+            return response
+          }
+        } catch (fallbackError) {
+          console.warn(`Provider ${providerName} fallback failed:`, fallbackError)
+        }
+      }
       
-      const totalScore = latencyScore * 0.4 + costScore * 0.3 + quotaScore * 0.3
-      
-      return { provider, score: totalScore }
-    })
-
-    // Sort by score and select the best
-    scoredProviders.sort((a, b) => b.score - a.score)
-    const selected = scoredProviders[0].provider
-
-    // Determine fallback
-    const fallback = scoredProviders.length > 1 ? scoredProviders[1].provider.name : undefined
-
-    return {
-      provider: selected.name,
-      reason: `Selected ${selected.name} based on latency (${selected.latencyMs}ms), cost ($${(selected.costPerToken * maxTokens).toFixed(6)}), and quota availability`,
-      estimatedCost: selected.costPerToken * maxTokens,
-      estimatedLatency: selected.latencyMs,
-      fallback
+      throw new Error(`All providers failed: ${(error as Error).message}`)
     }
   }
 
-  public async executeQuery(query: string, maxTokens: number = 1024): Promise<{
-    response: string
-    routing: RoutingDecision
-    telemetry: {
-      provider: string
-      instance: string
-      latencyMs: number
-      tokensUsed: number
-      cost: number
-    }
-  }> {
-    const routing = this.selectProvider(query, maxTokens)
-    const provider = this.providers.get(routing.provider.toLowerCase().replace(/\s+/g, '-'))
+  async streamRequest(request: ProviderRequest): Promise<ReadableStream<string>> {
+    const healthyProviders = await this.getHealthyProviders()
     
-    if (!provider) {
-      throw new Error(`Provider ${routing.provider} not found`)
+    if (healthyProviders.length === 0) {
+      throw new Error('No healthy providers available')
     }
 
+    // Select first healthy provider
+    const selectedProvider = healthyProviders[0]
+    const provider = this.providers.get(selectedProvider)
+    
+    if (!provider) {
+      throw new Error(`Provider ${selectedProvider} not found`)
+    }
+
+    try {
+      return await provider.streamText(request)
+    } catch (error) {
+      // If first provider fails, try others
+      for (const providerName of healthyProviders.slice(1)) {
+        try {
+          const provider = this.providers.get(providerName)
+          if (provider) {
+            return await provider.streamText(request)
+          }
+        } catch (fallbackError) {
+          console.warn(`Provider ${providerName} fallback failed:`, fallbackError)
+        }
+      }
+      
+      throw new Error(`All providers failed: ${(error as Error).message}`)
+    }
+  }
+
+  getProviderHealth(): ProviderHealth[] {
+    return Array.from(this.healthCache.values())
+  }
+
+  async forceHealthCheck(): Promise<void> {
+    await this.updateProviderHealth()
+  }
+
+  destroy() {
+    if (this.healthCheckInterval) {
+      clearInterval(this.healthCheckInterval)
+      this.healthCheckInterval = null
+    }
+  }
+}
+
+// Enhanced router with additional features
+export class EnhancedProviderRouter extends ProviderRouter {
+  private requestHistory: Array<{
+    timestamp: Date
+    provider: string
+    prompt: string
+    latency: number
+    success: boolean
+  }> = []
+
+  async routeRequest(request: ProviderRequest): Promise<ProviderResponse> {
     const startTime = Date.now()
+    let success = false
+    let selectedProvider = 'unknown'
     
     try {
-      // This is a placeholder - actual implementation would call the provider's API
-      const response = await this.callProvider(provider, query, maxTokens)
-      const latency = Date.now() - startTime
+      const response = await super.routeRequest(request)
+      success = true
+      selectedProvider = response.provider
       
-      return {
-        response,
-        routing,
-        telemetry: {
-          provider: provider.name,
-          instance: provider.baseUrl,
-          latencyMs: latency,
-          tokensUsed: maxTokens,
-          cost: routing.estimatedCost
-        }
-      }
+      // Log successful request
+      this.requestHistory.push({
+        timestamp: new Date(),
+        provider: selectedProvider,
+        prompt: request.prompt.substring(0, 100) + '...',
+        latency: Date.now() - startTime,
+        success: true
+      })
+      
+      return response
     } catch (error) {
-      // Try fallback if available
-      if (routing.fallback) {
-        const fallbackProvider = this.providers.get(routing.fallback.toLowerCase().replace(/\s+/g, '-'))
-        if (fallbackProvider) {
-          const response = await this.callProvider(fallbackProvider, query, maxTokens)
-          const latency = Date.now() - startTime
-          
-          return {
-            response,
-            routing: { ...routing, provider: fallbackProvider.name },
-            telemetry: {
-              provider: fallbackProvider.name,
-              instance: fallbackProvider.baseUrl,
-              latencyMs: latency,
-              tokensUsed: maxTokens,
-              cost: fallbackProvider.costPerToken * maxTokens
-            }
-          }
-        }
-      }
+      // Log failed request
+      this.requestHistory.push({
+        timestamp: new Date(),
+        provider: selectedProvider,
+        prompt: request.prompt.substring(0, 100) + '...',
+        latency: Date.now() - startTime,
+        success: false
+      })
       
       throw error
     }
   }
 
-  private async callProvider(provider: ProviderConfig, query: string, maxTokens: number): Promise<string> {
-    // This is a placeholder implementation
-    // In production, this would make actual API calls to the selected provider
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, provider.latencyMs))
-    
-    // Return mock response for now
-    return `Response from ${provider.name}: This is a placeholder response to "${query}". In production, this would be the actual AI response from ${provider.name}.`
+  getRequestHistory(limit: number = 100) {
+    return this.requestHistory
+      .slice(-limit)
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
   }
 
-  public getProviderStatus(): Record<string, any> {
-    const status: Record<string, any> = {}
+  getProviderStats() {
+    const stats = new Map<string, { requests: number; success: number; avgLatency: number }>()
     
-    for (const [name, provider] of this.providers) {
-      status[name] = {
-        health: provider.health,
-        latencyMs: provider.latencyMs,
-        quotaUsed: provider.quota.used,
-        quotaRemaining: provider.quota.daily - provider.quota.used,
-        lastCheck: new Date().toISOString()
-      }
+    for (const request of this.requestHistory) {
+      const current = stats.get(request.provider) || { requests: 0, success: 0, avgLatency: 0 }
+      current.requests++
+      if (request.success) current.success++
+      current.avgLatency = (current.avgLatency * (current.requests - 1) + request.latency) / current.requests
+      stats.set(request.provider, current)
     }
     
-    return status
-  }
-
-  public cleanup() {
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval)
-    }
+    return stats
   }
 }
 
-// Export singleton instance
-export const providerRouter = new ProviderRouter()
-
-// Export types for external use
-export type { ProviderConfig, RoutingDecision }
+export default EnhancedProviderRouter

@@ -1,88 +1,170 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { featureFlags } from '../../../../lib/feature-flags'
 
-interface Proposal {
+export const dynamic = 'force-dynamic'
+
+interface ConsensusProposal {
   id: string
   prompt: string
-  synthiant_id: string
-  created_at: string
-  state: 'pending' | 'synthiant_approved' | 'synthiant_vetoed' | 'human_approved' | 'human_vetoed'
-  synthiant_reason?: string
-  human_reason?: string
-  training_signal?: any
-  evidence_links: string[]
+  rationale: string
+  synthiantId: string
+  state: 'pending' | 'approved' | 'vetoed'
+  synthiantVotes: { [synthiantId: string]: 'approve' | 'veto' }
+  humanVotes: { [userId: string]: 'approve' | 'veto' }
+  synthiantConsensus: boolean
+  humanConsensus: boolean
+  createdAt: string
+  updatedAt: string
+  evidence: string[]
+  trainingSignal: {
+    dataset: string
+    expectedOutcome: string
+    confidence: number
+  }
 }
 
-// In-memory storage for proposals (in production, this would be a database)
-let proposals: Proposal[] = []
-let proposalCounter = 1
+// In-memory storage for proposals (shared across consensus routes)
+// In production, this would be a database
+declare global {
+  var consensusProposals: Map<string, ConsensusProposal>
+}
+
+if (!global.consensusProposals) {
+  global.consensusProposals = new Map()
+}
+
+const proposals = global.consensusProposals
+
+// Generate unique ID
+function generateId(): string {
+  return `proposal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+}
+
+// Check if consensus is enabled
+function checkConsensusEnabled(): boolean {
+  return featureFlags.isEnabled('CONSENSUS_ENABLED')
+}
 
 export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { prompt, synthiant_id, training_signal, evidence_links = [] } = body
+  if (!checkConsensusEnabled()) {
+    return NextResponse.json(
+      { error: 'Consensus system is disabled' },
+      { status: 503 }
+    )
+  }
 
-    if (!prompt || !synthiant_id) {
+  try {
+    const { prompt, rationale, synthiantId, trainingSignal } = await request.json()
+
+    if (!prompt || !rationale || !synthiantId) {
       return NextResponse.json(
-        { error: 'Missing required fields: prompt and synthiant_id' },
+        { error: 'Missing required fields: prompt, rationale, synthiantId' },
         { status: 400 }
       )
     }
 
-    const proposal: Proposal = {
-      id: `p-${proposalCounter++}`,
-      prompt,
-      synthiant_id,
-      created_at: new Date().toISOString(),
-      state: 'pending',
-      training_signal,
-      evidence_links
+    // Zeroth principle check
+    if (prompt.toLowerCase().includes('bypass') || 
+        prompt.toLowerCase().includes('hack') ||
+        prompt.toLowerCase().includes('exploit')) {
+      return NextResponse.json(
+        { error: 'Zeroth violation: Proposal violates ethical principles' },
+        { status: 400 }
+      )
     }
 
-    proposals.push(proposal)
+    const proposal: ConsensusProposal = {
+      id: generateId(),
+      prompt,
+      rationale,
+      synthiantId,
+      state: 'pending',
+      synthiantVotes: {},
+      humanVotes: {},
+      synthiantConsensus: false,
+      humanConsensus: false,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      evidence: [],
+      trainingSignal: trainingSignal || {
+        dataset: 'default',
+        expectedOutcome: 'improved reasoning',
+        confidence: 0.7
+      }
+    }
 
-    return NextResponse.json({
-      success: true,
-      proposal_id: proposal.id,
-      message: 'Proposal created successfully'
-    }, {
+    proposals.set(proposal.id, proposal)
+
+    return NextResponse.json(proposal, {
       status: 201,
       headers: {
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-        'x-content-type-options': 'nosniff',
-        'content-disposition': 'inline',
-        'access-control-allow-origin': '*'
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'X-Proposal-ID': proposal.id
       }
     })
   } catch (error) {
+    console.error('Error creating proposal:', error)
     return NextResponse.json(
-      { error: 'Invalid request body' },
-      { status: 400 }
+      { error: 'Failed to create proposal' },
+      { status: 500 }
     )
   }
 }
 
 export async function GET(request: NextRequest) {
+  if (!checkConsensusEnabled()) {
+    return NextResponse.json(
+      { error: 'Consensus system is disabled' },
+      { status: 503 }
+    )
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     const state = searchParams.get('state')
-    
-    let filteredProposals = proposals
-    
-    if (state) {
-      filteredProposals = proposals.filter(p => p.state === state)
+    const limit = parseInt(searchParams.get('limit') || '50')
+    const offset = parseInt(searchParams.get('offset') || '0')
+
+    let filteredProposals = Array.from(proposals.values())
+
+    // Filter by state if specified
+    if (state && ['pending', 'approved', 'vetoed'].includes(state)) {
+      filteredProposals = filteredProposals.filter(p => p.state === state)
     }
 
-    return NextResponse.json(filteredProposals, {
+    // Sort by creation date (newest first)
+    filteredProposals.sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
+
+    // Apply pagination
+    const paginatedProposals = filteredProposals.slice(offset, offset + limit)
+
+    const response = {
+      proposals: paginatedProposals,
+      pagination: {
+        total: filteredProposals.length,
+        limit,
+        offset,
+        hasMore: offset + limit < filteredProposals.length
+      },
+      summary: {
+        pending: filteredProposals.filter(p => p.state === 'pending').length,
+        approved: filteredProposals.filter(p => p.state === 'approved').length,
+        vetoed: filteredProposals.filter(p => p.state === 'vetoed').length
+      }
+    }
+
+    return NextResponse.json(response, {
       headers: {
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-        'x-content-type-options': 'nosniff',
-        'content-disposition': 'inline',
-        'access-control-allow-origin': '*'
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'X-Total-Count': filteredProposals.length.toString()
       }
     })
   } catch (error) {
+    console.error('Error fetching proposals:', error)
     return NextResponse.json(
       { error: 'Failed to fetch proposals' },
       { status: 500 }

@@ -1,108 +1,178 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { featureFlags } from '../../../../lib/feature-flags'
 
-interface Vote {
-  id: string
-  proposal_id: string
-  voter_id: string
-  voter_type: 'synthiant' | 'human'
+export const dynamic = 'force-dynamic'
+
+interface VoteRequest {
+  proposalId: string
+  voterId: string
   vote: 'approve' | 'veto'
-  reason?: string
-  timestamp: string
+  rationale: string
+  voterType: 'synthiant' | 'human'
 }
 
-// In-memory storage for votes (in production, this would be a database)
-let votes: Vote[] = []
-let voteCounter = 1
+interface VoteResponse {
+  success: boolean
+  proposalId: string
+  vote: 'approve' | 'veto'
+  voterId: string
+  voterType: 'synthiant' | 'human'
+  rationale: string
+  timestamp: string
+  consensusReached: boolean
+  nextAction?: string
+}
+
+// In-memory storage for proposals (shared with proposals route)
+// In production, this would be a database
+declare global {
+  var consensusProposals: Map<string, any>
+}
+
+if (!global.consensusProposals) {
+  global.consensusProposals = new Map()
+}
+
+const proposals = global.consensusProposals
+
+// Check if consensus is enabled
+function checkConsensusEnabled(): boolean {
+  return featureFlags.isEnabled('CONSENSUS_ENABLED')
+}
+
+// Calculate consensus based on votes
+function calculateConsensus(proposal: any, voterType: 'synthiant' | 'human'): boolean {
+  const votes = voterType === 'synthiant' ? proposal.synthiantVotes : proposal.humanVotes
+  const totalVotes = Object.keys(votes).length
+  
+  if (totalVotes === 0) return false
+  
+  const approveVotes = Object.values(votes).filter(vote => vote === 'approve').length
+  const vetoVotes = Object.values(votes).filter(vote => vote === 'veto').length
+  
+  // Consensus requires 2/3 majority for approval, or any veto for rejection
+  if (vetoVotes > 0) return false
+  return approveVotes >= Math.ceil(totalVotes * 0.67)
+}
+
+// Update proposal state based on consensus
+function updateProposalState(proposal: any): string | undefined {
+  if (proposal.synthiantConsensus && proposal.humanConsensus) {
+    proposal.state = 'approved'
+    return 'Proposal approved by both synthiant and human consensus'
+  } else if (proposal.synthiantConsensus && !proposal.humanConsensus) {
+    proposal.state = 'pending'
+    return 'Waiting for human consensus'
+  } else if (!proposal.synthiantConsensus) {
+    proposal.state = 'vetoed'
+    return 'Proposal vetoed by synthiant consensus'
+  }
+  return undefined
+}
 
 export async function POST(request: NextRequest) {
+  if (!checkConsensusEnabled()) {
+    return NextResponse.json(
+      { error: 'Consensus system is disabled' },
+      { status: 503 }
+    )
+  }
+
   try {
-    const body = await request.json()
-    const { proposal_id, voter_id, voter_type, vote, reason } = body
+    const { proposalId, voterId, vote, rationale, voterType }: VoteRequest = await request.json()
 
-    if (!proposal_id || !voter_id || !voter_type || !vote) {
+    // Validate required fields
+    if (!proposalId || !voterId || !vote || !rationale || !voterType) {
       return NextResponse.json(
-        { error: 'Missing required fields: proposal_id, voter_id, voter_type, vote' },
+        { error: 'Missing required fields: proposalId, voterId, vote, rationale, voterType' },
         { status: 400 }
       )
     }
 
-    if (!['synthiant', 'human'].includes(voter_type)) {
-      return NextResponse.json(
-        { error: 'Invalid voter_type. Must be "synthiant" or "human"' },
-        { status: 400 }
-      )
-    }
-
+    // Validate vote value
     if (!['approve', 'veto'].includes(vote)) {
       return NextResponse.json(
-        { error: 'Invalid vote. Must be "approve" or "veto"' },
+        { error: 'Invalid vote value. Must be "approve" or "veto"' },
         { status: 400 }
       )
     }
 
-    // Create vote record
-    const voteRecord: Vote = {
-      id: `v-${voteCounter++}`,
-      proposal_id,
-      voter_id,
-      voter_type,
-      vote,
-      reason,
-      timestamp: new Date().toISOString()
+    // Validate voter type
+    if (!['synthiant', 'human'].includes(voterType)) {
+      return NextResponse.json(
+        { error: 'Invalid voter type. Must be "synthiant" or "human"' },
+        { status: 400 }
+      )
     }
 
-    votes.push(voteRecord)
-
-    // Update proposal state based on vote
-    // This would typically involve database transactions in production
-    const proposal = await fetch(`${request.nextUrl.origin}/api/consensus/proposals`).then(r => r.json())
-    const targetProposal = proposal.find((p: any) => p.id === proposal_id)
-    
-    if (!targetProposal) {
+    // Get proposal
+    const proposal = proposals.get(proposalId)
+    if (!proposal) {
       return NextResponse.json(
         { error: 'Proposal not found' },
         { status: 404 }
       )
     }
 
-    // Update proposal state logic
-    let newState = targetProposal.state
-    if (voter_type === 'synthiant') {
-      if (vote === 'approve') {
-        newState = 'synthiant_approved'
-      } else {
-        newState = 'synthiant_vetoed'
-      }
-    } else if (voter_type === 'human') {
-      if (vote === 'approve') {
-        newState = 'human_approved'
-      } else {
-        newState = 'human_vetoed'
-      }
+    // Check if proposal is still pending
+    if (proposal.state !== 'pending') {
+      return NextResponse.json(
+        { error: 'Cannot vote on proposal that is not pending' },
+        { status: 400 }
+      )
     }
 
-    // In production, this would update the database
-    // For now, we'll return the vote record and suggested state change
+    // Check if voter has already voted
+    const votes = voterType === 'synthiant' ? proposal.synthiantVotes : proposal.humanVotes
+    if (votes[voterId]) {
+      return NextResponse.json(
+        { error: 'Voter has already voted on this proposal' },
+        { status: 400 }
+      )
+    }
 
-    return NextResponse.json({
+    // Record the vote
+    votes[voterId] = vote
+    proposal.updatedAt = new Date().toISOString()
+
+    // Calculate consensus
+    if (voterType === 'synthiant') {
+      proposal.synthiantConsensus = calculateConsensus(proposal, 'synthiant')
+    } else {
+      proposal.humanConsensus = calculateConsensus(proposal, 'human')
+    }
+
+    // Update proposal state
+    const nextAction = updateProposalState(proposal)
+
+    // Save updated proposal
+    proposals.set(proposalId, proposal)
+
+    const response: VoteResponse = {
       success: true,
-      vote_id: voteRecord.id,
-      proposal_id,
-      new_state: newState,
-      message: `${voter_type} ${vote} recorded successfully`
-    }, {
-      status: 201,
+      proposalId,
+      vote,
+      voterId,
+      voterType,
+      rationale,
+      timestamp: new Date().toISOString(),
+      consensusReached: proposal.synthiantConsensus && proposal.humanConsensus,
+      nextAction
+    }
+
+    return NextResponse.json(response, {
+      status: 200,
       headers: {
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-        'x-content-type-options': 'nosniff',
-        'content-disposition': 'inline',
-        'access-control-allow-origin': '*'
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache',
+        'X-Proposal-State': proposal.state,
+        'X-Consensus-Reached': response.consensusReached.toString()
       }
     })
   } catch (error) {
+    console.error('Error processing vote:', error)
     return NextResponse.json(
-      { error: 'Failed to record vote' },
+      { error: 'Failed to process vote' },
       { status: 500 }
     )
   }

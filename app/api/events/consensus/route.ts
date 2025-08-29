@@ -103,17 +103,21 @@ function streamConsensusEvents(): ReadableStream<Uint8Array> {
       // Set up interval to send periodic updates
       const interval = setInterval(() => {
         try {
-          // Send heartbeat
-          const heartbeat = {
-            id: generateEventId(),
-            type: 'heartbeat',
-            timestamp: new Date().toISOString()
+          // Check if controller is still active
+          if (controller.desiredSize !== null) {
+            // Send heartbeat
+            const heartbeat = {
+              id: generateEventId(),
+              type: 'heartbeat',
+              timestamp: new Date().toISOString()
+            }
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(heartbeat)}\n\n`))
+          } else {
+            clearInterval(interval)
           }
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(heartbeat)}\n\n`))
         } catch (error) {
           console.error('Error sending heartbeat:', error)
           clearInterval(interval)
-          controller.close()
         }
       }, 30000) // Every 30 seconds
       

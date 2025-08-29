@@ -152,19 +152,23 @@ function streamAgentEvents(): ReadableStream<Uint8Array> {
       // Set up interval to send new agent events
       const interval = setInterval(() => {
         try {
-          // Generate new random agent events
-          const newEvents = generateAgentEvents()
-          const randomEvent = newEvents[Math.floor(Math.random() * newEvents.length)]
-          
-          // Update timestamp to current time
-          randomEvent.timestamp = new Date().toISOString()
-          randomEvent.id = generateEventId()
-          
-          controller.enqueue(encoder.encode(`data: ${JSON.stringify(randomEvent)}\n\n`))
+          // Check if controller is still active
+          if (controller.desiredSize !== null) {
+            // Generate new random agent events
+            const newEvents = generateAgentEvents()
+            const randomEvent = newEvents[Math.floor(Math.random() * newEvents.length)]
+            
+            // Update timestamp to current time
+            randomEvent.timestamp = new Date().toISOString()
+            randomEvent.id = generateEventId()
+            
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(randomEvent)}\n\n`))
+          } else {
+            clearInterval(interval)
+          }
         } catch (error) {
           console.error('Error sending agent event:', error)
           clearInterval(interval)
-          controller.close()
         }
       }, 15000) // Every 15 seconds
       

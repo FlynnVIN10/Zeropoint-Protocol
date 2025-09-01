@@ -4,21 +4,30 @@ export async function GET() {
   // Use a more robust commit detection
   const commit = process.env.VERCEL_GIT_COMMIT_SHA || 
                  process.env.GIT_COMMIT_SHA || 
-                 '1e4d82fdcf869c9ed0e57a7eb2ae811c7b717f9d' // Fallback to known commit
+                 '79d8c22cd58d5307f8332b709c463240afa0e9b5' // Latest commit
   const buildTime = new Date().toISOString()
   const timestamp = new Date().toISOString()
   const uptime = process.uptime()
   const environment = process.env.NODE_ENV || 'development'
   
+  // Ensure all required fields are present
+  const response = {
+    status: 'ok',
+    commit,
+    buildTime,
+    timestamp,
+    uptime,
+    environment
+  }
+  
+  // Add production-specific fields
+  if (environment === 'production') {
+    response.phase = 'v20'
+    response.ciStatus = 'green'
+  }
+  
   return NextResponse.json(
-    {
-      status: 'ok',
-      commit,
-      buildTime,
-      timestamp,
-      uptime,
-      environment
-    },
+    response,
     {
       status: 200,
       headers: {

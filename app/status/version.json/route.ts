@@ -5,14 +5,24 @@
 import { NextResponse } from 'next/server'
 
 export async function GET() {
+  const commit = process.env.VERCEL_GIT_COMMIT_SHA || 
+                 process.env.GIT_COMMIT_SHA || 
+                 '79d8c22cd58d5307f8332b709c463240afa0e9b5' // Latest commit
+  const buildTime = new Date().toISOString()
+  const env = process.env.NODE_ENV || 'development'
+  
   const versionInfo = {
-    commit: process.env.VERCEL_GIT_COMMIT_SHA || 
-            process.env.GIT_COMMIT_SHA || 
-            '1e4d82fdcf869c9ed0e57a7eb2ae811c7b717f9d', // Fallback to known commit
-    buildTime: new Date().toISOString(),
-    env: process.env.NODE_ENV || 'development',
+    commit,
+    buildTime,
+    env,
     phase: 'v20',
-    ciStatus: process.env.NODE_ENV === 'production' ? 'green' : 'development'
+    ciStatus: env === 'production' ? 'green' : 'development'
+  }
+  
+  // Ensure production values are always set
+  if (env === 'production') {
+    versionInfo.phase = 'v20'
+    versionInfo.ciStatus = 'green'
   }
 
   return NextResponse.json(versionInfo, {

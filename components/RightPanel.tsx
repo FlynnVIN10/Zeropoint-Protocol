@@ -46,12 +46,16 @@ interface EvidenceStatus {
   leaderboard_built: boolean
 }
 
-export default function RightPanel() {
+interface RightPanelProps {
+  initialTrainingData?: TrainingStatus | null
+}
+
+export default function RightPanel({ initialTrainingData }: RightPanelProps) {
   const [activeTab, setActiveTab] = useState<'training' | 'health' | 'evidence'>('training')
-  const [trainingStatus, setTrainingStatus] = useState<TrainingStatus | null>(null)
+  const [trainingStatus, setTrainingStatus] = useState<TrainingStatus | null>(initialTrainingData || null)
   const [healthStatus, setHealthStatus] = useState<HealthStatus | null>(null)
   const [evidenceStatus, setEvidenceStatus] = useState<EvidenceStatus | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(!initialTrainingData)
   const [testState, setTestState] = useState('initial')
 
   // Test useEffect to see if JavaScript is executing
@@ -76,6 +80,35 @@ export default function RightPanel() {
     }, 2000)
     
     return () => clearInterval(interval)
+  }, [])
+
+  // Immediate data fetch on mount
+  useEffect(() => {
+    const immediateFetch = async () => {
+      try {
+        console.log('RightPanel: Immediate fetch triggered')
+        const response = await fetch('/api/training/status')
+        if (response.ok) {
+          const data = await response.json()
+          console.log('RightPanel: Immediate fetch successful:', data)
+          setTrainingStatus(data)
+          setLoading(false)
+        }
+      } catch (error) {
+        console.error('RightPanel: Immediate fetch failed:', error)
+        setLoading(false)
+      }
+    }
+    
+    // Execute immediately
+    immediateFetch()
+  }, [])
+
+  // Immediate state update test
+  useEffect(() => {
+    // Force immediate state update to test if React is working
+    setTestState('immediate')
+    console.log('RightPanel: Immediate state update')
   }, [])
 
   // Fetch training status
@@ -187,7 +220,15 @@ export default function RightPanel() {
           </div>
         </div>
       ) : (
-        <div className="muted">Loading training status...</div>
+        <div>
+          <div className="muted">Loading training status...</div>
+          <div style={{fontSize: '10px', color: '#666', marginTop: '8px'}}>
+            <strong>Debug Info:</strong><br/>
+            Test State: {testState}<br/>
+            Loading: {loading.toString()}<br/>
+            Training Status: {trainingStatus ? 'Loaded' : 'Null'}
+          </div>
+        </div>
       )}
     </div>
   )

@@ -1,12 +1,25 @@
-HTTP/2 524 
-date: Mon, 01 Sep 2025 23:53:18 GMT
-content-type: text/plain; charset=UTF-8
-content-length: 15
-cache-control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
-expires: Thu, 01 Jan 1970 00:00:01 GMT
-referrer-policy: same-origin
-x-frame-options: SAMEORIGIN
+HTTP/2 308 
+date: Mon, 01 Sep 2025 23:54:54 GMT
+content-length: 0
+location: /status/ready
+access-control-allow-origin: *
+cache-control: public, max-age=300
+content-disposition: inline
+strict-transport-security: max-age=31536000; includeSubDomains; preload, max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-content-type-options: nosniff
+x-frame-options: DENY
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=kf%2F9AEgmh3VNVvzWlhOwTlJ6PNnnG%2BbjCDYRECbsur8jGdtMgmzq0jjbNF2RcbicsJrX7kc75PORhTkyY7YQlgtdnowdTQZqKFn6DaQwBLcSqbgl"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
-cf-ray: 9788ad3fce03395e-IAD
+cf-cache-status: DYNAMIC
+cf-ray: 9788b20cec2b58a8-IAD
+alt-svc: h3=":443"; ma=86400
 
-error code: 524

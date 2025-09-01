@@ -6,11 +6,13 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   const versionInfo = {
-    commit: process.env.VERCEL_GIT_COMMIT_SHA || 'dev-local',
+    commit: process.env.VERCEL_GIT_COMMIT_SHA || 
+            process.env.GIT_COMMIT_SHA || 
+            '1e4d82fdcf869c9ed0e57a7eb2ae811c7b717f9d', // Fallback to known commit
     buildTime: new Date().toISOString(),
     env: process.env.NODE_ENV || 'development',
     phase: 'v20',
-    ciStatus: 'development'
+    ciStatus: process.env.NODE_ENV === 'production' ? 'green' : 'development'
   }
 
   return NextResponse.json(versionInfo, {

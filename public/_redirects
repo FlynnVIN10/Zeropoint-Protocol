@@ -8,8 +8,10 @@
 # API redirects - Allow static files to be served first
 # /api/* /api/:splat 200  # Commented out to allow static API files
 
-# Force training status API to serve static file
+# Force API endpoints to serve static files
 /api/training/status /api/training/status.json 200
+/api/healthz /api/healthz.json 200
+/api/readyz /api/readyz.json 200
 
 # Status redirects
 /status/* /status/:splat 200

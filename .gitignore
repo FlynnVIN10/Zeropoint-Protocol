@@ -42,6 +42,10 @@ htmlcov/
 *.tsbuildinfo
 tsconfig.build.tsbuildinfo
 
+# Next.js build cache
+.next/
+out/
+
 # IDE files
 .vscode/
 .idea/

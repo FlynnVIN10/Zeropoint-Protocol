@@ -3,6 +3,26 @@ import { featureFlags } from '../../../../lib/feature-flags'
 
 export const dynamic = 'force-dynamic'
 
+interface ConsensusProposal {
+  id: string
+  prompt: string
+  rationale: string
+  synthiantId: string
+  state: 'pending' | 'approved' | 'vetoed'
+  synthiantVotes: { [synthiantId: string]: 'approve' | 'veto' }
+  humanVotes: { [userId: string]: 'approve' | 'veto' }
+  synthiantConsensus: boolean
+  humanConsensus: boolean
+  createdAt: string
+  updatedAt: string
+  evidence: string[]
+  trainingSignal: {
+    dataset: string
+    expectedOutcome: string
+    confidence: number
+  }
+}
+
 interface ConsensusHistoryItem {
   id: string
   proposalId: string
@@ -44,7 +64,7 @@ interface HistoryResponse {
 // In-memory storage for proposals (shared with other consensus routes)
 // In production, this would be a database
 declare global {
-  var consensusProposals: Map<string, any>
+  var consensusProposals: Map<string, ConsensusProposal>
 }
 
 if (!global.consensusProposals) {
@@ -134,6 +154,7 @@ export async function GET(request: NextRequest) {
       const resolutionTime = calculateResolutionTime(proposal.createdAt, proposal.updatedAt)
       return {
         ...proposal,
+        proposalId: proposal.id, // Add the missing proposalId field
         resolvedAt: proposal.state !== 'pending' ? proposal.updatedAt : undefined,
         resolutionTime
       }

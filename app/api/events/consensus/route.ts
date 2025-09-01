@@ -3,6 +3,26 @@ import { featureFlags } from '../../../../lib/feature-flags'
 
 export const dynamic = 'force-dynamic'
 
+interface ConsensusProposal {
+  id: string
+  prompt: string
+  rationale: string
+  synthiantId: string
+  state: 'pending' | 'approved' | 'vetoed'
+  synthiantVotes: { [synthiantId: string]: 'approve' | 'veto' }
+  humanVotes: { [userId: string]: 'approve' | 'veto' }
+  synthiantConsensus: boolean
+  humanConsensus: boolean
+  createdAt: string
+  updatedAt: string
+  evidence: string[]
+  trainingSignal: {
+    dataset: string
+    expectedOutcome: string
+    confidence: number
+  }
+}
+
 interface ConsensusEvent {
   id: string
   type: 'proposal_created' | 'synthiant_vote' | 'human_vote' | 'consensus_reached' | 'proposal_resolved'
@@ -24,7 +44,7 @@ interface ConsensusEvent {
 
 // In-memory storage for proposals (shared with consensus routes)
 declare global {
-  var consensusProposals: Map<string, any>
+  var consensusProposals: Map<string, ConsensusProposal>
 }
 
 if (!global.consensusProposals) {
@@ -176,7 +196,7 @@ export async function GET(request: NextRequest) {
 
 // Helper function to broadcast events to all connected clients
 // This would be implemented with a proper event system in production
-export async function broadcastEvent(event: ConsensusEvent) {
+async function broadcastEvent(event: ConsensusEvent) {
   // In production, this would notify all connected SSE clients
   console.log('Broadcasting consensus event:', event)
 }

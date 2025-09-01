@@ -220,7 +220,7 @@ export async function GET(request: NextRequest) {
 
 // Helper function to broadcast agent events to all connected clients
 // This would be implemented with a proper event system in production
-export async function broadcastAgentEvent(event: AgentEvent) {
+async function broadcastAgentEvent(event: AgentEvent) {
   // In production, this would notify all connected SSE clients
   console.log('Broadcasting agent event:', event)
 }

@@ -3,6 +3,26 @@ import { featureFlags } from '../../../../lib/feature-flags'
 
 export const dynamic = 'force-dynamic'
 
+interface ConsensusProposal {
+  id: string
+  prompt: string
+  rationale: string
+  synthiantId: string
+  state: 'pending' | 'approved' | 'vetoed'
+  synthiantVotes: { [synthiantId: string]: 'approve' | 'veto' }
+  humanVotes: { [userId: string]: 'approve' | 'veto' }
+  synthiantConsensus: boolean
+  humanConsensus: boolean
+  createdAt: string
+  updatedAt: string
+  evidence: string[]
+  trainingSignal: {
+    dataset: string
+    expectedOutcome: string
+    confidence: number
+  }
+}
+
 interface VoteRequest {
   proposalId: string
   voterId: string
@@ -26,7 +46,7 @@ interface VoteResponse {
 // In-memory storage for proposals (shared with proposals route)
 // In production, this would be a database
 declare global {
-  var consensusProposals: Map<string, any>
+  var consensusProposals: Map<string, ConsensusProposal>
 }
 
 if (!global.consensusProposals) {
@@ -183,13 +203,44 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url)
     const proposal_id = searchParams.get('proposal_id')
     
-    let filteredVotes = votes
-    
     if (proposal_id) {
-      filteredVotes = votes.filter(v => v.proposal_id === proposal_id)
+      const proposal = proposals.get(proposal_id)
+      if (!proposal) {
+        return NextResponse.json(
+          { error: 'Proposal not found' },
+          { status: 404 }
+        )
+      }
+      
+      const allVotes = {
+        synthiantVotes: proposal.synthiantVotes,
+        humanVotes: proposal.humanVotes,
+        totalVotes: Object.keys(proposal.synthiantVotes).length + Object.keys(proposal.humanVotes).length
+      }
+      
+      return NextResponse.json(allVotes, {
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff',
+          'content-disposition': 'inline',
+          'access-control-allow-origin': '*'
+        }
+      })
     }
-
-    return NextResponse.json(filteredVotes, {
+    
+    // Return all proposals with their vote counts
+    const allProposals = Array.from(proposals.values()).map(proposal => ({
+      id: proposal.id,
+      prompt: proposal.prompt,
+      state: proposal.state,
+      synthiantVoteCount: Object.keys(proposal.synthiantVotes).length,
+      humanVoteCount: Object.keys(proposal.humanVotes).length,
+      createdAt: proposal.createdAt,
+      updatedAt: proposal.updatedAt
+    }))
+    
+    return NextResponse.json(allProposals, {
       headers: {
         'content-type': 'application/json; charset=utf-8',
         'cache-control': 'no-store',

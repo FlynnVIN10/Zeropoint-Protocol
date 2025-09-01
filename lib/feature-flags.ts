@@ -132,7 +132,7 @@ class FeatureFlagManager {
 export const featureFlags = new FeatureFlagManager()
 
 // Export types
-export type { FeatureFlags }
+// FeatureFlags is already exported from the class definition
 
 // Export convenience functions
 export const isQuantumEnabled = () => featureFlags.isEnabled('QUANTUM_ENABLED')

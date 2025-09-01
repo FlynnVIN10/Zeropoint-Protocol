@@ -1,8 +1,8 @@
 {
   "/api/healthz/route": "app/api/healthz/route.js",
-  "/api/readyz/route": "app/api/readyz/route.js",
   "/status/version.json/route": "app/status/version.json/route.js",
+  "/api/readyz/route": "app/api/readyz/route.js",
+  "/api/consensus/proposals/route": "app/api/consensus/proposals/route.js",
   "/api/training/status/route": "app/api/training/status/route.js",
-  "/not-found": "app/not-found.js",
   "/(spa)/page": "app/(spa)/page.js"
 }

@@ -136,6 +136,82 @@ export class ProviderRouter {
     }
   }
 
+  async executeQuery(query: string, maxTokens: number = 1024): Promise<{
+    response: string
+    routing: { provider: string; latency: number }
+    telemetry: { timestamp: string; success: boolean }
+  }> {
+    const healthyProviders = await this.getHealthyProviders()
+    
+    if (healthyProviders.length === 0) {
+      throw new Error('No healthy providers available')
+    }
+    
+    const startTime = Date.now()
+    let selectedProvider = 'unknown'
+    
+    try {
+      const provider = this.providers.get(healthyProviders[0])
+      if (provider) {
+        selectedProvider = healthyProviders[0]
+        const response = await provider.generateText({
+          prompt: query,
+          maxTokens,
+          temperature: 0.7
+        })
+        
+        const latency = Date.now() - startTime
+        
+        return {
+          response: response.text || 'No response generated',
+          routing: {
+            provider: selectedProvider,
+            latency
+          },
+          telemetry: {
+            timestamp: new Date().toISOString(),
+            success: true
+          }
+        }
+      }
+    } catch (error) {
+      // If first provider fails, try others
+      for (const providerName of healthyProviders.slice(1)) {
+        try {
+          const provider = this.providers.get(providerName)
+          if (provider) {
+            selectedProvider = providerName
+            const response = await provider.generateText({
+              prompt: query,
+              maxTokens,
+              temperature: 0.7
+            })
+            
+            const latency = Date.now() - startTime
+            
+            return {
+              response: response.text || 'No response generated',
+              routing: {
+                provider: selectedProvider,
+                latency
+              },
+              telemetry: {
+                timestamp: new Date().toISOString(),
+                success: true
+              }
+            }
+          }
+        } catch (fallbackError) {
+          console.warn(`Provider ${providerName} fallback failed:`, fallbackError)
+        }
+      }
+      
+      throw new Error(`All providers failed: ${(error as Error).message}`)
+    }
+    
+    throw new Error('No providers available')
+  }
+
   async streamRequest(request: ProviderRequest): Promise<ReadableStream<string>> {
     const healthyProviders = await this.getHealthyProviders()
     
@@ -251,4 +327,7 @@ export class EnhancedProviderRouter extends ProviderRouter {
   }
 }
 
-export default EnhancedProviderRouter
+// Create and export a default instance
+const providerRouter = new EnhancedProviderRouter()
+export default providerRouter
+export { providerRouter }

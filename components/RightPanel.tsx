@@ -58,6 +58,9 @@ export default function RightPanel({ initialTrainingData }: RightPanelProps) {
   const [loading, setLoading] = useState(!initialTrainingData)
   const [testState, setTestState] = useState('initial')
 
+  // Error boundary state
+  const [error, setError] = useState<string | null>(null)
+
   // Test useEffect to see if JavaScript is executing
   useEffect(() => {
     console.log('RightPanel: Component mounted')
@@ -82,27 +85,51 @@ export default function RightPanel({ initialTrainingData }: RightPanelProps) {
     return () => clearInterval(interval)
   }, [])
 
+  // Error boundary - catch any errors and display them
+  if (error) {
+    return (
+      <div className="right-panel error-boundary" style={{padding: '20px', color: '#ff6b6b'}}>
+        <h3>Error Loading Training Data</h3>
+        <p>{error}</p>
+        <button onClick={() => setError(null)} style={{padding: '8px 16px', background: '#333', color: '#fff', border: 'none', borderRadius: '4px'}}>
+          Retry
+        </button>
+      </div>
+    )
+  }
+
   // Immediate data fetch on mount
   useEffect(() => {
     const immediateFetch = async () => {
       try {
         console.log('RightPanel: Immediate fetch triggered')
-        const response = await fetch('/api/training/status')
+        // Use the working static JSON endpoint
+        const response = await fetch('/api/training/status.json')
         if (response.ok) {
           const data = await response.json()
           console.log('RightPanel: Immediate fetch successful:', data)
           setTrainingStatus(data)
           setLoading(false)
+          setError(null) // Clear any previous errors
+        } else {
+          console.error('RightPanel: Fetch failed with status:', response.status)
+          setError(`Failed to fetch training data: ${response.status} ${response.statusText}`)
+          setLoading(false)
         }
       } catch (error) {
         console.error('RightPanel: Immediate fetch failed:', error)
+        setError(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`)
         setLoading(false)
       }
     }
-    
-    // Execute immediately
-    immediateFetch()
-  }, [])
+
+    // Only fetch if we don't have initial data
+    if (!initialTrainingData) {
+      immediateFetch()
+    } else {
+      setLoading(false)
+    }
+  }, [initialTrainingData])
 
   // Immediate state update test
   useEffect(() => {

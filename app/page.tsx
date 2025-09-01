@@ -7,14 +7,19 @@ import RightPanel from '../components/RightPanel'
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
 
-// Server-side data fetching
+// Server-side data fetching - Use the working JSON endpoint
 async function getTrainingData() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/training/status`, {
+    // Use the static JSON endpoint that's working
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/training/status.json`, {
       cache: 'no-store'
     })
     if (response.ok) {
-      return await response.json()
+      const data = await response.json()
+      console.log('Training data fetched successfully:', data)
+      return data
+    } else {
+      console.error('Failed to fetch training data:', response.status, response.statusText)
     }
   } catch (error) {
     console.error('Failed to fetch training data:', error)
@@ -41,9 +46,13 @@ export default async function HomePage() {
       {/* Debug info */}
       <div style={{position: 'fixed', bottom: '10px', right: '10px', background: '#333', color: '#fff', padding: '8px', fontSize: '12px', zIndex: 1000}}>
         Debug: Page rendered at {new Date().toISOString()}
-        {trainingData && (
+        {trainingData ? (
           <div style={{marginTop: '4px', fontSize: '10px'}}>
-            Training Data: {trainingData.active_runs} active runs
+            Training Data: {trainingData.active_runs} active runs, {trainingData.completed_today} completed today
+          </div>
+        ) : (
+          <div style={{marginTop: '4px', fontSize: '10px', color: '#ff6b6b'}}>
+            Training Data: Failed to load
           </div>
         )}
       </div>

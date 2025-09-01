@@ -167,11 +167,12 @@ export default function RightPanel({ initialTrainingData }: RightPanelProps) {
   useEffect(() => {
     const fetchHealthStatus = async () => {
       try {
+        // Use the working endpoints that return correct data structure
         const [healthz, readyz, version, training, petals, wondercraft] = await Promise.all([
-          fetch('/api/healthz').then(r => r.ok),
-          fetch('/api/readyz').then(r => r.ok),
+          fetch('/api/healthz.json').then(r => r.ok), // Use static JSON file
+          fetch('/api/readyz.json').then(r => r.ok),  // Use static JSON file
           fetch('/status/version.json').then(r => r.ok),
-          fetch('/api/training/status').then(r => r.ok),
+          fetch('/api/training/status.json').then(r => r.ok), // Use working training endpoint
           fetch('/petals/status.json').then(r => r.ok),
           fetch('/wondercraft/status.json').then(r => r.ok)
         ])

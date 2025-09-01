@@ -69,6 +69,13 @@ export default function RightPanel() {
     setTimeout(() => {
       setLoading(false)
     }, 500)
+    
+    // Force a re-render to test if state updates work
+    const interval = setInterval(() => {
+      setTestState(prev => prev === 'updated' ? 'interval' : 'updated')
+    }, 2000)
+    
+    return () => clearInterval(interval)
   }, [])
 
   // Fetch training status

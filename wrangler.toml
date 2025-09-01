@@ -2,7 +2,7 @@ name = "zeropoint-protocol"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Cloudflare Pages configuration
+# Cloudflare Pages configuration - Static deployment
 pages_build_output_dir = "public"
 
 # Remove site section for Pages projects

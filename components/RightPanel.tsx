@@ -64,6 +64,11 @@ export default function RightPanel() {
       setTestState('updated')
       console.log('RightPanel: State updated')
     }, 1000)
+    
+    // Set loading to false after a short delay to ensure component renders
+    setTimeout(() => {
+      setLoading(false)
+    }, 500)
   }, [])
 
   // Fetch training status

@@ -19,6 +19,11 @@ export default function HomePage() {
       </div>
       
       <BottomTicker />
+      
+      {/* Debug info */}
+      <div style={{position: 'fixed', bottom: '10px', right: '10px', background: '#333', color: '#fff', padding: '8px', fontSize: '12px', zIndex: 1000}}>
+        Debug: Page rendered at {new Date().toISOString()}
+      </div>
     </div>
   )
 }

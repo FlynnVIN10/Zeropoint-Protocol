@@ -11,7 +11,7 @@ export async function GET() {
   const environment = process.env.NODE_ENV || 'development'
   
   // Ensure all required fields are present
-  const response = {
+  const response: any = {
     status: 'ok',
     commit,
     buildTime,

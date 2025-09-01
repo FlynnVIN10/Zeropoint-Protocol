@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url
+cache-control: no-store
+content-disposition: inline
+content-type: application/json; charset=utf-8
+x-content-type-options: nosniff
+Date: Mon, 01 Sep 2025 18:46:19 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
+
+{"status":"ok","commit":"e06619cb","buildTime":"2025-09-01T18:46:19.399Z","timestamp":"2025-09-01T18:46:19.399Z","uptime":7209.091919211,"environment":"development","phase":"v20","ciStatus":"development"}

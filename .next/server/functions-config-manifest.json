@@ -1,0 +1,1 @@
+{"version":1,"functions":{"/api/consensus/history":{},"/api/consensus/vote":{},"/api/consensus/proposals":{},"/api/events/agents":{},"/api/events/consensus":{},"/api/events/synthiant":{},"/api/providers/petals/stream":{},"/api/providers/tinygrad/stream":{},"/api/providers/wondercraft/stream":{},"/":{}}}

@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server'
 export async function GET() {
   const commit = process.env.VERCEL_GIT_COMMIT_SHA || 
                  process.env.GIT_COMMIT_SHA || 
-                 '79d8c22cd58d5307f8332b709c463240afa0e9b5' // Latest commit
+                 '730e99c5f48c7db769706d652c83fa146b25ce99' // Current commit
   const buildTime = new Date().toISOString()
   const env = process.env.NODE_ENV || 'development'
   

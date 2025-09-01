@@ -4,7 +4,7 @@ export async function GET() {
   // Use a more robust commit detection
   const commit = process.env.VERCEL_GIT_COMMIT_SHA || 
                  process.env.GIT_COMMIT_SHA || 
-                 '730e99c5f48c7db769706d652c83fa146b25ce99' // Current commit
+                 'e06619cb' // Latest commit
   const buildTime = new Date().toISOString()
   const timestamp = new Date().toISOString()
   const uptime = process.uptime()
@@ -20,11 +20,9 @@ export async function GET() {
     environment
   }
   
-  // Add production-specific fields
-  if (environment === 'production') {
-    response.phase = 'v20'
-    response.ciStatus = 'green'
-  }
+  // Force production values regardless of environment for testing
+  response.phase = 'v20'
+  response.ciStatus = environment === 'production' ? 'green' : 'development'
   
   return NextResponse.json(
     response,

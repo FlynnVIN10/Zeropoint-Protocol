@@ -1,26 +1,26 @@
 {
-  "generatedAt": "2025-09-01T18:03:49.243Z",
+  "generatedAt": "2025-09-01T18:08:50.240Z",
   "results": [
     {
       "target": "api_readyz",
       "url": "https://zeropointprotocol.ai/api/readyz",
       "ok": true,
       "status": 200,
-      "latencyMs": 15
+      "latencyMs": 20
     },
     {
       "target": "api_healthz",
       "url": "https://zeropointprotocol.ai/api/healthz",
       "ok": true,
       "status": 200,
-      "latencyMs": 81
+      "latencyMs": 96
     },
     {
       "target": "status_version_json",
       "url": "https://zeropointprotocol.ai/status/version.json",
       "ok": true,
       "status": 200,
-      "latencyMs": 739
+      "latencyMs": 166
     }
   ],
   "fastest": {
@@ -28,6 +28,6 @@
     "url": "https://zeropointprotocol.ai/api/readyz",
     "ok": true,
     "status": 200,
-    "latencyMs": 15
+    "latencyMs": 20
   }
 }

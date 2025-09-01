@@ -5,8 +5,8 @@
 /evidence/phase5 /evidence/phase5/ 308
 /evidence/v19 /evidence/v19/ 308
 
-# API redirects
-/api/* /api/:splat 200
+# API redirects - Allow static files to be served first
+# /api/* /api/:splat 200  # Commented out to allow static API files
 
 # Status redirects
 /status/* /status/:splat 200

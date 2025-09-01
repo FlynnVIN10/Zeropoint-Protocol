@@ -1,25 +1,12 @@
-HTTP/2 308 
-date: Mon, 01 Sep 2025 22:05:16 GMT
-content-length: 0
-location: /status/ready
-access-control-allow-origin: *
-cache-control: public, max-age=300
-content-disposition: inline
-strict-transport-security: max-age=31536000; includeSubDomains; preload, max-age=31536000; includeSubDomains; preload
-content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
-content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
-permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
-permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
-referrer-policy: strict-origin-when-cross-origin
-referrer-policy: strict-origin-when-cross-origin
-x-content-type-options: nosniff
-x-content-type-options: nosniff
-x-frame-options: DENY
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=XMTrdGjILgOEQwOF%2F6WTEC4Ek24kv9FkjRq9xTdOA2%2BRS6a%2BCUtZ2EdsHjGHgWQCdDd9AYcJMMhcGZ4O489%2BJwYt8xqVO0xhNpkWZXJHH1E4DPf2"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+HTTP/2 524 
+date: Mon, 01 Sep 2025 23:53:18 GMT
+content-type: text/plain; charset=UTF-8
+content-length: 15
+cache-control: private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0
+expires: Thu, 01 Jan 1970 00:00:01 GMT
+referrer-policy: same-origin
+x-frame-options: SAMEORIGIN
 server: cloudflare
-cf-cache-status: DYNAMIC
-cf-ray: 97881170ae1713fa-IAD
-alt-svc: h3=":443"; ma=86400
+cf-ray: 9788ad3fce03395e-IAD
 
+error code: 524

@@ -1,22 +1,25 @@
 HTTP/2 200 
-date: Tue, 02 Sep 2025 01:20:32 GMT
+date: Tue, 02 Sep 2025 01:27:23 GMT
 content-type: text/html; charset=utf-8
+cf-cache-status: DYNAMIC
+server: cloudflare
+vary: Accept-Encoding
 access-control-allow-origin: *
 cache-control: public, max-age=300
 content-disposition: inline
+nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
 strict-transport-security: max-age=31536000; includeSubDomains; preload, max-age=31536000; includeSubDomains; preload
 content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
 permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
 referrer-policy: strict-origin-when-cross-origin
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=jDO%2F5ZgsNMrl1UqB7GIHXHkKFEhrwzUt2ZGhQkNqPSdNuZviXm78TDYiu90rdR86E%2BbGMDp%2Bbctxyw40yMXSVTzfVE3AB6IFOm%2F7M9lRuX9ngURX"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-cache-status: DYNAMIC
-cf-ray: 97892f792fbbf24a-IAD
-alt-svc: h3=":443"; ma=86400
+report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=KMXP76uJNwBwqombiI61%2BAov2PxvP4XeNgIncR9%2BFo%2BqvVdgcqWErofeQcVTPkP%2BGdWoi1eHLFSQWkcAm2yWvBr1KrEdEhRw40cQacFU%2Fe78aelTmgxGutIO85n6XK0T1d234caZ9g%3D%3D"}],"group":"cf-nel","max_age":604800}
+cf-ray: 978939827fed6d20-LAX
 
 <!DOCTYPE html>
 <html lang="en">

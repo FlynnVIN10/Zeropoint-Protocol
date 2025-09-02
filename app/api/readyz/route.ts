@@ -14,6 +14,8 @@ export async function GET() {
       commit,
       buildTime,
       timestamp,
+      phase: 'stage0',
+      ciStatus: environment === 'production' ? 'green' : 'development',
       services: {
         database: 'healthy',
         cache: 'healthy',

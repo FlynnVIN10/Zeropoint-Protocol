@@ -1,4 +1,10 @@
-export const onRequest = async (ctx: any) => {
+type Env = {
+  CF_PAGES_COMMIT_SHA?: string;
+};
+
+type PagesFunction<Env = unknown> = (ctx: { env: Env }) => Response | Promise<Response>;
+
+export const onRequest: PagesFunction<Env> = async (ctx) => {
   try {
     const body = JSON.stringify({
       status: "ok",
@@ -6,7 +12,7 @@ export const onRequest = async (ctx: any) => {
       commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
       buildTime: new Date().toISOString(),
       service: "zeropoint-protocol",
-      phase: "5",
+      phase: "stage0",
       version: "1.0.0",
       ciStatus: "green",
       timestamp: new Date().toISOString(),
@@ -32,7 +38,7 @@ export const onRequest = async (ctx: any) => {
       uptime: 0, 
       commit: "unknown",
       buildTime: new Date().toISOString(),
-      phase: "5",
+      phase: "stage0",
       ciStatus: "red",
       timestamp: new Date().toISOString(),
       environment: "production"

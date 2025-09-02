@@ -21,7 +21,7 @@ export async function GET() {
   }
   
   // Force production values regardless of environment for testing
-  response.phase = 'v20'
+  response.phase = 'stage0'
   response.ciStatus = environment === 'production' ? 'green' : 'development'
   
   return NextResponse.json(

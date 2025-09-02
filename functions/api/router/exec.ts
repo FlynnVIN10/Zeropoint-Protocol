@@ -160,11 +160,15 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
 
 		const env = ctx.env || {} as Env;
 
-		// Preferred Synthient routing
+		// Preferred Synthient routing (use internal proxies if env URLs not present)
+		const petalsUrl = env.PETALS_EXEC_URL || new URL('/api/providers/petals/exec', ctx.request.url).toString();
+		const wonderUrl = env.WONDERCRAFT_EXEC_URL || new URL('/api/providers/wondercraft/exec', ctx.request.url).toString();
+		const tinyUrl = env.TINYGRAD_EXEC_URL || new URL('/api/providers/tinygrad/exec', ctx.request.url).toString();
+
 		const synthientCandidates: Array<{name: string; url?: string; token?: string}> = [];
-		if (!provider || provider === 'petals') synthientCandidates.push({ name: 'petals', url: env.PETALS_EXEC_URL, token: env.PETALS_TOKEN });
-		if (!provider || provider === 'wondercraft') synthientCandidates.push({ name: 'wondercraft', url: env.WONDERCRAFT_EXEC_URL, token: env.WONDERCRAFT_TOKEN });
-		if (!provider || provider === 'tinygrad') synthientCandidates.push({ name: 'tinygrad', url: env.TINYGRAD_EXEC_URL, token: env.TINYGRAD_TOKEN });
+		if (!provider || provider === 'petals') synthientCandidates.push({ name: 'petals', url: petalsUrl, token: env.PETALS_TOKEN });
+		if (!provider || provider === 'wondercraft') synthientCandidates.push({ name: 'wondercraft', url: wonderUrl, token: env.WONDERCRAFT_TOKEN });
+		if (!provider || provider === 'tinygrad') synthientCandidates.push({ name: 'tinygrad', url: tinyUrl, token: env.TINYGRAD_TOKEN });
 
 		for (const cand of synthientCandidates) {
 			if (!cand.url) continue;

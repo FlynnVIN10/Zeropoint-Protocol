@@ -141,13 +141,18 @@
       <aside class="right-panel">
         <h3 style="margin-top:0">Training</h3>
         <dl>
-          <div><dt class="muted">Run ID</dt><dd id="ts-run" class="font-mono"></dd></div>
-          <div><dt class="muted">Epoch</dt><dd id="ts-epoch" class="font-mono"></dd></div>
-          <div><dt class="muted">Step</dt><dd id="ts-step" class="font-mono"></dd></div>
-          <div><dt class="muted">Loss</dt><dd id="ts-loss" class="font-mono"></dd></div>
+          <div><dt class="muted">Active Runs</dt><dd id="ts-active-runs" class="font-mono"></dd></div>
+          <div><dt class="muted">Completed Today</dt><dd id="ts-completed-today" class="font-mono"></dd></div>
+          <div><dt class="muted">Total Runs</dt><dd id="ts-total-runs" class="font-mono"></dd></div>
+          <div><dt class="muted">Last Run Model</dt><dd id="ts-last-model" class="font-mono"></dd></div>
+          <div><dt class="muted">Last Run Accuracy</dt><dd id="ts-last-accuracy" class="font-mono"></dd></div>
+          <div><dt class="muted">Last Run Loss</dt><dd id="ts-last-loss" class="font-mono"></dd></div>
           <div><dt class="muted">Commit</dt><dd id="ts-commit" class="font-mono"></dd></div>
-          <div><dt class="muted">Timestamp</dt><dd id="ts-ts" class="font-mono"></dd></div>
+          <div><dt class="muted">Last Update</dt><dd id="ts-timestamp" class="font-mono"></dd></div>
         </dl>
+        
+        <h4 style="margin-top:16px;margin-bottom:8px;color:#6e00ff">Leaderboard</h4>
+        <div id="ts-leaderboard" style="font-size:0.9em;"></div>
       </aside>
     </div>
     
@@ -220,19 +225,51 @@
         const r = await fetch('/api/training/status', { cache: 'no-store' });
         if (!r.ok) throw new Error(String(r.status));
         const d = await r.json();
-        document.getElementById('ts-run').textContent = d.run_id || 'No data';
-        document.getElementById('ts-epoch').textContent = d.epoch ?? '';
-        document.getElementById('ts-step').textContent = d.step ?? '';
-        document.getElementById('ts-loss').textContent = (d.metrics && d.metrics.loss) || d.loss || '';
-        document.getElementById('ts-commit').textContent = d.commit || '';
-        document.getElementById('ts-ts').textContent = d.ended_at || d.started_at || d.ts || '';
+        
+        // Update training metrics
+        // Update training metrics
+        document.getElementById('ts-active-runs').textContent = d.active_runs || '0';
+        document.getElementById('ts-completed-today').textContent = d.completed_today || '0';
+        document.getElementById('ts-total-runs').textContent = d.total_runs || '0';
+        
+        // Update last run details
+        if (d.last_run) {
+          document.getElementById('ts-last-model').textContent = d.last_run.model || 'N/A';
+          document.getElementById('ts-last-accuracy').textContent = d.last_run.metrics?.accuracy ? 
+            (d.last_run.metrics.accuracy * 100).toFixed(1) + '%' : 'N/A';
+          document.getElementById('ts-last-loss').textContent = d.last_run.metrics?.loss ? 
+            d.last_run.metrics.loss.toFixed(4) : 'N/A';
+        } else {
+          document.getElementById('ts-last-model').textContent = 'N/A';
+          document.getElementById('ts-last-accuracy').textContent = 'N/A';
+          document.getElementById('ts-last-loss').textContent = 'N/A';
+        }
+        
+        document.getElementById('ts-commit').textContent = d.commit || 'N/A';
+        document.getElementById('ts-timestamp').textContent = d.timestamp ? 
+          new Date(d.timestamp).toLocaleString() : 'N/A';
+
+        // Update leaderboard
+        const leaderboardDiv = document.getElementById('ts-leaderboard');
+        leaderboardDiv.innerHTML = ''; // Clear previous content
+        if (d.leaderboard && d.leaderboard.length > 0) {
+          leaderboardDiv.innerHTML = '<strong>Top Models:</strong><br>';
+          d.leaderboard.forEach(item => {
+            leaderboardDiv.innerHTML += `#${item.rank} ${item.model} (${(item.accuracy * 100).toFixed(1)}%) - ${item.runs} runs<br>`;
+          });
+        } else {
+          leaderboardDiv.textContent = 'No leaderboard data available.';
+        }
       } catch (e) {
-        document.getElementById('ts-run').textContent = 'Error';
-        document.getElementById('ts-epoch').textContent = '';
-        document.getElementById('ts-step').textContent = '';
-        document.getElementById('ts-loss').textContent = '';
+        document.getElementById('ts-active-runs').textContent = 'Error';
+        document.getElementById('ts-completed-today').textContent = '';
+        document.getElementById('ts-total-runs').textContent = '';
+        document.getElementById('ts-last-model').textContent = '';
+        document.getElementById('ts-last-accuracy').textContent = '';
+        document.getElementById('ts-last-loss').textContent = '';
         document.getElementById('ts-commit').textContent = '';
-        document.getElementById('ts-ts').textContent = '';
+        document.getElementById('ts-timestamp').textContent = '';
+        document.getElementById('ts-leaderboard').textContent = 'Error loading leaderboard';
       }
     }
     

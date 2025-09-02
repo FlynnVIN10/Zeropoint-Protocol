@@ -275,11 +275,34 @@
       }
     }
     
+    // Test if JavaScript is running
+    console.log('JavaScript loaded successfully');
+    
+    // Verify DOM elements exist
+    const activeRunsEl = document.getElementById('ts-active-runs');
+    if (activeRunsEl) {
+      activeRunsEl.textContent = 'Loading...';
+      console.log('DOM elements found successfully');
+    } else {
+      console.error('DOM element ts-active-runs not found!');
+    }
+    
     // Load training data on page load
-    loadTraining();
+    try {
+      loadTraining();
+    } catch (error) {
+      console.error('Error calling loadTraining:', error);
+      document.getElementById('ts-active-runs').textContent = 'JS Error: ' + error.message;
+    }
     
     // Refresh training data every 30 seconds
-    setInterval(loadTraining, 30000);
+    setInterval(() => {
+      try {
+        loadTraining();
+      } catch (error) {
+        console.error('Error in training interval:', error);
+      }
+    }, 30000);
   </script>
 </body>
 </html>

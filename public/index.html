@@ -120,7 +120,7 @@
     <div class="panel-container">
       <aside class="left-panel">
         <h3 style="margin-top:0">Consensus Queue</h3>
-        <div id="consensus-queue" class="muted">Synthiant proposals will appear here.</div>
+        <div id="consensus-queue" class="muted">Synthient proposals will appear here.</div>
       </aside>
       
       <main class="center-panel">
@@ -176,10 +176,10 @@
       });
     } catch {}
     try {
-      const bottom = new EventSource('/api/events/synthiant');
+              const bottom = new EventSource('/api/events/synthient');
       bottom.addEventListener('tick', (e) => {
         const d = JSON.parse(e.data);
-        marquee(document.getElementById('bottom-ticker'), `[synthiant] ${d.msg} #${d.seq} ${d.ts}`);
+        marquee(document.getElementById('bottom-ticker'), `[synthient] ${d.msg} #${d.seq} ${d.ts}`);
       });
     } catch {}
 

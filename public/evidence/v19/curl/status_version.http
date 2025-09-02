@@ -1,5 +1,5 @@
 HTTP/2 200 
-date: Tue, 02 Sep 2025 00:49:01 GMT
+date: Tue, 02 Sep 2025 01:09:44 GMT
 content-type: text/html; charset=utf-8
 access-control-allow-origin: *
 cache-control: public, max-age=300
@@ -15,11 +15,11 @@ x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=anHu2hNuaZLqGIeNzIqPub%2F0J%2Fcdtou3vcEs7awWlqSzoD%2FrQzNF%2BT6nweSzAyzDUujbzm2pGoegDhqXNvpeSHA2lKqVtYT1ofTTZ8x5YBmi8y0U"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=3C4BzOxzAKtZk3U2ToRcDDS%2BU29t%2BV41JEttoS73%2Bn4FjZ9JVrjf%2BbP1gkwvr5Za%2FVRTECFfUOvKje4yealK3I3NIoFEX%2BOtrWua2r7OPrISvF%2BK"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 9789014fea6ed227-IAD
+cf-ray: 97891fa75a5208ab-LAX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html>
@@ -221,7 +221,7 @@ alt-svc: h3=":443"; ma=86400
       document.getElementById('telemetry').textContent = 'Processing...';
       
       try {
-        const r = await fetch('/api/router/exec?q=' + encodeURIComponent(q), { cache: 'no-store' });
+        const r = await fetch('/api/router/exec.json?q=' + encodeURIComponent(q), { cache: 'no-store' });
         const j = await r.json().catch(() => ({}));
         
         // Display response in the flowing text area
@@ -246,11 +246,13 @@ alt-svc: h3=":443"; ma=86400
     // Training panel fetch
     async function loadTraining() {
       try {
+        console.log('Loading training data...');
         const r = await fetch('/api/training/status', { cache: 'no-store' });
+        console.log('Response status:', r.status);
         if (!r.ok) throw new Error(String(r.status));
         const d = await r.json();
+        console.log('Training data received:', d);
         
-        // Update training metrics
         // Update training metrics
         document.getElementById('ts-active-runs').textContent = d.active_runs || '0';
         document.getElementById('ts-completed-today').textContent = d.completed_today || '0';

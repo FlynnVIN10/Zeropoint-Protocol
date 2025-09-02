@@ -1,10 +1,10 @@
 export const onRequest: PagesFunction = async (ctx) => {
 	const { request } = ctx;
 	const url = new URL(request.url);
-	// Optional: allow client to set interval via query (?interval=2000)
+	// Optional: allow client to set interval via query (?interval=1500)
 	const intervalMs = Math.min(
-		Math.max(parseInt(url.searchParams.get('interval') || '3000', 10) || 3000, 500),
-		15000
+		Math.max(parseInt(url.searchParams.get('interval') || '1500', 10) || 1500, 300),
+		10000
 	);
 
 	const stream = new ReadableStream<Uint8Array>({
@@ -12,40 +12,43 @@ export const onRequest: PagesFunction = async (ctx) => {
 			let seq = 1;
 			const encoder = new TextEncoder();
 
-			// Helper to enqueue SSE formatted message
 			const send = (event: string, data: unknown) => {
 				const payload = typeof data === 'string' ? data : JSON.stringify(data);
 				controller.enqueue(encoder.encode(`event: ${event}\n`));
 				controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
 			};
 
-			// Initial comment to establish stream
+			// Initial comment
 			controller.enqueue(encoder.encode(`: connected ${new Date().toISOString()}\n\n`));
 
-			// Heartbeat every 25s to keep connections alive across proxies
+			// Heartbeat
 			const heartbeat = setInterval(() => {
 				controller.enqueue(encoder.encode(`: ping ${Date.now()}\n\n`));
 			}, 25000);
 
-			// Emit consensus state updates on an interval
+			const messages = [
+				'Agent proposal queued',
+				'Council vote opened',
+				'Provider status: healthy',
+				'Consensus threshold reached',
+				'Executing action pipeline'
+			];
+
 			const timer = setInterval(() => {
 				const message = {
-					state: ['proposing', 'voting', 'finalizing'][seq % 3],
+					msg: messages[seq % messages.length],
 					seq,
 					ts: new Date().toISOString()
 				};
-				send('consensus', message);
+				send('tick', message);
 				seq += 1;
 			}, intervalMs);
 
-			// Close handlers
 			const close = () => {
 				clearInterval(timer);
 				clearInterval(heartbeat);
 				controller.close();
 			};
-
-			// Cloudflare does not expose request.on('close'). We rely on GC once the Response is gone.
 		},
 	});
 

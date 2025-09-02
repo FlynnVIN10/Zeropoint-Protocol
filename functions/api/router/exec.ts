@@ -3,6 +3,7 @@ type Env = {
 	OPENAI_BASE_URL?: string; // optional custom base URL
 	WORKERS_AI_MODEL?: string; // e.g., @cf/meta/llama-3.1-8b-instruct
 	AI?: any; // Workers AI binding (if configured)
+	[key: string]: any;
 };
 
 function jsonHeaders() {
@@ -19,6 +20,23 @@ function jsonHeaders() {
 	};
 }
 
+function getOpenAIKey(env: Env): string | undefined {
+	const candidates = [
+		"OPENAI_API_KEY",
+		"OPENAI_KEY",
+		"OPENAI_TOKEN",
+		"OPENAI",
+		"OPENAI_API",
+		"OPENAI_SECRET",
+		"OPENAI_ACCESS_TOKEN"
+	];
+	for (const name of candidates) {
+		const v = env[name];
+		if (v && typeof v === "string" && v.trim()) return v.trim();
+	}
+	return undefined;
+}
+
 async function readQuery(request: Request): Promise<string> {
 	const url = new URL(request.url);
 	const qFromUrl = url.searchParams.get("q");
@@ -33,7 +51,7 @@ async function readQuery(request: Request): Promise<string> {
 }
 
 async function callOpenAI(env: Env, prompt: string) {
-	const apiKey = env.OPENAI_API_KEY as string;
+	const apiKey = getOpenAIKey(env) as string;
 	const base = (env.OPENAI_BASE_URL || "https://api.openai.com").replace(/\/$/, "");
 	const endpoint = `${base}/v1/chat/completions`;
 	const started = Date.now();
@@ -97,14 +115,14 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
 		const env = ctx.env || {} as Env;
 		let result: any = null;
 
-		if (env.OPENAI_API_KEY) {
+		if (getOpenAIKey(env)) {
 			result = await callOpenAI(env, q);
 		} else if (env.WORKERS_AI_MODEL && (env as any).AI) {
 			result = await callWorkersAI(env, q);
 		} else {
 			return new Response(JSON.stringify({ 
 				error: "not_configured",
-				message: "LLM provider not configured. Set OPENAI_API_KEY or bind Workers AI (AI) and WORKERS_AI_MODEL.",
+				message: "LLM provider not configured. Set OPENAI_API_KEY (or OPENAI_KEY) or bind Workers AI (AI) and WORKERS_AI_MODEL.",
 				telemetry: { provider: "none", instance: "none", latencyMs: 0 }
 			}), { status: 503, headers: jsonHeaders() });
 		}

@@ -5,7 +5,9 @@ compatibility_flags = ["nodejs_compat"]
 # Cloudflare Pages configuration - Static deployment
 pages_build_output_dir = "public"
 
-# Remove site section for Pages projects
+# Workers AI binding for Pages Functions
+[ai]
+binding = "AI"
 
 [env.production]
 name = "zeropoint-protocol"
@@ -14,5 +16,6 @@ name = "zeropoint-protocol"
 __BUILD_SHA__ = "02107f3c"
 BUILD_TIME = "2025-08-21T22:15:00Z"
 MOCKS_DISABLED = "1"
+WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
 
 

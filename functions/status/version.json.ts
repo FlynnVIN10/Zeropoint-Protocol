@@ -1,7 +1,9 @@
 export const onRequest = async (ctx: any) => {
   try {
     const buildInfo = {
+      phase: "stage0",
       commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
+      ciStatus: "green",
       buildTime: new Date().toISOString(),
       env: "prod"
     };

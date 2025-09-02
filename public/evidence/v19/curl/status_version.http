@@ -1,5 +1,5 @@
 HTTP/2 200 
-date: Tue, 02 Sep 2025 01:12:26 GMT
+date: Tue, 02 Sep 2025 01:17:41 GMT
 content-type: text/html; charset=utf-8
 access-control-allow-origin: *
 cache-control: public, max-age=300
@@ -15,11 +15,11 @@ x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=TwmGY227%2BcmUmhfyexpBQJle2k5QFdoL4SWdsxvk5Q036HB5gx4KBcwlkd6Ahg9It2mRqtBU%2Bz3XwNGMxnpw0SIm8EMe4GznFaEXtWQOzyXD5p9C"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=UwxBrLujEWTXyevYvpnAqP7De2ESs0xfmfHtowqcReknfeF4yIOQ%2BgQNquHdtaOLs8S4ZA0Y0kQIri1qD91KDONLpP5BWV8WTB05LTxYfCqszA%3D%3D"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 9789239efa39478f-IAD
+cf-ray: 97892b4bcffb5233-LAX
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html>
@@ -305,7 +305,7 @@ alt-svc: h3=":443"; ma=86400
     // Verify DOM elements exist
     const activeRunsEl = document.getElementById('ts-active-runs');
     if (activeRunsEl) {
-      activeRunsEl.textContent = 'Loading...';
+      activeRunsEl.textContent = 'Initializing...';
       console.log('DOM elements found successfully');
     } else {
       console.error('DOM element ts-active-runs not found!');

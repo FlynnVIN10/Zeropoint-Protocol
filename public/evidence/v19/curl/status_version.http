@@ -1,5 +1,5 @@
 HTTP/2 200 
-date: Tue, 02 Sep 2025 01:09:44 GMT
+date: Tue, 02 Sep 2025 01:12:26 GMT
 content-type: text/html; charset=utf-8
 access-control-allow-origin: *
 cache-control: public, max-age=300
@@ -15,11 +15,11 @@ x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=3C4BzOxzAKtZk3U2ToRcDDS%2BU29t%2BV41JEttoS73%2Bn4FjZ9JVrjf%2BbP1gkwvr5Za%2FVRTECFfUOvKje4yealK3I3NIoFEX%2BOtrWua2r7OPrISvF%2BK"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=TwmGY227%2BcmUmhfyexpBQJle2k5QFdoL4SWdsxvk5Q036HB5gx4KBcwlkd6Ahg9It2mRqtBU%2Bz3XwNGMxnpw0SIm8EMe4GznFaEXtWQOzyXD5p9C"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 97891fa75a5208ab-LAX
+cf-ray: 9789239efa39478f-IAD
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html>
@@ -299,11 +299,34 @@ alt-svc: h3=":443"; ma=86400
       }
     }
     
+    // Test if JavaScript is running
+    console.log('JavaScript loaded successfully');
+    
+    // Verify DOM elements exist
+    const activeRunsEl = document.getElementById('ts-active-runs');
+    if (activeRunsEl) {
+      activeRunsEl.textContent = 'Loading...';
+      console.log('DOM elements found successfully');
+    } else {
+      console.error('DOM element ts-active-runs not found!');
+    }
+    
     // Load training data on page load
-    loadTraining();
+    try {
+      loadTraining();
+    } catch (error) {
+      console.error('Error calling loadTraining:', error);
+      document.getElementById('ts-active-runs').textContent = 'JS Error: ' + error.message;
+    }
     
     // Refresh training data every 30 seconds
-    setInterval(loadTraining, 30000);
+    setInterval(() => {
+      try {
+        loadTraining();
+      } catch (error) {
+        console.error('Error in training interval:', error);
+      }
+    }, 30000);
   </script>
 </body>
 </html>

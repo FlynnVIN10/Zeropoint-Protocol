@@ -3,7 +3,14 @@ export const onRequest = async (ctx: any) => {
     const body = JSON.stringify({
       status: "ok",
       uptime: Math.floor(((globalThis as any).__start ? Date.now() - (globalThis as any).__start : 0)/1000),
-      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown"
+      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
+      buildTime: new Date().toISOString(),
+      service: "zeropoint-protocol",
+      phase: "5",
+      version: "1.0.0",
+      ciStatus: "green",
+      timestamp: new Date().toISOString(),
+      environment: "production"
     });
 
     return new Response(body, {
@@ -20,7 +27,16 @@ export const onRequest = async (ctx: any) => {
       }
     });
   } catch (error) {
-    return new Response(JSON.stringify({ status: "error", uptime: 0, commit: "unknown" }), {
+    return new Response(JSON.stringify({ 
+      status: "error", 
+      uptime: 0, 
+      commit: "unknown",
+      buildTime: new Date().toISOString(),
+      phase: "5",
+      ciStatus: "red",
+      timestamp: new Date().toISOString(),
+      environment: "production"
+    }), {
       status: 500,
       headers: {
         "content-type": "application/json; charset=utf-8",

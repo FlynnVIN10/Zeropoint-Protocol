@@ -1,4 +1,10 @@
-export const onRequest: PagesFunction = async (ctx) => {
+type Env = {
+	// Environment variables for consensus events
+};
+
+type PagesFunction<Env = unknown> = (ctx: { request: Request; env: Env }) => Response | Promise<Response>;
+
+export const onRequest: PagesFunction<Env> = async (ctx) => {
 	const { request } = ctx;
 	const url = new URL(request.url);
 	// Optional: allow client to set interval via query (?interval=2000)

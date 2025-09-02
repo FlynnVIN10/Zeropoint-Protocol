@@ -151,6 +151,8 @@ async function callWorkersAI(env: Env, prompt: string) {
 	}
 }
 
+type PagesFunction<Env = unknown> = (ctx: { request: Request; env: Env }) => Response | Promise<Response>;
+
 export const onRequest: PagesFunction<Env> = async (ctx) => {
 	try {
 		const { q, provider } = await readQuery(ctx.request);

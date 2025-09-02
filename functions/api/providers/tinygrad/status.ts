@@ -2,6 +2,8 @@ type Env = {
 	TINYGRAD_STATUS_UPSTREAM?: string;
 };
 
+type PagesFunction<Env = unknown> = (ctx: { request: Request; env: Env }) => Response | Promise<Response>;
+
 function jsonHeaders() {
 	return {
 		"content-type": "application/json; charset=utf-8",

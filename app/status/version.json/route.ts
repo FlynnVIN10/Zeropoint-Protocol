@@ -12,16 +12,15 @@ export async function GET() {
   const env = process.env.NODE_ENV || 'development'
   
   const versionInfo = {
+    phase: 'stage0',
     commit,
-    buildTime,
-    env,
-    phase: 'v20',
-    ciStatus: env === 'production' ? 'green' : 'development'
+    ciStatus: env === 'production' ? 'green' : 'development',
+    buildTime
   }
   
   // Ensure production values are always set
   if (env === 'production') {
-    versionInfo.phase = 'v20'
+    versionInfo.phase = 'stage0'
     versionInfo.ciStatus = 'green'
   }
 

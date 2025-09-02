@@ -1,5 +1,5 @@
 HTTP/2 200 
-date: Tue, 02 Sep 2025 01:17:41 GMT
+date: Tue, 02 Sep 2025 01:20:32 GMT
 content-type: text/html; charset=utf-8
 access-control-allow-origin: *
 cache-control: public, max-age=300
@@ -11,11 +11,11 @@ referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=UwxBrLujEWTXyevYvpnAqP7De2ESs0xfmfHtowqcReknfeF4yIOQ%2BgQNquHdtaOLs8S4ZA0Y0kQIri1qD91KDONLpP5BWV8WTB05LTxYfCqszA%3D%3D"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=jDO%2F5ZgsNMrl1UqB7GIHXHkKFEhrwzUt2ZGhQkNqPSdNuZviXm78TDYiu90rdR86E%2BbGMDp%2Bbctxyw40yMXSVTzfVE3AB6IFOm%2F7M9lRuX9ngURX"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 97892b4bcffb5233-LAX
+cf-ray: 97892f792fbbf24a-IAD
 alt-svc: h3=":443"; ma=86400
 
 <!DOCTYPE html>
@@ -140,7 +140,7 @@ alt-svc: h3=":443"; ma=86400
     <div class="panel-container">
       <aside class="left-panel">
         <h3 style="margin-top:0">Consensus Queue</h3>
-        <div id="consensus-queue" class="muted">Synthiant proposals will appear here.</div>
+        <div id="consensus-queue" class="muted">Synthient proposals will appear here.</div>
       </aside>
       
       <main class="center-panel">
@@ -196,10 +196,10 @@ alt-svc: h3=":443"; ma=86400
       });
     } catch {}
     try {
-      const bottom = new EventSource('/api/events/synthiant');
+              const bottom = new EventSource('/api/events/synthient');
       bottom.addEventListener('tick', (e) => {
         const d = JSON.parse(e.data);
-        marquee(document.getElementById('bottom-ticker'), `[synthiant] ${d.msg} #${d.seq} ${d.ts}`);
+        marquee(document.getElementById('bottom-ticker'), `[synthient] ${d.msg} #${d.seq} ${d.ts}`);
       });
     } catch {}
 

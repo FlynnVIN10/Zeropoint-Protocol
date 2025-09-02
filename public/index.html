@@ -197,7 +197,7 @@
       document.getElementById('telemetry').textContent = 'Processing...';
       
       try {
-        const r = await fetch('/api/router/exec?q=' + encodeURIComponent(q), { cache: 'no-store' });
+        const r = await fetch('/api/router/exec.json?q=' + encodeURIComponent(q), { cache: 'no-store' });
         const j = await r.json().catch(() => ({}));
         
         // Display response in the flowing text area
@@ -222,11 +222,13 @@
     // Training panel fetch
     async function loadTraining() {
       try {
+        console.log('Loading training data...');
         const r = await fetch('/api/training/status', { cache: 'no-store' });
+        console.log('Response status:', r.status);
         if (!r.ok) throw new Error(String(r.status));
         const d = await r.json();
+        console.log('Training data received:', d);
         
-        // Update training metrics
         // Update training metrics
         document.getElementById('ts-active-runs').textContent = d.active_runs || '0';
         document.getElementById('ts-completed-today').textContent = d.completed_today || '0';

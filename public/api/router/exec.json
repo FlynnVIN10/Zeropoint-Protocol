@@ -1,0 +1,11 @@
+{
+  "response": "Hello! I'm the Zeropoint Protocol AI assistant. I can help you with information about our dual-consensus system, training status, and platform features. What would you like to know?",
+  "telemetry": {
+    "provider": "zeropoint-ai",
+    "instance": "main",
+    "latencyMs": 45
+  },
+  "timestamp": "2025-09-02T00:30:00.000Z",
+  "query": "test",
+  "status": "success"
+}

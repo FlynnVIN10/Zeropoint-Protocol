@@ -16,6 +16,7 @@ name = "zeropoint-protocol"
 __BUILD_SHA__ = "02107f3c"
 BUILD_TIME = "2025-08-21T22:15:00Z"
 MOCKS_DISABLED = "1"
+TRAINING_ENABLED = "1"
 WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
 
 # Synthient status sources (placeholders; replace with real URLs when ready)

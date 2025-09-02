@@ -1,0 +1,18 @@
+{
+  "run_id": "sample-run-123",
+  "dataset": "MNIST",
+  "model": "simple_cnn",
+  "batch_size": 32,
+  "learning_rate": 0.001,
+  "epochs": 10,
+  "optimizer": "adam",
+  "loss_function": "cross_entropy",
+  "validation_split": 0.2,
+  "data_augmentation": {
+    "rotation": 10,
+    "zoom": 0.1,
+    "horizontal_flip": false
+  },
+  "checkpoint_frequency": 3,
+  "created_at": "2025-09-02T22:50:00Z"
+}

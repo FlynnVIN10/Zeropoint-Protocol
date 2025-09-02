@@ -1,0 +1,17 @@
+{
+  "run_id": "sample-run-123",
+  "dataset": {
+    "name": "MNIST",
+    "sha256": "f68b3c2dcbeaaa9fbdd348bbdeb94873cf0fbe10516410e6f6c7ecc039c11a5d",
+    "source": "http://yann.lecun.com/exdb/mnist/",
+    "samples": 60000,
+    "verified": true
+  },
+  "commit": "48411d3e",
+  "build_time": "2025-09-02T22:50:00Z",
+  "environment": "production",
+  "mocks_disabled": true,
+  "framework": "tinygrad",
+  "hardware": "cloudflare-workers",
+  "created_at": "2025-09-02T22:50:00Z"
+}

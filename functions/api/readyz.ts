@@ -12,10 +12,11 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
       cache: true,
       commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
       buildTime: new Date().toISOString(),
-      phase: "stage0",
+      phase: "stage1",
       ciStatus: "green",
       timestamp: new Date().toISOString(),
-      environment: "production"
+      environment: "production",
+      mocks: false
     });
 
     return new Response(body, {
@@ -38,10 +39,11 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
       cache: false,
       commit: "unknown",
       buildTime: new Date().toISOString(),
-      phase: "stage0",
+      phase: "stage1",
       ciStatus: "red",
       timestamp: new Date().toISOString(),
-      environment: "production"
+      environment: "production",
+      mocks: false
     }), {
       status: 500,
       headers: {

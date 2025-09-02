@@ -12,11 +12,12 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
       commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
       buildTime: new Date().toISOString(),
       service: "zeropoint-protocol",
-      phase: "stage0",
+      phase: "stage1",
       version: "1.0.0",
       ciStatus: "green",
       timestamp: new Date().toISOString(),
-      environment: "production"
+      environment: "production",
+      mocks: false
     });
 
     return new Response(body, {
@@ -38,10 +39,11 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
       uptime: 0, 
       commit: "unknown",
       buildTime: new Date().toISOString(),
-      phase: "stage0",
+      phase: "stage1",
       ciStatus: "red",
       timestamp: new Date().toISOString(),
-      environment: "production"
+      environment: "production",
+      mocks: false
     }), {
       status: 500,
       headers: {

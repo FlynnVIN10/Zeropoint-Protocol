@@ -1,0 +1,55 @@
+{
+  "tasks": [
+    {
+      "name": "Broadcast directive",
+      "status": "completed",
+      "evidence": "/docs/stage1-directive.md"
+    },
+    {
+      "name": "Implement /api/training/* endpoints",
+      "status": "completed",
+      "evidence": "/functions/api/training/runs.ts, /functions/api/training/runs/[runId]/metrics.ts, /functions/api/events/training.ts"
+    },
+    {
+      "name": "Ingest datasets, store checksums",
+      "status": "completed",
+      "evidence": "/functions/trainer-tinygrad/datasets/checksums.json"
+    },
+    {
+      "name": "Write evidence files",
+      "status": "completed",
+      "evidence": "/evidence/training/{run_id}/ structure implemented"
+    },
+    {
+      "name": "Update /healthz and /readyz",
+      "status": "completed",
+      "evidence": "Updated to include mocks: false, phase: stage1"
+    },
+    {
+      "name": "Probe endpoints",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "name": "Validate metrics and checkpoints",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "name": "File PR comments",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "name": "Update PM_STATUS_REPORT.md",
+      "status": "in-progress",
+      "evidence": "/evidence/phase1/progress.json"
+    },
+    {
+      "name": "Run CTO Verification Gate",
+      "status": "pending",
+      "evidence": null
+    }
+  ],
+  "last_updated": "2025-09-02T22:50:00Z"
+}

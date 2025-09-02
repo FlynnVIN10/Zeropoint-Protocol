@@ -40,12 +40,16 @@ export const onRequest = async (ctx: { env: Env; request: Request }) => {
 			return undefined;
 		}
 
-		// Map provider data heuristically
-		const activeRuns = pickNumber(
+		const activeFromFields = pickNumber(
 			petals.ok ? (petals as any).data?.active_runs : undefined,
 			wonder.ok ? (wonder as any).data?.active_runs : undefined,
 			tiny.ok ? (tiny as any).data?.active_runs : undefined
-		) ?? 0;
+		);
+		let activeDerived = 0;
+		activeDerived += petals.ok && (petals as any).data?.active === true ? 1 : 0;
+		activeDerived += wonder.ok && (wonder as any).data?.active === true ? 1 : 0;
+		activeDerived += tiny.ok && (tiny as any).data?.active === true ? 1 : 0;
+		const activeRuns = activeFromFields ?? activeDerived;
 
 		const completedToday = pickNumber(
 			petals.ok ? (petals as any).data?.completed_today : undefined,
@@ -75,9 +79,21 @@ export const onRequest = async (ctx: { env: Env; request: Request }) => {
 			environment: 'production',
 			source_latency_ms: Date.now() - started,
 			sources: {
-				petals: petals.ok ? 'ok' : 'unavailable',
-				wondercraft: wonder.ok ? 'ok' : 'unavailable',
-				tinygrad: tiny.ok ? 'ok' : 'unavailable'
+				petals: {
+					state: petals.ok ? 'ok' : 'unavailable',
+					active: petals.ok ? !!(petals as any).data?.active : false,
+					lastContact: petals.ok ? (petals as any).data?.lastContact || (petals as any).data?.ts : undefined
+				},
+				wondercraft: {
+					state: wonder.ok ? 'ok' : 'unavailable',
+					active: wonder.ok ? !!(wonder as any).data?.active : false,
+					lastContact: wonder.ok ? (wonder as any).data?.lastContact || (wonder as any).data?.ts : undefined
+				},
+				tinygrad: {
+					state: tiny.ok ? 'ok' : 'unavailable',
+					active: tiny.ok ? !!(tiny as any).data?.active : false,
+					lastContact: tiny.ok ? (tiny as any).data?.lastContact || (tiny as any).data?.ts : undefined
+				}
 			}
 		};
 

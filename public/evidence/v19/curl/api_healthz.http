@@ -1,7 +1,7 @@
 HTTP/2 200 
-date: Tue, 02 Sep 2025 22:13:10 GMT
+date: Tue, 02 Sep 2025 22:43:31 GMT
 content-type: application/json; charset=utf-8
-content-length: 263
+content-length: 268
 access-control-allow-origin: *
 cache-control: no-store
 content-disposition: inline
@@ -11,11 +11,11 @@ permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(),
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Qo2FGNVZkzfXD6tPIwfaKWnap6VTt3oMckIy4RC6ffI4ullA%2FWVCvd6%2BYzB194gFTYBC576wjt%2FOIWGaJjvL9zz5t2vma2OUyaTypWlbNo3yCkW7"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ezy5OFmHz9EwTLLcrR9umhX3AlfLnyP16jf3NeKlaFLVDbaRos9STtnX5X8FdNewe3ffX0bkkec4Oqnf69%2FisZIRqrAJ8ZOBjKO7O%2F6ctZTOUelq"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 97905a674ac72a96-IAD
+cf-ray: 979086d8fbc45710-IAD
 alt-svc: h3=":443"; ma=86400
 
-{"status":"ok","uptime":0,"commit":"e74f5bc973ec25502fd594f1166de331657fe51a","buildTime":"2025-09-02T22:13:10.956Z","service":"zeropoint-protocol","phase":"5","version":"1.0.0","ciStatus":"green","timestamp":"2025-09-02T22:13:10.956Z","environment":"production"}
+{"status":"ok","uptime":0,"commit":"98da6b42c86cda37da33aa7ebcc33f5a7a66d13e","buildTime":"2025-09-02T22:43:31.390Z","service":"zeropoint-protocol","phase":"stage0","version":"1.0.0","ciStatus":"green","timestamp":"2025-09-02T22:43:31.390Z","environment":"production"}

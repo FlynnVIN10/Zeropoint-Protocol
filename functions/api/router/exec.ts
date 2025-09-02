@@ -117,6 +117,13 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
 
 		if (getOpenAIKey(env)) {
 			result = await callOpenAI(env, q);
+			// Fallback to Workers AI on provider errors if available
+			if (!result?.ok && env.WORKERS_AI_MODEL && (env as any).AI) {
+				const fallback = await callWorkersAI(env, q);
+				if (fallback?.ok) {
+					result = fallback;
+				}
+			}
 		} else if (env.WORKERS_AI_MODEL && (env as any).AI) {
 			result = await callWorkersAI(env, q);
 		} else {

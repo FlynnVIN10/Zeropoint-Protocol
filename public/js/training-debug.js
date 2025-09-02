@@ -4,13 +4,14 @@
 console.log('=== JAVASCRIPT DEBUG START ===');
 console.log('JavaScript loaded successfully');
 
-// Helper: check if SSE debugging is enabled via URL (?sse=1)
+// Helper: check if SSE debugging is enabled via URL (?sse=1). Default to enabled.
 function isSSEEnabled() {
   try {
     const params = new URLSearchParams(window.location.search);
-    return params.get('sse') === '1';
+    const flag = params.get('sse');
+    return flag === null ? true : flag === '1';
   } catch {
-    return false;
+    return true;
   }
 }
 
@@ -178,13 +179,19 @@ async function handleCommunicationForm(event) {
   if (telemetryEl) telemetryEl.textContent = 'Processing...';
   
   try {
-    const r = await fetch('/api/router/exec.json?q=' + encodeURIComponent(q), { cache: 'no-store' });
+    const r = await fetch('/api/router/exec?q=' + encodeURIComponent(q), { cache: 'no-store' });
     const j = await r.json().catch(() => ({}));
     
     // Append assistant response
     const aiBlock = document.createElement('div');
     aiBlock.style.margin = '8px 0 12px 0';
-    aiBlock.innerHTML = `<strong>Response:</strong> ${j.response || 'No response received'}`;
+    if (j.status === 'success') {
+      aiBlock.innerHTML = `<strong>Response:</strong> ${j.response}`;
+    } else if (j.error === 'not_configured') {
+      aiBlock.innerHTML = `<strong>Response:</strong> Live LLM not configured. Ask PM to set OPENAI_API_KEY or Workers AI.`;
+    } else {
+      aiBlock.innerHTML = `<strong>Response:</strong> ${j.response || 'No response received'}`;
+    }
     responseArea.appendChild(aiBlock);
     responseArea.scrollTop = responseArea.scrollHeight;
     
@@ -255,9 +262,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, 30000);
   
-  // SSE ticker setup (disabled by default; enable with ?sse=1)
+  // SSE ticker setup (default enabled; disable with ?sse=0)
   if (isSSEEnabled() && 'EventSource' in window) {
-    console.log('SSE enabled via URL flag. Initializing event streams...');
+    console.log('SSE enabled. Initializing event streams...');
     try {
       const top = new EventSource('/api/events/consensus');
       top.addEventListener('consensus', (e) => {

@@ -1,5 +1,5 @@
 HTTP/2 200 
-date: Tue, 02 Sep 2025 01:27:23 GMT
+date: Tue, 02 Sep 2025 04:44:53 GMT
 content-type: text/html; charset=utf-8
 cf-cache-status: DYNAMIC
 server: cloudflare
@@ -18,8 +18,8 @@ referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
-report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=KMXP76uJNwBwqombiI61%2BAov2PxvP4XeNgIncR9%2BFo%2BqvVdgcqWErofeQcVTPkP%2BGdWoi1eHLFSQWkcAm2yWvBr1KrEdEhRw40cQacFU%2Fe78aelTmgxGutIO85n6XK0T1d234caZ9g%3D%3D"}],"group":"cf-nel","max_age":604800}
-cf-ray: 978939827fed6d20-LAX
+report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=Pbm4UFcIlEfz9wVzU2RTXeNifbREu%2FknqknsABJdzDiWaRJOsyDgOIUteBHcKg23TDSqAPvfBxl1PtQGbHzB%2F%2BQeXTrAI9YKJ2lwKuyjE3y37nt0Itp2lzAQV4jLTlnnxiRYYKhTxQ%3D%3D"}],"group":"cf-nel","max_age":604800}
+cf-ray: 978a5ad00f129d52-ORD
 
 <!DOCTYPE html>
 <html lang="en">
@@ -182,150 +182,6 @@ cf-ray: 978939827fed6d20-LAX
     <div id="bottom-ticker" style="white-space:nowrap; overflow:hidden; border-top:1px solid #333; padding:8px 12px"></div>
   </div>
 
-  <script>
-    // SSE Tickers
-    function marquee(el, text) {
-      const span = document.createElement('span');
-      span.textContent = ' ' + text + ' ';
-      span.style.paddingRight = '24px';
-      el.appendChild(span);
-      el.scrollLeft = el.scrollWidth; // keep right-to-left effect
-    }
-    try {
-      const top = new EventSource('/api/events/consensus');
-      top.addEventListener('consensus', (e) => {
-        const d = JSON.parse(e.data);
-        marquee(document.getElementById('top-ticker'), `[consensus] ${d.state} #${d.seq} ${d.ts}`);
-      });
-    } catch {}
-    try {
-              const bottom = new EventSource('/api/events/synthient');
-      bottom.addEventListener('tick', (e) => {
-        const d = JSON.parse(e.data);
-        marquee(document.getElementById('bottom-ticker'), `[synthient] ${d.msg} #${d.seq} ${d.ts}`);
-      });
-    } catch {}
-
-    // Prompt routing
-    const form = document.getElementById('prompt-form');
-    form.addEventListener('submit', async (ev) => {
-      ev.preventDefault();
-      const q = document.getElementById('prompt').value.trim();
-      if (!q) return;
-      
-      // Clear previous response
-      document.getElementById('response-area').textContent = '';
-      
-      // Show loading indicator
-      document.getElementById('telemetry').textContent = 'Processing...';
-      
-      try {
-        const r = await fetch('/api/router/exec.json?q=' + encodeURIComponent(q), { cache: 'no-store' });
-        const j = await r.json().catch(() => ({}));
-        
-        // Display response in the flowing text area
-        document.getElementById('response-area').textContent = j.response || 'No response received';
-        
-        // Show telemetry
-        const t = j.telemetry || {};
-        document.getElementById('telemetry').textContent = `provider=${t.provider||'unknown'} instance=${t.instance||'none'} latency=${t.latencyMs||'-'}ms`;
-        
-        // Clear input
-        document.getElementById('prompt').value = '';
-        
-        // Scroll to bottom of response area
-        const responseArea = document.getElementById('response-area');
-        responseArea.scrollTop = responseArea.scrollHeight;
-      } catch (error) {
-        document.getElementById('response-area').textContent = 'Error: ' + error.message;
-        document.getElementById('telemetry').textContent = 'Request failed';
-      }
-    });
-
-    // Training panel fetch
-    async function loadTraining() {
-      try {
-        console.log('Loading training data...');
-        const r = await fetch('/api/training/status', { cache: 'no-store' });
-        console.log('Response status:', r.status);
-        if (!r.ok) throw new Error(String(r.status));
-        const d = await r.json();
-        console.log('Training data received:', d);
-        
-        // Update training metrics
-        document.getElementById('ts-active-runs').textContent = d.active_runs || '0';
-        document.getElementById('ts-completed-today').textContent = d.completed_today || '0';
-        document.getElementById('ts-total-runs').textContent = d.total_runs || '0';
-        
-        // Update last run details
-        if (d.last_run) {
-          document.getElementById('ts-last-model').textContent = d.last_run.model || 'N/A';
-          document.getElementById('ts-last-accuracy').textContent = d.last_run.metrics?.accuracy ? 
-            (d.last_run.metrics.accuracy * 100).toFixed(1) + '%' : 'N/A';
-          document.getElementById('ts-last-loss').textContent = d.last_run.metrics?.loss ? 
-            d.last_run.metrics.loss.toFixed(4) : 'N/A';
-        } else {
-          document.getElementById('ts-last-model').textContent = 'N/A';
-          document.getElementById('ts-last-accuracy').textContent = 'N/A';
-          document.getElementById('ts-last-loss').textContent = 'N/A';
-        }
-        
-        document.getElementById('ts-commit').textContent = d.commit || 'N/A';
-        document.getElementById('ts-timestamp').textContent = d.timestamp ? 
-          new Date(d.timestamp).toLocaleString() : 'N/A';
-
-        // Update leaderboard
-        const leaderboardDiv = document.getElementById('ts-leaderboard');
-        leaderboardDiv.innerHTML = ''; // Clear previous content
-        if (d.leaderboard && d.leaderboard.length > 0) {
-          leaderboardDiv.innerHTML = '<strong>Top Models:</strong><br>';
-          d.leaderboard.forEach(item => {
-            leaderboardDiv.innerHTML += `#${item.rank} ${item.model} (${(item.accuracy * 100).toFixed(1)}%) - ${item.runs} runs<br>`;
-          });
-        } else {
-          leaderboardDiv.textContent = 'No leaderboard data available.';
-        }
-      } catch (e) {
-        document.getElementById('ts-active-runs').textContent = 'Error';
-        document.getElementById('ts-completed-today').textContent = '';
-        document.getElementById('ts-total-runs').textContent = '';
-        document.getElementById('ts-last-model').textContent = '';
-        document.getElementById('ts-last-accuracy').textContent = '';
-        document.getElementById('ts-last-loss').textContent = '';
-        document.getElementById('ts-commit').textContent = '';
-        document.getElementById('ts-timestamp').textContent = '';
-        document.getElementById('ts-leaderboard').textContent = 'Error loading leaderboard';
-      }
-    }
-    
-    // Test if JavaScript is running
-    console.log('JavaScript loaded successfully');
-    
-    // Verify DOM elements exist
-    const activeRunsEl = document.getElementById('ts-active-runs');
-    if (activeRunsEl) {
-      activeRunsEl.textContent = 'Initializing...';
-      console.log('DOM elements found successfully');
-    } else {
-      console.error('DOM element ts-active-runs not found!');
-    }
-    
-    // Load training data on page load
-    try {
-      loadTraining();
-    } catch (error) {
-      console.error('Error calling loadTraining:', error);
-      document.getElementById('ts-active-runs').textContent = 'JS Error: ' + error.message;
-    }
-    
-    // Refresh training data every 30 seconds
-    setInterval(() => {
-      try {
-        loadTraining();
-      } catch (error) {
-        console.error('Error in training interval:', error);
-      }
-    }, 30000);
-  </script>
+  <script src="/js/training-debug.js"></script>
 </body>
 </html>

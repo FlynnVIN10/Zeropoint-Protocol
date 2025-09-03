@@ -203,8 +203,32 @@
       "name": "Final evidence regeneration complete",
       "status": "completed",
       "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json, /public/evidence/phase1/progress.json",
-      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
+      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
+    },
+    {
+      "name": "Rebuild evidence manifest with current commit",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/index.json",
+      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
+    },
+    {
+      "name": "Update progress.json with actual task statuses",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/progress.json",
+      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
+    },
+    {
+      "name": "Update training evidence to current commit",
+      "status": "completed",
+      "evidence": "/public/evidence/training/sample-run-123/provenance.json",
+      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
+    },
+    {
+      "name": "Final evidence synchronization complete",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json, /public/evidence/phase1/progress.json",
+      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
     }
   ],
-  "last_updated": "2025-09-03T01:05:00Z"
+  "last_updated": "2025-09-03T01:15:00Z"
 }

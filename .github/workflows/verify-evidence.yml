@@ -68,7 +68,12 @@ jobs:
       - name: Enforce short SHA format everywhere
         run: |
           SHORT=$(git rev-parse --short=7 HEAD)
-          grep -RIl '"commit"' public | xargs -I{} jq -e --arg s "$SHORT" '(.commit|type)=="string" and (.commit|length)==7 and (.commit==$s)' {}
+          for f in $(git ls-files 'public/**/*.json'); do
+            [ -f "$f" ] || continue
+            if jq -e 'has("commit")' "$f" >/dev/null; then
+              jq -e --arg s "$SHORT" '(.commit|type)=="string" and (.commit|length)==7 and (.commit==$s)' "$f" >/dev/null || { echo "Commit mismatch: $f"; exit 1; }
+            fi
+          done
 
       - name: Forbid hashed subdomains in evidence
         run: |

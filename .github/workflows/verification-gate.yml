@@ -108,6 +108,7 @@ jobs:
           fi
           
           # Pull latest changes first with merge strategy
+          export GIT_EDITOR=:
           git pull --no-rebase https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main
           
           # Add and commit changes

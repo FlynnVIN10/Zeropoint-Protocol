@@ -1,0 +1,32 @@
+{
+  "phase": "stage1",
+  "commit": "dc40bde1",
+  "files": [
+    "verify/dc40bde1/index.txt",
+    "verify/dc40bde1/robots.txt",
+    "verify/dc40bde1/sitemap.xml",
+    "verify/dc40bde1/api_healthz.txt",
+    "verify/dc40bde1/api_readyz.txt",
+    "verify/dc40bde1/api_training_runs.txt",
+    "verify/dc40bde1/lighthouse.json",
+    "training/sample-run-123/metrics.jsonl",
+    "training/sample-run-123/config.json",
+    "training/sample-run-123/provenance.json",
+    "training/sample-run-123/checkpoints/",
+    "acknowledgements/response.json",
+    "progress.json",
+    "metadata.json"
+  ],
+  "runs": [
+    "sample-run-123"
+  ],
+  "endpoints": [
+    "/api/training/runs",
+    "/api/training/runs/{run_id}",
+    "/api/training/runs/{run_id}/metrics",
+    "/api/events/training",
+    "/api/healthz",
+    "/api/readyz"
+  ],
+  "last_updated": "2025-09-02T23:45:00Z"
+}

@@ -103,5 +103,4 @@
 ---
 
 **Directive Status:** Active  
-**Broadcast Time:** 2025-09-02T22:50:00Z  
-**Awaiting:** Dev Team and SCRA acknowledgements
+**Status:** Directive active and acknowledged by Dev Team and SCRA

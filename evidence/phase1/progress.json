@@ -42,13 +42,48 @@
     },
     {
       "name": "Update PM_STATUS_REPORT.md",
-      "status": "in-progress",
+      "status": "completed",
       "evidence": "/evidence/phase1/progress.json"
     },
     {
       "name": "Run CTO Verification Gate",
       "status": "pending",
       "evidence": null
+    },
+    {
+      "name": "Implement /api/training/runs read-only endpoint",
+      "status": "completed",
+      "evidence": "/functions/api/training/runs.ts"
+    },
+    {
+      "name": "Enable test runs for POST /api/training/runs",
+      "status": "completed",
+      "evidence": "/functions/api/training/runs.ts with TEST_TOKEN"
+    },
+    {
+      "name": "Remove date/time metadata from directive",
+      "status": "completed",
+      "evidence": "/docs/stage1-directive.md, /evidence/phase1/metadata.json"
+    },
+    {
+      "name": "Publish evidence manifest",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json"
+    },
+    {
+      "name": "Expose metrics and checkpoint metadata",
+      "status": "completed",
+      "evidence": "/functions/api/training/runs/[runId]/metrics.ts"
+    },
+    {
+      "name": "Document SSE behavior",
+      "status": "completed",
+      "evidence": "/docs/sse-validation.md, /functions/api/events/training/test.ts"
+    },
+    {
+      "name": "Create probe script",
+      "status": "completed",
+      "evidence": "/scripts/probe-endpoints.sh"
     }
   ],
   "last_updated": "2025-09-02T22:50:00Z"

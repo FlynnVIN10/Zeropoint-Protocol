@@ -19,6 +19,8 @@ MOCKS_DISABLED = "1"
 TRAINING_ENABLED = "1"
 GOVERNANCE_MODE = "dual-consensus"
 WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
+TEST_TOKEN = "scra-test-token"
+ENVIRONMENT = "production"
 
 # Synthient status sources (placeholders; replace with real URLs when ready)
 PETALS_STATUS_URL = "https://zeropointprotocol.ai/petals/status.json"

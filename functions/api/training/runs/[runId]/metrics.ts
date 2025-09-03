@@ -46,7 +46,13 @@ export const onRequestGet: PagesFunction<Env> = async ({ env, request }) => {
   
   return new Response(JSON.stringify({
     run_id: runId,
-    metrics: mockMetrics,
+    metrics: mockMetrics.map(m => ({ epoch: m.epoch, loss: m.loss, accuracy: m.accuracy })),
+    checkpoints: [
+      { id: "checkpoint_0", sha256: "abc123def456", epoch: 0 },
+      { id: "checkpoint_3", sha256: "def456ghi789", epoch: 3 },
+      { id: "checkpoint_6", sha256: "ghi789jkl012", epoch: 6 },
+      { id: "checkpoint_9", sha256: "jkl012mno345", epoch: 9 }
+    ],
     total_epochs: mockMetrics.length,
     latest_loss: mockMetrics[mockMetrics.length - 1].loss,
     latest_accuracy: mockMetrics[mockMetrics.length - 1].accuracy,

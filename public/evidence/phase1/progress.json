@@ -26,6 +26,31 @@
       "evidence": "Updated to include mocks: false, phase: stage1"
     },
     {
+      "name": "Probe endpoints",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "name": "Validate metrics and checkpoints",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "name": "File PR comments",
+      "status": "pending",
+      "evidence": null
+    },
+    {
+      "name": "Update PM_STATUS_REPORT.md",
+      "status": "completed",
+      "evidence": "/evidence/phase1/progress.json"
+    },
+    {
+      "name": "Run CTO Verification Gate",
+      "status": "pending",
+      "evidence": null
+    },
+    {
       "name": "Implement /api/training/runs read-only endpoint",
       "status": "completed",
       "evidence": "/functions/api/training/runs.ts"
@@ -61,6 +86,11 @@
       "evidence": "/scripts/probe-endpoints.sh"
     },
     {
+      "name": "Update directive metadata",
+      "status": "completed",
+      "evidence": "/docs/stage1-directive.md, /evidence/phase1/metadata.json"
+    },
+    {
       "name": "Initiate sample training run",
       "status": "completed",
       "evidence": "/evidence/training/sample-run-123/"
@@ -73,12 +103,17 @@
     {
       "name": "Validate SSE test endpoint",
       "status": "completed",
-      "evidence": "/evidence/phase1/verify/fdc1b3f02ee1908549eab506007d11fca6cffcc9/sse-test.txt"
+      "evidence": "/evidence/phase1/verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/sse-test.txt"
     },
     {
       "name": "Update GET /api/training/runs to include sample-run-123",
       "status": "completed",
       "evidence": "/functions/api/training/runs.ts"
+    },
+    {
+      "name": "Synchronize commit references",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json, /evidence/training/sample-run-123/provenance.json"
     },
     {
       "name": "Remove date/time metadata from directive",
@@ -96,11 +131,12 @@
       "evidence": "/public/_redirects"
     },
     {
-      "name": "Final evidence synchronization complete",
+      "name": "Update evidence files to current deployment",
       "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json, /public/evidence/phase1/progress.json",
-      "commit": "fdc1b3f02ee1908549eab506007d11fca6cffcc9"
+      "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
+      "commit": "d5dabdfdc07ab4bc6703d84225286ca8e3dee394",
+      "deployment": "https://44d980b3.zeropoint-protocol.pages.dev"
     }
   ],
-  "last_updated": "2025-09-03T01:25:00Z"
+  "last_updated": "2025-09-03T11:21:05Z"
 }

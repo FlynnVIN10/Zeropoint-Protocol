@@ -69,7 +69,7 @@ jobs:
         run: |
           set -euo pipefail
           SHORT=$(git rev-parse --short=7 HEAD)
-          mapfile -t files < <(git ls-files 'public/evidence/verify/**/*.json' || true)
+          mapfile -t files < <(find public/evidence/verify -type f -name '*.json' -print || true)
           [[ ${#files[@]} -gt 0 ]]
           for f in "${files[@]}"; do
             if jq -e 'has("commit")' "$f" >/dev/null; then

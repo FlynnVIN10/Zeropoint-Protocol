@@ -88,48 +88,69 @@
     {
       "name": "Update directive metadata",
       "status": "completed",
-      "evidence": "/docs/stage1-directive.md, /evidence/phase1/metadata.json"
+      "evidence": "/docs/stage1-directive.md, /evidence/phase1/metadata.json",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Initiate sample training run",
       "status": "completed",
-      "evidence": "/evidence/training/sample-run-123/"
+      "evidence": "/evidence/training/sample-run-123/",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Make evidence files accessible",
       "status": "completed",
-      "evidence": "/evidence/phase1/index.json"
+      "evidence": "/evidence/phase1/index.json",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Validate SSE test endpoint",
       "status": "completed",
-      "evidence": "/evidence/phase1/verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/sse-test.txt"
+      "evidence": "/evidence/phase1/verify/e7d5766c08658daa06cecf9438b9fb507dc36aad/sse-test.txt",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Update GET /api/training/runs to include sample-run-123",
       "status": "completed",
-      "evidence": "/functions/api/training/runs.ts"
+      "evidence": "/functions/api/training/runs.ts",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Synchronize commit references",
       "status": "completed",
-      "evidence": "/evidence/phase1/index.json, /evidence/training/sample-run-123/provenance.json"
+      "evidence": "/evidence/phase1/index.json, /evidence/training/sample-run-123/provenance.json",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Remove date/time metadata from directive",
       "status": "completed",
-      "evidence": "/docs/stage1-directive.md"
+      "evidence": "/docs/stage1-directive.md",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Fix status/version mismatch",
       "status": "completed",
-      "evidence": "/functions/status/version.json.ts"
+      "evidence": "/functions/status/version.json.ts",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     },
     {
       "name": "Configure evidence directory access",
       "status": "completed",
-      "evidence": "/public/_redirects"
+      "evidence": "/public/_redirects",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+    },
+    {
+      "name": "Update evidence manifest with current commit",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/index.json",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+    },
+    {
+      "name": "Synchronize progress log with current commit",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/progress.json",
+      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
     }
   ],
-  "last_updated": "2025-09-03T00:10:00Z"
+  "last_updated": "2025-09-03T00:35:00Z"
 }

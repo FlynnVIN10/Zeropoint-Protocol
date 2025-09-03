@@ -100,7 +100,19 @@ jobs:
           cp evidence_out/*.http public/evidence/v19/curl/
           git config user.name "GitHub Action"
           git config user.email "action@github.com"
+          
+          # Check if there are any changes to commit
+          if git diff --quiet --exit-code; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Pull latest changes first with merge strategy
+          git pull --no-rebase https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main
+          
+          # Add and commit changes
           git add public/evidence/v19/curl/
-          git commit -m "auto: update v19 curl evidences from CI" || true
-          git pull --rebase https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main || true
-          git push https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main || true
+          git commit -m "auto: update v19 curl evidences from CI"
+          
+          # Push changes
+          git push https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main

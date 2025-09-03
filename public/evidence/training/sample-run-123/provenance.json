@@ -3,7 +3,7 @@
   "dataset": "MNIST",
   "dataset_sha256": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b",
   "dataset_size": 60000,
-  "commit": "f1175fd56cebdbc7133c5a8339a6e3125985d73e",
+  "commit": "dc0d55c983c229d603d4bb2e3a6678de4923078c",
   "build_time": "2025-09-02T23:45:00Z",
   "environment": "production",
   "mocks_disabled": true,

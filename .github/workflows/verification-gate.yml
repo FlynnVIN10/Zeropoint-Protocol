@@ -109,7 +109,12 @@ jobs:
           
           # Pull latest changes first with merge strategy
           export GIT_EDITOR=:
-          git pull --no-rebase https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main
+          git pull --no-rebase https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main || {
+            echo "Merge conflict detected, resolving by accepting our changes"
+            git checkout --ours public/evidence/v19/curl/
+            git add public/evidence/v19/curl/
+            git commit -m "auto: resolve merge conflict in curl evidences from CI"
+          }
           
           # Add and commit changes
           git add public/evidence/v19/curl/

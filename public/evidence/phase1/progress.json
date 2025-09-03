@@ -179,8 +179,32 @@
       "name": "Confirm provenance consistency",
       "status": "completed",
       "evidence": "/public/evidence/training/sample-run-123/provenance.json",
-      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
+      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
+    },
+    {
+      "name": "Rebuild evidence manifest with current commit",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/index.json",
+      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
+    },
+    {
+      "name": "Update progress.json with latest commit",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/progress.json",
+      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
+    },
+    {
+      "name": "Rewrite provenance files with new commit",
+      "status": "completed",
+      "evidence": "/public/evidence/training/sample-run-123/provenance.json",
+      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
+    },
+    {
+      "name": "Final evidence regeneration complete",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json, /public/evidence/phase1/progress.json",
+      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
     }
   ],
-  "last_updated": "2025-09-03T00:55:00Z"
+  "last_updated": "2025-09-03T01:05:00Z"
 }

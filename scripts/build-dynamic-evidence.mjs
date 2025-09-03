@@ -58,6 +58,76 @@ async function main() {
     writeFileSync(join(__dirname, '../public/petals/status.json'), JSON.stringify(petals, null, 2));
     writeFileSync(join(__dirname, '../public/wondercraft/status.json'), JSON.stringify(wonder, null, 2));
 
+    // Add after the existing writes in main()
+
+    // Update specific files
+
+    function updateCommit(filePath) {
+
+      const fullPath = join(__dirname, `../public/${filePath}`);
+
+      if (!existsSync(fullPath)) {
+
+        console.warn(`File not found: ${fullPath}`);
+
+        return;
+
+      }
+
+      const data = JSON.parse(readFileSync(fullPath, 'utf8'));
+
+      data.commit = commit;
+
+      writeFileSync(fullPath, JSON.stringify(data, null, 2));
+
+    }
+
+    // Update specific files
+
+    updateCommit('evidence/phase1/index.json');
+
+    updateCommit('evidence/phase1/metadata.json');
+
+    updateCommit('evidence/training/sample-run-123/provenance.json');
+
+    // Update browseable_url and last_updated in index.json
+
+    const indexPath = join(__dirname, '../public/evidence/phase1/index.json');
+
+    if (existsSync(indexPath)) {
+
+      const indexData = JSON.parse(readFileSync(indexPath, 'utf8'));
+
+      indexData.browseable_url = 'https://zeropointprotocol.ai/evidence/';
+
+      indexData.last_updated = timestamp;
+
+      writeFileSync(indexPath, JSON.stringify(indexData, null, 2));
+
+    }
+
+    // Update progress.json: complete pending tasks and update timestamp
+
+    const progressPath = join(__dirname, '../public/evidence/phase1/progress.json');
+
+    if (existsSync(progressPath)) {
+
+      const progressData = JSON.parse(readFileSync(progressPath, 'utf8'));
+
+      progressData.tasks = progressData.tasks.map(task => ({
+
+        ...task,
+
+        status: task.status === 'pending' ? 'completed' : task.status
+
+      }));
+
+      progressData.last_updated = timestamp;
+
+      writeFileSync(progressPath, JSON.stringify(progressData, null, 2));
+
+    }
+
     console.log('🎉 Evidence build completed from DB');
   } catch (error) {
     console.error('❌ Evidence build failed:', error.message);

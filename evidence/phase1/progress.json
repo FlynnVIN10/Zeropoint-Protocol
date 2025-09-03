@@ -84,6 +84,26 @@
       "name": "Create probe script",
       "status": "completed",
       "evidence": "/scripts/probe-endpoints.sh"
+    },
+    {
+      "name": "Update directive metadata",
+      "status": "completed",
+      "evidence": "/docs/stage1-directive.md, /evidence/phase1/metadata.json"
+    },
+    {
+      "name": "Initiate sample training run",
+      "status": "completed",
+      "evidence": "/evidence/training/sample-run-123/"
+    },
+    {
+      "name": "Make evidence files accessible",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json"
+    },
+    {
+      "name": "Validate SSE test endpoint",
+      "status": "completed",
+      "evidence": "/evidence/phase1/verify/0e72b265966785c70b66177fff37e1d3a2d8d8ac/sse-test.txt"
     }
   ],
   "last_updated": "2025-09-02T22:50:00Z"

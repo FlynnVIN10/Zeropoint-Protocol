@@ -103,4 +103,4 @@
 ---
 
 **Directive Status:** Active  
-**Status:** Directive active and acknowledged by Dev Team and SCRA
+**Compliance:** Date/time metadata removed, stored in evidence

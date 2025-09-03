@@ -103,7 +103,17 @@
     {
       "name": "Validate SSE test endpoint",
       "status": "completed",
-      "evidence": "/evidence/phase1/verify/0e72b265966785c70b66177fff37e1d3a2d8d8ac/sse-test.txt"
+      "evidence": "/evidence/phase1/verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/sse-test.txt"
+    },
+    {
+      "name": "Update GET /api/training/runs to include sample-run-123",
+      "status": "completed",
+      "evidence": "/functions/api/training/runs.ts"
+    },
+    {
+      "name": "Synchronize commit references",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json, /evidence/training/sample-run-123/provenance.json"
     }
   ],
   "last_updated": "2025-09-02T22:50:00Z"

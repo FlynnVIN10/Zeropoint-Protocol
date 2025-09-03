@@ -103,4 +103,4 @@
 ---
 
 **Directive Status:** Active  
-**Compliance:** Date/time metadata removed, stored in evidence
+**Compliance:** Directive free of date/time metadata

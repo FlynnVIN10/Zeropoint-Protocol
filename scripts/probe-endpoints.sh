@@ -3,7 +3,7 @@
 # Probes all training endpoints and stores results in evidence directory
 
 commit=$(git rev-parse HEAD)
-base_url="https://8b685ab4.zeropoint-protocol.pages.dev"
+base_url="https://01ac9728.zeropoint-protocol.pages.dev"
 output_dir="evidence/phase1/verify/$commit"
 
 echo "Probing endpoints for commit: $commit"
@@ -60,6 +60,16 @@ if [ $? -eq 0 ]; then
   echo "✅ Successfully tested metrics endpoint"
 else
   echo "❌ Failed to test metrics endpoint"
+fi
+
+# Test SSE endpoint
+echo "Testing SSE endpoint..."
+curl -s "$base_url/api/events/training/test" > "$output_dir/sse-test.txt" 2>&1
+
+if [ $? -eq 0 ]; then
+  echo "✅ Successfully tested SSE endpoint"
+else
+  echo "❌ Failed to test SSE endpoint"
 fi
 
 echo "Probe complete. Results saved to: $output_dir"

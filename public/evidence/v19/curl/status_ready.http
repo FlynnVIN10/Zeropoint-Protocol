@@ -1,0 +1,25 @@
+HTTP/2 308 
+date: Wed, 03 Sep 2025 11:25:57 GMT
+content-length: 0
+location: /status/ready
+access-control-allow-origin: *
+cache-control: public, max-age=300
+content-disposition: inline
+strict-transport-security: max-age=31536000; includeSubDomains; preload, max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-content-type-options: nosniff
+x-frame-options: DENY
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ALjdc%2FMIj2v5N8Z223cIlLWgOnqNNc1ALMO0rVkpgnbk9oVlKlVyw0MTuCp9pfPNIplXJkUMdtjyvGZDhU64d7nIAMH0FdZFFlVZAcK%2FDsaKCh8%2F"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9794e3b1da1af79d-LAX
+alt-svc: h3=":443"; ma=86400
+

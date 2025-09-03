@@ -1,0 +1,21 @@
+HTTP/2 200 
+date: Wed, 03 Sep 2025 11:25:57 GMT
+content-type: application/json; charset=utf-8
+content-length: 244
+access-control-allow-origin: *
+cache-control: no-store
+content-disposition: inline
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
+permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=zCBJ2R8sSp%2B6%2BmsXbQjbSbQZCiVYp%2FlROEKciIo5Z2B8UFQte9KZfPjIGJA6zBcaRT18erk50ebnys8XADVA3Rbbk%2FElhTJmJAyHuEV6IEdPGlhU"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 9794e3b01dc02b74-LAX
+alt-svc: h3=":443"; ma=86400
+
+{"ready":true,"db":true,"cache":true,"commit":"8d8588ab482a29bd5ffee72e7d49bb18077ebd21","buildTime":"2025-09-03T11:25:57.176Z","phase":"stage1","ciStatus":"green","timestamp":"2025-09-03T11:25:57.176Z","environment":"production","mocks":false}

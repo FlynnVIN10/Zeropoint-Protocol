@@ -1,6 +1,6 @@
 {
   "phase": "stage1",
-  "commit": "bb74d71e6ccd8a2069feea8d9529d3e3f2273a2c",
+  "commit": "cdaf049bf300574023b138263bc8c9292851832b",
   "files": [
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/index.txt",
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/robots.txt",
@@ -34,5 +34,5 @@
   ],
   "public_access": true,
   "browseable_url": "https://zeropointprotocol.ai/evidence/",
-  "last_updated": "2025-09-03T19:30:00Z"
+  "last_updated": "2025-09-03T20:00:00Z"
 }

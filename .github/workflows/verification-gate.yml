@@ -102,5 +102,5 @@ jobs:
           git config user.email "action@github.com"
           git add public/evidence/v19/curl/
           git commit -m "auto: update v19 curl evidences from CI" || true
-          git pull https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main
-          git push https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main
+          git pull --rebase https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main || true
+          git push https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main || true

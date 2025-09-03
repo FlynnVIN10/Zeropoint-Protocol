@@ -134,14 +134,14 @@
       "name": "Update evidence files to current deployment",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "cdaf049bf300574023b138263bc8c9292851832b",
+      "commit": "f1175fd56cebdbc7133c5a8339a6e3125985d73e",
       "deployment": "https://zeropoint-protocol.pages.dev"
     },
     {
       "name": "Final evidence synchronization complete",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/progress.json",
-      "commit": "cdaf049bf300574023b138263bc8c9292851832b",
+      "commit": "f1175fd56cebdbc7133c5a8339a6e3125985d73e",
       "deployment": "https://zeropointprotocol.ai",
       "description": "All evidence files now reference current deployment URL and commit"
     },
@@ -149,7 +149,7 @@
       "name": "Evidence commit synchronization to c6a7cd3",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "cdaf049bf300574023b138263bc8c9292851832b",
+      "commit": "f1175fd56cebdbc7133c5a8339a6e3125985d73e",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Updated all evidence files to reference correct commit and deployment URL"
     },
@@ -157,7 +157,7 @@
       "name": "CTO Directive Compliance - Truth-to-Repo Synchronization",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "cdaf049bf300574023b138263bc8c9292851832b",
+      "commit": "f1175fd56cebdbc7133c5a8339a6e3125985d73e",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Synchronized all evidence files to match live deployment commit and consolidated to single production domain per CTO directive"
     },
@@ -165,7 +165,7 @@
       "name": "FINAL: Complete Evidence Synchronization to Live Commit",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "cdaf049bf300574023b138263bc8c9292851832b",
+      "commit": "f1175fd56cebdbc7133c5a8339a6e3125985d73e",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Updated all evidence files to match current live deployment commit cdaf049bf300574023b138263bc8c9292851832b - Truth-to-Repo compliance fully restored"
     }

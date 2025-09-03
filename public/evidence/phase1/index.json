@@ -1,6 +1,6 @@
 {
   "phase": "stage1",
-  "commit": "de956d199ca23edbf68448171e3d6f31a5bdb137",
+  "commit": "bb74d71e6ccd8a2069feea8d9529d3e3f2273a2c",
   "files": [
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/index.txt",
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/robots.txt",
@@ -33,6 +33,6 @@
     "/api/readyz"
   ],
   "public_access": true,
-  "browseable_url": "https://zeropoint-protocol.pages.dev/evidence/",
+  "browseable_url": "https://zeropointprotocol.ai/evidence/",
   "last_updated": "2025-09-03T19:30:00Z"
 }

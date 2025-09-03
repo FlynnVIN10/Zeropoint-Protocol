@@ -134,31 +134,31 @@
       "name": "Update evidence files to current deployment",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "de956d199ca23edbf68448171e3d6f31a5bdb137",
+      "commit": "bb74d71e6ccd8a2069feea8d9529d3e3f2273a2c",
       "deployment": "https://zeropoint-protocol.pages.dev"
     },
     {
       "name": "Final evidence synchronization complete",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/progress.json",
-      "commit": "de956d199ca23edbf68448171e3d6f31a5bdb137",
-      "deployment": "https://zeropoint-protocol.pages.dev",
+      "commit": "bb74d71e6ccd8a2069feea8d9529d3e3f2273a2c",
+      "deployment": "https://zeropointprotocol.ai",
       "description": "All evidence files now reference current deployment URL and commit"
     },
     {
       "name": "Evidence commit synchronization to c6a7cd3",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "de956d199ca23edbf68448171e3d6f31a5bdb137",
-      "deployment": "https://zeropoint-protocol.pages.dev",
+      "commit": "bb74d71e6ccd8a2069feea8d9529d3e3f2273a2c",
+      "deployment": "https://zeropointprotocol.ai",
       "description": "Updated all evidence files to reference correct commit and deployment URL"
     },
     {
       "name": "CTO Directive Compliance - Truth-to-Repo Synchronization",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "de956d199ca23edbf68448171e3d6f31a5bdb137",
-      "deployment": "https://zeropoint-protocol.pages.dev",
+      "commit": "bb74d71e6ccd8a2069feea8d9529d3e3f2273a2c",
+      "deployment": "https://zeropointprotocol.ai",
       "description": "Synchronized all evidence files to match live deployment commit and consolidated to single production domain per CTO directive"
     }
   ],

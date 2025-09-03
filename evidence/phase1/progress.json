@@ -135,8 +135,16 @@
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
       "commit": "d5dabdfdc07ab4bc6703d84225286ca8e3dee394",
-      "deployment": "https://b20fe786.zeropoint-protocol.pages.dev"
+      "deployment": "https://5790380f.zeropoint-protocol.pages.dev"
+    },
+    {
+      "name": "Final evidence synchronization complete",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json, /evidence/phase1/progress.json",
+      "commit": "d5dabdfdc07ab4bc6703d84225286ca8e3dee394",
+      "deployment": "https://5790380f.zeropoint-protocol.pages.dev",
+      "description": "All evidence files now reference current deployment URL and commit"
     }
   ],
-  "last_updated": "2025-09-03T11:21:05Z"
+  "last_updated": "2025-09-03T12:00:00Z"
 }

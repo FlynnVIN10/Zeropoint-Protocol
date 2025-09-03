@@ -1,13 +1,13 @@
 {
   "phase": "stage1",
-  "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+  "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
   "deployment": "https://zeropointprotocol.ai",
   "tasks": [
     {
       "name": "Evidence directory structure fixed",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+      "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Evidence files moved to public/evidence/ directory for proper serving by Cloudflare Pages"
     },
@@ -15,7 +15,7 @@
       "name": "Automated evidence generation",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+      "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Evidence generation script implemented to dynamically create files based on current commit"
     },
@@ -23,7 +23,7 @@
       "name": "Truth-to-Repo compliance",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+      "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
       "deployment": "https://zeropointprotocol.ai",
       "description": "All evidence files now reference the same commit as live deployment endpoints"
     },
@@ -31,7 +31,7 @@
       "name": "Files array synchronization",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json",
-      "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+      "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Evidence files array now points to verification artifacts from current commit"
     },
@@ -39,7 +39,7 @@
       "name": "Domain consolidation",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+      "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
       "deployment": "https://zeropointprotocol.ai",
       "description": "All evidence files reference single production domain https://zeropointprotocol.ai"
     },
@@ -47,7 +47,7 @@
       "name": "Cloudflare Pages deployment",
       "status": "completed",
       "evidence": "/status/version.json, /api/healthz, /api/readyz",
-      "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+      "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Manual deployment successful via Wrangler CLI - deployment infrastructure unblocked"
     },
@@ -55,10 +55,10 @@
       "name": "Dynamic evidence enumeration",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json",
-      "commit": "6201a894d2a289109ac35adf23f1801aea391253",
+      "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Evidence generation script updated to dynamically enumerate verification artifacts from current commit"
     }
   ],
-  "last_updated": "2025-09-03T21:24:41.006Z"
+  "last_updated": "2025-09-03T21:25:29.919Z"
 }

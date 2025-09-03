@@ -3,12 +3,12 @@
   "dataset": "MNIST",
   "dataset_sha256": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b",
   "dataset_size": 60000,
-  "commit": "fdaaad81e37caa43a8350d352e366de59dde94df",
-  "build_time": "2025-09-03T21:25:29.919Z",
+  "commit": "2bc486d27ce2fb39b5a8ce5634f508b70789f59e",
+  "build_time": "2025-09-03T21:34:05.274Z",
   "environment": "production",
   "mocks_disabled": true,
   "governance_mode": "dual-consensus",
   "training_framework": "Tinygrad",
-  "created_at": "2025-09-03T21:25:29.919Z",
-  "completed_at": "2025-09-03T21:25:29.919Z"
+  "created_at": "2025-09-03T21:34:05.274Z",
+  "completed_at": "2025-09-03T21:34:05.274Z"
 }

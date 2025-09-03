@@ -1,23 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   244  100   244    0     0   1764      0 --:--:-- --:--:-- --:--:--  1768
-HTTP/2 200 
-date: Wed, 03 Sep 2025 16:16:15 GMT
-content-type: application/json; charset=utf-8
-content-length: 244
-access-control-allow-origin: *
-cache-control: no-store
-content-disposition: inline
-strict-transport-security: max-age=31536000; includeSubDomains; preload
-content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests
-permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
-referrer-policy: strict-origin-when-cross-origin
-x-content-type-options: nosniff
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=kabHh4UhYoEDs4B2wHrN0XKroFI00UYKJ0On2miObNxTUPt0hDIbLTNRVgBLf7XIW3BISArXislrhh1%2FtaFxoLndLl7uyUKCGwICHsWcnlkUgqwPlvM%2BIwwfWdB8j56WbD4RRpsGtRNBHIAi%2BlPDM6g%3D"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-ray: 97968cf1e9d16b32-DFW
-alt-svc: h3=":443"; ma=86400
-
-{"ready":true,"db":true,"cache":true,"commit":"3c4641a757bd8ee29faf9a44d3acbec4fcca9080","buildTime":"2025-09-03T16:16:15.680Z","phase":"stage1","ciStatus":"green","timestamp":"2025-09-03T16:16:15.680Z","environment":"production","mocks":false}

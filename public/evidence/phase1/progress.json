@@ -1,13 +1,13 @@
 {
   "phase": "stage1",
-  "commit": "a0a10f50d9148f72e468e2fcf14d1cd60ba79028",
+  "commit": "unknown",
   "deployment": "https://zeropointprotocol.ai",
   "tasks": [
     {
       "name": "Evidence directory structure fixed",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": "a0a10f50d9148f72e468e2fcf14d1cd60ba79028",
+      "commit": "unknown",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Automated evidence generation implemented - evidence files now generated from current commit in CI"
     },
@@ -15,10 +15,10 @@
       "name": "Automated evidence generation",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "a0a10f50d9148f72e468e2fcf14d1cd60ba79028",
+      "commit": "unknown",
       "deployment": "https://zeropointprotocol.ai",
       "description": "Evidence files automatically generated from current commit - Truth-to-Repo compliance maintained"
     }
   ],
-  "last_updated": "2025-09-03T19:48:04.970Z"
+  "last_updated": "2025-09-03T20:10:41.684Z"
 }

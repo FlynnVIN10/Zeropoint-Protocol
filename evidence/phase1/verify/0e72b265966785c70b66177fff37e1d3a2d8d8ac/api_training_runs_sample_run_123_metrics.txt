@@ -1,18 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   915  100   915    0     0   6670      0 --:--:-- --:--:-- --:--:--  6678
-HTTP/2 200 
-date: Wed, 03 Sep 2025 01:21:00 GMT
-content-type: application/json; charset=utf-8
-content-length: 915
-cache-control: no-store
-content-disposition: inline
-x-content-type-options: nosniff
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=q%2FEgZyPX8fX9eIhoQmHAlIjwGoqRtE53Ky5wfHgZvG6ydqu8I%2BzorQ6EEuEerbtcUrt4yUL3IUmY324q%2BcpjjElqPlV9OXUVNhhAkyVaVfpBGtPvil4qJF3cfLzpUh9QuiymVOdI98dWBJH0oiHxXHM%3D"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-ray: 97916d8caaf0f07a-DFW
-alt-svc: h3=":443"; ma=86400
-
-{"run_id":"sample-run-123","metrics":[{"epoch":0,"loss":2.4567,"accuracy":0.5234,"timestamp":"2025-09-02T22:50:00Z"},{"epoch":1,"loss":2.1234,"accuracy":0.5678,"timestamp":"2025-09-02T22:50:01Z"},{"epoch":2,"loss":1.8901,"accuracy":0.6123,"timestamp":"2025-09-02T22:50:02Z"},{"epoch":3,"loss":1.6789,"accuracy":0.6567,"timestamp":"2025-09-02T22:50:03Z"},{"epoch":4,"loss":1.4567,"accuracy":0.7012,"timestamp":"2025-09-02T22:50:04Z"},{"epoch":5,"loss":1.2345,"accuracy":0.7456,"timestamp":"2025-09-02T22:50:05Z"},{"epoch":6,"loss":1.0123,"accuracy":0.789,"timestamp":"2025-09-02T22:50:06Z"},{"epoch":7,"loss":0.8901,"accuracy":0.8234,"timestamp":"2025-09-02T22:50:07Z"},{"epoch":8,"loss":0.7678,"accuracy":0.8567,"timestamp":"2025-09-02T22:50:08Z"},{"epoch":9,"loss":0.6456,"accuracy":0.8901,"timestamp":"2025-09-02T22:50:09Z"}],"total_epochs":10,"latest_loss":0.6456,"latest_accuracy":0.8901,"decreasing_loss":true}

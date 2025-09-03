@@ -1,18 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    34  100    34    0     0    143      0 --:--:-- --:--:-- --:--:--   143
-HTTP/2 404 
-date: Wed, 03 Sep 2025 01:20:59 GMT
-content-type: application/json; charset=utf-8
-content-length: 34
-cache-control: no-store
-content-disposition: inline
-x-content-type-options: nosniff
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=qXAVQxewX5jPCP1qsHAcqfHpC8UcmSDJEK03d%2BR9FWDQxBCPpeSfDS1Cc9gC0LFv3Gvuf9kOWNZyl8ir19VyoC08%2BLUU4wNCZC%2BYwHWTum9YwP%2BzS%2BMb5Ippmw0zgPSqkMEQUCNS8U4YMDf%2F%2FlxrbjA%3D"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-ray: 97916d843f77f08c-DFW
-alt-svc: h3=":443"; ma=86400
-
-{"error":"Training run not found"}

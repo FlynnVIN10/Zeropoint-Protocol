@@ -1,18 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   148  100   148    0     0    770      0 --:--:-- --:--:-- --:--:--   770
-HTTP/2 200 
-date: Wed, 03 Sep 2025 16:16:15 GMT
-content-type: application/json; charset=utf-8
-content-length: 148
-cache-control: no-store
-content-disposition: inline
-x-content-type-options: nosniff
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Zrh32AtgDW5CHCGcRjPq1A7ON2UKSMadR2hKYaso6Gyi%2FQRm8IsRpgwe3seXdKBYmdf5WSEsjHuRwHxfjpTYzGj4%2F9NYwc2VdTMzPGyax7lt%2FzlMiz5HUXnshw4VnO3a7D1IbZJE0P%2FyaA%2FUa2plwU0%3D"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-ray: 97968cef5ca8eabd-DFW
-alt-svc: h3=":443"; ma=86400
-
-{"runs":[{"run_id":"sample-run-123","status":"completed","started":"2025-09-02T23:45:00Z","metrics_count":10,"checkpoints_count":3}],"total_runs":1}

@@ -1,18 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   141  100   108  100    33    617    188 --:--:-- --:--:-- --:--:--   810
-HTTP/2 200 
-date: Wed, 03 Sep 2025 01:21:00 GMT
-content-type: application/json; charset=utf-8
-content-length: 108
-cf-ray: 97916d8b8f22f0b4-DFW
-cache-control: no-store
-content-disposition: inline
-x-content-type-options: nosniff
-report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=P0m%2FPEppng6KycJNYZRhkXRuPP396p4Ja%2FMUz5oT4ctXNB9mhtmzgSKBHk8LD0UCl8K45cLy9FqCXScfGSIbK54UyBu9bTfdsTWQaXG6kDuSJN9JBqeyUF3rIXkApRUQJZxDl7Lo5OxJvtPzobWOMWA1PwTbAy16UT9X%2BHqY1eJe9%2FSE"}],"group":"cf-nel","max_age":604800}
-nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
-server: cloudflare
-alt-svc: h3=":443"; ma=86400
-server-timing: cfL4;desc="?proto=TCP&rtt=29473&min_rtt=24094&rtt_var=10662&sent=8&recv=11&lost=0&retrans=0&sent_bytes=2976&recv_bytes=715&delivery_rate=166694&cwnd=255&unsent_bytes=0&cid=4bd2790c8f823b9e&ts=85&x=0"
-
-{"run_id":"13944b38-db45-4015-b991-9c36ee2a4f81","status":"started","config":{"dataset":"MNIST","epochs":5}}

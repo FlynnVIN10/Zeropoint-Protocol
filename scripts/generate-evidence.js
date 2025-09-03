@@ -13,7 +13,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Get environment variables
-const GITHUB_SHA = process.env.GITHUB_SHA || process.env.VERCEL_GIT_COMMIT_SHA || 'unknown';
+const GITHUB_SHA = process.env.GITHUB_SHA || process.env.VERCEL_GIT_COMMIT_SHA || process.env.CF_PAGES_COMMIT_SHA || 'unknown';
 const BUILD_TIME = new Date().toISOString();
 const PRODUCTION_DOMAIN = 'https://zeropointprotocol.ai';
 

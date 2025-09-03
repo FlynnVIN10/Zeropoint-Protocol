@@ -4,7 +4,6 @@ compatibility_flags = ["nodejs_compat"]
 
 # Cloudflare Pages configuration - Static deployment
 pages_build_output_dir = "public"
-pages_build_command = "./build.sh"
 
 # Workers AI binding for Pages Functions
 [ai]

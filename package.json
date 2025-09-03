@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/generate-evidence.js && next build",
+    "build:site": "next build",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit"

@@ -1,26 +1,26 @@
 {
   "phase": "stage1",
-  "commit": "caa161b512dbd575c9a12efd0ea465794da5dfcc",
+  "commit": "c1932f6b9472d480bbee8eb175749081aa35ca03",
   "files": [
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/index.txt",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/robots.txt",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/sitemap.xml",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/api_healthz.txt",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/api_readyz.txt",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/status_version_json.txt",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/lighthouse_report.html",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/lighthouse_report.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/curl_evidence.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/smoke_test.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/deploy_log.txt",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/ci_status.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/endpoint_verification.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/security_scan.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/performance_metrics.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/accessibility_audit.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/seo_analysis.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/compliance_check.json",
-    "verify/caa161b512dbd575c9a12efd0ea465794da5dfcc/final_verification.json"
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/index.txt",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/robots.txt",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/sitemap.xml",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/api_healthz.txt",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/api_readyz.txt",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/status_version_json.txt",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/lighthouse_report.html",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/lighthouse_report.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/curl_evidence.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/smoke_test.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/deploy_log.txt",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/ci_status.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/endpoint_verification.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/security_scan.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/performance_metrics.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/accessibility_audit.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/seo_analysis.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/compliance_check.json",
+    "verify/c1932f6b9472d480bbee8eb175749081aa35ca03/final_verification.json"
   ],
   "endpoints": [
     "/status/version.json",
@@ -29,5 +29,5 @@
   ],
   "public_access": true,
   "browseable_url": "https://zeropointprotocol.ai/evidence/",
-  "last_updated": "2025-09-03T21:12:22.441Z"
+  "last_updated": "2025-09-03T21:15:13.375Z"
 }

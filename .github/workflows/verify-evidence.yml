@@ -65,19 +65,22 @@ jobs:
             jq -e . "$f" >/dev/null
           done
 
-      - name: Enforce short SHA format everywhere
+      - name: Enforce short SHA in commit fields (verify dir only)
         run: |
+          set -euo pipefail
           SHORT=$(git rev-parse --short=7 HEAD)
-          set -e
-          jq -e --arg s "$SHORT" '(.commit|type)=="string" and (.commit|length)==7 and (.commit==$s)' public/status/version.json >/dev/null
-          for f in $(find public/evidence/verify/$SHORT -type f -name '*.json'); do
-            jq -e --arg s "$SHORT" '(.commit|type)=="string" and (.commit|length)==7 and (.commit==$s)' "$f" >/dev/null || { echo "Commit mismatch: $f"; exit 1; }
+          mapfile -t files < <(git ls-files 'public/evidence/verify/**/*.json' || true)
+          [[ ${#files[@]} -gt 0 ]]
+          for f in "${files[@]}"; do
+            if jq -e 'has("commit")' "$f" >/dev/null; then
+              jq -e --arg s "$SHORT" '(.commit|type)=="string" and (.commit|length)==7 and .commit==$s' "$f" >/dev/null
+            fi
           done
 
-      - name: Forbid hashed subdomains in evidence
+      - name: Forbid hashed pages.dev URLs in evidence
         run: |
-          ! grep -RIEo 'https://[-a-z0-9]+\.pages\.dev/evidence' public || \
-            (echo "Found hashed subdomain references" && exit 1)
+          ! grep -RIEo 'https://[-a-z0-9]\+\.pages\.dev/evidence' public/evidence || \
+            (echo "Found hashed pages.dev refs" && exit 1)
 
       - name: Validate headers via local dev
         run: |

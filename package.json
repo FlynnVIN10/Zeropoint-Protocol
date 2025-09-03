@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/generate-evidence.js && next build",
+    "build": "next build",
+    "postbuild": "node scripts/generate-evidence.mjs",
     "build:site": "next build",
     "start": "next start",
     "lint": "next lint",

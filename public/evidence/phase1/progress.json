@@ -155,8 +155,32 @@
       "name": "Final evidence synchronization",
       "status": "completed",
       "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json",
-      "commit": "dc2b1206b8dfe560e8830e99f7b7e797290d13d6"
+      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
+    },
+    {
+      "name": "Regenerate evidence files with current commit",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json",
+      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
+    },
+    {
+      "name": "Verify manifest links and deployment URL",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/index.json",
+      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
+    },
+    {
+      "name": "Align progress log with latest commit",
+      "status": "completed",
+      "evidence": "/public/evidence/phase1/progress.json",
+      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
+    },
+    {
+      "name": "Confirm provenance consistency",
+      "status": "completed",
+      "evidence": "/public/evidence/training/sample-run-123/provenance.json",
+      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
     }
   ],
-  "last_updated": "2025-09-03T00:45:00Z"
+  "last_updated": "2025-09-03T00:55:00Z"
 }

@@ -1,0 +1,137 @@
+name: verify-evidence
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+
+      - name: Install
+        run: npm ci
+
+      - name: Build (simulate Pages env)
+        env:
+          CF_PAGES_COMMIT_SHA: ${{ github.sha }}
+          CF_PAGES_URL: https://zeropointprotocol.ai
+          CF_PAGES_BRANCH: ${{ github.ref_name }}
+          CF_PAGES_COMMIT_TIME: ${{ github.event.head_commit.timestamp || github.event.pull_request.updated_at || github.event.repository.pushed_at || '' }}
+        run: npm run build
+
+      - name: Assert evidence matches commit
+        run: |
+          SHORT=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          test -f public/status/version.json
+          V=$(jq -r '.commit' public/status/version.json)
+          test "$V" = "$SHORT"
+
+          IDX="public/evidence/verify/${SHORT}/index.json"
+          META="public/evidence/verify/${SHORT}/metadata.json"
+          PROG="public/evidence/verify/${SHORT}/progress.json"
+          PROV="public/evidence/verify/${SHORT}/provenance.json"
+
+          for f in "$IDX" "$META" "$PROG" "$PROV"; do
+            test -f "$f"
+            jq -e --arg s "$SHORT" '._ as $o | .commit == $s' "$f" >/dev/null
+          done
+
+      - name: Fail if any stray evidence for other SHAs
+        run: |
+          SHORT=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          shopt -s nullglob
+          for d in public/evidence/verify/*; do
+            [ -d "$d" ] || continue
+            base=$(basename "$d")
+            if [ "$base" != "$SHORT" ]; then
+              echo "Unexpected evidence dir: $d"
+              exit 1
+            fi
+          done
+
+      - name: Assert JSON validity and no BOM
+        run: |
+          for f in $(git ls-files 'public/**/*.json'); do
+            # No UTF-8 BOM
+            if [ "$(xxd -p -l 3 "$f" 2>/dev/null)" = "efbbbf" ]; then
+              echo "BOM in $f"; exit 1; fi
+            # Valid JSON
+            jq -e . "$f" >/dev/null
+          done
+
+      - name: Enforce short SHA in commit fields (verify dir only)
+        run: |
+          set -euo pipefail
+          SHORT=$(git rev-parse --short=7 HEAD)
+          mapfile -t files < <(find public/evidence/verify -type f -name '*.json' -print || true)
+          [[ ${#files[@]} -gt 0 ]]
+          for f in "${files[@]}"; do
+            if jq -e 'has("commit")' "$f" >/dev/null; then
+              jq -e --arg s "$SHORT" '(.commit|type)=="string" and (.commit|length)==7 and .commit==$s' "$f" >/dev/null
+            fi
+          done
+
+      - name: Forbid hashed pages.dev URLs in evidence
+        run: |
+          ! grep -RIEo 'https://[-a-z0-9]\+\.pages\.dev/evidence' public/evidence || \
+            (echo "Found hashed pages.dev refs" && exit 1)
+
+      - name: Validate headers via local dev
+        run: |
+          npx wrangler pages dev public --port=8788 --local & sleep 2
+          for path in /status/version.json /evidence/verify/$(git rev-parse --short=7 HEAD)/index.json; do
+            curl -fsSIL "http://127.0.0.1:8788$path" | tee /tmp/h.txt
+            grep -i '^content-type: application/json' /tmp/h.txt
+            grep -i '^x-content-type-options: nosniff' /tmp/h.txt
+            grep -i '^cache-control: no-store' /tmp/h.txt
+          done
+
+      - name: ISO8601Z timestamp
+        run: |
+          jq -e '(.timestamp|test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"))' public/status/version.json
+
+  post-deploy-smoke:
+    needs: build-and-check
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_PROJECT_NAME: ${{ secrets.CF_PROJECT_NAME }}
+    steps:
+      - name: Get latest production deployment URL
+        id: dep
+        run: |
+          URL=$(curl -fsSL -H "Authorization: Bearer $CF_API_TOKEN" \
+            "https://api.cloudflare.com/client/v4/accounts/$CF_ACCOUNT_ID/pages/projects/$CF_PROJECT_NAME/deployments?env=production&per_page=1" \
+            | jq -r '.result[0].url')
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+
+      - name: Probe /status/version.json
+        run: |
+          U="${{ steps.dep.outputs.url }}"
+          curl -fsSIL "$U/status/version.json" | tee headers.txt
+          grep -i "^content-type: application/json" headers.txt
+          grep -i "^x-content-type-options: nosniff" headers.txt
+          grep -i "^cache-control: no-store" headers.txt
+          SHORT=$(curl -fsSL "$U/status/version.json" | jq -r '.commit')
+          test "${SHORT}" = "$(git rev-parse --short=7 HEAD)"
+
+      - name: Probe evidence index
+        run: |
+          U="${{ steps.dep.outputs.url }}"
+          SHORT=$(curl -fsSL "$U/status/version.json" | jq -r '.commit')
+          curl -fsSIL "$U/evidence/verify/${SHORT}/index.json" | tee headers2.txt
+          grep -i "^content-type: application/json" headers2.txt
+          grep -i "^x-content-type-options: nosniff" headers2.txt
+          grep -i "^cache-control: no-store" headers2.txt
+          C=$(curl -fsSL "$U/evidence/verify/${SHORT}/index.json" | jq -r '.commit')
+          test "$C" = "$SHORT"
+
+

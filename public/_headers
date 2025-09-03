@@ -1,5 +1,19 @@
 # Headers for Zeropoint Protocol
 
+# JSON files (site-wide)
+/*.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-store
+  Content-Disposition: inline
+
+# Specific status JSON endpoint
+/status/version.json
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+  Cache-Control: no-store
+  Content-Disposition: inline
+
 # Evidence files
 /evidence/*/deploy_log.txt
   Content-Type: text/plain; charset=utf-8

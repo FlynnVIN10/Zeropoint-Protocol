@@ -1,9 +1,8 @@
 {
   "phase": "stage1",
-  "commit": "c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4",
+  "commit": "2f66621514fa6eff847549bd92dee1392b3f4a2d",
   "acknowledgements": "Dev Team and SCRA responded 'Received and understood'",
   "broadcast_status": "Completed",
-  "directive_created": "2025-09-02T22:50:00Z",
   "compliance_resolution": "Date/time metadata removed from directive, moved to evidence",
   "finalization_status": "Completed - All SCRA findings addressed",
   "verification_status": "Ready for SCRA verification"

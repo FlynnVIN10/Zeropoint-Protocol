@@ -1,17 +1,11 @@
-# Redirects for Zeropoint Protocol
+# Evidence directory - serve raw files with proper headers
+/evidence/* /evidence/:splat 200!
 
-# Evidence redirects
-/public/evidence/* /evidence/:splat 308
-/evidence/phase5 /evidence/phase5/ 308
-/evidence/v19 /evidence/v19/ 308
+# API routes
+/api/* /api/:splat 200
 
-# API redirects - Allow static files to be served first
-# /api/* /api/:splat 200  # Commented out to allow static API files
-
-# Force API endpoints to serve static files
-/api/training/status /api/training/status.json 200
-/api/healthz /api/healthz.json 200
-/api/readyz /api/readyz.json 200
-
-# Status redirects
+# Status routes
 /status/* /status/:splat 200
+
+# Fallback to SPA
+/* /index.html 200

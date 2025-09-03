@@ -114,7 +114,22 @@
       "name": "Synchronize commit references",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/training/sample-run-123/provenance.json"
+    },
+    {
+      "name": "Remove date/time metadata from directive",
+      "status": "completed",
+      "evidence": "/docs/stage1-directive.md"
+    },
+    {
+      "name": "Fix status/version mismatch",
+      "status": "completed",
+      "evidence": "/functions/status/version.json.ts"
+    },
+    {
+      "name": "Configure evidence directory access",
+      "status": "completed",
+      "evidence": "/public/_redirects"
     }
   ],
-  "last_updated": "2025-09-02T22:50:00Z"
+  "last_updated": "2025-09-03T00:10:00Z"
 }

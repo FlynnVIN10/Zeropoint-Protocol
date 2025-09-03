@@ -1,8 +1,6 @@
 # Stage 1 Directive - Tinygrad Training Microservice
 
-**Date:** 2025-09-02  
-**Directive:** Per CTO directive, Stage 1 — Operationalize Tinygrad Training Loop  
-**Broadcast Status:** Sent to Dev Team and SCRA on 2025-09-02 at 22:50 CDT  
+**Per CTO Directive:** Stage 1 — Operationalize Tinygrad Training Loop  
 **Objective:** Bring Tinygrad training loop online with live metrics and checkpoints, enforce MOCKS_DISABLED=1, and maintain dual-consensus governance.
 
 ## Tasks and Owners

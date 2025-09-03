@@ -1,15 +1,15 @@
 {
   "phase": "stage1",
-  "commit": "c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4",
+  "commit": "2f66621514fa6eff847549bd92dee1392b3f4a2d",
   "files": [
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/index.txt",
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/robots.txt",
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/sitemap.xml",
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/api_healthz.txt",
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/api_readyz.txt",
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/api_training_runs.txt",
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/lighthouse.json",
-    "verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/sse-test.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/index.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/robots.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/sitemap.xml",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/api_healthz.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/api_readyz.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/api_training_runs.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/lighthouse.json",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/sse-test.txt",
     "training/sample-run-123/metrics.jsonl",
     "training/sample-run-123/config.json",
     "training/sample-run-123/provenance.json",
@@ -33,6 +33,6 @@
     "/api/readyz"
   ],
   "public_access": true,
-  "browseable_url": "https://01ac9728.zeropoint-protocol.pages.dev/evidence/",
-  "last_updated": "2025-09-02T23:55:00Z"
+  "browseable_url": "https://859f7913.zeropoint-protocol.pages.dev/evidence/",
+  "last_updated": "2025-09-03T00:05:00Z"
 }

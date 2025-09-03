@@ -1,5 +1,5 @@
 HTTP/2 308 
-date: Wed, 03 Sep 2025 19:43:02 GMT
+date: Wed, 03 Sep 2025 19:49:01 GMT
 content-length: 0
 location: /status/ready
 access-control-allow-origin: *
@@ -16,10 +16,10 @@ x-content-type-options: nosniff
 x-content-type-options: nosniff
 x-frame-options: DENY
 vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=tOwgEGrIsEsTJ5Ubqyhrxw%2Fu%2FM29vi7J%2FkTWu41zsFfy1zBaRC7D2Gtytq3DR10ytFzNcv0FvsrveXsGdZPnyTe9TZzW2EwsQ9MnErPulZmbpkfO"}]}
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=rbiHIafhUZV6ctmf%2FhdSEGXmn2YMrzU5KGFfYg8ZYj1NTtPq5%2BL%2FEZH2xYWK3p1RfXYB%2Bz%2FQ27R6CHFytrx8wu8Fc3IZNViHPYdxP%2BbVeUeheBcB"}]}
 nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
 server: cloudflare
 cf-cache-status: DYNAMIC
-cf-ray: 9797bbd7ecd02716-SJC
+cf-ray: 9797c49c0b612a2f-CDG
 alt-svc: h3=":443"; ma=86400
 

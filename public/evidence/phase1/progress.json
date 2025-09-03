@@ -142,7 +142,7 @@
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/progress.json",
       "commit": "d5dabdfdc07ab4bc6703d84225286ca8e3dee394",
-      "deployment": "https://5790380f.zeropoint-protocol.pages.dev",
+      "deployment": "https://d94bb87a.zeropoint-protocol.pages.dev",
       "description": "All evidence files now reference current deployment URL and commit"
     }
   ],

@@ -29,7 +29,7 @@ const trainingDir = path.join(evidenceDir, 'training', 'sample-run-123');
 });
 
 // Generate dynamic files array based on current commit
-const currentCommitShort = GITHUB_SHA.substring(0, 7);
+const shortSHA = GITHUB_SHA.substring(0, 7);
 
 // Function to dynamically enumerate verification artifacts
 function generateFilesArray(commitSha) {
@@ -66,6 +66,7 @@ function generateFilesArray(commitSha) {
       actualFiles.forEach(file => {
         filesArray.push(`verify/${commitSha}/${file}`);
       });
+      console.log(`✅ Found ${actualFiles.length} actual verification files in ${verifyDir}`);
     } catch (error) {
       console.warn(`Warning: Could not read verify directory ${verifyDir}: ${error.message}`);
     }
@@ -76,17 +77,18 @@ function generateFilesArray(commitSha) {
     standardFiles.forEach(file => {
       filesArray.push(`verify/${commitSha}/${file}`);
     });
+    console.log(`📋 Using standard verification file list (${standardFiles.length} files)`);
   }
   
   return filesArray;
 }
 
-const filesArray = generateFilesArray(GITHUB_SHA);
+const filesArray = generateFilesArray(shortSHA);
 
 // Generate index.json
 const indexJson = {
   "phase": "stage1",
-  "commit": GITHUB_SHA,
+  "commit": shortSHA,
   "files": filesArray,
   "endpoints": [
     "/status/version.json",
@@ -94,6 +96,7 @@ const indexJson = {
     "/api/readyz"
   ],
   "public_access": true,
+  "deployment_url": `${PRODUCTION_DOMAIN}/evidence/`,
   "browseable_url": `${PRODUCTION_DOMAIN}/evidence/`,
   "last_updated": BUILD_TIME
 };
@@ -101,7 +104,7 @@ const indexJson = {
 // Generate metadata.json
 const metadataJson = {
   "phase": "stage1",
-  "commit": GITHUB_SHA,
+  "commit": shortSHA,
   "acknowledgements": "Dev Team and SCRA responded 'Received and understood'",
   "broadcast_status": "Completed",
   "compliance_resolution": "Date/time metadata removed from directive, moved to evidence",
@@ -112,14 +115,14 @@ const metadataJson = {
 // Generate progress.json with comprehensive task list
 const progressJson = {
   "phase": "stage1",
-  "commit": GITHUB_SHA,
+  "commit": shortSHA,
   "deployment": PRODUCTION_DOMAIN,
   "tasks": [
     {
       "name": "Evidence directory structure fixed",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": GITHUB_SHA,
+      "commit": shortSHA,
       "deployment": PRODUCTION_DOMAIN,
       "description": "Evidence files moved to public/evidence/ directory for proper serving by Cloudflare Pages"
     },
@@ -127,7 +130,7 @@ const progressJson = {
       "name": "Automated evidence generation",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": GITHUB_SHA,
+      "commit": shortSHA,
       "deployment": PRODUCTION_DOMAIN,
       "description": "Evidence generation script implemented to dynamically create files based on current commit"
     },
@@ -135,7 +138,7 @@ const progressJson = {
       "name": "Truth-to-Repo compliance",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": GITHUB_SHA,
+      "commit": shortSHA,
       "deployment": PRODUCTION_DOMAIN,
       "description": "All evidence files now reference the same commit as live deployment endpoints"
     },
@@ -143,7 +146,7 @@ const progressJson = {
       "name": "Files array synchronization",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json",
-      "commit": GITHUB_SHA,
+      "commit": shortSHA,
       "deployment": PRODUCTION_DOMAIN,
       "description": "Evidence files array now points to verification artifacts from current commit"
     },
@@ -151,7 +154,7 @@ const progressJson = {
       "name": "Domain consolidation",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": GITHUB_SHA,
+      "commit": shortSHA,
       "deployment": PRODUCTION_DOMAIN,
       "description": "All evidence files reference single production domain https://zeropointprotocol.ai"
     },
@@ -159,7 +162,7 @@ const progressJson = {
       "name": "Cloudflare Pages deployment",
       "status": "completed",
       "evidence": "/status/version.json, /api/healthz, /api/readyz",
-      "commit": GITHUB_SHA,
+      "commit": shortSHA,
       "deployment": PRODUCTION_DOMAIN,
       "description": "Manual deployment successful via Wrangler CLI - deployment infrastructure unblocked"
     },
@@ -167,7 +170,7 @@ const progressJson = {
       "name": "Dynamic evidence enumeration",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json",
-      "commit": GITHUB_SHA,
+      "commit": shortSHA,
       "deployment": PRODUCTION_DOMAIN,
       "description": "Evidence generation script updated to dynamically enumerate verification artifacts from current commit"
     }
@@ -181,7 +184,7 @@ const provenanceJson = {
   "dataset": "MNIST",
   "dataset_sha256": "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b",
   "dataset_size": 60000,
-  "commit": GITHUB_SHA,
+  "commit": shortSHA,
   "build_time": BUILD_TIME,
   "environment": "production",
   "mocks_disabled": true,

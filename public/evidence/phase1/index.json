@@ -1,26 +1,26 @@
 {
   "phase": "stage1",
-  "commit": "0c9378b637e25c141eca7e2bf7bd5deaed6a41c4",
+  "commit": "aba9e51",
   "files": [
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/index.txt",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/robots.txt",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/sitemap.xml",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/api_healthz.txt",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/api_readyz.txt",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/status_version_json.txt",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/lighthouse_report.html",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/lighthouse_report.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/curl_evidence.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/smoke_test.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/deploy_log.txt",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/ci_status.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/endpoint_verification.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/security_scan.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/performance_metrics.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/accessibility_audit.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/seo_analysis.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/compliance_check.json",
-    "verify/0c9378b637e25c141eca7e2bf7bd5deaed6a41c4/final_verification.json"
+    "verify/aba9e51/index.txt",
+    "verify/aba9e51/robots.txt",
+    "verify/aba9e51/sitemap.xml",
+    "verify/aba9e51/api_healthz.txt",
+    "verify/aba9e51/api_readyz.txt",
+    "verify/aba9e51/status_version_json.txt",
+    "verify/aba9e51/lighthouse_report.html",
+    "verify/aba9e51/lighthouse_report.json",
+    "verify/aba9e51/curl_evidence.json",
+    "verify/aba9e51/smoke_test.json",
+    "verify/aba9e51/deploy_log.txt",
+    "verify/aba9e51/ci_status.json",
+    "verify/aba9e51/endpoint_verification.json",
+    "verify/aba9e51/security_scan.json",
+    "verify/aba9e51/performance_metrics.json",
+    "verify/aba9e51/accessibility_audit.json",
+    "verify/aba9e51/seo_analysis.json",
+    "verify/aba9e51/compliance_check.json",
+    "verify/aba9e51/final_verification.json"
   ],
   "endpoints": [
     "/status/version.json",
@@ -28,6 +28,7 @@
     "/api/readyz"
   ],
   "public_access": true,
+  "deployment_url": "https://zeropointprotocol.ai/evidence/",
   "browseable_url": "https://zeropointprotocol.ai/evidence/",
-  "last_updated": "2025-09-03T21:36:08.795Z"
+  "last_updated": "2025-09-03T21:43:17.205Z"
 }

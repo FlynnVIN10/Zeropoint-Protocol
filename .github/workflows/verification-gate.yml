@@ -91,34 +91,9 @@ jobs:
         if: always()
         run: echo "artifact=verification-artifacts"
 
-      - name: Auto-commit evidence to repo (on main only)
-        if: success() && github.ref == 'refs/heads/main'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Store evidence artifacts (no commit)
+        if: success()
         run: |
           mkdir -p public/evidence/v19/curl
           cp evidence_out/*.http public/evidence/v19/curl/
-          git config user.name "GitHub Action"
-          git config user.email "action@github.com"
-          
-          # Check if there are any changes to commit
-          if git diff --quiet --exit-code; then
-            echo "No changes to commit"
-            exit 0
-          fi
-          
-          # Pull latest changes first with merge strategy
-          export GIT_EDITOR=:
-          git pull --no-rebase https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main || {
-            echo "Merge conflict detected, resolving by accepting our changes"
-            git checkout --ours public/evidence/v19/curl/
-            git add public/evidence/v19/curl/
-            git commit -m "auto: resolve merge conflict in curl evidences from CI"
-          }
-          
-          # Add and commit changes
-          git add public/evidence/v19/curl/
-          git commit -m "auto: update v19 curl evidences from CI"
-          
-          # Push changes
-          git push https://$GITHUB_TOKEN@github.com/${{ github.repository }}.git main
+          echo "Evidence artifacts stored locally - no commit to repository"

@@ -1,38 +1,33 @@
 {
   "phase": "stage1",
-  "commit": "6fda1bdf5301af6dbc35542d662338ee56b2acd5",
+  "commit": "39ed3f7043469322b4a5d4021627465c57a424fc",
   "files": [
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/index.txt",
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/robots.txt",
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/sitemap.xml",
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/api_healthz.txt",
     "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/api_readyz.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/api_training_runs.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/lighthouse.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/sse-test.txt",
-    "training/sample-run-123/metrics.jsonl",
-    "training/sample-run-123/config.json",
-    "training/sample-run-123/provenance.json",
-    "training/sample-run-123/checkpoints/checkpoint-3.bin",
-    "training/sample-run-123/checkpoints/checkpoint-6.bin",
-    "training/sample-run-123/checkpoints/checkpoint-9.bin",
-    "acknowledgements/response.json",
-    "progress.json",
-    "metadata.json"
-  ],
-  "runs": [
-    "sample-run-123"
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/status_version_json.txt",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/lighthouse_report.html",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/lighthouse_report.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/curl_evidence.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/smoke_test.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/deploy_log.txt",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/ci_status.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/endpoint_verification.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/security_scan.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/performance_metrics.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/accessibility_audit.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/seo_analysis.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/compliance_check.json",
+    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/final_verification.json"
   ],
   "endpoints": [
-    "/api/training/runs",
-    "/api/training/runs/{run_id}",
-    "/api/training/runs/{run_id}/metrics",
-    "/api/events/training",
-    "/api/events/training/test",
+    "/status/version.json",
     "/api/healthz",
     "/api/readyz"
   ],
   "public_access": true,
   "browseable_url": "https://zeropointprotocol.ai/evidence/",
-  "last_updated": "2025-09-03T22:00:00Z"
+  "last_updated": "2025-09-03T19:37:05.556Z"
 }

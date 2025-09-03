@@ -11,7 +11,11 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@chainsafe/libp2p-noise": "^16.1.4",
+    "@libp2p/mplex": "^11.0.47",
+    "@libp2p/websockets": "^9.2.19",
     "jsonwebtoken": "^9.0.2",
+    "libp2p": "^2.10.0",
     "next": "14.0.4",
     "prom-client": "^15.1.3",
     "react": "^18",

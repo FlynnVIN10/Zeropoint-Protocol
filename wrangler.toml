@@ -13,7 +13,6 @@ binding = "AI"
 name = "zeropoint-protocol"
 
 [env.production.vars]
-__BUILD_SHA__ = "02107f3c"
 BUILD_TIME = "2025-08-21T22:15:00Z"
 MOCKS_DISABLED = "1"
 TRAINING_ENABLED = "1"

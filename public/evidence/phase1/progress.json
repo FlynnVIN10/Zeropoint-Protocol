@@ -88,147 +88,55 @@
     {
       "name": "Update directive metadata",
       "status": "completed",
-      "evidence": "/docs/stage1-directive.md, /evidence/phase1/metadata.json",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/docs/stage1-directive.md, /evidence/phase1/metadata.json"
     },
     {
       "name": "Initiate sample training run",
       "status": "completed",
-      "evidence": "/evidence/training/sample-run-123/",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/evidence/training/sample-run-123/"
     },
     {
       "name": "Make evidence files accessible",
       "status": "completed",
-      "evidence": "/evidence/phase1/index.json",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/evidence/phase1/index.json"
     },
     {
       "name": "Validate SSE test endpoint",
       "status": "completed",
-      "evidence": "/evidence/phase1/verify/e7d5766c08658daa06cecf9438b9fb507dc36aad/sse-test.txt",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/evidence/phase1/verify/c15a28eb681ff4a8b0e5a63ef704c9c1d1abc4d4/sse-test.txt"
     },
     {
       "name": "Update GET /api/training/runs to include sample-run-123",
       "status": "completed",
-      "evidence": "/functions/api/training/runs.ts",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/functions/api/training/runs.ts"
     },
     {
       "name": "Synchronize commit references",
       "status": "completed",
-      "evidence": "/evidence/phase1/index.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/evidence/phase1/index.json, /evidence/training/sample-run-123/provenance.json"
     },
     {
       "name": "Remove date/time metadata from directive",
       "status": "completed",
-      "evidence": "/docs/stage1-directive.md",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/docs/stage1-directive.md"
     },
     {
       "name": "Fix status/version mismatch",
       "status": "completed",
-      "evidence": "/functions/status/version.json.ts",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/functions/status/version.json.ts"
     },
     {
       "name": "Configure evidence directory access",
       "status": "completed",
-      "evidence": "/public/_redirects",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
+      "evidence": "/public/_redirects"
     },
     {
-      "name": "Update evidence manifest with current commit",
+      "name": "Update evidence files to current deployment",
       "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json",
-      "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad"
-    },
-    {
-      "name": "Synchronize progress log with current commit",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/progress.json",
-      "commit": "dc2b1206b8dfe560e8830e99f7b7e797290d13d6"
-    },
-    {
-      "name": "Final evidence synchronization",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json",
-      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
-    },
-    {
-      "name": "Regenerate evidence files with current commit",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json",
-      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
-    },
-    {
-      "name": "Verify manifest links and deployment URL",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json",
-      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
-    },
-    {
-      "name": "Align progress log with latest commit",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/progress.json",
-      "commit": "ebb65a613fc4073894b370ec314b346299452df8"
-    },
-    {
-      "name": "Confirm provenance consistency",
-      "status": "completed",
-      "evidence": "/public/evidence/training/sample-run-123/provenance.json",
-      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
-    },
-    {
-      "name": "Rebuild evidence manifest with current commit",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json",
-      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
-    },
-    {
-      "name": "Update progress.json with latest commit",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/progress.json",
-      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
-    },
-    {
-      "name": "Rewrite provenance files with new commit",
-      "status": "completed",
-      "evidence": "/public/evidence/training/sample-run-123/provenance.json",
-      "commit": "4c75bc2dd2ae702946105f3a2a56c6e272e22bb1"
-    },
-    {
-      "name": "Final evidence regeneration complete",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json, /public/evidence/phase1/progress.json",
-      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
-    },
-    {
-      "name": "Rebuild evidence manifest with current commit",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json",
-      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
-    },
-    {
-      "name": "Update progress.json with actual task statuses",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/progress.json",
-      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
-    },
-    {
-      "name": "Update training evidence to current commit",
-      "status": "completed",
-      "evidence": "/public/evidence/training/sample-run-123/provenance.json",
-      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
-    },
-    {
-      "name": "Final evidence synchronization complete",
-      "status": "completed",
-      "evidence": "/public/evidence/phase1/index.json, /public/evidence/phase1/metadata.json, /public/evidence/phase1/progress.json",
-      "commit": "0187600c59e390c0da58bdfdc6a1639be7920ac4"
+      "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
+      "commit": "d5dabdfdc07ab4bc6703d84225286ca8e3dee394",
+      "deployment": "https://44d980b3.zeropoint-protocol.pages.dev"
     }
   ],
-  "last_updated": "2025-09-03T01:15:00Z"
+  "last_updated": "2025-09-03T11:21:05Z"
 }

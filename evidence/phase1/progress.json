@@ -129,7 +129,14 @@
       "name": "Configure evidence directory access",
       "status": "completed",
       "evidence": "/public/_redirects"
+    },
+    {
+      "name": "Update evidence files to current deployment",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/training/sample-run-123/provenance.json",
+      "commit": "d5dabdfdc07ab4bc6703d84225286ca8e3dee394",
+      "deployment": "https://44d980b3.zeropoint-protocol.pages.dev"
     }
   ],
-  "last_updated": "2025-09-03T01:15:00Z"
+  "last_updated": "2025-09-03T11:21:05Z"
 }

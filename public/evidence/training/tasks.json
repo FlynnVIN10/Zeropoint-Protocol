@@ -1,0 +1,26 @@
+{
+  "tasks": [
+    {
+      "id": "task-001",
+      "title": "Implement SCP v1 Validation",
+      "description": "Add schema validation to build-leaderboard script",
+      "status": "open",
+      "priority": "high",
+      "assigned_to": "dev-team"
+    },
+    {
+      "id": "task-002",
+      "title": "Update Status Dashboard",
+      "description": "Add noscript support to training status page",
+      "status": "open",
+      "priority": "medium",
+      "assigned_to": "frontend-dev"
+    }
+  ],
+  "summary": {
+    "total_tasks": 2,
+    "open_tasks": 2,
+    "completed_tasks": 0,
+    "generated_at": ""
+  }
+}

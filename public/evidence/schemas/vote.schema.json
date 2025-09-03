@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["vote_id", "proposal_id", "voter", "vote", "timestamp"],
+  "properties": {
+    "vote_id": { "type": "string" },
+    "proposal_id": { "type": "string" },
+    "voter": { "type": "string", "enum": ["synthiant", "human"] },
+    "vote": { "type": "string", "enum": ["approve", "veto"] },
+    "timestamp": { "type": "string", "format": "date-time" }
+  }
+}

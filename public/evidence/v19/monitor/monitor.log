@@ -1,0 +1,10 @@
+[2025-08-29T00:18:33Z] [INFO] === Zeropoint Protocol Local Monitoring Started ===
+[2025-08-29T00:18:33Z] [INFO] Base URL: http://localhost:3000
+[2025-08-29T00:18:34Z] [INFO] Evidence Directory: evidence/v19/monitor
+[2025-08-29T00:18:34Z] [INFO] Check Interval: 30s
+[2025-08-29T00:18:34Z] [ERROR] Script failed: Production URLs detected in monitoring script - ABORTING
+[2025-08-29T00:19:04Z] [INFO] === Zeropoint Protocol Local Monitoring Started ===
+[2025-08-29T00:19:05Z] [INFO] Base URL: http://localhost:3000
+[2025-08-29T00:19:05Z] [INFO] Evidence Directory: evidence/v19/monitor
+[2025-08-29T00:19:05Z] [INFO] Check Interval: 30s
+[2025-08-29T00:19:05Z] [INFO] Starting endpoint monitoring...

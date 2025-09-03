@@ -1,0 +1,38 @@
+{
+  "phase": "stage1",
+  "commit": "e7d5766c08658daa06cecf9438b9fb507dc36aad",
+  "files": [
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/index.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/robots.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/sitemap.xml",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/api_healthz.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/api_readyz.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/api_training_runs.txt",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/lighthouse.json",
+    "verify/2f66621514fa6eff847549bd92dee1392b3f4a2d/sse-test.txt",
+    "training/sample-run-123/metrics.jsonl",
+    "training/sample-run-123/config.json",
+    "training/sample-run-123/provenance.json",
+    "training/sample-run-123/checkpoints/checkpoint-3.bin",
+    "training/sample-run-123/checkpoints/checkpoint-6.bin",
+    "training/sample-run-123/checkpoints/checkpoint-9.bin",
+    "acknowledgements/response.json",
+    "progress.json",
+    "metadata.json"
+  ],
+  "runs": [
+    "sample-run-123"
+  ],
+  "endpoints": [
+    "/api/training/runs",
+    "/api/training/runs/{run_id}",
+    "/api/training/runs/{run_id}/metrics",
+    "/api/events/training",
+    "/api/events/training/test",
+    "/api/healthz",
+    "/api/readyz"
+  ],
+  "public_access": true,
+  "browseable_url": "https://859f7913.zeropoint-protocol.pages.dev/evidence/",
+  "last_updated": "2025-09-03T00:05:00Z"
+}

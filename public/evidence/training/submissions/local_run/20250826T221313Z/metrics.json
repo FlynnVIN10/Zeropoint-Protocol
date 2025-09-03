@@ -1,0 +1,12 @@
+{
+  "run_id": "20250826T221313Z",
+  "model": "tinygrad_toy",
+  "started_at": "2025-08-26T22:13:13.868356Z",
+  "ended_at": "2025-08-26T22:13:14.073619Z",
+  "dataset": "toyset",
+  "metrics": {
+    "loss": 0.7368,
+    "accuracy": 0.7556
+  },
+  "notes": "Toy run"
+}

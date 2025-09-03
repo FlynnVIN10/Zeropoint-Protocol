@@ -1,0 +1,22 @@
+{
+  "phase": "stage0",
+  "commit": "23ac985d4589dc0fac3cbb60b625f0cee8fd3c9b",
+  "files": [
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/status_version_json.json",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/api_healthz.json",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/api_readyz.json",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/status_version_json.http",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/api_healthz.http",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/api_readyz.http",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/final_prod_status_version_json.json",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/final_prod_status_version_json.http",
+    "verify/fa4259e2f8e2e64512e18e81766f1257155d1303/STAGE0_COMPLETION_REPORT.md",
+    "verify/23ac985d4589dc0fac3cbb60b625f0cee8fd3c9b/status_version_json.json",
+    "verify/23ac985d4589dc0fac3cbb60b625f0cee8fd3c9b/api_healthz.json",
+    "verify/23ac985d4589dc0fac3cbb60b625f0cee8fd3c9b/api_readyz.json",
+    "verify/23ac985d4589dc0fac3cbb60b625f0cee8fd3c9b/headers/_status_version.json.txt",
+    "verify/23ac985d4589dc0fac3cbb60b625f0cee8fd3c9b/headers/_api_healthz.txt",
+    "verify/23ac985d4589dc0fac3cbb60b625f0cee8fd3c9b/headers/_api_readyz.txt"
+  ],
+  "timestamp": "2025-09-02T22:40:00Z"
+}

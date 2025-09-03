@@ -1,0 +1,12 @@
+{
+  "run_id": "run_2025_08_25_001",
+  "model": "gpt-3.5-turbo",
+  "started_at": "2025-08-25T16:10:00Z",
+  "ended_at": "2025-08-25T16:15:00Z",
+  "dataset": "wikitext-103",
+  "metrics": {
+    "loss": 0.234,
+    "accuracy": 0.876
+  },
+  "notes": "Sample submission for SCP v1 validation and testing"
+}

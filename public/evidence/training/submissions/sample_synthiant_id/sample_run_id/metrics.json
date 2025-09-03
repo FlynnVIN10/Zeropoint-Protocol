@@ -1,0 +1,12 @@
+{
+  "run_id": "sample_run_001",
+  "model": "tinygrad_toy",
+  "started_at": "2025-08-25T00:00:00Z",
+  "ended_at": "2025-08-25T01:00:00Z",
+  "dataset": "sample_dataset",
+  "metrics": {
+    "loss": 0.45,
+    "accuracy": 0.88
+  },
+  "notes": "Sample submission for SCP v1"
+}

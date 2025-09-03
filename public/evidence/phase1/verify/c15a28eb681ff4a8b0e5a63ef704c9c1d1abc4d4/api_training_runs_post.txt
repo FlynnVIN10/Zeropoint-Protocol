@@ -1,0 +1,18 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   141  100   108  100    33    612    187 --:--:-- --:--:-- --:--:--   801
+HTTP/2 200 
+date: Wed, 03 Sep 2025 02:54:48 GMT
+content-type: application/json; charset=utf-8
+content-length: 108
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=UhEn0qXAZKLWz5OSusiRmXtcECRrVFKo4%2Bk9QtgVSvQxXBxRWjaOrYJ7xf00LeXEI3QPEoS77%2FW3HotFDnTEuh6Jg2KKxdWbdwzng%2BxvwdIgSch80UX8ELE2skSLfDkE7urBrlau%2BhsMh7toG13cVPs%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: 9791f6efc83f486b-DFW
+alt-svc: h3=":443"; ma=86400
+
+{"run_id":"3b7b6e07-5936-4363-88c8-9f3aa4a4bae8","status":"started","config":{"dataset":"MNIST","epochs":5}}

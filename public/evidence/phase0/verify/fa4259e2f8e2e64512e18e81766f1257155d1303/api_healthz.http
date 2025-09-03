@@ -1,0 +1,28 @@
+* Host localhost:3000 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:3000...
+* Connected to localhost (::1) port 3000
+> GET /api/healthz HTTP/1.1
+> Host: localhost:3000
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url
+< cache-control: no-store
+< content-disposition: inline
+< content-type: application/json; charset=utf-8
+< x-content-type-options: nosniff
+< Date: Tue, 02 Sep 2025 22:10:08 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+< Transfer-Encoding: chunked
+< 
+{ [212 bytes data]
+100   201    0   201    0     0   4726      0 --:--:-- --:--:-- --:--:--  4785
+* Connection #0 to host localhost left intact
+{"status":"ok","commit":"e06619cb","buildTime":"2025-09-02T22:10:08.188Z","timestamp":"2025-09-02T22:10:08.188Z","uptime":21.66828516,"environment":"development","phase":"v20","ciStatus":"development"}

@@ -1,24 +1,48 @@
 {
   "phase": "stage1",
-  "commit": "2284c9443555ff94cdb99705a22ea1553ba3545f",
+  "commit": "f3153de5a2610875df6ff72b3b73225de324e300",
   "deployment": "https://zeropointprotocol.ai",
   "tasks": [
     {
       "name": "Evidence directory structure fixed",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
-      "commit": "2284c9443555ff94cdb99705a22ea1553ba3545f",
+      "commit": "f3153de5a2610875df6ff72b3b73225de324e300",
       "deployment": "https://zeropointprotocol.ai",
-      "description": "Automated evidence generation implemented - evidence files now generated from current commit in CI"
+      "description": "Evidence files moved to public/evidence/ directory for proper serving by Cloudflare Pages"
     },
     {
       "name": "Automated evidence generation",
       "status": "completed",
       "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json, /evidence/training/sample-run-123/provenance.json",
-      "commit": "2284c9443555ff94cdb99705a22ea1553ba3545f",
+      "commit": "f3153de5a2610875df6ff72b3b73225de324e300",
       "deployment": "https://zeropointprotocol.ai",
-      "description": "Evidence files automatically generated from current commit - Truth-to-Repo compliance maintained"
+      "description": "Evidence generation script implemented to dynamically create files based on current commit"
+    },
+    {
+      "name": "Truth-to-Repo compliance",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
+      "commit": "f3153de5a2610875df6ff72b3b73225de324e300",
+      "deployment": "https://zeropointprotocol.ai",
+      "description": "All evidence files now reference the same commit as live deployment endpoints"
+    },
+    {
+      "name": "Files array synchronization",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json",
+      "commit": "f3153de5a2610875df6ff72b3b73225de324e300",
+      "deployment": "https://zeropointprotocol.ai",
+      "description": "Evidence files array now points to verification artifacts from current commit f3153de"
+    },
+    {
+      "name": "Domain consolidation",
+      "status": "completed",
+      "evidence": "/evidence/phase1/index.json, /evidence/phase1/metadata.json, /evidence/phase1/progress.json",
+      "commit": "f3153de5a2610875df6ff72b3b73225de324e300",
+      "deployment": "https://zeropointprotocol.ai",
+      "description": "All evidence files reference single production domain https://zeropointprotocol.ai"
     }
   ],
-  "last_updated": "2025-09-03T20:18:35.062Z"
+  "last_updated": "2025-09-03T20:25:00.000Z"
 }

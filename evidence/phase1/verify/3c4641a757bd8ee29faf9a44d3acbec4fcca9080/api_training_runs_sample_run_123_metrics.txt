@@ -1,0 +1,18 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   805  100   805    0     0   2971      0 --:--:-- --:--:-- --:--:--  2981
+HTTP/2 200 
+date: Wed, 03 Sep 2025 16:16:26 GMT
+content-type: application/json; charset=utf-8
+content-length: 805
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=Ts4vYRijZ8PVf2fvHdu5I2kCmf%2FNGpVumC%2F6iiCfmQDyOioRMDGAFgec3VPj1DicvlVCRWfJaxDEtklewhmQmH70dVS1AE1jfC77O8S6TRusutdZ84TlhmKhgWPXc0rWvPpqacpjHo%2BgcS5pPgfuGys%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: 97968d356a8986e1-ORD
+alt-svc: h3=":443"; ma=86400
+
+{"run_id":"sample-run-123","metrics":[{"epoch":0,"loss":2.4567,"accuracy":0.5234},{"epoch":1,"loss":2.1234,"accuracy":0.5678},{"epoch":2,"loss":1.8901,"accuracy":0.6123},{"epoch":3,"loss":1.6789,"accuracy":0.6567},{"epoch":4,"loss":1.4567,"accuracy":0.7012},{"epoch":5,"loss":1.2345,"accuracy":0.7456},{"epoch":6,"loss":1.0123,"accuracy":0.789},{"epoch":7,"loss":0.8901,"accuracy":0.8234},{"epoch":8,"loss":0.7678,"accuracy":0.8567},{"epoch":9,"loss":0.6456,"accuracy":0.8901}],"checkpoints":[{"id":"checkpoint_0","sha256":"abc123def456","epoch":0},{"id":"checkpoint_3","sha256":"def456ghi789","epoch":3},{"id":"checkpoint_6","sha256":"ghi789jkl012","epoch":6},{"id":"checkpoint_9","sha256":"jkl012mno345","epoch":9}],"total_epochs":10,"latest_loss":0.6456,"latest_accuracy":0.8901,"decreasing_loss":true}

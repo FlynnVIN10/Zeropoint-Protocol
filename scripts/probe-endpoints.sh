@@ -3,7 +3,7 @@
 # Probes all training endpoints and stores results in evidence directory
 
 commit=$(git rev-parse HEAD)
-base_url="https://5790380f.zeropoint-protocol.pages.dev"
+base_url="https://f287e7ca.zeropoint-protocol.pages.dev"
 output_dir="evidence/phase1/verify/$commit"
 
 echo "Probing endpoints for commit: $commit"

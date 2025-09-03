@@ -1,0 +1,22 @@
+data: {"epoch":1,"loss":2.5281093542337065,"accuracy":0.5022444943132293,"timestamp":"2025-09-03T16:16:27.723Z","test_mode":true}
+
+data: {"epoch":2,"loss":2.3991703707112007,"accuracy":0.5481854618490943,"timestamp":"2025-09-03T16:16:28.723Z","test_mode":true}
+
+data: {"epoch":3,"loss":2.149212776536668,"accuracy":0.5942603293405498,"timestamp":"2025-09-03T16:16:29.723Z","test_mode":true}
+
+data: {"epoch":4,"loss":1.958462504989748,"accuracy":0.6294825586141679,"timestamp":"2025-09-03T16:16:30.723Z","test_mode":true}
+
+data: {"epoch":5,"loss":1.7181022257832423,"accuracy":0.6636326681942101,"timestamp":"2025-09-03T16:16:31.723Z","test_mode":true}
+
+data: {"epoch":6,"loss":1.5001486897602359,"accuracy":0.7150117038024737,"timestamp":"2025-09-03T16:16:32.723Z","test_mode":true}
+
+data: {"epoch":7,"loss":1.3964939381579935,"accuracy":0.7468765984396024,"timestamp":"2025-09-03T16:16:33.723Z","test_mode":true}
+
+data: {"epoch":8,"loss":1.166708302766866,"accuracy":0.788668529057967,"timestamp":"2025-09-03T16:16:34.723Z","test_mode":true}
+
+data: {"epoch":9,"loss":0.9034981822951625,"accuracy":0.8356260387414223,"timestamp":"2025-09-03T16:16:35.723Z","test_mode":true}
+
+data: {"epoch":10,"loss":0.7314920135033487,"accuracy":0.8666648621654479,"timestamp":"2025-09-03T16:16:36.723Z","test_mode":true}
+
+data: {"message":"Test stream completed","total_events":10,"test_mode":true}
+

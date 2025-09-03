@@ -5,13 +5,10 @@ const {
   CF_PAGES_COMMIT_SHA = "",
   CF_PAGES_URL = "https://zeropointprotocol.ai",
   CF_PAGES_BRANCH = "unknown",
-  CF_PAGES_COMMIT_TIME = new Date().toISOString(),
+  CF_PAGES_COMMIT_TIME = "",
 } = process.env;
 
-if (!CF_PAGES_COMMIT_SHA) {
-  console.error("Missing CF_PAGES_COMMIT_SHA");
-  process.exit(1);
-}
+if (!CF_PAGES_COMMIT_SHA) { throw new Error("CF_PAGES_COMMIT_SHA required"); }
 
 const short = CF_PAGES_COMMIT_SHA.slice(0, 7);
 const root = resolve("public");
@@ -37,11 +34,13 @@ async function listFiles(dir) {
   }
 }
 
+const iso = (CF_PAGES_COMMIT_TIME ? new Date(CF_PAGES_COMMIT_TIME) : new Date()).toISOString().replace(/Z$/, "Z");
+
 const common = {
   commit: short,
   branch: CF_PAGES_BRANCH,
   deployment_url: `${CF_PAGES_URL}/evidence/`,
-  timestamp: CF_PAGES_COMMIT_TIME,
+  timestamp: iso,
 };
 
 await fs.writeFile(
@@ -53,7 +52,7 @@ await fs.writeFile(
   )
 );
 
-const files = (await listFiles(verDir)).filter((p) => !p.endsWith("index.json"));
+const files = (await listFiles(verDir)).filter((p) => !/\/index\.json$/.test(p) && p.startsWith(`/evidence/verify/${short}/`));
 await fs.writeFile(join(verDir, "index.json"), JSON.stringify({ ...common, files }, null, 2));
 await fs.writeFile(
   join(verDir, "metadata.json"),

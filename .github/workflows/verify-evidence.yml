@@ -55,6 +55,40 @@ jobs:
             fi
           done
 
+      - name: Assert JSON validity and no BOM
+        run: |
+          for f in $(git ls-files 'public/**/*.json'); do
+            # No UTF-8 BOM
+            if [ "$(xxd -p -l 3 "$f" 2>/dev/null)" = "efbbbf" ]; then
+              echo "BOM in $f"; exit 1; fi
+            # Valid JSON
+            jq -e . "$f" >/dev/null
+          done
+
+      - name: Enforce short SHA format everywhere
+        run: |
+          SHORT=$(git rev-parse --short=7 HEAD)
+          grep -RIl '"commit"' public | xargs -I{} jq -e --arg s "$SHORT" '(.commit|type)=="string" and (.commit|length)==7 and (.commit==$s)' {}
+
+      - name: Forbid hashed subdomains in evidence
+        run: |
+          ! grep -RIEo 'https://[-a-z0-9]+\.pages\.dev/evidence' public || \
+            (echo "Found hashed subdomain references" && exit 1)
+
+      - name: Validate headers via local dev
+        run: |
+          npx wrangler pages dev public --port=8788 --local & sleep 2
+          for path in /status/version.json /evidence/verify/$(git rev-parse --short=7 HEAD)/index.json; do
+            curl -fsSIL "http://127.0.0.1:8788$path" | tee /tmp/h.txt
+            grep -i '^content-type: application/json' /tmp/h.txt
+            grep -i '^x-content-type-options: nosniff' /tmp/h.txt
+            grep -i '^cache-control: no-store' /tmp/h.txt
+          done
+
+      - name: ISO8601Z timestamp
+        run: |
+          jq -e '(.timestamp|test("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\\.[0-9]{3}Z$"))' public/status/version.json
+
   post-deploy-smoke:
     needs: build-and-check
     if: github.ref == 'refs/heads/main'

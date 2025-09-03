@@ -1,9 +1,7 @@
 HTTP/2 200 
-date: Wed, 03 Sep 2025 04:15:51 GMT
+date: Wed, 03 Sep 2025 04:26:56 GMT
 content-type: application/json; charset=utf-8
-cf-cache-status: DYNAMIC
-server: cloudflare
-vary: Accept-Encoding
+content-length: 282
 access-control-allow-origin: *
 cache-control: no-store
 content-disposition: inline
@@ -12,8 +10,12 @@ content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' 
 permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
-report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=WZx8ZOF3Thl1ToMU%2BrNi7LPKWkpKY2zxnh853a0yxNB0JN0Dn3BLRGRSBHzRCK3uXocH48r5QwXcxcMp1wOzZp6qF8cnK5v5CeRWg%2FyYqoIs7XQ%2B1IrseRLFy6iHaMsiPpOc1frCdw%3D%3D"}],"group":"cf-nel","max_age":604800}
-nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
-cf-ray: 97926dabdd3c7b4b-IAD
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=bkPwfZ2HzzLv5bnqiTQOL0H2IF5CIiE2EG%2F7PyiKjb0%2FzSPUlTDYEjE7EH6DaNrYMMdsZZdpYZMW5x8GnPX%2BS%2FlmV2qzkpGukaLU6EImbtts2Yh8"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 97927de48e3faa23-IAD
+alt-svc: h3=":443"; ma=86400
 
-{"status":"ok","uptime":0,"commit":"c66be5c02e63d821a5b8ffc9cee19e61f615bb97","buildTime":"2025-09-03T04:15:51.683Z","service":"zeropoint-protocol","phase":"stage1","version":"1.0.0","ciStatus":"green","timestamp":"2025-09-03T04:15:51.683Z","environment":"production","mocks":false}
+{"status":"ok","uptime":0,"commit":"7e5c5879d18b50c78e100c9a789a30ec8634d852","buildTime":"2025-09-03T04:26:56.113Z","service":"zeropoint-protocol","phase":"stage1","version":"1.0.0","ciStatus":"green","timestamp":"2025-09-03T04:26:56.113Z","environment":"production","mocks":false}

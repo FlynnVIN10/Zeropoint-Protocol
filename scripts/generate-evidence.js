@@ -28,31 +28,35 @@ const trainingDir = path.join(evidenceDir, 'training', 'sample-run-123');
   }
 });
 
+// Generate dynamic files array based on current commit
+const currentCommitShort = GITHUB_SHA.substring(0, 7);
+const filesArray = [
+  `verify/${GITHUB_SHA}/index.txt`,
+  `verify/${GITHUB_SHA}/robots.txt`,
+  `verify/${GITHUB_SHA}/sitemap.xml`,
+  `verify/${GITHUB_SHA}/api_healthz.txt`,
+  `verify/${GITHUB_SHA}/api_readyz.txt`,
+  `verify/${GITHUB_SHA}/status_version_json.txt`,
+  `verify/${GITHUB_SHA}/lighthouse_report.html`,
+  `verify/${GITHUB_SHA}/lighthouse_report.json`,
+  `verify/${GITHUB_SHA}/curl_evidence.json`,
+  `verify/${GITHUB_SHA}/smoke_test.json`,
+  `verify/${GITHUB_SHA}/deploy_log.txt`,
+  `verify/${GITHUB_SHA}/ci_status.json`,
+  `verify/${GITHUB_SHA}/endpoint_verification.json`,
+  `verify/${GITHUB_SHA}/security_scan.json`,
+  `verify/${GITHUB_SHA}/performance_metrics.json`,
+  `verify/${GITHUB_SHA}/accessibility_audit.json`,
+  `verify/${GITHUB_SHA}/seo_analysis.json`,
+  `verify/${GITHUB_SHA}/compliance_check.json`,
+  `verify/${GITHUB_SHA}/final_verification.json`
+];
+
 // Generate index.json
 const indexJson = {
   "phase": "stage1",
   "commit": GITHUB_SHA,
-  "files": [
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/index.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/robots.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/sitemap.xml",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/api_healthz.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/api_readyz.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/status_version_json.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/lighthouse_report.html",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/lighthouse_report.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/curl_evidence.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/smoke_test.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/deploy_log.txt",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/ci_status.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/endpoint_verification.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/security_scan.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/performance_metrics.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/accessibility_audit.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/seo_analysis.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/compliance_check.json",
-    "verify/c6a7cd37727e6338c13b140c292f43f28bed2ad2/final_verification.json"
-  ],
+  "files": filesArray,
   "endpoints": [
     "/status/version.json",
     "/api/healthz",

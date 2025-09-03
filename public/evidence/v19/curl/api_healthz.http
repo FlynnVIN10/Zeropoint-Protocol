@@ -1,9 +1,7 @@
 HTTP/2 200 
-date: Wed, 03 Sep 2025 17:28:45 GMT
+date: Wed, 03 Sep 2025 18:22:41 GMT
 content-type: application/json; charset=utf-8
-cf-cache-status: DYNAMIC
-server: cloudflare
-vary: Accept-Encoding
+content-length: 282
 access-control-allow-origin: *
 cache-control: no-store
 content-disposition: inline
@@ -12,8 +10,12 @@ content-security-policy: default-src 'self'; connect-src 'self'; img-src 'self' 
 permissions-policy: accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
 referrer-policy: strict-origin-when-cross-origin
 x-content-type-options: nosniff
-report-to: {"endpoints":[{"url":"https:\/\/a.nel.cloudflare.com\/report\/v4?s=TLTa8Klk0XnFYHr9o%2FhQNaMb%2BbGEw1qrX3Z21Hl9SM91JTlk3rsc33dDCw93YR9Q9IM30asZC1%2BNZJ71T0No0ZYWSbHNWBxebKYOj4ahbMX0BGvGP%2BPjoIEuW6zGzHMQBxjNOuoYrg%3D%3D"}],"group":"cf-nel","max_age":604800}
-nel: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
-cf-ray: 9796f7218eba6681-AMS
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=ACp%2BduczfhHtAs%2FxnCqXAgYSUajhlP%2BzkjxNR5ytc9oLBiZwSkR6YISz2%2BUVNcDgkE%2FBGz%2Fm8m6EfLnnRTVEfMoEWLM%2FRjttpyf6VLE%2BIAay4IrV"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-cache-status: DYNAMIC
+cf-ray: 979746269dceae43-LAX
+alt-svc: h3=":443"; ma=86400
 
-{"status":"ok","uptime":0,"commit":"541454708c8d204b52bad007769539261de7e524","buildTime":"2025-09-03T17:28:45.125Z","service":"zeropoint-protocol","phase":"stage1","version":"1.0.0","ciStatus":"green","timestamp":"2025-09-03T17:28:45.125Z","environment":"production","mocks":false}
+{"status":"ok","uptime":0,"commit":"bb74d71e6ccd8a2069feea8d9529d3e3f2273a2c","buildTime":"2025-09-03T18:22:41.795Z","service":"zeropoint-protocol","phase":"stage1","version":"1.0.0","ciStatus":"green","timestamp":"2025-09-03T18:22:41.795Z","environment":"production","mocks":false}

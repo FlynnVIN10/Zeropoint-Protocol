@@ -26,6 +26,7 @@ jobs:
             probe https://zeropointprotocol.ai/api/healthz        api_healthz
             probe https://zeropointprotocol.ai/api/readyz         api_readyz
             probe https://zeropointprotocol.ai/status/version.json status_version_json
+            probe https://zeropointprotocol.ai/status/synthients.json status_synthients_json
             probe https://zeropointprotocol.ai/status/health/      status_health
             probe https://zeropointprotocol.ai/status/ready/       status_ready
             probe https://zeropointprotocol.ai/status/version/     status_version
@@ -34,6 +35,7 @@ jobs:
             probe http://localhost:3000/api/healthz        api_healthz
             probe http://localhost:3000/api/readyz         api_readyz
             probe http://localhost:3000/status/version.json status_version_json
+            probe http://localhost:3000/status/synthients.json status_synthients_json
             probe http://localhost:3000/status/health/      status_health
             probe http://localhost:3000/status/ready/       status_ready
             probe http://localhost:3000/status/version/     status_version
@@ -45,6 +47,10 @@ jobs:
           grep -qi '^HTTP/.* 200' evidence_out/api_healthz.http
           grep -qi '^HTTP/.* 200' evidence_out/api_readyz.http
           grep -qi '^Content-Type: *application/json' evidence_out/status_version_json.http
+          # Stage 2 endpoints - synthients status should return 200
+          if [ -f evidence_out/status_synthients_json.http ]; then
+            grep -qi '^HTTP/.* 200' evidence_out/status_synthients_json.http || echo "⚠️ Warning: synthients status endpoint not accessible"
+          fi
           
           # Extract JSON body after the first blank line (handles CRLF)
           BODY=$(awk 'BEGIN{b=0} { if(b) print; if($0=="" || $0=="\r") {b=1}}' evidence_out/status_version_json.http)

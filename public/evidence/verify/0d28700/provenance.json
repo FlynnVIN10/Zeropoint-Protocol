@@ -1,7 +1,7 @@
 {
-  "commit": "8fe5e9d",
-  "branch": "fix/build-time-evidence",
+  "commit": "0d28700",
+  "branch": "main",
   "deployment_url": "https://zeropointprotocol.ai/evidence/",
-  "timestamp": "2025-09-03T22:53:29.000Z",
+  "timestamp": "2025-09-04T03:29:37.549Z",
   "generator": "build:generate-evidence@pages"
 }

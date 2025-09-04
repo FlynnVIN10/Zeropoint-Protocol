@@ -1,9 +1,7 @@
 {
-  "phase": "stage-1",
-  "ciStatus": "unknown",
-  "buildTime": "",
   "commit": "0d28700",
   "branch": "main",
   "deployment_url": "https://zeropointprotocol.ai/evidence/",
-  "timestamp": "2025-09-04T03:29:37.549Z"
+  "timestamp": "2025-09-04T03:29:37.549Z",
+  "tasks": []
 }

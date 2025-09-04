@@ -46,11 +46,21 @@ jobs:
         run: |
           SHORT=$(echo "${GITHUB_SHA}" | cut -c1-7)
           shopt -s nullglob
+          # Check Stage 1 evidence directories
           for d in public/evidence/verify/*; do
             [ -d "$d" ] || continue
             base=$(basename "$d")
             if [ "$base" != "$SHORT" ]; then
-              echo "Unexpected evidence dir: $d"
+              echo "Unexpected Stage 1 evidence dir: $d"
+              exit 1
+            fi
+          done
+          # Check Stage 2 evidence directories
+          for d in public/evidence/phase2/verify/*; do
+            [ -d "$d" ] || continue
+            base=$(basename "$d")
+            if [ "$base" != "$SHORT" ]; then
+              echo "Unexpected Stage 2 evidence dir: $d"
               exit 1
             fi
           done
@@ -69,7 +79,8 @@ jobs:
         run: |
           set -euo pipefail
           SHORT=$(git rev-parse --short=7 HEAD)
-          mapfile -t files < <(find public/evidence/verify -type f -name '*.json' -print || true)
+          # Check both Stage 1 and Stage 2 evidence directories
+          mapfile -t files < <(find public/evidence/verify public/evidence/phase2/verify -type f -name '*.json' -print 2>/dev/null || true)
           [[ ${#files[@]} -gt 0 ]]
           for f in "${files[@]}"; do
             if jq -e 'has("commit")' "$f" >/dev/null; then

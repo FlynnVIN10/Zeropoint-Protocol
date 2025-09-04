@@ -1,0 +1,19 @@
+{
+  "status": "scaffolding",
+  "message": "Petals orchestrator voting endpoint - implementation pending",
+  "endpoint": "/api/petals/vote/{proposalId}",
+  "method": "POST",
+  "description": "Cast a vote on a proposal",
+  "expected_payload": {
+    "vote": "approve|reject|abstain",
+    "voter_type": "human|synthient",
+    "reasoning": "string"
+  },
+  "expected_response": {
+    "proposal_id": "string",
+    "vote_recorded": "boolean",
+    "current_tally": "object"
+  },
+  "implementation_status": "pending",
+  "timestamp": "2025-09-04T01:00:00.000Z"
+}

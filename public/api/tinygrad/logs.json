@@ -1,0 +1,15 @@
+{
+  "status": "scaffolding",
+  "message": "Tinygrad trainer logs endpoint - implementation pending",
+  "endpoint": "/api/tinygrad/logs/{jobId}",
+  "method": "GET",
+  "description": "Get training logs for a job",
+  "expected_response": {
+    "job_id": "string",
+    "logs": "array",
+    "metrics": "object",
+    "model_sha256": "string"
+  },
+  "implementation_status": "pending",
+  "timestamp": "2025-09-04T01:00:00.000Z"
+}

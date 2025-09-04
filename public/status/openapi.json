@@ -1,0 +1,180 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Zeropoint Protocol Stage 2 API",
+    "description": "Synthient services API with dual-consensus governance",
+    "version": "2.0.0",
+    "contact": {
+      "name": "Zeropoint Protocol Dev Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://zeropointprotocol.ai",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/status/synthients.json": {
+      "get": {
+        "summary": "Get Synthient services status",
+        "responses": {
+          "200": {
+            "description": "Synthient services status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SynthientStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tinygrad/start": {
+      "post": {
+        "summary": "Start Tinygrad training job",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingJobRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Training job started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingJobResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/petals/propose": {
+      "post": {
+        "summary": "Submit proposal for voting",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposalRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Proposal submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposalResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wondercraft/contribute": {
+      "post": {
+        "summary": "Submit asset contribution",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContributionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Contribution submitted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContributionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SynthientStatus": {
+        "type": "object",
+        "properties": {
+          "status": {"type": "string"},
+          "governance_mode": {"type": "string"},
+          "synthients": {"type": "object"},
+          "environment": {"type": "object"},
+          "timestamp": {"type": "string"},
+          "commit": {"type": "string"}
+        }
+      },
+      "TrainingJobRequest": {
+        "type": "object",
+        "properties": {
+          "dataset": {"type": "string"},
+          "model_config": {"type": "object"},
+          "training_params": {"type": "object"}
+        }
+      },
+      "TrainingJobResponse": {
+        "type": "object",
+        "properties": {
+          "job_id": {"type": "string"},
+          "status": {"type": "string"},
+          "estimated_duration": {"type": "string"}
+        }
+      },
+      "ProposalRequest": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string"},
+          "description": {"type": "string"},
+          "proposal_type": {"type": "string"},
+          "synthient_approval": {"type": "boolean"}
+        }
+      },
+      "ProposalResponse": {
+        "type": "object",
+        "properties": {
+          "proposal_id": {"type": "string"},
+          "status": {"type": "string"},
+          "voting_deadline": {"type": "string"}
+        }
+      },
+      "ContributionRequest": {
+        "type": "object",
+        "properties": {
+          "asset_type": {"type": "string"},
+          "asset_data": {"type": "string"},
+          "metadata": {"type": "object"},
+          "contributor": {"type": "string"}
+        }
+      },
+      "ContributionResponse": {
+        "type": "object",
+        "properties": {
+          "contribution_id": {"type": "string"},
+          "status": {"type": "string"},
+          "sha256": {"type": "string"},
+          "validation_results": {"type": "object"}
+        }
+      }
+    }
+  }
+}

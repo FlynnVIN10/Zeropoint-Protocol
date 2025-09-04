@@ -1,0 +1,21 @@
+{
+  "status": "scaffolding",
+  "message": "Wondercraft bridge contribution endpoint - implementation pending",
+  "endpoint": "/api/wondercraft/contribute",
+  "method": "POST",
+  "description": "Submit an asset contribution for validation",
+  "expected_payload": {
+    "asset_type": "string",
+    "asset_data": "string|object",
+    "metadata": "object",
+    "contributor": "string"
+  },
+  "expected_response": {
+    "contribution_id": "string",
+    "status": "submitted|validating|approved|rejected",
+    "sha256": "string",
+    "validation_results": "object"
+  },
+  "implementation_status": "pending",
+  "timestamp": "2025-09-04T01:00:00.000Z"
+}

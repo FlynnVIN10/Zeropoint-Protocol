@@ -95,7 +95,17 @@ jobs:
 
       - name: Validate headers via local dev
         run: |
-          npx wrangler pages dev public --port=8788 --local & sleep 2
+          npx wrangler pages dev public --port=8788 --local &
+          sleep 5
+          # Wait for server to be ready
+          for i in {1..10}; do
+            if curl -fsS "http://127.0.0.1:8788/status/version.json" >/dev/null 2>&1; then
+              echo "Server is ready after $i attempts"
+              break
+            fi
+            echo "Waiting for server to start... attempt $i"
+            sleep 1
+          done
           for path in /status/version.json /evidence/verify/$(git rev-parse --short=7 HEAD)/index.json; do
             curl -fsSIL "http://127.0.0.1:8788$path" | tee /tmp/h.txt
             grep -i '^content-type: application/json' /tmp/h.txt

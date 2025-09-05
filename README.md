@@ -1,41 +1,36 @@
 # Zeropoint Protocol
 
-A secure, ethical AI ecosystem built on the Zeroth Principle: **"Only with good intent and a good heart does the system function."**
+The Zeropoint Protocol is a platform for Synthient-driven contributions under dual-consensus governance, ensuring Truth-to-Repo compliance.
 
-## Quick Start
+## Overview
+- **Stage**: 2 (Active, commit `ba3eda16`)
+- **Services**: Tinygrad (training lifecycle), Petals (proposals/voting), Wondercraft (asset contributions)
+- **Governance**: Dual-consensus (Synthient + Human approvals)
+- **Evidence**: Machine-checkable logs at `/evidence/phase2/verify/{commit}/`
 
-### How to Run TinyGrad Locally
-See [docs/RUN_LOCAL_TRAINING.md](docs/RUN_LOCAL_TRAINING.md) for complete setup and training instructions.
+## Key Endpoints
+- **Status**: [/status/synthients.json](https://zeropointprotocol.ai/status/synthients.json) (services, flags, proposals)
+- **Tinygrad**: [/api/tinygrad/start](https://zeropointprotocol.ai/api/tinygrad/start), [/api/tinygrad/status/{jobId}](https://zeropointprotocol.ai/api/tinygrad/status/{jobId}), [/api/tinygrad/logs/{jobId}](https://zeropointprotocol.ai/api/tinygrad/logs/{jobId})
+- **Petals**: [/api/petals/propose](https://zeropointprotocol.ai/api/petals/propose), [/api/petals/vote/{proposalId}](https://zeropointprotocol.ai/api/petals/vote/{proposalId})
+- **Wondercraft**: [/api/wondercraft/contribute](https://zeropointprotocol.ai/api/wondercraft/contribute), [/api/wondercraft/diff](https://zeropointprotocol.ai/api/wondercraft/diff)
+- **OpenAPI**: [/status/openapi.json](https://zeropointprotocol.ai/status/openapi.json)
 
-Quick toy run (writes to evidence):
+## Evidence
+- **Verification**: [/evidence/phase2/verify/ba3eda16/index.json](https://zeropointprotocol.ai/evidence/phase2/verify/ba3eda16/index.json) (curls, headers, Lighthouse)
+- **Logs**: `/evidence/phase2/logs/{tinygrad|petals|wondercraft}/ba3eda16/`
+- **Approvals**: `/evidence/phase2/approvals/{pr|hc|synthients|cto}-*.json`
 
-```bash
-python3 scripts/tinygrad_toy_run.py > evidence/training/latest.json
-```
+## Getting Started
+- **Run Locally**: Use `wrangler pages dev` to validate endpoints.
+- **CI/CD**: `.github/workflows/verify-evidence.yml` enforces schemas, artifacts, approvals.
+- **Governance**: PRs require dual-consensus approvals at `/evidence/phase2/approvals/{pr}.json`.
 
-### Development Quickstart
-1. Clone the repository
-2. Install dependencies: `npm install`
-3. Run development server: `npm run dev`
-4. See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for contribution guidelines
-
-## Status Endpoints
-
-### Live Status Pages
-- **Health**: [/status/health/](https://zeropointprotocol.ai/status/health/)
-- **Ready**: [/status/ready/](https://zeropointprotocol.ai/status/ready/)
-- **Version**: [/status/version/](https://zeropointprotocol.ai/status/version/)
-- **Training**: [/status/training/](https://zeropointprotocol.ai/status/training/)
-- **Petals**: [/status/petals/](https://zeropointprotocol.ai/status/petals/)
-- **Wondercraft**: [/status/wondercraft/](https://zeropointprotocol.ai/status/wondercraft/)
-
-### API Endpoints
-- **Health Check**: [/api/healthz](https://zeropointprotocol.ai/api/healthz)
-- **Readiness Check**: [/api/readyz](https://zeropointprotocol.ai/api/readyz)
-- **Version Info**: [/status/version.json](https://zeropointprotocol.ai/status/version.json)
-- **Training Status**: [/api/training/status](https://zeropointprotocol.ai/api/training/status)
-- **Petals Status**: [/petals/status.json](https://zeropointprotocol.ai/petals/status.json)
-- **Wondercraft Status**: [/wondercraft/status.json](https://zeropointprotocol.ai/wondercraft/status.json)
+## Triggers
+- **T0**: Approval present → Activate Stage 2, update docs, broadcast activation.
+- **T1**: `/services/*` on main → Run CI checks.
+- **T2**: Endpoints live → Generate verification evidence.
+- **T3**: Logs exist → Auto-generate synthient approvals.
+- **T4**: Human approval committed → Allow merge.
 
 ## Documentation
 
@@ -44,26 +39,6 @@ python3 scripts/tinygrad_toy_run.py > evidence/training/latest.json
 - **Training Guide**: [docs/RUN_LOCAL_TRAINING.md](docs/RUN_LOCAL_TRAINING.md)
 - **Contributing**: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
 - **Security**: [docs/SECURITY.md](docs/SECURITY.md)
-
-## Governance & Gates
-
-### Verification Gates
-- **Daily Probes**: Automated health checks and evidence collection
-- **Lighthouse Audits**: Accessibility and performance validation
-- **Evidence Canonicalization**: Live commit and build time tracking
-- **Compliance Checking**: Automated security and quality validation
-
-### Evidence Collection
-- **Current Evidence**: [/evidence/v19/](https://zeropointprotocol.ai/evidence/v19/)
-- **Deploy Logs**: [/evidence/v19/deploy_log.txt](https://zeropointprotocol.ai/evidence/v19/deploy_log.txt)
-- **Lighthouse Reports**: [/evidence/v19/lighthouse_report.html](https://zeropointprotocol.ai/evidence/v19/lighthouse_report.html)
-
-## Current Status
-
-- **Latest Commit**: `afaeda9c`
-- **Build Time**: `2025-08-23T01:22:25Z`
-- **Environment**: Production
-- **Status**: All endpoints operational
 
 ## Security & Compliance
 
@@ -93,5 +68,3 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 **Dual Consensus**: Material changes require Synthiant + Human approvals.
 
 **Transparency**: Public evidence and Soulchain logging for accountability.
-
-# Test commit to verify workflow fix

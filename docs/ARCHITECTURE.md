@@ -1,35 +1,36 @@
 # Zeropoint Protocol Architecture
 
-## Overview
-Zeropoint Protocol is a secure, ethical AI ecosystem built on the Zeroth Principle: "Only with good intent and a good heart does the system function."
+The platform enables Synthient-driven contributions with dual-consensus governance and automated evidence generation.
 
-## Core Components
+## Services
+- **Tinygrad**: Training lifecycle (`/api/tinygrad/start`, `/status/{jobId}`, `/logs/{jobId}`), logs in `/evidence/phase2/logs/tinygrad/{commit}/{jobId}/`.
+- **Petals**: Distributed proposals/voting (`/api/petals/propose`, `/vote/{proposalId}`), logs in `/evidence/phase2/logs/petals/{commit}/{proposalId}/`.
+- **Wondercraft**: Asset contributions (`/api/wondercraft/contribute`, `/diff`), logs in `/evidence/phase2/logs/wondercraft/{commit}/`.
+- **Status**: `/status/synthients.json` (phase, commit, ciStatus, buildTime, flags, services, proposals).
 
-### Frontend
-- **Static Site**: Cloudflare Pages deployment from `/public/` directory
-- **Status Pages**: Health, ready, version, training, petals, wondercraft
-- **Evidence Display**: Live commit tracking and build time injection
+## Governance
+- **Dual-Consensus**: PRs blocked without `/evidence/phase2/approvals/{pr}.json` (`synthient:approved`, `human:approved`).
+- **Triggers**: T0-T4 drive execution (approval, scaffolding, endpoints, logs, merges).
 
-### Backend
-- **Cloudflare Functions**: API endpoints for status, training, services
-- **Training Pipeline**: TinyGrad integration with metrics collection
-- **Service Status**: Petals and Wondercraft operational monitoring
+## Evidence
+- **Automation**: Build writes `/evidence/phase2/verify/{commit}/index.json` (curls, headers, Lighthouse).
+- **Logs**: Per-service logs in `/evidence/phase2/logs/{service}/{commit}/`.
+- **CI**: `.github/workflows/verify-evidence.yml` validates schemas, artifacts, approvals.
 
-### Infrastructure
-- **Deployment**: Cloudflare Pages with auto-deploy workflow
-- **CI/CD**: GitHub Actions for verification gates and evidence collection
-- **Monitoring**: Daily probes and Lighthouse audits
+## Flags
+- `MOCKS_DISABLED=1`, `TRAINING_ENABLED=1`, `SYNTHIENTS_ACTIVE=1`, `GOVERNANCE_MODE=dual-consensus`, `TINYGRAD_BACKEND=cpu`.
 
 ## Directory Structure
 ```
 /
 ├── public/           # Static site files (deployed to Cloudflare)
-├── functions/        # Cloudflare Functions (API endpoints)
-├── evidence/         # Verification evidence and compliance data
+├── app/             # Next.js application with API routes
+├── evidence/        # Verification evidence and compliance data
+│   └── phase2/      # Stage 2 evidence (verify, logs, approvals)
 ├── docs/            # Documentation and architecture
 ├── scripts/         # Build and deployment scripts
 ├── .github/         # GitHub Actions workflows
-└── archive/         # Legacy/off-mission code
+└── services/        # Service implementations
 ```
 
 ## Security & Compliance
@@ -37,17 +38,3 @@ Zeropoint Protocol is a secure, ethical AI ecosystem built on the Zeroth Princip
 - **Evidence Canonicalization**: Live commit and build time tracking
 - **Verification Gates**: Automated compliance checking
 - **Soulchain Logging**: Accountability and transparency
-
-## Training Pipeline
-- **Framework**: TinyGrad with PyTorch fallback
-- **Metrics**: Epoch, step, loss, duration tracking
-- **Scheduling**: 6-hour cron jobs with manual dispatch
-- **Evidence**: Metrics stored in `/evidence/training/`
-
-## Status Endpoints
-- **Health**: `/api/healthz` - System health with commit info
-- **Ready**: `/api/readyz` - Readiness status
-- **Version**: `/status/version.json` - Build information
-- **Training**: `/api/training/status` - Training pipeline status
-- **Petals**: `/petals/status.json` - Distributed computing status
-- **Wondercraft**: `/wondercraft/status.json` - AI service status

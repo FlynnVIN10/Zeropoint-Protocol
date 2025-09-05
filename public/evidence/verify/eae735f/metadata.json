@@ -1,7 +1,7 @@
 {
-  "commit": "test",
-  "branch": "unknown",
+  "commit": "eae735f",
+  "branch": "main",
   "deployment_url": "https://zeropointprotocol.ai/evidence/",
-  "timestamp": "2025-09-05T01:14:52.609Z",
+  "timestamp": "2025-09-05T03:20:45.000Z",
   "source_of_truth": "/public/evidence/"
 }

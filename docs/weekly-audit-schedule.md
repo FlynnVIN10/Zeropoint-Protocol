@@ -1,6 +1,12 @@
-# Weekly Audit Schedule
+# Audit Schedule
+Audits run automatically on trigger events, not fixed calendar dates.
 
-- **When:** Every Monday 09:00 America/Chicago
-- **Scope:** Endpoints, headers, CI checks, evidence tree freshness, Lighthouse (A11y ≥95; others ≥90)
-- **Output:** `/evidence/compliance/<YYYY-MM-DD>/report.md` + artifacts
-- **Owners:** PM (coordination), DevOps (automation), Web Lead (fixes)
+## Triggers
+- **T2**: Endpoints live → Run SCRA probes (status, headers, logs, A11y).
+- **T4**: Merge completed → Verify compliance (CI green, approvals present).
+
+## Scope
+- Endpoints, headers, CI checks, evidence freshness, and Lighthouse (A11y ≥95; others ≥90).
+
+## Deliverables
+- Compliance report at `/evidence/compliance/stage2/report.md` plus attachments.

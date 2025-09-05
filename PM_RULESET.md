@@ -51,9 +51,15 @@ Run after every PM report:
 - Maintain continuous risk register (technical, security, ethical, operational).  
 - If blocked >30m or any gate fails twice, page CTO with 5-line summary: root cause, impact, owner, ETA, rollback.  
 
-## Cadence
-- **Daily:** stand-up note in `PM_STATUS_REPORT.md` + Verification Gate.  
-- **Weekly:** phase retro + roadmap deltas; propose improvements and vetted emerging tech (e.g., TinyGrad, Petals) with justification.  
+## Execution
+- **Triggers**:
+  - T0: Approval present → Update reports, broadcast activation.
+  - T2: Endpoints live → Trigger SCRA probes.
+  - T4: Merge completed → Review compliance.
+- **Actions**:
+  - Update PM_STATUS_REPORT.md post-T0/T4.
+  - Commit notifications in `/docs/comms/`.
+  - Tag @OCEAN on gate failures.  
 
 ## Authority
 - Enforce standards; veto merges missing tests/reviews/ethics.  

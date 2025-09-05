@@ -127,26 +127,9 @@ const additionalHeaders = {
 ```
 
 ## Vulnerability Management
-
-### 1. Vulnerability Scanning
-- **Automated Scanning**: Daily vulnerability assessments
-- **Dependency Scanning**: Monitor for vulnerable packages
-- **Code Analysis**: Static and dynamic code analysis
-- **Penetration Testing**: Regular security testing
-
-### 2. Patch Management
-- **Critical Patches**: Apply within 24 hours
-- **High Priority**: Apply within 72 hours
-- **Medium Priority**: Apply within 1 week
-- **Low Priority**: Apply within 1 month
-
-### 3. Incident Response
-- **Detection**: Automated and manual threat detection
-- **Analysis**: Rapid incident assessment and classification
-- **Containment**: Isolate affected systems
-- **Eradication**: Remove threat and restore security
-- **Recovery**: Restore normal operations
-- **Lessons Learned**: Document and improve processes
+- **Scanning**: Automated vulnerability assessments triggered at T2 (endpoints live) and after each merge (T4).
+- **Patch Management**: Apply critical fixes immediately upon discovery. High and medium priority patches addressed ASAP.
+- **Incident Response**: Immediate triage and mitigation. Use "detect → analyze → contain → eradicate → recover → learn" cycle.
 
 ## Security Monitoring
 
@@ -257,10 +240,10 @@ const additionalHeaders = {
 - **P3 (Low)**: Information disclosure, configuration issues
 
 ### 2. Response Timeline
-- **P0**: Immediate response (within 1 hour)
-- **P1**: Rapid response (within 4 hours)
-- **P2**: Standard response (within 24 hours)
-- **P3**: Routine response (within 1 week)
+- **P0**: Immediate response (ASAP)
+- **P1**: Rapid response (ASAP)
+- **P2**: Standard response (ASAP)
+- **P3**: Routine response (ASAP)
 
 ### 3. Communication Plan
 - **Internal**: Immediate notification to security team

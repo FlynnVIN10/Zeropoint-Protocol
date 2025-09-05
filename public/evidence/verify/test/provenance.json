@@ -1,9 +1,7 @@
 {
-  "phase": "stage-1",
-  "ciStatus": "unknown",
-  "buildTime": "",
   "commit": "test",
   "branch": "unknown",
   "deployment_url": "https://zeropointprotocol.ai/evidence/",
-  "timestamp": "2025-09-05T01:14:52.609Z"
+  "timestamp": "2025-09-05T01:14:52.609Z",
+  "generator": "build:generate-evidence@pages"
 }

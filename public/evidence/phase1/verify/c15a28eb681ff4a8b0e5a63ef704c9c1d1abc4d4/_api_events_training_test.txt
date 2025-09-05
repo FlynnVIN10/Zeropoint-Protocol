@@ -1,40 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   131    0   131    0     0    114      0 --:--:--  0:00:01 --:--:--   114100   131    0   131    0     0     60      0 --:--:--  0:00:02 --:--:--    60100   262    0   262    0     0     82      0 --:--:--  0:00:03 --:--:--    82100   523    0   523    0     0    126      0 --:--:--  0:00:04 --:--:--   126100   523    0   523    0     0    101      0 --:--:--  0:00:05 --:--:--   101100   654    0   654    0     0    106      0 --:--:--  0:00:06 --:--:--   104100   784    0   784    0     0    109      0 --:--:--  0:00:07 --:--:--   129100  1046    0  1046    0     0    128      0 --:--:--  0:00:08 --:--:--   158100  1177    0  1177    0     0    128      0 --:--:--  0:00:09 --:--:--   130100  1177    0  1177    0     0    116      0 --:--:--  0:00:10 --:--:--   130100  1387    0  1387    0     0    136      0 --:--:--  0:00:10 --:--:--   182
-HTTP/2 200 
-date: Wed, 03 Sep 2025 02:54:37 GMT
-content-type: text/event-stream; charset=utf-8
-access-control-allow-origin: *
-cache-control: no-store
-content-disposition: inline
-access-control-allow-headers: Cache-Control
-x-content-type-options: nosniff
-vary: accept-encoding
-report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=e%2FB8RPp4Wak6YW8ma3%2FRVMChIdA%2BlQvJsuJHi2IER60SlC7K9VTyiQtkrV76DaSWDvVTYUWpX89YzUze1wTq62svdpjA%2B7aVBxuF%2FtCLWp58unLAi9Jhv29qEydSyTDDPxltnPRijCmvR8E4aQQqsdw%3D"}]}
-nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
-server: cloudflare
-cf-ray: 9791f6ad4d70461a-DFW
-alt-svc: h3=":443"; ma=86400
-
-data: {"epoch":1,"loss":2.5070295710754724,"accuracy":0.5155913578356367,"timestamp":"2025-09-03T02:54:38.679Z","test_mode":true}
-
-data: {"epoch":2,"loss":2.3324137511004457,"accuracy":0.5412138309598366,"timestamp":"2025-09-03T02:54:39.679Z","test_mode":true}
-
-data: {"epoch":3,"loss":2.107593981084064,"accuracy":0.5864430220286069,"timestamp":"2025-09-03T02:54:40.679Z","test_mode":true}
-
-data: {"epoch":4,"loss":1.9441841863132316,"accuracy":0.6388923640801881,"timestamp":"2025-09-03T02:54:41.679Z","test_mode":true}
-
-data: {"epoch":5,"loss":1.7481988904847046,"accuracy":0.6643634456155824,"timestamp":"2025-09-03T02:54:42.679Z","test_mode":true}
-
-data: {"epoch":6,"loss":1.550179693698801,"accuracy":0.7000375669433792,"timestamp":"2025-09-03T02:54:43.679Z","test_mode":true}
-
-data: {"epoch":7,"loss":1.3863407059119055,"accuracy":0.7583604793850406,"timestamp":"2025-09-03T02:54:44.679Z","test_mode":true}
-
-data: {"epoch":8,"loss":1.1642177649974617,"accuracy":0.7908132476085532,"timestamp":"2025-09-03T02:54:45.679Z","test_mode":true}
-
-data: {"epoch":9,"loss":0.9886206483852916,"accuracy":0.8229057533808763,"timestamp":"2025-09-03T02:54:46.679Z","test_mode":true}
-
-data: {"epoch":10,"loss":0.7410295567894973,"accuracy":0.8604436285196145,"timestamp":"2025-09-03T02:54:47.679Z","test_mode":true}
-
-data: {"message":"Test stream completed","total_events":10,"test_mode":true}
-

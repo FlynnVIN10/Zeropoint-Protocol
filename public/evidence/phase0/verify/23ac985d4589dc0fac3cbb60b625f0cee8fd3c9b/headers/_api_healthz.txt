@@ -1,15 +1,0 @@
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100   205    0   205    0     0  12164      0 --:--:-- --:--:-- --:--:-- 12812
-HTTP/1.1 200 OK
-vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Url
-cache-control: no-store
-content-disposition: inline
-content-type: application/json; charset=utf-8
-x-content-type-options: nosniff
-Date: Tue, 02 Sep 2025 22:40:37 GMT
-Connection: keep-alive
-Keep-Alive: timeout=5
-Transfer-Encoding: chunked
-
-{"status":"ok","commit":"e06619cb","buildTime":"2025-09-02T22:40:37.427Z","timestamp":"2025-09-02T22:40:37.427Z","uptime":24.714418171,"environment":"development","phase":"stage0","ciStatus":"development"}

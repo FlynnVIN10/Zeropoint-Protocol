@@ -1,0 +1,40 @@
+{
+  "commit": "f1c039a",
+  "branch": "main",
+  "deployment_url": "https://zeropointprotocol.ai/evidence/",
+  "timestamp": "2025-09-05T19:44:48.000Z",
+  "stage": "stage2",
+  "governance_mode": "dual-consensus",
+  "files": [],
+  "services": {
+    "tinygrad": {
+      "status": "active",
+      "endpoints": [
+        "/api/tinygrad/start",
+        "/api/tinygrad/status/{jobId}",
+        "/api/tinygrad/logs/{jobId}"
+      ]
+    },
+    "petals": {
+      "status": "active",
+      "endpoints": [
+        "/api/petals/propose",
+        "/api/petals/vote/{proposalId}"
+      ]
+    },
+    "wondercraft": {
+      "status": "active",
+      "endpoints": [
+        "/api/wondercraft/contribute",
+        "/api/wondercraft/diff"
+      ]
+    },
+    "governance": {
+      "status": "active",
+      "endpoints": [
+        "/api/governance/approval",
+        "/api/governance/consensus/{prNumber}/{commitSha}"
+      ]
+    }
+  }
+}

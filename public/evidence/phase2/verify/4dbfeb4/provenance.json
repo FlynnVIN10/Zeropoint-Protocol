@@ -1,8 +1,8 @@
 {
-  "commit": "8153cd1",
+  "commit": "4dbfeb4",
   "branch": "main",
   "deployment_url": "https://zeropointprotocol.ai/evidence/",
-  "timestamp": "2025-09-05T03:25:59.000Z",
+  "timestamp": "2025-09-05T03:27:52.000Z",
   "stage": "stage2",
   "governance_mode": "dual-consensus",
   "generator": "build:generate-stage2-evidence@pages",

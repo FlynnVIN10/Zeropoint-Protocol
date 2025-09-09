@@ -59,3 +59,6 @@ Thumbs.db
 dist/
 *.js
 *.js.map
+
+# Monitoring logs - these change frequently and shouldn't be tracked
+monitoring/logs/*.log

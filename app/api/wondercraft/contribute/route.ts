@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Import the WondercraftBridge service
-const WondercraftBridge = require('../../../../services/wondercraft-bridge/index.js')
-
-// Initialize the bridge service
-const bridge = new WondercraftBridge()
+import * as Wondercraft from '@services/wondercraft-bridge'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,12 +16,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Submit contribution
-    const result = await bridge.submitContribution(
-      body.assetType,
-      body.assetData,
-      body.metadata,
-      body.contributor
-    )
+    const result = await Wondercraft.contributeAsset({
+      assetType: body.assetType,
+      assetData: body.assetData,
+      metadata: body.metadata,
+      contributor: body.contributor
+    })
 
     return NextResponse.json(result, {
       headers: {

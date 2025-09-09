@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Import the WondercraftBridge service
-const WondercraftBridge = require('../../../../services/wondercraft-bridge/index.js')
-
-// Initialize the bridge service
-const bridge = new WondercraftBridge()
+import * as Wondercraft from '@services/wondercraft-bridge'
 
 export async function GET(
   request: NextRequest,
@@ -21,7 +18,7 @@ export async function GET(
     }
 
     // Get contribution status
-    const result = await bridge.getContributionStatus(contributionId)
+    const result = await Wondercraft.getContributionStatus(contributionId);
 
     return NextResponse.json(result, {
       headers: {

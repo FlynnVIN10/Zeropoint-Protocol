@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { dbManager } from '../../../lib/db/config'
+import { dbManager } from '@lib/db/config'
 
 export async function GET() {
   try {

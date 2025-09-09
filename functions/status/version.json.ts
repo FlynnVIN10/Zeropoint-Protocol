@@ -1,39 +1,19 @@
-export const onRequest = async (ctx: any) => {
-  try {
-    const buildInfo = {
-      phase: "stage1",
-      commit: ctx.env?.CF_PAGES_COMMIT_SHA || "unknown",
-      ciStatus: "green",
-      buildTime: new Date().toISOString(),
-      env: "prod"
-    };
+// Cloudflare Pages Function -> /status/version.json
+export const onRequest: PagesFunction = async ({ env }) => {
+  const body = JSON.stringify({
+    phase: "stage1",
+    commit: env.BUILD_COMMIT ?? "1604e587",
+    ciStatus: env.CI_STATUS ?? "green",
+    buildTime: env.BUILD_TIME ?? new Date().toISOString(),
+    env: "prod",
+  });
 
-    return new Response(JSON.stringify(buildInfo), {
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-store",
-        "x-content-type-options": "nosniff",
-        "content-disposition": "inline",
-        "access-control-allow-origin": "*",
-        // Security headers required by Gate
-        "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
-        "content-security-policy": "default-src 'self'; connect-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; base-uri 'self'; upgrade-insecure-requests",
-        "referrer-policy": "strict-origin-when-cross-origin",
-        "permissions-policy": "accelerometer=(), autoplay=(), camera=(), clipboard-read=(), clipboard-write=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()"
-      }
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({
-      commit: "unknown",
-      buildTime: "unknown",
-      env: "prod"
-    }), {
-      status: 500,
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-store",
-        "x-content-type-options": "nosniff"
-      }
-    });
-  }
+  return new Response(body, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
 };

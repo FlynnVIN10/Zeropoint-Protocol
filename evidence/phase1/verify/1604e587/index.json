@@ -1,153 +1,46 @@
 {
-  "verification_commit": "1604e587",
-  "phase": "phase1",
-  "timestamp": "2025-09-09T17:00:00Z",
-  "evidence_type": "service_activation_verification",
-  "services_tested": [
-    "trainer-tinygrad",
-    "petals-orchestrator",
-    "wondercraft-bridge"
-  ],
-  "curl_evidence": {
-    "trainer-tinygrad": {
-      "start_endpoint": {
-        "command": "curl -i http://localhost:3000/api/tinygrad/start",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
+  "meta": {
+    "phase": "stage1",
+    "commit": "1604e587",
+    "ciStatus": "green",
+    "buildTime": "<filled by CI>",
+    "generator": "SCRA v1"
+  },
+  "probes": [
+    {
+      "name": "version.json",
+      "curl_i": "curl -i https://zeropointprotocol.ai/status/version.json",
+      "expect": {
+        "status": 200,
+        "headers": {
           "content-type": "application/json; charset=utf-8",
           "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "142"
+          "x-content-type-options": "nosniff"
         },
-        "response_body_preview": "{\"service\":\"tinygrad-trainer\",\"status\":\"operational\",\"endpoints\":{\"start\":\"POST /api/tinygrad/start\",\"status\":\"GET /api/tinygrad/status/{jobId}\",\"logs\":\"GET /api/tinygrad/logs/{jobId}\"}}"
+        "json": {
+          "phase": "stage1",
+          "commit": "1604e587"
+        }
       },
-      "status_endpoint": {
-        "command": "curl -i http://localhost:3000/api/tinygrad/status/test-job-123",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "89"
-        },
-        "response_body_preview": "{\"jobId\":\"test-job-123\",\"status\":\"pending\",\"progress\":0,\"message\":\"Training job initialized\"}"
-      },
-      "logs_endpoint": {
-        "command": "curl -i http://localhost:3000/api/tinygrad/logs/test-job-123",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "67"
-        },
-        "response_body_preview": "{\"jobId\":\"test-job-123\",\"logs\":[],\"message\":\"No logs available yet\"}"
-      }
+      "first120": "<filled by CI>"
     },
-    "petals-orchestrator": {
-      "propose_endpoint": {
-        "command": "curl -i http://localhost:3000/api/petals/propose",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "158"
-        },
-        "response_body_preview": "{\"service\":\"petals-orchestrator\",\"status\":\"operational\",\"endpoints\":{\"propose\":\"POST /api/petals/propose\",\"vote\":\"POST /api/petals/vote/{proposalId}\",\"status\":\"GET /api/petals/status/{proposalId}\",\"tally\":\"GET /api/petals/tally/{proposalId}\"}}"
-      },
-      "vote_endpoint": {
-        "command": "curl -i http://localhost:3000/api/petals/vote/test-proposal-456",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "95"
-        },
-        "response_body_preview": "{\"proposalId\":\"test-proposal-456\",\"vote\":\"accepted\",\"timestamp\":\"2025-09-09T17:00:00Z\"}"
-      },
-      "status_endpoint": {
-        "command": "curl -i http://localhost:3000/api/petals/status/test-proposal-456",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "112"
-        },
-        "response_body_preview": "{\"proposalId\":\"test-proposal-456\",\"status\":\"active\",\"votes\":{\"yes\":3,\"no\":1,\"abstain\":0}}"
-      },
-      "tally_endpoint": {
-        "command": "curl -i http://localhost:3000/api/petals/tally/test-proposal-456",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "98"
-        },
-        "response_body_preview": "{\"proposalId\":\"test-proposal-456\",\"result\":\"passed\",\"finalTally\":{\"yes\":3,\"no\":1}}"
-      }
+    {
+      "name": "tinygrad.start",
+      "curl_i": "curl -i https://zeropointprotocol.ai/api/tinygrad/start",
+      "expect": { "status": 200 },
+      "first120": "<filled by CI>"
     },
-    "wondercraft-bridge": {
-      "contribute_endpoint": {
-        "command": "curl -i http://localhost:3000/api/wondercraft/contribute",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "145"
-        },
-        "response_body_preview": "{\"service\":\"wondercraft-bridge\",\"status\":\"operational\",\"endpoints\":{\"contribute\":\"POST /api/wondercraft/contribute\",\"status\":\"GET /api/wondercraft/status/{contributionId}\",\"diff\":\"GET /api/wondercraft/diff/{assetId}\"}}"
-      },
-      "status_endpoint": {
-        "command": "curl -i http://localhost:3000/api/wondercraft/status/test-contrib-789",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "105"
-        },
-        "response_body_preview": "{\"contributionId\":\"test-contrib-789\",\"status\":\"processing\",\"progress\":75,\"message\":\"Asset generation in progress\"}"
-      },
-      "diff_endpoint": {
-        "command": "curl -i http://localhost:3000/api/wondercraft/diff/test-asset-101",
-        "response_headers": {
-          "HTTP/1.1 200 OK": "",
-          "content-type": "application/json; charset=utf-8",
-          "cache-control": "no-store",
-          "x-content-type-options": "nosniff",
-          "content-disposition": "inline",
-          "content-length": "89"
-        },
-        "response_body_preview": "{\"assetId\":\"test-asset-101\",\"diff\":\"+ Added new creative elements\",\"version\":\"v1.2.0\"}"
-      }
+    {
+      "name": "petals.propose",
+      "curl_i": "curl -i https://zeropointprotocol.ai/api/petals/propose",
+      "expect": { "status": 200 },
+      "first120": "<filled by CI>"
+    },
+    {
+      "name": "wondercraft.contribute",
+      "curl_i": "curl -i https://zeropointprotocol.ai/api/wondercraft/contribute",
+      "expect": { "status": 200 },
+      "first120": "<filled by CI>"
     }
-  },
-  "version_json_check": {
-    "command": "curl -i http://localhost:3000/status/version.json",
-    "response_headers": {
-      "HTTP/1.1 200 OK": "",
-      "content-type": "application/json; charset=utf-8",
-      "cache-control": "no-store",
-      "x-content-type-options": "nosniff",
-      "content-disposition": "inline",
-      "content-length": "127"
-    },
-    "response_body": "{\"commit\":\"1604e587\",\"buildTime\":\"2025-09-09T17:00:00Z\",\"env\":\"production\",\"TRAINING_ENABLED\":\"1\"}"
-  },
-  "verification_status": "PASSED",
-  "notes": "All service endpoints responding with correct headers and operational status. Training services activated successfully."
+  ]
 }

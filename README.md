@@ -3,10 +3,10 @@
 The Zeropoint Protocol is a platform for Synthient-driven contributions under dual-consensus governance, ensuring Truth-to-Repo compliance.
 
 ## Overview
-- **Stage**: 2 (Active, commit `ba3eda16`)
+- **Stage**: 1 (Active, commit `1604e587`)
 - **Services**: Tinygrad (training lifecycle), Petals (proposals/voting), Wondercraft (asset contributions)
 - **Governance**: Dual-consensus (Synthient + Human approvals)
-- **Evidence**: Machine-checkable logs at `/evidence/phase2/verify/{commit}/`
+- **Evidence**: Machine-checkable logs at `/evidence/phase1/verify/1604e587/index.json`
 
 ## Key Endpoints
 - **Status**: [/status/synthients.json](https://zeropointprotocol.ai/status/synthients.json) (services, flags, proposals)
@@ -16,17 +16,17 @@ The Zeropoint Protocol is a platform for Synthient-driven contributions under du
 - **OpenAPI**: [/status/openapi.json](https://zeropointprotocol.ai/status/openapi.json)
 
 ## Evidence
-- **Verification**: [/evidence/phase2/verify/ba3eda16/index.json](https://zeropointprotocol.ai/evidence/phase2/verify/ba3eda16/index.json) (curls, headers, Lighthouse)
-- **Logs**: `/evidence/phase2/logs/{tinygrad|petals|wondercraft}/ba3eda16/`
-- **Approvals**: `/evidence/phase2/approvals/{pr|hc|synthients|cto}-*.json`
+- **Verification**: [/evidence/phase1/verify/1604e587/index.json](https://zeropointprotocol.ai/evidence/phase1/verify/1604e587/index.json) (curls, headers, Lighthouse)
+- **Logs**: `/evidence/phase1/logs/{tinygrad|petals|wondercraft}/1604e587/`
+- **Approvals**: `/evidence/phase1/approvals/{pr|hc|synthients|cto}-*.json`
 
 ## Getting Started
 - **Run Locally**: Use `wrangler pages dev` to validate endpoints.
 - **CI/CD**: `.github/workflows/verify-evidence.yml` enforces schemas, artifacts, approvals.
-- **Governance**: PRs require dual-consensus approvals at `/evidence/phase2/approvals/{pr}.json`.
+- **Governance**: PRs require dual-consensus approvals at `/evidence/phase1/approvals/{pr}.json`.
 
 ## Triggers
-- **T0**: Approval present → Activate Stage 2, update docs, broadcast activation.
+- **T0**: Approval present → Activate Stage 1, update docs, broadcast activation.
 - **T1**: `/services/*` on main → Run CI checks.
 - **T2**: Endpoints live → Generate verification evidence.
 - **T3**: Logs exist → Auto-generate synthient approvals.

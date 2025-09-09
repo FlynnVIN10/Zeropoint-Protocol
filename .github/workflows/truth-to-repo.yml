@@ -1,0 +1,40 @@
+name: truth-to-repo
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  verify-alignment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse README commit
+        id: readme
+        run: |
+          c=$(grep -Eo 'commit `([0-9a-f]{7,40})`' README.md | head -1 | sed -E 's/.*`(.*)`/\1/')
+          echo "readme_commit=$c" >> $GITHUB_OUTPUT
+
+      - name: Fetch live version.json
+        id: live
+        run: |
+          set -e
+          curl -sSf https://zeropointprotocol.ai/status/version.json -o v.json
+          cat v.json
+          jq -e '.commit and .phase' v.json
+          echo "live_commit=$(jq -r .commit v.json)" >> $GITHUB_OUTPUT
+          echo "live_phase=$(jq -r .phase v.json)" >> $GITHUB_OUTPUT
+
+      - name: Assert alignment with canonical
+        env:
+          CANON_COMMIT: 1604e587
+          CANON_PHASE: stage1
+        run: |
+          test "${{ steps.readme.outputs.readme_commit }}" = "$CANON_COMMIT"
+          test "${{ steps.live.outputs.live_commit }}" = "$CANON_COMMIT"
+          test "${{ steps.live.outputs.live_phase }}" = "$CANON_PHASE"
+
+      - name: Evidence exists
+        run: |
+          test -f evidence/phase1/verify/1604e587/index.json

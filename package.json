@@ -25,6 +25,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250909.0",
     "@nestjs/axios": "^3.0.2",
     "@nestjs/common": "^10.4.13",
     "@nestjs/config": "^3.2.3",

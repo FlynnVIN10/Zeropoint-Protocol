@@ -1,4 +1,6 @@
 // Cloudflare Pages Function -> /status/version.json
+import type { PagesFunction } from '@cloudflare/workers-types';
+
 export const onRequest: PagesFunction = async ({ env }) => {
   const body = JSON.stringify({
     phase: "stage1",

@@ -15,7 +15,8 @@ const {
 } = process.env;
 
 if (!CF_PAGES_COMMIT_SHA) {
-  throw new Error("CF_PAGES_COMMIT_SHA required");
+  console.warn("generate-stage2-evidence.mjs: CF_PAGES_COMMIT_SHA not set; skipping stage2 evidence generation.");
+  process.exit(0);
 }
 
 const short = CF_PAGES_COMMIT_SHA.slice(0, 7);

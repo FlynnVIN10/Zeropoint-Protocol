@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Import the PetalsOrchestrator service
-const PetalsOrchestrator = require('../../../../services/petals-orchestrator/index.js')
-
-// Initialize the orchestrator service
-const orchestrator = new PetalsOrchestrator()
+import * as Petals from '@services/petals-orchestrator'
 
 export async function GET(
   request: NextRequest,
@@ -21,7 +18,7 @@ export async function GET(
     }
 
     // Get proposal status
-    const result = await orchestrator.getProposalStatus(proposalId);
+    const result = await Petals.proposalStatus(proposalId);
 
     return NextResponse.json(result, {
       headers: {

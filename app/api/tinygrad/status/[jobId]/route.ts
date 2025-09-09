@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Import the TinygradTrainer service
-const TinygradTrainer = require('../../../../services/trainer-tinygrad/index.js')
-
-// Initialize the trainer service
-const trainer = new TinygradTrainer()
+import * as Tiny from '@services/trainer-tinygrad'
 
 export async function GET(
   request: NextRequest,
@@ -21,7 +18,7 @@ export async function GET(
     }
 
     // Get job status
-    const result = await trainer.getJobStatus(jobId);
+    const result = await Tiny.jobStatus(jobId);
 
     return NextResponse.json(result, {
       headers: {

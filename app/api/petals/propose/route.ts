@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Import the PetalsOrchestrator service
-const PetalsOrchestrator = require('../../../../services/petals-orchestrator/index.js')
-
-// Initialize the orchestrator service
-const orchestrator = new PetalsOrchestrator()
+import * as Petals from '@services/petals-orchestrator'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,12 +16,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Submit proposal
-    const result = await orchestrator.submitProposal(
-      body.title,
-      body.description,
-      body.proposalType,
-      body.synthientApproval || false
-    )
+    const result = await Petals.submitProposal({
+      title: body.title,
+      description: body.description,
+      proposalType: body.proposalType,
+      synthientApproval: body.synthientApproval || false
+    })
 
     return NextResponse.json(result, {
       headers: {

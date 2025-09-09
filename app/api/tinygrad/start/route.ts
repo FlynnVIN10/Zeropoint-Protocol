@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Import the TinygradTrainer service
-const TinygradTrainer = require('../../../../services/trainer-tinygrad/index.js')
-
-// Initialize the trainer service
-const trainer = new TinygradTrainer()
+import * as Tiny from '@services/trainer-tinygrad'
 
 export async function POST(request: NextRequest) {
   try {

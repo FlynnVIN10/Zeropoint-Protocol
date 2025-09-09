@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
 // Import the PetalsOrchestrator service
-const PetalsOrchestrator = require('../../../../services/petals-orchestrator/index.js')
-
-// Initialize the orchestrator service
-const orchestrator = new PetalsOrchestrator()
+import * as Petals from '@services/petals-orchestrator'
 
 export async function POST(
   request: NextRequest,
@@ -29,11 +26,10 @@ export async function POST(
     }
 
     // Cast vote
-    const result = await orchestrator.castVote(
-      proposalId,
-      body.voterId,
-      body.decision
-    );
+    const result = await Petals.voteOnProposal(proposalId, {
+      voterId: body.voterId,
+      decision: body.decision
+    });
 
     return NextResponse.json(result, {
       headers: {

@@ -1,60 +1,65 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server'
+
+// Import the TinygradTrainer service
+const TinygradTrainer = require('../../../../services/trainer-tinygrad/index.js')
+
+// Initialize the trainer service
+const trainer = new TinygradTrainer()
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { config, model, dataset } = body;
-
-    // Generate unique job ID
-    const jobId = `tinygrad-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const body = await request.json()
     
-    // Validate required parameters
-    if (!config || !model) {
+    // Validate required fields
+    if (!body.dataset || !body.modelConfig) {
       return NextResponse.json(
-        { error: 'Missing required parameters: config and model are required' },
+        { error: 'Missing required fields: dataset, modelConfig' },
         { status: 400 }
-      );
+      )
     }
 
-    // Create training job configuration
-    const trainingConfig = {
-      jobId,
-      config,
-      model,
-      dataset: dataset || 'default',
-      status: 'queued',
-      createdAt: new Date().toISOString(),
-      backend: process.env.TINYGRAD_BACKEND || 'cpu'
-    };
+    // Start training job
+    const result = await trainer.startTrainingJob(
+      body.dataset,
+      body.modelConfig,
+      body.trainingParams || {}
+    )
 
-    // Log the training start
-    console.log(`TinyGrad training job started: ${jobId}`, trainingConfig);
-
-    // In a real implementation, this would queue the job with TinyGrad
-    // For now, we'll simulate the job creation
-    const response = {
-      jobId,
-      status: 'queued',
-      message: 'Training job queued successfully',
-      config: trainingConfig,
-      estimatedDuration: '6 hours',
-      backend: process.env.TINYGRAD_BACKEND || 'cpu'
-    };
-
-    return NextResponse.json(response, { 
-      status: 200,
+    return NextResponse.json(result, {
       headers: {
-        'Content-Type': 'application/json',
-        'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'no-store'
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
       }
-    });
-
+    })
   } catch (error) {
-    console.error('TinyGrad start error:', error);
+    console.error('Tinygrad training start error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to start training job' },
       { status: 500 }
-    );
+    )
   }
+}
+
+export async function GET() {
+  return NextResponse.json(
+    { 
+      service: 'tinygrad-trainer',
+      status: 'operational',
+      endpoints: {
+        start: 'POST /api/tinygrad/start',
+        status: 'GET /api/tinygrad/status/{jobId}',
+        logs: 'GET /api/tinygrad/logs/{jobId}'
+      }
+    },
+    {
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
+      }
+    }
+  )
 }

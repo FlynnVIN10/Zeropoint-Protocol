@@ -15,7 +15,13 @@ export async function GET() {
     phase: 'stage0',
     commit,
     ciStatus: env === 'production' ? 'green' : 'development',
-    buildTime
+    buildTime,
+    TRAINING_ENABLED: 1,
+    services: {
+      tinygrad: 'operational',
+      petals: 'operational', 
+      wondercraft: 'operational'
+    }
   }
   
   // Ensure production values are always set

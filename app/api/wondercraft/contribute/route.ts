@@ -1,91 +1,66 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { createHash } from 'crypto';
+import { NextRequest, NextResponse } from 'next/server'
+
+// Import the WondercraftBridge service
+const WondercraftBridge = require('../../../../services/wondercraft-bridge/index.js')
+
+// Initialize the bridge service
+const bridge = new WondercraftBridge()
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { asset, sha256, contributor, assetType, metadata } = body;
-
-    // Validate required parameters
-    if (!asset || !sha256 || !contributor || !assetType) {
-      return NextResponse.json(
-        { error: 'Missing required parameters: asset, sha256, contributor, and assetType are required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate asset type
-    const validAssetTypes = ['model', 'dataset', 'code', 'documentation', 'test'];
-    if (!validAssetTypes.includes(assetType)) {
-      return NextResponse.json(
-        { error: 'Invalid asset type. Must be: model, dataset, code, documentation, or test' },
-        { status: 400 }
-      );
-    }
-
-    // Verify SHA256 hash (in a real implementation, this would verify the actual asset)
-    const expectedHash = createHash('sha256').update(JSON.stringify(asset)).digest('hex');
-    const hashMatch = expectedHash === sha256;
-
-    if (!hashMatch) {
-      return NextResponse.json(
-        { error: 'SHA256 hash verification failed' },
-        { status: 400 }
-      );
-    }
-
-    // Generate unique contribution ID
-    const contributionId = `wondercraft-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const body = await request.json()
     
-    // Create contribution record
-    const contribution = {
-      id: contributionId,
-      asset,
-      sha256,
-      contributor,
-      assetType,
-      metadata: metadata || {},
-      status: 'validated',
-      createdAt: new Date().toISOString(),
-      size: JSON.stringify(asset).length,
-      hashVerified: true,
-      validation: {
-        sha256: hashMatch,
-        format: true,
-        integrity: true
-      }
-    };
+    // Validate required fields
+    if (!body.assetType || !body.assetData || !body.metadata || !body.contributor) {
+      return NextResponse.json(
+        { error: 'Missing required fields: assetType, assetData, metadata, contributor' },
+        { status: 400 }
+      )
+    }
 
-    // Log the contribution
-    console.log(`Wondercraft contribution: ${contributionId}`, contribution);
+    // Submit contribution
+    const result = await bridge.submitContribution(
+      body.assetType,
+      body.assetData,
+      body.metadata,
+      body.contributor
+    )
 
-    // In a real implementation, this would store the contribution
-    const response = {
-      contributionId,
-      status: 'validated',
-      message: 'Contribution validated and recorded successfully',
-      contribution,
-      verification: {
-        sha256: hashMatch,
-        integrity: true,
-        format: true
-      }
-    };
-
-    return NextResponse.json(response, {
-      status: 200,
+    return NextResponse.json(result, {
       headers: {
-        'Content-Type': 'application/json',
-        'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'no-store'
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
       }
-    });
-
+    })
   } catch (error) {
-    console.error('Wondercraft contribute error:', error);
+    console.error('Wondercraft contribution error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to submit contribution' },
       { status: 500 }
-    );
+    )
   }
+}
+
+export async function GET() {
+  return NextResponse.json(
+    { 
+      service: 'wondercraft-bridge',
+      status: 'operational',
+      endpoints: {
+        contribute: 'POST /api/wondercraft/contribute',
+        status: 'GET /api/wondercraft/status/{contributionId}',
+        diff: 'GET /api/wondercraft/diff/{assetId}?versionA={v1}&versionB={v2}'
+      }
+    },
+    {
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
+      }
+    }
+  )
 }

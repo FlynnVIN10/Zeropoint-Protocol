@@ -6,13 +6,12 @@ const PetalsOrchestrator = require('../../../../services/petals-orchestrator/ind
 // Initialize the orchestrator service
 const orchestrator = new PetalsOrchestrator()
 
-export async function POST(
+export async function GET(
   request: NextRequest,
   { params }: { params: { proposalId: string } }
 ) {
   try {
     const { proposalId } = params
-    const body = await request.json()
 
     if (!proposalId) {
       return NextResponse.json(
@@ -21,20 +20,8 @@ export async function POST(
       )
     }
 
-    if (!body.vote || !body.voterType) {
-      return NextResponse.json(
-        { error: 'Missing required fields: vote, voterType' },
-        { status: 400 }
-      )
-    }
-
-    // Cast vote
-    const result = await orchestrator.castVote(
-      proposalId,
-      body.vote,
-      body.voterType,
-      body.reasoning || ''
-    )
+    // Get voting tally
+    const result = await orchestrator.getVotingTally(proposalId)
 
     return NextResponse.json(result, {
       headers: {
@@ -45,9 +32,9 @@ export async function POST(
       }
     })
   } catch (error) {
-    console.error('Petals vote error:', error)
+    console.error('Petals tally error:', error)
     return NextResponse.json(
-      { error: 'Failed to cast vote' },
+      { error: 'Failed to get voting tally' },
       { status: 500 }
     )
   }

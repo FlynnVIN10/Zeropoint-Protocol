@@ -1,73 +1,67 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
+import { NextRequest, NextResponse } from 'next/server'
+
+// Import the PetalsOrchestrator service
+const PetalsOrchestrator = require('../../../../services/petals-orchestrator/index.js')
+
+// Initialize the orchestrator service
+const orchestrator = new PetalsOrchestrator()
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { title, description, type, parameters, proposer } = body;
-
-    // Validate required parameters
-    if (!title || !description || !type || !proposer) {
+    const body = await request.json()
+    
+    // Validate required fields
+    if (!body.title || !body.description || !body.proposalType) {
       return NextResponse.json(
-        { error: 'Missing required parameters: title, description, type, and proposer are required' },
+        { error: 'Missing required fields: title, description, proposalType' },
         { status: 400 }
-      );
+      )
     }
 
-    // Generate unique proposal ID
-    const proposalId = uuidv4();
-    
-    // Create proposal
-    const proposal = {
-      id: proposalId,
-      title,
-      description,
-      type,
-      parameters: parameters || {},
-      proposer,
-      status: 'active',
-      createdAt: new Date().toISOString(),
-      votes: {
-        for: 0,
-        against: 0,
-        abstain: 0
-      },
-      totalVotes: 0,
-      consensus: {
-        synthient: false,
-        human: false,
-        required: 2
-      }
-    };
+    // Submit proposal
+    const result = await orchestrator.submitProposal(
+      body.title,
+      body.description,
+      body.proposalType,
+      body.synthientApproval || false
+    )
 
-    // Log the proposal creation
-    console.log(`Petals proposal created: ${proposalId}`, proposal);
-
-    // In a real implementation, this would store the proposal in a database
-    // For now, we'll simulate the proposal creation
-    const response = {
-      proposalId,
-      status: 'active',
-      message: 'Proposal created successfully',
-      proposal,
-      votingDeadline: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
-      consensusRequired: 2
-    };
-
-    return NextResponse.json(response, {
-      status: 200,
+    return NextResponse.json(result, {
       headers: {
-        'Content-Type': 'application/json',
-        'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'no-store'
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
       }
-    });
-
+    })
   } catch (error) {
-    console.error('Petals propose error:', error);
+    console.error('Petals proposal error:', error)
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to submit proposal' },
       { status: 500 }
-    );
+    )
   }
+}
+
+export async function GET() {
+  return NextResponse.json(
+    { 
+      service: 'petals-orchestrator',
+      status: 'operational',
+      endpoints: {
+        propose: 'POST /api/petals/propose',
+        vote: 'POST /api/petals/vote/{proposalId}',
+        status: 'GET /api/petals/status/{proposalId}',
+        tally: 'GET /api/petals/tally/{proposalId}'
+      }
+    },
+    {
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
+      }
+    }
+  )
 }

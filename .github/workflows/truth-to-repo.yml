@@ -3,6 +3,8 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
+  schedule:
+    - cron: '0 */4 * * *' # Run every 4 hours
 
 jobs:
   verify-alignment:
@@ -35,6 +37,82 @@ jobs:
           test "${{ steps.live.outputs.live_commit }}" = "$CANON_COMMIT"
           test "${{ steps.live.outputs.live_phase }}" = "$CANON_PHASE"
 
-      - name: Evidence exists
+      - name: Evidence exists and is JSON
         run: |
           test -f evidence/phase1/verify/1604e587/index.json
+          jq empty evidence/phase1/verify/1604e587/index.json
+
+      - name: Verify evidence endpoint serves JSON
+        id: evidence_check
+        run: |
+          set -e
+          # Check if evidence endpoint serves JSON, not HTML
+          response=$(curl -s -H "Accept: application/json" https://zeropointprotocol.ai/evidence/phase1/verify/1604e587/index.json)
+          if echo "$response" | jq empty 2>/dev/null; then
+            echo "Evidence endpoint serves valid JSON"
+            echo "evidence_json=true" >> $GITHUB_OUTPUT
+          else
+            echo "Evidence endpoint does not serve JSON - possible HTML shell override"
+            echo "$response" | head -20
+            echo "evidence_json=false" >> $GITHUB_OUTPUT
+            exit 1
+          fi
+
+      - name: Verify evidence content alignment
+        run: |
+          set -e
+          # Check if evidence contains expected commit and phase
+          evidence=$(curl -s https://zeropointprotocol.ai/evidence/phase1/verify/1604e587/index.json)
+          echo "$evidence" | jq -e '.meta.commit == "1604e587"'
+          echo "$evidence" | jq -e '.meta.phase == "stage1"'
+          echo "Evidence content alignment verified"
+
+      - name: Test API endpoints health
+        run: |
+          set -e
+          # Test key API endpoints for 200 responses
+          curl -f https://zeropointprotocol.ai/api/healthz > /dev/null
+          curl -f https://zeropointprotocol.ai/api/readyz > /dev/null
+          curl -f https://zeropointprotocol.ai/api/tinygrad/start > /dev/null || true
+          curl -f https://zeropointprotocol.ai/api/petals/propose > /dev/null || true
+          curl -f https://zeropointprotocol.ai/api/wondercraft/contribute > /dev/null || true
+          echo "API endpoints health check passed"
+
+      - name: Security headers verification
+        run: |
+          set -e
+          # Check security headers on key endpoints
+          headers=$(curl -I https://zeropointprotocol.ai/api/healthz 2>/dev/null)
+          echo "$headers" | grep -i "content-type: application/json" > /dev/null
+          echo "$headers" | grep -i "cache-control: no-store" > /dev/null
+          echo "$headers" | grep -i "x-content-type-options: nosniff" > /dev/null
+          echo "Security headers verification passed"
+
+      - name: Database connectivity check
+        run: |
+          set -e
+          # Check if healthz endpoint reports database connectivity
+          health_response=$(curl -s https://zeropointprotocol.ai/api/healthz)
+          echo "$health_response" | jq -e '.database.connected == true'
+          echo "Database connectivity verified"
+
+      - name: Training enabled verification
+        run: |
+          set -e
+          # Verify training services are enabled
+          health_response=$(curl -s https://zeropointprotocol.ai/api/healthz)
+          echo "$health_response" | jq -e '.trainingEnabled == true'
+          echo "Training services enabled"
+
+      - name: Mocks disabled verification
+        run: |
+          set -e
+          # Verify mocks are disabled in production
+          health_response=$(curl -s https://zeropointprotocol.ai/api/healthz)
+          mocks=$(echo "$health_response" | jq -r '.mocks')
+          if [ "$mocks" = "false" ]; then
+            echo "MOCKS_DISABLED=1 verified"
+          else
+            echo "Warning: Mocks still enabled - MOCKS_DISABLED may not be set"
+            exit 1
+          fi

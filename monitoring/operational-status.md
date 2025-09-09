@@ -1,6 +1,6 @@
 # Zeropoint Protocol - Operational Status Dashboard
 
-## Platform Status: 🟢 OPERATIONAL EXCELLENCE
+## Platform Status: 🟢 OPERATIONAL (LOCAL)
 
 **Last Updated: 2025-08-26 17:28 UTC
 **Current Commit:** $(git rev-parse --short HEAD)

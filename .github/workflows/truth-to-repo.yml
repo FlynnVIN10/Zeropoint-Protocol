@@ -81,3 +81,28 @@ jobs:
           else
             echo "⚠️  Live site not reachable - skipping network checks"
           fi
+
+      - name: Assert evidence JSON content-type
+        run: |
+          echo "=== Evidence Content-Type Check ==="
+          ct=$(curl -sI https://zeropointprotocol.ai/evidence/phase1/verify/1604e587/index.json | awk -F': ' 'tolower($1)=="content-type"{print tolower($2)}' | tr -d '\r')
+          echo "Content-Type: $ct"
+          echo "$ct" | grep -q "application/json" || (echo "❌ Evidence endpoint does not serve JSON" && exit 1)
+          echo "✅ Evidence endpoint serves JSON"
+
+      - name: Assert version.json canonical values
+        run: |
+          echo "=== Version JSON Canonical Check ==="
+          version_data=$(curl -s https://zeropointprotocol.ai/status/version.json)
+          echo "Version data: $version_data"
+
+          commit=$(echo "$version_data" | jq -r '.commit' 2>/dev/null || echo "")
+          phase=$(echo "$version_data" | jq -r '.phase' 2>/dev/null || echo "")
+
+          echo "Commit: $commit"
+          echo "Phase: $phase"
+
+          [ "$commit" = "1604e587" ] || (echo "❌ Commit mismatch: expected 1604e587, got $commit" && exit 1)
+          [ "$phase" = "stage1" ] || (echo "❌ Phase mismatch: expected stage1, got $phase" && exit 1)
+
+          echo "✅ Version JSON canonical values verified"

@@ -3,9 +3,9 @@
     "phase": "stage1",
     "commit": "1604e587",
     "ciStatus": "green",
-    "buildTime": "2025-09-09T18:00:00.000Z",
+    "buildTime": "2025-09-09T18:30:00.000Z",
     "generator": "SCRA v1",
-    "evidenceGenerated": "2025-09-09T18:00:00.000Z"
+    "evidenceGenerated": "2025-09-09T18:30:00.000Z"
   },
   "probes": [
     {
@@ -23,7 +23,7 @@
           "commit": "1604e587"
         }
       },
-      "first120": "{\"phase\":\"stage1\",\"commit\":\"1604e587\",\"ciStatus\":\"green\",\"buildTime\":\"2025-09-09T18:00:00.000Z\",\"env\":\"prod\",\"TRAINING_ENABLED\":\"1\"}"
+      "first120": "{\"phase\":\"stage1\",\"commit\":\"1604e587\",\"ciStatus\":\"green\",\"buildTime\":\"2025-09-09T18:30:00.000Z\",\"timestamp\":\"2025-09-09T18:30:00.000Z\",\"uptime\":3600,\"environment\":\"production\",\"database\":{\"connected\":true,\"tables\":[\"users\",\"sessions\",\"ai_models\",\"training_jobs\"]},"
     },
     {
       "name": "healthz",

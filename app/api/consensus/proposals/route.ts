@@ -194,6 +194,27 @@ export async function POST(request: NextRequest) {
     // Save consensus to file
     writeFileSync(consensusPath, JSON.stringify(consensus, null, 2))
 
+    // Write evidence file for the proposal
+    const evidenceDir = join(process.cwd(), 'evidence', 'consensus')
+    const evidenceFile = `${body.proposalId}-evidence.json`
+    const evidencePath = join(evidenceDir, evidenceFile)
+
+    const evidenceData = {
+      proposalId: body.proposalId,
+      reviews: consensus.reviews,
+      finalDecision: consensus.summary.finalDecision,
+      consensusReached: consensus.summary.consensusReached,
+      timestamp: new Date().toISOString(),
+      evidenceGenerated: new Date().toISOString()
+    }
+
+    try {
+      writeFileSync(evidencePath, JSON.stringify(evidenceData, null, 2))
+      console.log(`Evidence written to ${evidencePath}`)
+    } catch (evidenceError) {
+      console.error('Failed to write evidence file:', evidenceError)
+    }
+
     // Try to save to database
     try {
       await dbManager.initialize()

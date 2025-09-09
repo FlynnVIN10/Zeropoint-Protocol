@@ -110,13 +110,13 @@ If deployment fails:
 3. **Fix and Redeploy:** Correct environment variables and redeploy
 4. **Escalation:** Notify CEO if rollback required
 
-## Timeline Requirements
+## Execution Requirements
 
-- **T+0 minutes:** Start deployment process
-- **T+15 minutes:** Verify environment variables set
-- **T+30 minutes:** Complete deployment
-- **T+45 minutes:** Execute verification tests
-- **T+60 minutes:** Confirm success or initiate rollback
+- **Immediate:** Start deployment process
+- **Gate 1:** Verify environment variables set
+- **Gate 2:** Complete deployment
+- **Gate 3:** Execute verification tests
+- **Gate 4:** Confirm success or initiate rollback
 
 ## Contact Information
 

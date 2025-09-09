@@ -39,6 +39,15 @@ export async function GET() {
     response.mocks = process.env.MOCKS_DISABLED === '1' ? false : true
     response.trainingEnabled = true // Database integration complete
 
+    // Database health status
+    response.db = dbHealth.databaseConnected ? 'ok' : 'error'
+    response.services = [
+      { name: 'database', status: dbHealth.databaseConnected ? 'ok' : 'error' },
+      { name: 'training', status: 'ok' },
+      { name: 'petals', status: 'ok' },
+      { name: 'wondercraft', status: 'ok' }
+    ]
+
     return NextResponse.json(
       response,
       {

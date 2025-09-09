@@ -47,14 +47,8 @@ const common = {
   timestamp: iso,
 };
 
-await fs.writeFile(
-  join(statusDir, "version.json"),
-  JSON.stringify(
-    { phase: "stage1", ciStatus: "green", buildTime: CF_PAGES_COMMIT_TIME || new Date().toISOString(), ...common },
-    null,
-    2
-  )
-);
+// Do NOT generate /status/version.json; this path is owned by a Cloudflare Pages Function.
+// Keeping this file absent ensures the Function is authoritative and prevents drift.
 
 const files = (await listFiles(verDir)).filter((p) => !/\/index\.json$/.test(p) && p.startsWith(`/evidence/verify/${short}/`));
 await fs.writeFile(join(verDir, "index.json"), JSON.stringify({ ...common, files }, null, 2));

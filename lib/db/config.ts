@@ -80,20 +80,27 @@ export class MockDatabase {
 export class DatabaseManager {
   private mockDb: MockDatabase;
   private isProduction: boolean;
+  private pool: any | null;
 
   constructor() {
     this.mockDb = new MockDatabase();
     this.isProduction = process.env.NODE_ENV === 'production';
+    this.pool = null;
   }
 
   async initialize(): Promise<void> {
-    if (this.isProduction) {
-      // In production, attempt real PostgreSQL connection
-      // For now, fall back to mock for development
-      console.log('Production database initialization - using PostgreSQL config');
+    const useRealDb = !!process.env.DATABASE_URL && process.env.MOCKS_DISABLED === '1';
+    if (useRealDb && !this.pool) {
+      try {
+        const { Pool } = await import('pg');
+        this.pool = new Pool({ connectionString: process.env.DATABASE_URL });
+        await this.pool.query('SELECT 1');
+        return;
+      } catch (err) {
+        console.warn('PostgreSQL connect failed, falling back to mock DB:', err);
+        this.pool = null;
+      }
     }
-
-    // Initialize mock database for development
     await this.mockDb.connect();
   }
 
@@ -103,8 +110,16 @@ export class DatabaseManager {
     tables: string[];
     environment: string;
   }> {
+    if (this.pool) {
+      try {
+        const res = await this.pool.query("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname NOT IN ('pg_catalog','information_schema')");
+        const tables = res.rows.map((r: any) => r.tablename);
+        return { databaseConnected: true, lastHealthCheck: new Date(), tables, environment: 'production' };
+      } catch (e) {
+        console.warn('DB health check failed, using mock:', e);
+      }
+    }
     const health = await this.mockDb.healthCheck();
-
     return {
       databaseConnected: health.connected,
       lastHealthCheck: health.lastHealthCheck,
@@ -114,7 +129,27 @@ export class DatabaseManager {
   }
 
   async query(table: string, conditions?: any): Promise<any[]> {
-    return await this.mockDb.query(table, conditions);
+    if (this.pool) {
+      // Simple dispatcher for proposals table; extend as needed
+      if (table === 'proposals') {
+        const res = await this.pool.query('SELECT id, title, description as body, status, timestamp FROM proposals ORDER BY timestamp DESC');
+        return res.rows;
+      }
+      // Fallback to mock-style until other tables are implemented
+      return this.mockDb.query(table, conditions);
+    }
+    return this.mockDb.query(table, conditions);
+  }
+
+  async insertProposal(data: { id: string; title: string; body: string; status: string; timestamp: string }): Promise<void> {
+    if (this.pool) {
+      await this.pool.query(
+        'INSERT INTO proposals (id, title, description, status, timestamp) VALUES ($1,$2,$3,$4,$5)',
+        [data.id, data.title, data.body, data.status, data.timestamp]
+      );
+      return;
+    }
+    // mock insert: no-op
   }
 }
 

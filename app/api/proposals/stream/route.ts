@@ -7,6 +7,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(request: NextRequest) {
   try {
     // Set up SSE (Server-Sent Events) for real-time proposal updates
+    const encoder = new TextEncoder()
     const responseStream = new ReadableStream({
       start(controller) {
         // Send initial connection confirmation
@@ -15,7 +16,7 @@ export async function GET(request: NextRequest) {
           message: 'Connected to proposal stream',
           timestamp: new Date().toISOString()
         }
-        controller.enqueue(`data: ${JSON.stringify(initialData)}\n\n`)
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(initialData)}\n\n`))
 
         // Set up periodic updates (in production, this would use WebSocket or database triggers)
         const interval = setInterval(async () => {
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
                 proposals: proposals,
                 timestamp: new Date().toISOString()
               }
-              controller.enqueue(`data: ${JSON.stringify(updateData)}\n\n`)
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify(updateData)}\n\n`))
             }
 
             // Send heartbeat
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
               type: 'heartbeat',
               timestamp: new Date().toISOString()
             }
-            controller.enqueue(`data: ${JSON.stringify(heartbeatData)}\n\n`)
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(heartbeatData)}\n\n`))
 
           } catch (error) {
             console.error('Stream update error:', error)
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
               message: 'Stream update failed',
               timestamp: new Date().toISOString()
             }
-            controller.enqueue(`data: ${JSON.stringify(errorData)}\n\n`)
+            controller.enqueue(encoder.encode(`data: ${JSON.stringify(errorData)}\n\n`))
           }
         }, 30000) // Update every 30 seconds
 

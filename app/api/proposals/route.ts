@@ -20,15 +20,31 @@ let nextId = 1
 
 export async function GET() {
   try {
-    // Try to load from database first
     await dbManager.initialize()
+    // Prefer database if available; fallback to fs
+    let rows: any[] = []
+    try {
+      rows = await dbManager.query('proposals')
+    } catch {}
 
-    // For now, return stored proposals (in production, this would query database)
+    if (rows && rows.length) {
+      return NextResponse.json({
+        proposals: rows,
+        total: rows.length,
+        timestamp: new Date().toISOString()
+      }, {
+        status: 200,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff'
+        }
+      })
+    }
+
     const proposalsDir = join(process.cwd(), 'proposals')
     const proposalFiles = existsSync(proposalsDir) ? readdirSync(proposalsDir) : []
-
     const loadedProposals: Proposal[] = []
-
     for (const file of proposalFiles) {
       if (file.endsWith('.json')) {
         try {
@@ -107,7 +123,7 @@ export async function POST(request: NextRequest) {
       tags: body.tags || []
     }
 
-    // Save to file system (in production, this would save to database)
+    // Save to file system (fallback)
     const proposalsDir = join(process.cwd(), 'proposals')
     const fileName = `${id}.json`
     const filePath = join(proposalsDir, fileName)
@@ -131,8 +147,7 @@ export async function POST(request: NextRequest) {
     // Try to save to database as well
     try {
       await dbManager.initialize()
-      // In production, this would insert into database
-      console.log('Proposal saved to database (simulated)')
+      await dbManager.insertProposal({ id, title: proposal.title, body: proposal.body, status: proposal.status, timestamp: proposal.timestamp })
     } catch (dbError) {
       console.warn('Database save failed, using file system only:', dbError)
     }

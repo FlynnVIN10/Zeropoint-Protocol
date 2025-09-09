@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
+import { dbManager } from '../../../../lib/db/config'
 
 interface Proposal {
   id: string
@@ -33,7 +34,24 @@ export async function GET(
       })
     }
 
-    // Try to load from file system first
+    // Try database first
+    try {
+      await dbManager.initialize()
+      const rows = await dbManager.query('proposals')
+      const match = rows.find((p: any) => p.id === id)
+      if (match) {
+        return NextResponse.json({ proposal: match, timestamp: new Date().toISOString() }, {
+          status: 200,
+          headers: {
+            'content-type': 'application/json; charset=utf-8',
+            'cache-control': 'no-store',
+            'x-content-type-options': 'nosniff'
+          }
+        })
+      }
+    } catch {}
+
+    // Fallback: file system
     const proposalsDir = join(process.cwd(), 'proposals')
     const fileName = `${id}.json`
     const filePath = join(proposalsDir, fileName)

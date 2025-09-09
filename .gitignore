@@ -60,5 +60,8 @@ dist/
 *.js
 *.js.map
 
+# Exceptions for service files (needed for build)
+!services/*/index.js
+
 # Monitoring logs - these change frequently and shouldn't be tracked
 monitoring/logs/*.log

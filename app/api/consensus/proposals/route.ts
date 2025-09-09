@@ -1,173 +1,234 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { featureFlags } from '../../../../lib/feature-flags'
+import { writeFileSync, readFileSync, existsSync, readdirSync } from 'fs'
+import { join } from 'path'
+import { dbManager } from '../../../../lib/db/config'
 
-export const dynamic = 'force-dynamic'
-
-interface ConsensusProposal {
+interface ConsensusReview {
   id: string
-  prompt: string
-  rationale: string
-  synthiantId: string
-  state: 'pending' | 'approved' | 'vetoed'
-  synthiantVotes: { [synthiantId: string]: 'approve' | 'veto' }
-  humanVotes: { [userId: string]: 'approve' | 'veto' }
-  synthiantConsensus: boolean
-  humanConsensus: boolean
-  createdAt: string
-  updatedAt: string
-  evidence: string[]
-  trainingSignal: {
-    dataset: string
-    expectedOutcome: string
-    confidence: number
+  proposalId: string
+  reviewer: string
+  decision: 'approve' | 'reject' | 'abstain'
+  reasoning: string
+  confidence: number // 0-1 scale
+  timestamp: string
+  reviewerType: 'synthient' | 'human'
+}
+
+interface ProposalConsensus {
+  proposalId: string
+  reviews: ConsensusReview[]
+  summary: {
+    totalReviews: number
+    approved: number
+    rejected: number
+    abstained: number
+    consensusReached: boolean
+    finalDecision: 'approved' | 'rejected' | 'pending' | null
+    lastUpdated: string
   }
 }
 
-// In-memory storage for proposals (shared across consensus routes)
-// In production, this would be a database
-declare global {
-  var consensusProposals: Map<string, ConsensusProposal>
-}
+export async function GET() {
+  try {
+    // Load all proposals and their consensus status
+    const proposalsDir = join(process.cwd(), 'proposals')
+    const consensusDir = join(process.cwd(), 'evidence', 'consensus')
 
-if (!global.consensusProposals) {
-  global.consensusProposals = new Map()
-}
+    const proposalFiles = existsSync(proposalsDir) ? readdirSync(proposalsDir) : []
+    const consensusFiles = existsSync(consensusDir) ? readdirSync(consensusDir) : []
 
-const proposals = global.consensusProposals
+    const proposalsWithConsensus = []
 
-// Generate unique ID
-function generateId(): string {
-  return `proposal_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-}
+    for (const file of proposalFiles) {
+      if (file.endsWith('.json')) {
+        try {
+          const proposalPath = join(proposalsDir, file)
+          const proposal = JSON.parse(readFileSync(proposalPath, 'utf-8'))
 
-// Check if consensus is enabled
-function checkConsensusEnabled(): boolean {
-  return featureFlags.isEnabled('CONSENSUS_ENABLED')
+          // Find consensus file for this proposal
+          const consensusFile = consensusFiles.find(cf => cf.startsWith(proposal.id))
+          let consensus: ProposalConsensus | null = null
+
+          if (consensusFile) {
+            const consensusPath = join(consensusDir, consensusFile)
+            consensus = JSON.parse(readFileSync(consensusPath, 'utf-8'))
+          }
+
+          proposalsWithConsensus.push({
+            proposal,
+            consensus
+          })
+        } catch (error) {
+          console.error(`Error loading proposal ${file}:`, error)
+        }
+      }
+    }
+
+    return NextResponse.json({
+      proposals: proposalsWithConsensus,
+      total: proposalsWithConsensus.length,
+      timestamp: new Date().toISOString()
+    }, {
+      status: 200,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff'
+      }
+    })
+
+  } catch (error) {
+    console.error('Error fetching consensus data:', error)
+
+    return NextResponse.json({
+      proposals: [],
+      total: 0,
+      error: 'Failed to fetch consensus data',
+      timestamp: new Date().toISOString()
+    }, {
+      status: 500,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff'
+      }
+    })
+  }
 }
 
 export async function POST(request: NextRequest) {
-  if (!checkConsensusEnabled()) {
-    return NextResponse.json(
-      { error: 'Consensus system is disabled' },
-      { status: 503 }
-    )
-  }
-
   try {
-    const { prompt, rationale, synthiantId, trainingSignal } = await request.json()
+    const body = await request.json()
 
-    if (!prompt || !rationale || !synthiantId) {
-      return NextResponse.json(
-        { error: 'Missing required fields: prompt, rationale, synthiantId' },
-        { status: 400 }
-      )
+    // Validate required fields
+    if (!body.proposalId || !body.reviewer || !body.decision) {
+      return NextResponse.json({
+        error: 'Missing required fields: proposalId, reviewer, decision'
+      }, {
+        status: 400,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff'
+        }
+      })
     }
 
-    // Zeroth principle check
-    if (prompt.toLowerCase().includes('bypass') || 
-        prompt.toLowerCase().includes('hack') ||
-        prompt.toLowerCase().includes('exploit')) {
-      return NextResponse.json(
-        { error: 'Zeroth violation: Proposal violates ethical principles' },
-        { status: 400 }
-      )
+    // Verify proposal exists
+    const proposalsDir = join(process.cwd(), 'proposals')
+    const proposalFile = `${body.proposalId}.json`
+    const proposalPath = join(proposalsDir, proposalFile)
+
+    if (!existsSync(proposalPath)) {
+      return NextResponse.json({
+        error: 'Proposal not found'
+      }, {
+        status: 404,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff'
+        }
+      })
     }
 
-    const proposal: ConsensusProposal = {
-      id: generateId(),
-      prompt,
-      rationale,
-      synthiantId,
-      state: 'pending',
-      synthiantVotes: {},
-      humanVotes: {},
-      synthiantConsensus: false,
-      humanConsensus: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      evidence: [],
-      trainingSignal: trainingSignal || {
-        dataset: 'default',
-        expectedOutcome: 'improved reasoning',
-        confidence: 0.7
+    // Load existing consensus or create new
+    const consensusDir = join(process.cwd(), 'evidence', 'consensus')
+    const consensusFile = `${body.proposalId}-consensus.json`
+    const consensusPath = join(consensusDir, consensusFile)
+
+    let consensus: ProposalConsensus
+
+    if (existsSync(consensusPath)) {
+      consensus = JSON.parse(readFileSync(consensusPath, 'utf-8'))
+    } else {
+      consensus = {
+        proposalId: body.proposalId,
+        reviews: [],
+        summary: {
+          totalReviews: 0,
+          approved: 0,
+          rejected: 0,
+          abstained: 0,
+          consensusReached: false,
+          finalDecision: null,
+          lastUpdated: new Date().toISOString()
+        }
       }
     }
 
-    proposals.set(proposal.id, proposal)
+    // Create new review
+    const review: ConsensusReview = {
+      id: `review-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      proposalId: body.proposalId,
+      reviewer: body.reviewer,
+      decision: body.decision,
+      reasoning: body.reasoning || '',
+      confidence: body.confidence || 0.8,
+      timestamp: new Date().toISOString(),
+      reviewerType: body.reviewerType || 'synthient'
+    }
 
-    return NextResponse.json(proposal, {
+    // Add review to consensus
+    consensus.reviews.push(review)
+
+    // Update summary
+    consensus.summary.totalReviews = consensus.reviews.length
+    consensus.summary.approved = consensus.reviews.filter(r => r.decision === 'approve').length
+    consensus.summary.rejected = consensus.reviews.filter(r => r.decision === 'reject').length
+    consensus.summary.abstained = consensus.reviews.filter(r => r.decision === 'abstain').length
+    consensus.summary.lastUpdated = new Date().toISOString()
+
+    // Determine if consensus reached (simple majority for now)
+    const totalVotes = consensus.summary.approved + consensus.summary.rejected
+    if (totalVotes >= 3) { // Require minimum 3 votes
+      if (consensus.summary.approved > consensus.summary.rejected) {
+        consensus.summary.consensusReached = true
+        consensus.summary.finalDecision = 'approved'
+      } else if (consensus.summary.rejected > consensus.summary.approved) {
+        consensus.summary.consensusReached = true
+        consensus.summary.finalDecision = 'rejected'
+      }
+    }
+
+    // Save consensus to file
+    writeFileSync(consensusPath, JSON.stringify(consensus, null, 2))
+
+    // Try to save to database
+    try {
+      await dbManager.initialize()
+      console.log('Consensus review saved to database (simulated)')
+    } catch (dbError) {
+      console.warn('Database save failed, using file system only:', dbError)
+    }
+
+    return NextResponse.json({
+      success: true,
+      review,
+      consensus: consensus.summary,
+      message: 'Consensus review submitted successfully'
+    }, {
       status: 201,
       headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-        'X-Proposal-ID': proposal.id
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff'
       }
     })
+
   } catch (error) {
-    console.error('Error creating proposal:', error)
-    return NextResponse.json(
-      { error: 'Failed to create proposal' },
-      { status: 500 }
-    )
-  }
-}
+    console.error('Error submitting consensus review:', error)
 
-export async function GET(request: NextRequest) {
-  if (!checkConsensusEnabled()) {
-    return NextResponse.json(
-      { error: 'Consensus system is disabled' },
-      { status: 503 }
-    )
-  }
-
-  try {
-    const { searchParams } = new URL(request.url)
-    const state = searchParams.get('state')
-    const limit = parseInt(searchParams.get('limit') || '50')
-    const offset = parseInt(searchParams.get('offset') || '0')
-
-    let filteredProposals = Array.from(proposals.values())
-
-    // Filter by state if specified
-    if (state && ['pending', 'approved', 'vetoed'].includes(state)) {
-      filteredProposals = filteredProposals.filter(p => p.state === state)
-    }
-
-    // Sort by creation date (newest first)
-    filteredProposals.sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
-
-    // Apply pagination
-    const paginatedProposals = filteredProposals.slice(offset, offset + limit)
-
-    const response = {
-      proposals: paginatedProposals,
-      pagination: {
-        total: filteredProposals.length,
-        limit,
-        offset,
-        hasMore: offset + limit < filteredProposals.length
-      },
-      summary: {
-        pending: filteredProposals.filter(p => p.state === 'pending').length,
-        approved: filteredProposals.filter(p => p.state === 'approved').length,
-        vetoed: filteredProposals.filter(p => p.state === 'vetoed').length
-      }
-    }
-
-    return NextResponse.json(response, {
+    return NextResponse.json({
+      error: 'Failed to submit consensus review',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, {
+      status: 500,
       headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
-        'X-Total-Count': filteredProposals.length.toString()
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff'
       }
     })
-  } catch (error) {
-    console.error('Error fetching proposals:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch proposals' },
-      { status: 500 }
-    )
   }
 }

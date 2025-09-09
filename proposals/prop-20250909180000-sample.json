@@ -1,0 +1,10 @@
+{
+  "id": "prop-20250909180000-sample",
+  "title": "Phase 1 Training Gate Achievement Proposal",
+  "body": "This proposal acknowledges the successful completion of Phase 1 Training Gate with PostgreSQL database integration, evidence JSON publishing, enhanced CI workflows, and proposal system implementation. The system is now ready to advance to the Proposal Gate with full governance compliance maintained.",
+  "timestamp": "2025-09-09T18:00:00.000Z",
+  "status": "submitted",
+  "author": "Dev Team Lead",
+  "category": "governance",
+  "tags": ["phase1", "training-gate", "database-integration", "proposal-gate"]
+}

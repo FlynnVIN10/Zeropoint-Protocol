@@ -1,7 +1,5 @@
 // Cloudflare Pages Function -> /status/version.json
-import type { PagesFunction } from '@cloudflare/workers-types';
-
-export const onRequest: PagesFunction = async ({ env }) => {
+export const onRequest = async ({ env }: { env: Record<string, string | undefined> }) => {
   const body = JSON.stringify({
     phase: "stage1",
     commit: env.BUILD_COMMIT ?? "1604e587",

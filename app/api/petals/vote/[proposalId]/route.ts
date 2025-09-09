@@ -11,30 +11,29 @@ export async function POST(
   { params }: { params: { proposalId: string } }
 ) {
   try {
-    const { proposalId } = params
-    const body = await request.json()
+    const { proposalId } = params;
+    const body = await request.json();
 
     if (!proposalId) {
       return NextResponse.json(
         { error: 'Proposal ID is required' },
         { status: 400 }
-      )
+      );
     }
 
-    if (!body.vote || !body.voterType) {
+    if (!body.voterId || !body.decision) {
       return NextResponse.json(
-        { error: 'Missing required fields: vote, voterType' },
+        { error: 'Missing required fields: voterId, decision' },
         { status: 400 }
-      )
+      );
     }
 
     // Cast vote
     const result = await orchestrator.castVote(
       proposalId,
-      body.vote,
-      body.voterType,
-      body.reasoning || ''
-    )
+      body.voterId,
+      body.decision
+    );
 
     return NextResponse.json(result, {
       headers: {
@@ -43,12 +42,12 @@ export async function POST(
         'x-content-type-options': 'nosniff',
         'content-disposition': 'inline'
       }
-    })
+    });
   } catch (error) {
-    console.error('Petals vote error:', error)
+    console.error('Petals vote error:', error);
     return NextResponse.json(
       { error: 'Failed to cast vote' },
       { status: 500 }
-    )
+    );
   }
 }

@@ -11,17 +11,17 @@ export async function GET(
   { params }: { params: { jobId: string } }
 ) {
   try {
-    const { jobId } = params
+    const { jobId } = params;
 
     if (!jobId) {
       return NextResponse.json(
         { error: 'Job ID is required' },
         { status: 400 }
-      )
+      );
     }
 
     // Get job logs
-    const result = await trainer.getJobLogs(jobId)
+    const result = await trainer.getJobLogs(jobId);
 
     return NextResponse.json(result, {
       headers: {
@@ -30,12 +30,12 @@ export async function GET(
         'x-content-type-options': 'nosniff',
         'content-disposition': 'inline'
       }
-    })
+    });
   } catch (error) {
-    console.error('Tinygrad logs error:', error)
+    console.error('Tinygrad logs error:', error);
     return NextResponse.json(
       { error: 'Failed to get job logs' },
       { status: 500 }
-    )
+    );
   }
 }

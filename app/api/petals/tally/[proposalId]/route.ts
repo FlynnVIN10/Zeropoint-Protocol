@@ -11,17 +11,17 @@ export async function GET(
   { params }: { params: { proposalId: string } }
 ) {
   try {
-    const { proposalId } = params
+    const { proposalId } = params;
 
     if (!proposalId) {
       return NextResponse.json(
         { error: 'Proposal ID is required' },
         { status: 400 }
-      )
+      );
     }
 
     // Get voting tally
-    const result = await orchestrator.getVotingTally(proposalId)
+    const result = await orchestrator.tallyVotes(proposalId);
 
     return NextResponse.json(result, {
       headers: {
@@ -30,12 +30,12 @@ export async function GET(
         'x-content-type-options': 'nosniff',
         'content-disposition': 'inline'
       }
-    })
+    });
   } catch (error) {
-    console.error('Petals tally error:', error)
+    console.error('Petals tally error:', error);
     return NextResponse.json(
       { error: 'Failed to get voting tally' },
       { status: 500 }
-    )
+    );
   }
 }

@@ -16,11 +16,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Start training job
-    const result = await trainer.startTrainingJob(
-      body.dataset,
-      body.modelConfig,
-      body.trainingParams || {}
-    )
+    const result = await Tiny.startTraining({
+      dataset: body.dataset,
+      modelConfig: body.modelConfig,
+      trainingParams: body.trainingParams || {}
+    })
 
     return NextResponse.json(result, {
       headers: {

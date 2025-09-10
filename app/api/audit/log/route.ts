@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       resource,
       resource_id,
       details,
-      ip_address: request.headers.get('x-forwarded-for') || request.ip || 'unknown',
+      ip_address: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown',
       user_agent: request.headers.get('user-agent') || 'unknown',
       session_id: request.headers.get('x-session-id') || 'unknown',
       severity,

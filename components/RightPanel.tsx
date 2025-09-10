@@ -273,7 +273,9 @@ export default function RightPanel({ initialTrainingData }: RightPanelProps) {
   const renderHealthTab = () => (
     <div className="health-tab">
       <h4 style={{color: '#6E00FF', marginBottom: '12px'}}>System Health</h4>
-      {healthStatus ? (
+      {loading ? (
+        <div className="muted">Loading health status...</div>
+      ) : healthStatus ? (
         <div style={{fontSize: '12px'}}>
           <p><strong>Health Check:</strong> <span style={{color: healthStatus.healthz ? '#51cf66' : '#ff6b6b'}}>{healthStatus.healthz ? '✅' : '❌'}</span></p>
           <p><strong>Ready Check:</strong> <span style={{color: healthStatus.readyz ? '#51cf66' : '#ff6b6b'}}>{healthStatus.readyz ? '✅' : '❌'}</span></p>
@@ -283,7 +285,7 @@ export default function RightPanel({ initialTrainingData }: RightPanelProps) {
           <p><strong>Wondercraft:</strong> <span style={{color: healthStatus.wondercraft ? '#51cf66' : '#ff6b6b'}}>{healthStatus.wondercraft ? '✅' : '❌'}</span></p>
         </div>
       ) : (
-        <div className="muted">Loading health status...</div>
+        <div style={{color: '#ff6b6b'}}>Error: Unable to load health status. Please check API endpoints.</div>
       )}
     </div>
   )

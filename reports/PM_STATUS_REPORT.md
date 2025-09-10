@@ -25,10 +25,12 @@
 - ✅ **Design Gate:** ACHIEVED (c8d2d848)
 - ✅ **Dashboard Gate:** ACHIEVED (c8d2d848)
 - ✅ **Proposal Gate (UI):** ACHIEVED (c8d2d848)
-- 🔒 **Tinygrad Gate:** PENDING
-- 🔒 **Petals/Wondercraft Gate:** PENDING
+- ✅ **Tinygrad Gate:** ACHIEVED (7843124b)
+- ✅ **Petals/Wondercraft Gate:** ACHIEVED (7843124b)
 - ✅ **Evidence Gate:** ACHIEVED (c8d2d848)
 - ✅ **Verification Gate (New):** ACHIEVED (c8d2d848)
+- ✅ **Tinygrad Gate:** ACHIEVED (7843124b)
+- ✅ **Petals/Wondercraft Gate:** ACHIEVED (7843124b)
 
 ---
 
@@ -191,44 +193,50 @@
     - Build submission/vote forms
     - Log to `/evidence/phase1/ui/proposals/`
 
-#### **Story 4: Tinygrad Controls** ➡️ **PENDING**
+#### **Story 4: Tinygrad Controls** ➡️ **COMPLETED**
 - **Task 4.1**: Implement job start form
   - **Owner:** Dev Team
-  - **Status:** ⏳ **PENDING**
-  - **Target:** `apps/web/components/tinygrad/*`
-  - **Acceptance Tests:** POST returns job ID
+  - **Status:** ✅ **COMPLETED**
+  - **Target:** `components/tinygrad/JobStartForm.tsx`
+  - **Acceptance Tests:** ✅ POST returns job ID, form validation
   - **PR:** Open in `platform` repo, link to #TINY-001
-  - **Action Items:**
-    - Build start form for dataset/model_config/training_params
+  - **Action Items:** ✅ Complete
+    - ✅ Built start form with dataset/model_config/training_params inputs
+    - ✅ Error handling and success feedback
 
 - **Task 4.2**: Implement status/log viewers
   - **Owner:** Dev Team
-  - **Status:** ⏳ **PENDING**
-  - **Target:** Viewers for GET endpoints
-  - **Acceptance Tests:** Displays status/logs
+  - **Status:** ✅ **COMPLETED**
+  - **Target:** `components/tinygrad/JobStatusViewer.tsx`, `JobLogsViewer.tsx`
+  - **Acceptance Tests:** ✅ Displays status/logs in scrollable areas
   - **PR:** Open in `platform` repo, link to #TINY-002
-  - **Action Items:**
-    - Build status/log UI
-    - Log to `/evidence/phase1/logs/tinygrad/`
+  - **Action Items:** ✅ Complete
+    - ✅ Built status viewer with job details and progress
+    - ✅ Built logs viewer with line-numbered display
+    - ✅ Evidence logging implemented
 
-#### **Story 5: Petals & Wondercraft Interfaces** ➡️ **PENDING**
+#### **Story 5: Petals & Wondercraft Interfaces** ➡️ **COMPLETED**
 - **Task 5.1**: Implement Petals proposal/vote forms
   - **Owner:** Dev Team
-  - **Status:** ⏳ **PENDING**
-  - **Target:** `apps/web/components/petals/*`
-  - **Acceptance Tests:** POST returns IDs, updates tallies
+  - **Status:** ✅ **COMPLETED**
+  - **Target:** `components/petals/ProposalForm.tsx`, `VoteForm.tsx`
+  - **Acceptance Tests:** ✅ POST returns IDs, updates tallies, active proposal list
   - **PR:** Open in `platform` repo, link to #PETALS-001
-  - **Action Items:**
-    - Build forms for propose/vote
+  - **Action Items:** ✅ Complete
+    - ✅ Built proposal form with title/body/category/tags
+    - ✅ Built vote form with active proposal selection
+    - ✅ Error handling and success feedback
 
 - **Task 5.2**: Implement Wondercraft contribution/diff forms
   - **Owner:** Dev Team
-  - **Status:** ⏳ **PENDING**
-  - **Target:** `apps/web/components/wondercraft/*`
-  - **Acceptance Tests:** POST returns IDs, logs diff
+  - **Status:** ✅ **COMPLETED**
+  - **Target:** `components/wondercraft/ContributionForm.tsx`, `DiffForm.tsx`
+  - **Acceptance Tests:** ✅ POST returns IDs, logs diff, JSON validation
   - **PR:** Open in `platform` repo, link to #WONDER-001
-  - **Action Items:**
-    - Build forms for contribute/diff
+  - **Action Items:** ✅ Complete
+    - ✅ Built contribution form with asset type/metadata
+    - ✅ Built diff form with asset ID and change reason
+    - ✅ Evidence logging implemented
 
 #### **Story 6: Evidence Logging and Governance** ➡️ **COMPLETED**
 - **Task 6.1**: Implement unified client logger
@@ -357,7 +365,7 @@
 **Consensus Review:** ✅ **COMPLETED**
 **Governance Status:** ✅ **ACTIVE AND ENFORCING**
 **Build Status:** ✅ **SUCCESSFUL - Service modules created**
-**Next Gate:** 🚀 **TINYGRAD/PETALS IMPLEMENTATION (Next Priority)**
+**Next Gate:** 🚀 **WEBSITE INTEGRATION & TESTING (All UI Components Complete)**
 
 **Intent:** GOD FIRST, with good intent and a good heart.
 

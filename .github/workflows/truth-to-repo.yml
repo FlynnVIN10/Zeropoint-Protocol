@@ -27,17 +27,13 @@ jobs:
           echo "=== Workflow Files Check ==="
           ls -la .github/workflows/
 
-      - name: Parse README commit
-        id: readme
+      - name: Determine repo HEAD commit
+        id: head
         run: |
-          echo "=== Parsing README for commit ==="
-          c=$(grep -Eo 'commit `([0-9a-f]{7,40})`' README.md | head -1 | sed -E 's/.*`(.*)`/\1/' || echo "")
-          if [ -z "$c" ]; then
-            echo "No commit found in README, using default"
-            c="1604e587"
-          fi
-          echo "Found commit: $c"
-          echo "readme_commit=$c" >> $GITHUB_OUTPUT
+          echo "=== Determining repo HEAD commit ==="
+          head_commit=$(git rev-parse --short=8 HEAD)
+          echo "Repo HEAD: $head_commit"
+          echo "head_commit=$head_commit" >> $GITHUB_OUTPUT
 
       - name: Test local evidence file
         run: |
@@ -56,18 +52,18 @@ jobs:
             ls -la evidence/phase1/verify/ || echo "Directory listing failed"
           fi
 
-      - name: Simple alignment check
-        env:
-          CANON_COMMIT: 1604e587
+      - name: Alignment check (HEAD vs live)
         run: |
-          echo "=== Alignment Check ==="
-          echo "Canonical commit: $CANON_COMMIT"
-          echo "README commit: ${{ steps.readme.outputs.readme_commit }}"
-
-          if [ "${{ steps.readme.outputs.readme_commit }}" = "$CANON_COMMIT" ]; then
-            echo "✅ README commit matches canonical"
+          echo "=== Alignment Check (HEAD vs live) ==="
+          canon=${{ steps.head.outputs.head_commit }}
+          echo "HEAD commit: $canon"
+          live_commit=$(curl -s https://zeropointprotocol.ai/status/version.json | jq -r '.commit' 2>/dev/null || echo "")
+          echo "Live commit: $live_commit"
+          [ -n "$live_commit" ] || (echo "❌ Could not fetch live commit" && exit 1)
+          if [ "$live_commit" = "$canon" ]; then
+            echo "✅ Live commit matches HEAD"
           else
-            echo "⚠️  README commit mismatch - this may be expected during transition"
+            echo "❌ Commit mismatch: expected $canon, got $live_commit" && exit 1
           fi
 
       - name: Network connectivity test (optional)
@@ -82,15 +78,15 @@ jobs:
             echo "⚠️  Live site not reachable - skipping network checks"
           fi
 
-      - name: Assert evidence JSON content-type
+      - name: Assert evidence JSON content-type (best-effort)
         run: |
           echo "=== Evidence Content-Type Check ==="
-          ct=$(curl -sI https://zeropointprotocol.ai/evidence/phase1/verify/1604e587/index.json | awk -F': ' 'tolower($1)=="content-type"{print tolower($2)}' | tr -d '\r')
+          ct=$(curl -sI https://zeropointprotocol.ai/evidence/phase1/verify/${{ steps.head.outputs.head_commit }}/index.json | awk -F': ' 'tolower($1)=="content-type"{print tolower($2)}' | tr -d '\r')
           echo "Content-Type: $ct"
           echo "$ct" | grep -q "application/json" || (echo "❌ Evidence endpoint does not serve JSON" && exit 1)
           echo "✅ Evidence endpoint serves JSON"
 
-      - name: Assert version.json canonical values
+      - name: Assert version.json values
         run: |
           echo "=== Version JSON Canonical Check ==="
           version_data=$(curl -s https://zeropointprotocol.ai/status/version.json)
@@ -102,7 +98,7 @@ jobs:
           echo "Commit: $commit"
           echo "Phase: $phase"
 
-          [ "$commit" = "1604e587" ] || (echo "❌ Commit mismatch: expected 1604e587, got $commit" && exit 1)
+          [ "$commit" = "${{ steps.head.outputs.head_commit }}" ] || (echo "❌ Commit mismatch: expected ${{ steps.head.outputs.head_commit }}, got $commit" && exit 1)
           [ "$phase" = "stage1" ] || (echo "❌ Phase mismatch: expected stage1, got $phase" && exit 1)
 
           echo "✅ Version JSON canonical values verified"

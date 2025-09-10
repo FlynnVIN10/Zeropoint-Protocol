@@ -6,3 +6,6 @@
 
 # Status routes (handled by Functions)
 /status/* /status/:splat 200
+
+# Next.js pages fallback
+/synthients /synthients 200

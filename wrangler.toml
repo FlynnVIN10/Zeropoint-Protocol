@@ -21,7 +21,6 @@ BUILD_TIME = "2025-09-09T18:00:00Z"
 CI_STATUS = "green"
 MOCKS_DISABLED = "1"
 TRAINING_ENABLED = "1"
-DATABASE_URL = "postgresql://zeropoint_user:correct_password@ep-cool-mode-a5m2n9p9.us-east-2.aws.neon.tech/zeropoint_iaai?sslmode=require"
 GOVERNANCE_MODE = "dual-consensus"
 SYNTHIENTS_ACTIVE = "1"
 TINYGRAD_BACKEND = "cpu"
@@ -32,6 +31,6 @@ ENVIRONMENT = "production"
 # Synthient status sources (placeholders; replace with real URLs when ready)
 PETALS_STATUS_URL = "https://zeropointprotocol.ai/petals/status.json"
 WONDERCRAFT_STATUS_URL = "https://zeropointprotocol.ai/wondercraft/status.json"
-TINYGRAD_STATUS_URL = ""
+TINYGRAD_STATUS_URL = "https://zeropointprotocol.ai/tinygrad/status.json"
 
 

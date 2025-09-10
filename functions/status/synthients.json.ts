@@ -1,7 +1,5 @@
 // Cloudflare Pages Function -> /status/synthients.json
-import type { PagesFunction } from '@cloudflare/workers-types';
-
-export const onRequest: PagesFunction = async ({ env }) => {
+export const onRequest = async ({ env }: { env: Record<string, any> }) => {
   const body = JSON.stringify({
     platform: 'Zeropoint Protocol',
     governanceMode: env.GOVERNANCE_MODE ?? 'dual-consensus',
@@ -23,9 +21,10 @@ export const onRequest: PagesFunction = async ({ env }) => {
 
   return new Response(body, {
     headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'no-store',
-      'X-Content-Type-Options': 'nosniff'
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff',
+      'content-disposition': 'inline'
     }
   });
 };

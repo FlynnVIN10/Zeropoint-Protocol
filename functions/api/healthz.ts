@@ -1,6 +1,6 @@
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const commit = env.BUILD_COMMIT ?? '9bfe0f25';
+    const commit = (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined) || env.BUILD_COMMIT || '0cf3c811';
     const status = {
       status: 'ok',
       commit,

@@ -13,6 +13,10 @@ id = "REPLACE_WITH_PREVIEW_NAMESPACE_ID"
 [env.production]
 route = ""
 
+[[env.production.kv_namespaces]]
+binding = "SYNTHIENT_CONSENSUS"
+id = "824b2b27ffcf4392b0e34da1cecdf62f"
+
 [env.production.vars]
 # status URLs here if they differ per env
 PETALS_STATUS_URL = "https://zeropointprotocol.ai/petals/status.json"

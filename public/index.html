@@ -8,7 +8,7 @@
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://zeropoint-protocol.pages.dev/">
     <style>
-      :root { --bg:#1e1e1e; --fg:#ffffff; --accent:#6e00ff; --muted:#e0e0e0; }
+      :root { --bg:#1e1e1e; --fg:#ffffff; --accent:#6e00ff; --muted:#f0f0f0; }
       html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
       .container{max-width:100%;width:100%;margin:0;padding:0}
       h1{margin:0 0 8px 0}
@@ -113,14 +113,37 @@
       .center-content::-webkit-scrollbar-thumb:hover {
         background: #888;
       }
+      
+      /* Skip link for accessibility */
+      .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: var(--accent);
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 1000;
+      }
+      
+      .skip-link:focus {
+        top: 6px;
+      }
     </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <div class="container" style="padding:0; width:100vw; max-width:100vw;">
     <div id="top-ticker" style="white-space:nowrap; overflow:hidden; border-bottom:1px solid #333; padding:8px 12px"></div>
     
     <div class="panel-container">
-      <main class="center-panel">
+      <aside class="left-panel">
+        <h2 style="margin-top:0">Consensus Queue</h2>
+        <div id="consensus-queue" class="muted">Synthient proposals will appear here.</div>
+      </aside>
+      
+      <main class="center-panel" id="main-content">
         <h1 style="margin-top:0">Zeropoint Protocol</h1>
         
         <div class="center-content">
@@ -134,11 +157,6 @@
           <div class="muted" id="telemetry" style="margin-top:8px;"></div>
         </div>
       </main>
-      
-      <aside class="left-panel">
-        <h2 style="margin-top:0">Consensus Queue</h2>
-        <div id="consensus-queue" class="muted">Synthient proposals will appear here.</div>
-      </aside>
       
       <aside class="right-panel">
         <h2 style="margin-top:0">Training</h2>

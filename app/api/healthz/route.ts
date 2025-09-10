@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { dbManager } from '../../../lib/db/config'
-import { buildMeta } from '../../lib/buildMeta'
 
 export async function GET() {
   try {
@@ -10,6 +9,9 @@ export async function GET() {
     // Check database health
     const dbHealth = await dbManager.healthCheck();
 
+    // Read unified metadata from static file
+    const meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json())
+
     const timestamp = new Date().toISOString()
     const uptime = process.uptime()
     const environment = process.env.NODE_ENV || 'development'
@@ -17,8 +19,8 @@ export async function GET() {
     // Ensure all required fields are present with database connectivity
     const response: any = {
       status: 'ok',
-      commit: buildMeta.commit,
-      buildTime: buildMeta.buildTime,
+      commit: meta.commit,
+      buildTime: meta.buildTime,
       timestamp,
       uptime,
       environment,
@@ -30,8 +32,8 @@ export async function GET() {
     }
 
     // Phase and status information from unified metadata
-    response.phase = buildMeta.phase
-    response.ciStatus = buildMeta.ciStatus
+    response.phase = meta.phase
+    response.ciStatus = meta.ciStatus
     response.mocks = process.env.MOCKS_DISABLED === '1' ? false : true
     response.trainingEnabled = true // Database integration complete
 
@@ -58,14 +60,22 @@ export async function GET() {
     )
   } catch (error) {
     console.error('Health check failed:', error);
+    // Fallback to reading static file if fetch fails
+    let meta = { commit: 'unknown', buildTime: new Date().toISOString(), phase: 'stage2' };
+    try {
+      meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json());
+    } catch (e) {
+      console.warn('Could not read version.json, using fallback');
+    }
+    
     return NextResponse.json(
       {
         status: 'error',
-        commit: buildMeta.commit,
-        buildTime: buildMeta.buildTime,
+        commit: meta.commit,
+        buildTime: meta.buildTime,
         timestamp: new Date().toISOString(),
         database: { connected: false, error: 'Database connection failed' },
-        phase: buildMeta.phase,
+        phase: meta.phase,
         trainingEnabled: false
       },
       {

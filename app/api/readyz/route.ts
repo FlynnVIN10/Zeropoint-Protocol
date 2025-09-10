@@ -1,18 +1,20 @@
 import { NextResponse } from 'next/server'
-import { buildMeta } from '../../lib/buildMeta'
 
 export async function GET() {
+  // Read unified metadata from static file
+  const meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json())
+  
   const timestamp = new Date().toISOString()
   const environment = process.env.NODE_ENV || 'development'
   
   return NextResponse.json(
     {
       ready: true,
-      commit: buildMeta.commit,
-      buildTime: buildMeta.buildTime,
+      commit: meta.commit,
+      buildTime: meta.buildTime,
       timestamp,
-      phase: buildMeta.phase,
-      ciStatus: buildMeta.ciStatus,
+      phase: meta.phase,
+      ciStatus: meta.ciStatus,
       mocks: false,
       services: {
         database: 'healthy',

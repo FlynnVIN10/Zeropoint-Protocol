@@ -1,6 +1,6 @@
-import { buildMeta } from '../../app/lib/buildMeta';
-
 export const onRequest = async () => {
+  // Read unified metadata from static file
+  const meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json())
   
   const response = {
     status: "active",
@@ -43,10 +43,10 @@ export const onRequest = async () => {
       tinygrad_backend: "cpu"
     },
     timestamp: new Date().toISOString(),
-    commit: buildMeta.commit,
-    phase: buildMeta.phase,
-    ciStatus: buildMeta.ciStatus,
-    buildTime: buildMeta.buildTime
+    commit: meta.commit,
+    phase: meta.phase,
+    ciStatus: meta.ciStatus,
+    buildTime: meta.buildTime
   };
 
   return new Response(JSON.stringify(response), {

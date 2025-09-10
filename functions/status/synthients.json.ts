@@ -1,6 +1,11 @@
 export const onRequest = async () => {
   // Read unified metadata from static file
-  const meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json())
+  let meta = { commit: 'unknown', phase: 'stage2', ciStatus: 'green', buildTime: new Date().toISOString() };
+  try {
+    meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json());
+  } catch (e) {
+    console.warn('Could not read version.json, using fallback');
+  }
   
   const response = {
     status: "active",

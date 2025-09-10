@@ -11,7 +11,8 @@
     "build:pages": "echo 'Building for Cloudflare Pages...' && npm run build && echo 'Build complete'",
     "start": "next start",
     "lint": "next lint",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@chainsafe/libp2p-noise": "^16.1.4",
@@ -45,5 +46,8 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "overrides": {
+    "next": "15.0.4"
   }
 }

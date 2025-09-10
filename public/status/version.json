@@ -1,0 +1,7 @@
+{
+  "phase": "stage1",
+  "commit": "0cf3c811",
+  "ciStatus": "green",
+  "buildTime": "2025-09-11T08:00:00Z",
+  "env": "prod"
+}

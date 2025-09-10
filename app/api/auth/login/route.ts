@@ -1,5 +1,37 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sign } from 'jsonwebtoken'
+
+// ensure runtime
+export const runtime = 'edge';
+
+// Simple JWT implementation using Web Crypto API
+async function signJWT(payload: any, secret: string): Promise<string> {
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const encodedHeader = btoa(JSON.stringify(header));
+  const encodedPayload = btoa(JSON.stringify(payload));
+  const data = `${encodedHeader}.${encodedPayload}`;
+  
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(data));
+  const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)));
+  
+  return `${data}.${encodedSignature}`;
+}
+
+function getClientIp(req: Request) {
+  // prefer standard proxy headers on CF/Pages
+  const xfwd = req.headers.get('x-forwarded-for');
+  if (xfwd && xfwd.length > 0) return xfwd.split(',')[0].trim();
+  const cfConnectingIp = req.headers.get('cf-connecting-ip');
+  if (cfConnectingIp) return cfConnectingIp;
+  return 'unknown';
+}
 
 interface User {
   id: string
@@ -126,15 +158,15 @@ export async function POST(request: NextRequest) {
     user.last_login = new Date().toISOString()
 
     // Generate JWT token
-    const token = sign(
+    const token = await signJWT(
       {
         userId: user.id,
         username: user.username,
         role: user.role,
-        permissions: user.permissions
+        permissions: user.permissions,
+        exp: Math.floor(Date.now() / 1000) + (remember_me ? 7 * 24 * 60 * 60 : 24 * 60 * 60)
       },
-      process.env.JWT_SECRET || 'zeropoint-secret-key',
-      { expiresIn: remember_me ? '7d' : '24h' }
+      process.env.JWT_SECRET || 'zeropoint-secret-key'
     )
 
     // Create session
@@ -147,7 +179,7 @@ export async function POST(request: NextRequest) {
       permissions: user.permissions,
       created_at: new Date().toISOString(),
       expires_at: new Date(Date.now() + (remember_me ? 7 * 24 * 60 * 60 * 1000 : 24 * 60 * 60 * 1000)),
-      ip_address: request.headers.get('x-forwarded-for') || request.ip || 'unknown',
+      ip_address: getClientIp(request),
       user_agent: request.headers.get('user-agent') || 'unknown'
     }
 

@@ -5,10 +5,14 @@ compatibility_flags = ["nodejs_compat"]
 # Cloudflare Pages configuration - Static deployment
 pages_build_output_dir = "public"
 
-
 # Workers AI binding for Pages Functions
 [ai]
 binding = "AI"
+
+# Cloudflare KV namespace for consensus log + proposals
+[[kv_namespaces]]
+binding = "SYNTHIENT_CONSENSUS"
+id = "REPLACE_WITH_PRODUCTION_NAMESPACE_ID"
 
 [env.production]
 name = "zeropoint-protocol"
@@ -28,8 +32,6 @@ TINYGRAD_BACKEND = "cpu"
 WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
 TEST_TOKEN = "scra-test-token"
 ENVIRONMENT = "production"
-
-# Synthient status sources (placeholders; replace with real URLs when ready)
 PETALS_STATUS_URL = "https://zeropointprotocol.ai/petals/status.json"
 WONDERCRAFT_STATUS_URL = "https://zeropointprotocol.ai/wondercraft/status.json"
 TINYGRAD_STATUS_URL = "https://zeropointprotocol.ai/tinygrad/status.json"

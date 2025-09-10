@@ -1,0 +1,44 @@
+{
+  "items": [
+    {
+      "id": "ZP-001",
+      "title": "Tinygrad curriculum v1",
+      "summary": "Schedule of micro-tasks for gradient checks, unit tests, and CI artifacts.",
+      "owner": "trainer-tinygrad",
+      "created_at": "2025-09-10T00:00:00Z",
+      "priority": "high"
+    },
+    {
+      "id": "ZP-002", 
+      "title": "Petals consensus protocol",
+      "summary": "Implement distributed consensus mechanism for proposal validation across Petals network nodes.",
+      "owner": "petals-orchestrator",
+      "created_at": "2025-09-10T01:00:00Z",
+      "priority": "high"
+    },
+    {
+      "id": "ZP-003",
+      "title": "Wondercraft asset pipeline",
+      "summary": "Automated asset generation and validation pipeline for creative content production.",
+      "owner": "wondercraft-bridge",
+      "created_at": "2025-09-10T02:00:00Z",
+      "priority": "med"
+    },
+    {
+      "id": "ZP-004",
+      "title": "Synthient training metrics",
+      "summary": "Real-time monitoring and reporting of training progress across all Synthient models.",
+      "owner": "monitoring-service",
+      "created_at": "2025-09-10T03:00:00Z",
+      "priority": "med"
+    },
+    {
+      "id": "ZP-005",
+      "title": "Governance audit trail",
+      "summary": "Immutable logging system for all CEO decisions and consensus outcomes.",
+      "owner": "audit-service",
+      "created_at": "2025-09-10T04:00:00Z",
+      "priority": "high"
+    }
+  ]
+}

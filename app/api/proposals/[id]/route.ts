@@ -94,11 +94,12 @@ export async function GET(
     })
 
   } catch (error) {
-    console.error(`Error fetching proposal ${params.id}:`, error)
+    const { id } = await params;
+    console.error(`Error fetching proposal ${id}:`, error)
 
     return NextResponse.json({
       error: 'Failed to fetch proposal',
-      id: params.id,
+      id: id,
       details: error instanceof Error ? error.message : 'Unknown error'
     }, {
       status: 500,
@@ -166,11 +167,12 @@ export async function PUT(
     })
 
   } catch (error) {
-    console.error(`Error updating proposal ${params.id}:`, error)
+    const { id } = await params;
+    console.error(`Error updating proposal ${id}:`, error)
 
     return NextResponse.json({
       error: 'Failed to update proposal',
-      id: params.id
+      id: id
     }, {
       status: 500,
       headers: {

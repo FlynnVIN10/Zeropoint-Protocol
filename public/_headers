@@ -9,9 +9,7 @@
 
 # API endpoints - JSON enforced; actual content set by Functions
 /api/*
-  Cache-Control: no-store
   Content-Type: application/json; charset=utf-8
-  X-Content-Type-Options: nosniff
 
 # Status endpoints (handled by Functions)
 /status/*.json

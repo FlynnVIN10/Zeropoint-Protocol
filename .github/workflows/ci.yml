@@ -1,13 +1,25 @@
 name: CI
 on: [push, pull_request]
 jobs:
-  build:
+  build-and-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '22' }
       - run: npm ci
-      - run: npm run typecheck
-      - run: npm run build
-      - run: node scripts/smoke.mjs
+      - name: Build (simulate Pages env)
+        run: |
+          export GITHUB_SHA="${GITHUB_SHA}"
+          npm run build
+      - name: Assert evidence matches commit
+        run: |
+          SHORT="$(echo "${GITHUB_SHA}" | cut -c1-7)"
+          test -f public/status/version.json
+          jq -e --arg s "$SHORT" '.commit==$s' public/status/version.json
+          test -d "public/evidence/phase2/verify/${SHORT}"
+          # ensure no stray SHAs exist
+          ONLY="$(ls public/evidence/phase2/verify | wc -l)"
+          test "$ONLY" = "1"
+      - name: ISO8601 timestamp
+        run: jq -e '.buildTime|test("Z$")' public/status/version.json

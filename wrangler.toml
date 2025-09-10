@@ -1,39 +1,23 @@
 name = "zeropoint-protocol"
-compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
-
-# Cloudflare Pages configuration - Static deployment
 pages_build_output_dir = "public"
 
-# Workers AI binding for Pages Functions
-[ai]
-binding = "AI"
-
-# Cloudflare KV namespace for consensus log + proposals
+# global (dev/preview) bindings
 [[kv_namespaces]]
+binding = "SYNTHIENT_CONSENSUS"
+id = "REPLACE_WITH_PREVIEW_NAMESPACE_ID"
+
+[vars]
+# do not set BUILD_COMMIT / BUILD_TIME here. The build script writes them.
+
+# production bindings (Pages requires explicit env block)
+[env.production]
+route = ""
+[[env.production.kv_namespaces]]
 binding = "SYNTHIENT_CONSENSUS"
 id = "REPLACE_WITH_PRODUCTION_NAMESPACE_ID"
 
-[env.production]
-name = "zeropoint-protocol"
-
-[env.production.ai]
-binding = "AI"
-
 [env.production.vars]
-BUILD_COMMIT = "0cf3c811"
-BUILD_TIME = "2025-09-11T08:00:00Z"
-CI_STATUS = "green"
-MOCKS_DISABLED = "1"
-TRAINING_ENABLED = "1"
-GOVERNANCE_MODE = "dual-consensus"
-SYNTHIENTS_ACTIVE = "1"
-TINYGRAD_BACKEND = "cpu"
-WORKERS_AI_MODEL = "@cf/meta/llama-3.1-8b-instruct"
-TEST_TOKEN = "scra-test-token"
-ENVIRONMENT = "production"
+# status URLs here if they differ per env
 PETALS_STATUS_URL = "https://zeropointprotocol.ai/petals/status.json"
 WONDERCRAFT_STATUS_URL = "https://zeropointprotocol.ai/wondercraft/status.json"
 TINYGRAD_STATUS_URL = "https://zeropointprotocol.ai/tinygrad/status.json"
-
-

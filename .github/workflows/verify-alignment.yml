@@ -1,0 +1,19 @@
+name: verify-alignment
+on: [workflow_dispatch, push]
+jobs:
+  verify-alignment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Determine repo HEAD short
+        id: head
+        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Alignment check (HEAD vs live)
+        env:
+          URL: "https://zeropointprotocol.ai/status/version.json"
+        run: |
+          SHORT="${{ steps.head.outputs.short }}"
+          LIVE=$(curl -fsSL "$URL" | jq -r '.commit')
+          echo "HEAD commit: $SHORT"
+          echo "Live commit: $LIVE"
+          test "$SHORT" = "$LIVE" || (echo "✗ Commit mismatch: expected $SHORT, got $LIVE" && exit 1)

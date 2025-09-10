@@ -4,9 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && node scripts/generate-evidence.mjs",
     "adapt": "npx @cloudflare/next-on-pages",
-    "postbuild": "node scripts/generate-evidence.mjs && node scripts/generate-stage2-evidence.mjs",
     "build:site": "next build",
     "build:pages": "echo 'Building for Cloudflare Pages...' && npm run build && echo 'Build complete'",
     "start": "next start",

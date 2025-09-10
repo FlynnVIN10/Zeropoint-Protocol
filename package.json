@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "adapt": "npx @cloudflare/next-on-pages",
     "postbuild": "node scripts/generate-evidence.mjs && node scripts/generate-stage2-evidence.mjs",
     "build:site": "next build",
     "start": "next start",

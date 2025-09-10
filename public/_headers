@@ -7,13 +7,13 @@
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
 
-# API endpoints - exempt from SPA fallback
+# API endpoints - JSON enforced; actual content set by Functions
 /api/*
   Cache-Control: no-store
   Content-Type: application/json; charset=utf-8
   X-Content-Type-Options: nosniff
 
-# Status endpoints
+# Status endpoints (handled by Functions)
 /status/*.json
   Cache-Control: no-store
   Content-Type: application/json; charset=utf-8

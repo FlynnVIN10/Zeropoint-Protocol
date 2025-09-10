@@ -1,11 +1,6 @@
 # Evidence directory - serve raw files with proper headers (remove nonstandard status code)
 /evidence/* /evidence/:splat 200
 
-# API routes
-/api/* /api/:splat 200
-
-# Status routes
-/status/* /status/:splat 200
-
 # Fallback to SPA (avoid infinite loop; restrict to paths without extension)
-/((?!.*\.).*) /index.html 200
+# Do NOT rewrite /api/* or /status/* so that Pages Functions handle them
+/((?!api/|status/).*)(?!.*\..*) /index.html 200

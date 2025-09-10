@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx @cloudflare/next-on-pages@1 build",
+    "build": "next build",
     "postbuild": "node scripts/generate-evidence.mjs && node scripts/generate-stage2-evidence.mjs",
     "build:site": "next build",
     "start": "next start",

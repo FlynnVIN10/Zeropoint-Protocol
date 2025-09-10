@@ -2,8 +2,8 @@ name = "zeropoint-protocol"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-# Cloudflare Pages configuration - Static deployment
-pages_build_output_dir = "public"
+# Cloudflare Pages configuration - Use Next on Pages output
+pages_build_output_dir = ".vercel/output/static"
 
 # Workers AI binding for Pages Functions
 [ai]
@@ -16,7 +16,7 @@ name = "zeropoint-protocol"
 binding = "AI"
 
 [env.production.vars]
-BUILD_COMMIT = "9bfe0f25"
+BUILD_COMMIT = "0cf3c811"
 BUILD_TIME = "2025-09-11T08:00:00Z"
 CI_STATUS = "green"
 MOCKS_DISABLED = "1"

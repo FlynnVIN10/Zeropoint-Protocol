@@ -19,9 +19,9 @@ function isSSEEnabled() {
 async function loadTraining() {
   try {
     console.log('=== LOADING TRAINING DATA ===');
-    console.log('Fetching from /api/training/status...');
+    console.log('Fetching from /api/synthient/status...');
     
-    const r = await fetch('/api/training/status', { cache: 'no-store' });
+    const r = await fetch('/api/synthient/status', { cache: 'no-store' });
     console.log('Response received:', { status: r.status, ok: r.ok, statusText: r.statusText });
     
     if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
@@ -29,11 +29,10 @@ async function loadTraining() {
     const d = await r.json();
     console.log('Training data parsed successfully:', d);
     console.log('Data structure check:', {
-      active_runs: d.active_runs,
-      completed_today: d.completed_today,
-      total_runs: d.total_runs,
-      has_last_run: !!d.last_run,
-      leaderboard_length: d.leaderboard?.length || 0
+      ok: d.ok,
+      summary: d.summary,
+      services: Object.keys(d.services || {}),
+      has_services: !!d.services
     });
     
     // Update training metrics with detailed logging
@@ -49,84 +48,102 @@ async function loadTraining() {
       'ts-total-runs': totalRunsEl?.textContent || 'NOT_FOUND'
     });
     
-    // Update training metrics
+    // Update training metrics from synthient status
+    const services = d.services || {};
+    const petals = services.petals || {};
+    const wondercraft = services.wondercraft || {};
+    const tinygrad = services.tinygrad || {};
+    
+    // Count active services
+    const activeCount = Object.values(services).filter(s => s.ok).length;
+    const totalCount = Object.keys(services).length;
+    
     if (activeRunsEl) {
-      activeRunsEl.textContent = d.active_runs || '0';
-      console.log('Set ts-active-runs to:', d.active_runs || '0');
+      activeRunsEl.textContent = activeCount.toString();
+      console.log('Set ts-active-runs to:', activeCount);
     } else {
       console.error('ts-active-runs element not found!');
     }
     
     if (completedTodayEl) {
-      completedTodayEl.textContent = d.completed_today || '0';
-      console.log('Set ts-completed-today to:', d.completed_today || '0');
+      completedTodayEl.textContent = d.ok ? 'All Online' : 'Partial';
+      console.log('Set ts-completed-today to:', d.ok ? 'All Online' : 'Partial');
     } else {
       console.error('ts-completed-today element not found!');
     }
     
     if (totalRunsEl) {
-      totalRunsEl.textContent = d.total_runs || '0';
-      console.log('Set ts-total-runs to:', d.total_runs || '0');
+      totalRunsEl.textContent = totalCount.toString();
+      console.log('Set ts-total-runs to:', totalCount);
     } else {
       console.error('ts-total-runs element not found!');
     }
     
-    // Update last run details
-    if (d.last_run) {
-      const lastModelEl = document.getElementById('ts-last-model');
-      const lastAccuracyEl = document.getElementById('ts-last-accuracy');
-      const lastLossEl = document.getElementById('ts-last-loss');
-      
+    // Update last run details from service data
+    const lastModelEl = document.getElementById('ts-last-model');
+    const lastAccuracyEl = document.getElementById('ts-last-accuracy');
+    const lastLossEl = document.getElementById('ts-last-loss');
+    
+    // Find the most recently active service
+    let lastService = null;
+    let lastTime = 0;
+    for (const [name, service] of Object.entries(services)) {
+      if (service.data && service.data.lastContact) {
+        const time = new Date(service.data.lastContact).getTime();
+        if (time > lastTime) {
+          lastTime = time;
+          lastService = { name, ...service.data };
+        }
+      }
+    }
+    
+    if (lastService) {
       if (lastModelEl) {
-        lastModelEl.textContent = d.last_run.model || 'N/A';
-        console.log('Set ts-last-model to:', d.last_run.model || 'N/A');
+        lastModelEl.textContent = lastService.name || 'N/A';
+        console.log('Set ts-last-model to:', lastService.name || 'N/A');
       }
       
       if (lastAccuracyEl) {
-        lastAccuracyEl.textContent = d.last_run.metrics?.accuracy ? 
-          (d.last_run.metrics.accuracy * 100).toFixed(1) + '%' : 'N/A';
-        console.log('Set ts-last-accuracy to:', d.last_run.metrics?.accuracy ? 
-          (d.last_run.metrics.accuracy * 100).toFixed(1) + '%' : 'N/A');
+        lastAccuracyEl.textContent = lastService.configured ? 'Configured' : 'Not Configured';
+        console.log('Set ts-last-accuracy to:', lastService.configured ? 'Configured' : 'Not Configured');
       }
       
       if (lastLossEl) {
-        lastLossEl.textContent = d.last_run.metrics?.loss ? 
-          d.last_run.metrics.loss.toFixed(4) : 'N/A';
-        console.log('Set ts-last-loss to:', d.last_run.metrics?.loss ? 
-          d.last_run.metrics.loss.toFixed(4) : 'N/A');
+        lastLossEl.textContent = lastService.active ? 'Active' : 'Inactive';
+        console.log('Set ts-last-loss to:', lastService.active ? 'Active' : 'Inactive');
       }
     } else {
-      console.log('No last_run data available');
+      if (lastModelEl) lastModelEl.textContent = 'N/A';
+      if (lastAccuracyEl) lastAccuracyEl.textContent = 'N/A';
+      if (lastLossEl) lastLossEl.textContent = 'N/A';
+      console.log('No service data available');
     }
     
     const commitEl = document.getElementById('ts-commit');
     const timestampEl = document.getElementById('ts-timestamp');
     
     if (commitEl) {
-      commitEl.textContent = d.commit || 'N/A';
-      console.log('Set ts-commit to:', d.commit || 'N/A');
+      commitEl.textContent = 'N/A'; // No commit info in synthient status
+      console.log('Set ts-commit to: N/A');
     }
     
     if (timestampEl) {
-      timestampEl.textContent = d.timestamp ? 
-        new Date(d.timestamp).toLocaleString() : 'N/A';
-      console.log('Set ts-timestamp to:', d.timestamp ? 
-        new Date(d.timestamp).toLocaleString() : 'N/A');
+      timestampEl.textContent = d.updated_at ? 
+        new Date(d.updated_at).toLocaleString() : 'N/A';
+      console.log('Set ts-timestamp to:', d.updated_at ? 
+        new Date(d.updated_at).toLocaleString() : 'N/A');
     }
 
-    // Update leaderboard
+    // Update leaderboard with service status
     const leaderboardDiv = document.getElementById('ts-leaderboard');
     if (leaderboardDiv) {
       leaderboardDiv.innerHTML = ''; // Clear previous content
-      if (d.leaderboard && d.leaderboard.length > 0) {
-        leaderboardDiv.innerHTML = '<strong>Top Models:</strong><br>';
-        d.leaderboard.forEach(item => {
-          leaderboardDiv.innerHTML += `#${item.rank} ${item.model} (${(item.accuracy * 100).toFixed(1)}%) - ${item.runs} runs<br>`;
-        });
-        console.log('Updated leaderboard with', d.leaderboard.length, 'items');
+      if (d.summary) {
+        leaderboardDiv.innerHTML = `<strong>Status Summary:</strong><br>${d.summary}`;
+        console.log('Updated leaderboard with summary:', d.summary);
       } else {
-        leaderboardDiv.textContent = 'No leaderboard data available.';
-        console.log('Set leaderboard to: No leaderboard data available.');
+        leaderboardDiv.textContent = 'No status data available.';
+        console.log('Set leaderboard to: No status data available.');
       }
     }
     
@@ -146,15 +163,21 @@ async function loadTraining() {
     
   } catch (e) {
     console.error('Error in loadTraining:', e);
-    document.getElementById('ts-active-runs').textContent = 'Error';
-    document.getElementById('ts-completed-today').textContent = '';
-    document.getElementById('ts-total-runs').textContent = '';
-    document.getElementById('ts-last-model').textContent = '';
-    document.getElementById('ts-last-accuracy').textContent = '';
-    document.getElementById('ts-last-loss').textContent = '';
-    document.getElementById('ts-commit').textContent = '';
-    document.getElementById('ts-timestamp').textContent = '';
-    document.getElementById('ts-leaderboard').textContent = 'Error loading leaderboard';
+    const elements = [
+      'ts-active-runs', 'ts-completed-today', 'ts-total-runs', 
+      'ts-last-model', 'ts-last-accuracy', 'ts-last-loss', 
+      'ts-commit', 'ts-timestamp', 'ts-leaderboard'
+    ];
+    elements.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        if (id === 'ts-leaderboard') {
+          el.textContent = 'Error loading status';
+        } else {
+          el.textContent = 'Error';
+        }
+      }
+    });
   }
 }
 

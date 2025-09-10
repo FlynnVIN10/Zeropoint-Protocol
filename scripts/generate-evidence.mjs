@@ -27,4 +27,18 @@ for (const d of fs.readdirSync(root, { withFileTypes:true })) {
 // stamp a marker file in the current SHA dir
 fs.writeFileSync(path.join(outDir,'ok.txt'), `ok ${short}\n${buildTime}\n`);
 
+// create index.json for evidence directory
+const evidenceIndex = {
+  commit: short,
+  buildTime,
+  phase: process.env.PHASE || 'stage2',
+  ciStatus: process.env.CI_STATUS || 'green',
+  generated: buildTime,
+  evidence: {
+    version: version,
+    status: 'verified'
+  }
+};
+fs.writeFileSync(path.join(outDir,'index.json'), JSON.stringify(evidenceIndex, null, 2));
+
 console.log('ok', short);

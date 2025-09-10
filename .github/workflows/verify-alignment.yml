@@ -17,3 +17,21 @@ jobs:
           echo "HEAD commit: $SHORT"
           echo "Live commit: $LIVE"
           test "$SHORT" = "$LIVE" || (echo "✗ Commit mismatch: expected $SHORT, got $LIVE" && exit 1)
+      - name: Check API responses return JSON
+        run: |
+          echo "Checking /api/synthient/status..."
+          STATUS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/synthient/status | head -n1)
+          echo "$STATUS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/status not returning 200" && exit 1)
+          echo "$STATUS_RESPONSE" | grep -q "application/json" || (echo "✗ /api/synthient/status not returning JSON" && exit 1)
+          
+          echo "Checking /api/synthient/proposals..."
+          PROPOSALS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/synthient/proposals | head -n1)
+          echo "$PROPOSALS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/proposals not returning 200" && exit 1)
+          echo "$PROPOSALS_RESPONSE" | grep -q "application/json" || (echo "✗ /api/synthient/proposals not returning JSON" && exit 1)
+          
+          echo "Checking /api/synthient/consensus..."
+          CONSENSUS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/synthient/consensus | head -n1)
+          echo "$CONSENSUS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/consensus not returning 200" && exit 1)
+          echo "$CONSENSUS_RESPONSE" | grep -q "application/json" || (echo "✗ /api/synthient/consensus not returning JSON" && exit 1)
+          
+          echo "✓ All API endpoints returning JSON"

@@ -20,17 +20,28 @@ export const onRequestGet: PagesFunction<{
     }
   }));
 
-  // plain language synthesis
+  // plain language synthesis with enhanced mapping
   const summary = results.map(r=>{
     if (!r.ok) return `${r.name}: offline`;
-    const s = r.json?.status ?? r.json?.state ?? 'unknown';
+    
+    // Map configured/active to human-readable status
+    const configured = r.json?.configured ?? r.json?.status === 'configured';
+    const active = r.json?.active ?? r.json?.status === 'active';
+    
+    let status = 'unknown';
+    if (configured && active) status = 'online';
+    else if (configured && !active) status = 'configured';
+    else if (!configured) status = 'offline';
+    
+    // Extract metrics
     const ep = r.json?.epochs_completed ?? r.json?.epochs ?? r.json?.epoch ?? null;
     const jobs = r.json?.jobs_running ?? r.json?.runs ?? r.json?.active_jobs ?? null;
     const extra = [
       ep!=null ? `epochs ${ep}` : null,
       jobs!=null ? `jobs ${jobs}` : null,
     ].filter(Boolean).join(', ');
-    return `${r.name}: ${s}${extra ? ` (${extra})` : ''}`;
+    
+    return `${r.name}: ${status}${extra ? ` (${extra})` : ''}`;
   }).join(' | ');
 
   return new Response(JSON.stringify({

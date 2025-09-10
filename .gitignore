@@ -65,3 +65,6 @@ dist/
 
 # Monitoring logs - these change frequently and shouldn't be tracked
 monitoring/logs/*.log
+
+# Ignore Vercel/Next build output
+.vercel/

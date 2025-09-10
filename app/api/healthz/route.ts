@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { dbManager } from '../../../lib/db/config'
-import { getBuildMeta } from '../../../lib/buildMeta'
+import { getBuildMeta } from '../../lib/buildMeta'
 
 export async function GET() {
   try {

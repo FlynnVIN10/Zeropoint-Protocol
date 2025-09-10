@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getBuildMeta } from '../../../lib/buildMeta'
+import { getBuildMeta } from '../../lib/buildMeta'
 
 export async function GET() {
   const buildMeta = getBuildMeta()

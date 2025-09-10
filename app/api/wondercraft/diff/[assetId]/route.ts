@@ -5,10 +5,10 @@ import * as Wondercraft from '@services/wondercraft-bridge'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { assetId: string } }
+  { params }: { params: Promise<{ assetId: string }> }
 ) {
   try {
-    const { assetId } = params
+    const { assetId } = await params
     const { searchParams } = new URL(request.url)
     const versionA = searchParams.get('versionA')
     const versionB = searchParams.get('versionB')

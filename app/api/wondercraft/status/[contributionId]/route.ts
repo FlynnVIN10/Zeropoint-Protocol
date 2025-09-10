@@ -5,10 +5,10 @@ import * as Wondercraft from '@services/wondercraft-bridge'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { contributionId: string } }
+  { params }: { params: Promise<{ contributionId: string }> }
 ) {
   try {
-    const { contributionId } = params
+    const { contributionId } = await params
 
     if (!contributionId) {
       return NextResponse.json(

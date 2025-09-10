@@ -5,10 +5,10 @@ import * as Petals from '@services/petals-orchestrator'
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { proposalId: string } }
+  { params }: { params: Promise<{ proposalId: string }> }
 ) {
   try {
-    const { proposalId } = params;
+    const { proposalId } = await params;
     const body = await request.json();
 
     if (!proposalId) {

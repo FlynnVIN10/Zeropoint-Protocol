@@ -14,7 +14,7 @@
 **Current Phase:** Training Services Integration (Phase 1)
 **Objective:** Complete Task 1.2 (PostgreSQL integration), resolve deployment gaps, advance to Proposal Gate, maintain Truth-to-Repo compliance.
 
-**Status:** **SCRA COMPLIANCE ACHIEVED** - All production endpoints return correct JSON responses with latest commit, UI errors resolved, compliance report updated. Ready for production deployment.
+**Status:** **FINAL SCRA COMPLIANCE ACHIEVED** - All endpoints return JSON with commit `c24abd7a`, API routes fixed with Pages functions, UI error handling improved, compliance report updated. Production deployment ready.
 
 **Milestone Status:**
 - ✅ **Training Gate:** ACHIEVED (1604e587)
@@ -34,6 +34,7 @@
 - ✅ **Integration Gate:** ACHIEVED (000ce1e9)
 - ✅ **Build Fix Gate:** ACHIEVED (d05042d6)
 - ✅ **SCRA Compliance Gate:** ACHIEVED (d81df856)
+- ✅ **Final Compliance Gate:** ACHIEVED (c24abd7a)
 
 ---
 
@@ -305,13 +306,13 @@
   - **Owner:** Dev Team
   - **Status:** ✅ **COMPLETED**
   - **Target:** Static JSON files and BUILD_COMMIT
-  - **Acceptance Tests:** ✅ All endpoints return JSON with commit `d81df856`
+  - **Acceptance Tests:** ✅ All endpoints return JSON with commit `c24abd7a`
   - **PR:** Open in `platform` repo, link to #SCRA-001
   - **Action Items:** ✅ Complete
     - ✅ Updated `/api/healthz.json` with current commit and DB status
     - ✅ Updated `/api/readyz.json` with current commit and phase
     - ✅ Updated `/api/training/status.json` with fresh metrics
-    - ✅ Set BUILD_COMMIT to `d81df856` in wrangler.toml
+    - ✅ Set BUILD_COMMIT to `c24abd7a` in wrangler.toml
 
 - **Task 10.2**: Fix UI health/readiness errors
   - **Owner:** Dev Team
@@ -323,6 +324,7 @@
     - ✅ Fixed fetch calls to use `/api/healthz` instead of `/api/healthz.json`
     - ✅ Fixed fetch calls to use `/api/readyz` instead of `/api/readyz.json`
     - ✅ Fixed fetch calls to use `/api/training/status` instead of static JSON
+    - ✅ Improved error handling for API failures
 
 - **Task 10.3**: Update compliance report
   - **Owner:** Dev Team
@@ -331,9 +333,34 @@
   - **Acceptance Tests:** ✅ Report reflects production reality, no outdated references
   - **PR:** Open in `platform` repo, link to #SCRA-003
   - **Action Items:** ✅ Complete
-    - ✅ Updated commit references from `c8d2d848` to `d81df856`
+    - ✅ Updated commit references from `10b8fc38` to `c24abd7a`
     - ✅ Added API endpoint verification details
     - ✅ Confirmed governance and security compliance
+
+#### **Story 11: API Route Migration to Pages Functions** ➡️ **COMPLETED**
+- **Task 11.1**: Create Cloudflare Pages Functions for API endpoints
+  - **Owner:** Dev Team
+  - **Status:** ✅ **COMPLETED**
+  - **Target:** `functions/api/healthz.ts`, `readyz.ts`, `training/status.ts`
+  - **Acceptance Tests:** ✅ Functions return JSON with proper headers in Pages environment
+  - **PR:** Open in `platform` repo, link to #PAGES-001
+  - **Action Items:** ✅ Complete
+    - ✅ Created `functions/api/healthz.ts` with current commit and health data
+    - ✅ Created `functions/api/readyz.ts` with current commit and readiness status
+    - ✅ Created `functions/api/training/status.ts` with current commit and training metrics
+    - ✅ All functions include proper security headers and JSON responses
+    - ✅ Moved static JSON files to backup to prevent conflicts
+
+- **Task 11.2**: Remove static file conflicts
+  - **Owner:** Dev Team
+  - **Status:** ✅ **COMPLETED**
+  - **Target:** Static JSON files in `public/api/`
+  - **Acceptance Tests:** ✅ API routes take precedence over static files
+  - **PR:** Open in `platform` repo, link to #PAGES-002
+  - **Action Items:** ✅ Complete
+    - ✅ Renamed static files to `.backup` extensions
+    - ✅ Ensured Pages functions serve dynamic content
+    - ✅ Verified no conflicts between static and dynamic routes
 
 ## ✅ **TRAINING GATE ACHIEVED**
 

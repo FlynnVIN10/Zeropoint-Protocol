@@ -1,7 +1,6 @@
-import { getBuildMeta } from '../../app/lib/buildMeta';
+import { buildMeta } from '../../app/lib/buildMeta';
 
 export const onRequest = async () => {
-  const buildMeta = getBuildMeta();
   
   const response = {
     status: "active",

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { dbManager } from '../../../lib/db/config'
-import { getBuildMeta } from '../../lib/buildMeta'
+import { buildMeta } from '@/lib/buildMeta'
 
 export async function GET() {
   try {
@@ -10,8 +10,6 @@ export async function GET() {
     // Check database health
     const dbHealth = await dbManager.healthCheck();
 
-    // Get unified build metadata
-    const buildMeta = getBuildMeta()
     const timestamp = new Date().toISOString()
     const uptime = process.uptime()
     const environment = process.env.NODE_ENV || 'development'
@@ -60,7 +58,6 @@ export async function GET() {
     )
   } catch (error) {
     console.error('Health check failed:', error);
-    const buildMeta = getBuildMeta()
     return NextResponse.json(
       {
         status: 'error',

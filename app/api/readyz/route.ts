@@ -1,8 +1,7 @@
 import { NextResponse } from 'next/server'
-import { getBuildMeta } from '../../lib/buildMeta'
+import { buildMeta } from '@/lib/buildMeta'
 
 export async function GET() {
-  const buildMeta = getBuildMeta()
   const timestamp = new Date().toISOString()
   const environment = process.env.NODE_ENV || 'development'
   

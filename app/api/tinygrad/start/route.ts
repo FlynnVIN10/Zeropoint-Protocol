@@ -40,20 +40,13 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { 
-      error: 'Method Not Allowed',
-      message: 'This endpoint only accepts POST requests',
-      allowed_methods: ['POST']
-    },
-    {
-      status: 405,
-      headers: {
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-        'x-content-type-options': 'nosniff',
-        'content-disposition': 'inline'
-      }
+  return new Response(JSON.stringify({ error: 'method_not_allowed' }), { 
+    status: 405, 
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff',
+      'allow': 'POST'
     }
-  )
+  });
 }

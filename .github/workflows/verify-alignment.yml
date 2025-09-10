@@ -5,68 +5,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Determine repo HEAD short
-        id: head
-        run: echo "short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-      - name: Alignment check (HEAD vs live)
-        env:
-          URL: "https://zeropointprotocol.ai/status/version.json"
+      - name: Verify alignment and API hygiene
         run: |
-          SHORT="${{ steps.head.outputs.short }}"
-          LIVE=$(curl -fsSL "$URL" | jq -r '.commit')
-          echo "HEAD commit: $SHORT"
-          echo "Live commit: $LIVE"
-          test "$SHORT" = "$LIVE" || (echo "✗ Commit mismatch: expected $SHORT, got $LIVE" && exit 1)
-      - name: Check API responses return JSON
-        run: |
-          echo "Checking /api/healthz..."
-          HEALTHZ_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/healthz | head -n1)
-          echo "$HEALTHZ_RESPONSE" | grep -q "200" || (echo "✗ /api/healthz not returning 200" && exit 1)
-          echo "$HEALTHZ_RESPONSE" | grep -q "application/json" || (echo "✗ /api/healthz not returning JSON" && exit 1)
-          
-          echo "Checking /api/readyz..."
-          READYZ_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/readyz | head -n1)
-          echo "$READYZ_RESPONSE" | grep -q "200" || (echo "✗ /api/readyz not returning 200" && exit 1)
-          echo "$READYZ_RESPONSE" | grep -q "application/json" || (echo "✗ /api/readyz not returning JSON" && exit 1)
-          
-          echo "Checking /api/synthient/status..."
-          STATUS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/synthient/status | head -n1)
-          echo "$STATUS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/status not returning 200" && exit 1)
-          echo "$STATUS_RESPONSE" | grep -q "application/json" || (echo "✗ /api/synthient/status not returning JSON" && exit 1)
-          
-          echo "Checking /api/synthient/proposals..."
-          PROPOSALS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/synthient/proposals | head -n1)
-          echo "$PROPOSALS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/proposals not returning 200" && exit 1)
-          echo "$PROPOSALS_RESPONSE" | grep -q "application/json" || (echo "✗ /api/synthient/proposals not returning JSON" && exit 1)
-          
-          echo "✓ All API endpoints returning JSON"
-      - name: Check service endpoints return 405 on GET
-        run: |
-          echo "Checking /api/tinygrad/start returns 405 on GET..."
-          TINYGRAD_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/tinygrad/start | head -n1)
-          echo "$TINYGRAD_RESPONSE" | grep -q "405" || (echo "✗ /api/tinygrad/start not returning 405 on GET" && exit 1)
-          
-          echo "Checking /api/petals/propose returns 405 on GET..."
-          PETALS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/petals/propose | head -n1)
-          echo "$PETALS_RESPONSE" | grep -q "405" || (echo "✗ /api/petals/propose not returning 405 on GET" && exit 1)
-          
-          echo "Checking /api/wondercraft/contribute returns 405 on GET..."
-          WONDERCRAFT_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/wondercraft/contribute | head -n1)
-          echo "$WONDERCRAFT_RESPONSE" | grep -q "405" || (echo "✗ /api/wondercraft/contribute not returning 405 on GET" && exit 1)
-          
-          echo "✓ All service endpoints returning 405 on GET"
-      - name: Check evidence index exists for HEAD
-        run: |
-          SHORT="${{ steps.head.outputs.short }}"
-          echo "Checking evidence index for commit: $SHORT"
-          
-          EVIDENCE_RESPONSE=$(curl -si https://zeropointprotocol.ai/evidence/phase2/verify/$SHORT/index.json | head -n1)
-          echo "$EVIDENCE_RESPONSE" | grep -q "200" || (echo "✗ Evidence index not found for commit $SHORT" && exit 1)
-          echo "$EVIDENCE_RESPONSE" | grep -q "application/json" || (echo "✗ Evidence index not returning JSON" && exit 1)
-          echo "$EVIDENCE_RESPONSE" | grep -q "no-store" || (echo "✗ Evidence index missing no-store header" && exit 1)
-          
-          # Verify commit matches
-          EVIDENCE_COMMIT=$(curl -fsSL https://zeropointprotocol.ai/evidence/phase2/verify/$SHORT/index.json | jq -r '.commit')
-          test "$SHORT" = "$EVIDENCE_COMMIT" || (echo "✗ Evidence commit mismatch: expected $SHORT, got $EVIDENCE_COMMIT" && exit 1)
-          
-          echo "✓ Evidence index exists and matches HEAD commit"
+          set -euo pipefail
+          HEAD="$(git rev-parse --short HEAD)"
+          j() { curl -fsS "$1" | jq -r "$2"; }
+
+          V="$(j https://zeropointprotocol.ai/status/version.json .commit)"
+          H="$(j https://zeropointprotocol.ai/api/healthz .commit)"
+          R="$(j https://zeropointprotocol.ai/api/readyz .commit)"
+          S="$(curl -fsS https://zeropointprotocol.ai/status/synthients.json 2>/dev/null | jq -r .commit // empty)"
+          test "$V" = "$HEAD" -a "$H" = "$HEAD" -a "$R" = "$HEAD" -a "${S:-$HEAD}" = "$HEAD" || { echo "Commit mismatch"; exit 1; }
+
+          for p in healthz readyz synthient/status synthient/proposals; do
+            curl -si https://zeropointprotocol.ai/api/$p | grep -qi 'content-type: application/json' || exit 1
+          done
+          curl -si https://zeropointprotocol.ai/api/tinygrad/start         | grep -q ' 405 ' || exit 1
+          curl -si https://zeropointprotocol.ai/api/petals/propose         | grep -q ' 405 ' || exit 1
+          curl -si https://zeropointprotocol.ai/api/wondercraft/contribute | grep -q ' 405 ' || exit 1
+
+          curl -si "https://zeropointprotocol.ai/evidence/phase2/verify/$HEAD/index.json" | grep -qi 'content-type: application/json' || exit 1

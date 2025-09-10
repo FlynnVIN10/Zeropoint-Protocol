@@ -17,6 +17,7 @@ if (!CF_PAGES_COMMIT_SHA) {
 const short = CF_PAGES_COMMIT_SHA.slice(0, 7);
 const root = resolve("public");
 const statusDir = join(root, "status");
+const buildInfoPath = join(root, "build-info.json");
 const verDir = join(root, "evidence", "verify", short);
 
 await fs.mkdir(statusDir, { recursive: true });
@@ -63,5 +64,19 @@ await fs.writeFile(
 );
 
 console.log(`ok ${short}`);
+
+// Also write a canonical build-info.json for runtime consumption by Functions
+await fs.writeFile(
+  buildInfoPath,
+  JSON.stringify(
+    {
+      commit: short,
+      buildTime: iso,
+      env: "prod",
+    },
+    null,
+    2
+  )
+);
 
 

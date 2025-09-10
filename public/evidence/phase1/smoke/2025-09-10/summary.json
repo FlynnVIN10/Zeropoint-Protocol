@@ -1,0 +1,9 @@
+{
+  "timestamp": "2025-09-10T00:36:35Z",
+  "commit": "1604e587",
+  "urls": {
+    "version": "https://zeropointprotocol.ai/status/version.json",
+    "evidence": "https://zeropointprotocol.ai/evidence/phase1/verify/1604e587/index.json",
+    "healthz": "https://zeropointprotocol.ai/api/healthz"
+  }
+}

@@ -12,9 +12,6 @@ id = "REPLACE_WITH_PREVIEW_NAMESPACE_ID"
 # production bindings (Pages requires explicit env block)
 [env.production]
 route = ""
-[[env.production.kv_namespaces]]
-binding = "SYNTHIENT_CONSENSUS"
-id = "REPLACE_WITH_PRODUCTION_NAMESPACE_ID"
 
 [env.production.vars]
 # status URLs here if they differ per env

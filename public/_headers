@@ -19,6 +19,12 @@
   Content-Type: application/json; charset=utf-8
   X-Content-Type-Options: nosniff
 
+# Version endpoint - immutable per build
+/status/version.json
+  Cache-Control: no-store
+  Content-Type: application/json; charset=utf-8
+  X-Content-Type-Options: nosniff
+
 # Evidence endpoints - serve raw JSON
 /evidence/**/*.json
   Cache-Control: no-store

@@ -6,6 +6,3 @@
 
 # Status routes (handled by Functions)
 /status/* /status/:splat 200
-
-# Fallback to SPA for all other routes
-/* /index.html 200

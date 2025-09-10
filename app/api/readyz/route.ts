@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { buildMeta } from '@/lib/buildMeta'
+import { buildMeta } from '../../lib/buildMeta'
 
 export async function GET() {
   const timestamp = new Date().toISOString()

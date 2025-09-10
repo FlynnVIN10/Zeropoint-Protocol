@@ -1,4 +1,7 @@
-const { execSync } = require('node:child_process'), fs=require('fs'), path=require('path');
+import { execSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+
 const short = (process.env.GITHUB_SHA || execSync('git rev-parse --short HEAD')).toString().trim();
 const meta = { phase: process.env.PHASE||'stage2', commit: short, ciStatus: process.env.CI_STATUS||'green', buildTime: new Date().toISOString() };
 

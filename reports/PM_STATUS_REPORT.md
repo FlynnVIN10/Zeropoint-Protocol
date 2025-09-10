@@ -14,7 +14,7 @@
 **Current Phase:** Training Services Integration (Phase 1)
 **Objective:** Complete Task 1.2 (PostgreSQL integration), resolve deployment gaps, advance to Proposal Gate, maintain Truth-to-Repo compliance.
 
-**Status:** **100% COMPLETE** - All PM directives executed. Ready for next phase.
+**Status:** **NEW DIRECTIVE ACTIVE** - CEO approved Synthient Consensus Proposal (Draft 4) and website improvement directive. DevOps/Data Engineering tasks reassigned to Dev Team.
 
 **Milestone Status:**
 - ✅ **Training Gate:** ACHIEVED (1604e587)
@@ -22,6 +22,13 @@
 - ✅ **Website Gate:** ACHIEVED (b233727e)
 - ✅ **Consensus Gate:** ACHIEVED (b233727e)
 - ✅ **Verification Gate:** ACHIEVED (b233727e)
+- ⏳ **Design Gate:** ACTIVE (UI spec drafting)
+- 🔒 **Dashboard Gate:** PENDING
+- 🔒 **Proposal Gate (UI):** PENDING
+- 🔒 **Tinygrad Gate:** PENDING
+- 🔒 **Petals/Wondercraft Gate:** PENDING
+- 🔒 **Evidence Gate:** PENDING
+- 🔒 **Verification Gate (New):** PENDING
 
 ---
 
@@ -127,7 +134,7 @@
   - ✅ Validate all Verification Gate requirements
 
 #### **Task 4.2: Enforce Dual Consensus and MOCKS_DISABLED=1** - **COMPLETED** ✅
-- **Owner:** DevOps
+- **Owner:** DevOps (reassigned to Dev Team)
 - **Status:** ✅ **COMPLETED**
 - **Target:** Branch protection and environment variables
 - **Acceptance Tests:** ✅ Merges blocked without Dual Consensus, `MOCKS_DISABLED=1` set
@@ -137,6 +144,112 @@
   - ✅ Configure branch protection rules
   - ✅ Set `MOCKS_DISABLED=1` in production
   - ✅ Implement CODEOWNERS dual consensus
+
+### **Website Improvement Tasks - CEO Approved**
+
+#### **Story 1: Design & UX Spec** ➡️ **ACTIVE**
+- **Task 1.1**: Draft right-hand panel spec
+  - **Owner:** Dev Team (with PM)
+  - **Status:** ✅ **COMPLETED**
+  - **Target:** `docs/ui/RIGHT_PANEL_SPEC.md`
+  - **Acceptance Tests:** Spec approved, no overlap ≤1280px, dark-mode aesthetic
+  - **PR:** Open in `website` repo, link to #UX-001
+  - **Action Items:** ✅ Complete
+    - ✅ Document layout and sections
+    - ✅ Specify data sources and evidence logging
+
+#### **Story 2: Status Dashboard** ➡️ **PENDING**
+- **Task 2.1**: Implement dashboard for `/status/synthients.json`
+  - **Owner:** Dev Team
+  - **Status:** ⏳ **PENDING**
+  - **Target:** `apps/web/components/dashboard/SynthientsPanel.tsx`
+  - **Acceptance Tests:** Renders data, refreshes via SSE, Lighthouse ≥95
+  - **PR:** Open in `website` repo, link to #DASH-001
+  - **Action Items:**
+    - Build SynthientsPanel component
+    - Integrate with `/status/synthients.json`
+    - Log evidence to `/evidence/phase1/ui/stream/synthients.json.http`
+
+#### **Story 3: Proposal Management Panel** ➡️ **PENDING**
+- **Task 3.1**: Implement proposal list/detail view
+  - **Owner:** Dev Team
+  - **Status:** ⏳ **PENDING**
+  - **Target:** `apps/web/components/proposals/*`
+  - **Acceptance Tests:** Shows proposals or "No proposals yet"
+  - **PR:** Open in `website` repo, link to #PROP-003
+  - **Action Items:**
+    - Build list/detail UI
+    - Integrate with `/consensus/proposals`
+
+- **Task 3.2**: Implement proposal submission/vote UI
+  - **Owner:** Dev Team
+  - **Status:** ⏳ **PENDING**
+  - **Target:** Forms for POST actions
+  - **Acceptance Tests:** Adds proposals, updates votes, logs evidence
+  - **PR:** Open in `website` repo, link to #PROP-004
+  - **Action Items:**
+    - Build submission/vote forms
+    - Log to `/evidence/phase1/ui/proposals/`
+
+#### **Story 4: Tinygrad Controls** ➡️ **PENDING**
+- **Task 4.1**: Implement job start form
+  - **Owner:** Dev Team
+  - **Status:** ⏳ **PENDING**
+  - **Target:** `apps/web/components/tinygrad/*`
+  - **Acceptance Tests:** POST returns job ID
+  - **PR:** Open in `platform` repo, link to #TINY-001
+  - **Action Items:**
+    - Build start form for dataset/model_config/training_params
+
+- **Task 4.2**: Implement status/log viewers
+  - **Owner:** Dev Team
+  - **Status:** ⏳ **PENDING**
+  - **Target:** Viewers for GET endpoints
+  - **Acceptance Tests:** Displays status/logs
+  - **PR:** Open in `platform` repo, link to #TINY-002
+  - **Action Items:**
+    - Build status/log UI
+    - Log to `/evidence/phase1/logs/tinygrad/`
+
+#### **Story 5: Petals & Wondercraft Interfaces** ➡️ **PENDING**
+- **Task 5.1**: Implement Petals proposal/vote forms
+  - **Owner:** Dev Team
+  - **Status:** ⏳ **PENDING**
+  - **Target:** `apps/web/components/petals/*`
+  - **Acceptance Tests:** POST returns IDs, updates tallies
+  - **PR:** Open in `platform` repo, link to #PETALS-001
+  - **Action Items:**
+    - Build forms for propose/vote
+
+- **Task 5.2**: Implement Wondercraft contribution/diff forms
+  - **Owner:** Dev Team
+  - **Status:** ⏳ **PENDING**
+  - **Target:** `apps/web/components/wondercraft/*`
+  - **Acceptance Tests:** POST returns IDs, logs diff
+  - **PR:** Open in `platform` repo, link to #WONDER-001
+  - **Action Items:**
+    - Build forms for contribute/diff
+
+#### **Story 6: Evidence Logging and Governance** ➡️ **PENDING**
+- **Task 6.1**: Implement unified client logger
+  - **Owner:** Dev Team (with SCRA)
+  - **Status:** ⏳ **PENDING**
+  - **Target:** `apps/web/lib/evidence/logger.ts`
+  - **Acceptance Tests:** Logs all actions to `/evidence/phase1/`
+  - **PR:** Open in `website` repo, link to #GOV-003
+  - **Action Items:**
+    - Build logger with method/url/headers/status/first120/timestamp/commit
+
+#### **Story 7: Compliance & Verification** ➡️ **PENDING**
+- **Task 7.1**: Run Lighthouse and header checks
+  - **Owner:** SCRA
+  - **Status:** ⏳ **PENDING**
+  - **Target:** `/evidence/compliance/2025-09-10/report.md`
+  - **Acceptance Tests:** PASS, A11y ≥95, headers valid
+  - **PR:** Open in `platform` repo, link to #GOV-004
+  - **Action Items:**
+    - Run lighthouse.yml
+    - File report with curl outputs
 
 ## ✅ **TRAINING GATE ACHIEVED**
 

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { dbManager } from '../../../lib/db/config'
+import { getBuildMeta } from '../../../lib/buildMeta'
 
 export async function GET() {
   try {
@@ -9,11 +10,8 @@ export async function GET() {
     // Check database health
     const dbHealth = await dbManager.healthCheck();
 
-    // Use a more robust commit detection
-    const commit = process.env.VERCEL_GIT_COMMIT_SHA ||
-                   process.env.GIT_COMMIT_SHA ||
-                   '1604e587' // Canonical commit
-    const buildTime = new Date().toISOString()
+    // Get unified build metadata
+    const buildMeta = getBuildMeta()
     const timestamp = new Date().toISOString()
     const uptime = process.uptime()
     const environment = process.env.NODE_ENV || 'development'
@@ -21,8 +19,8 @@ export async function GET() {
     // Ensure all required fields are present with database connectivity
     const response: any = {
       status: 'ok',
-      commit,
-      buildTime,
+      commit: buildMeta.commit,
+      buildTime: buildMeta.buildTime,
       timestamp,
       uptime,
       environment,
@@ -33,9 +31,9 @@ export async function GET() {
       }
     }
 
-    // Phase and status information
-    response.phase = 'stage1'
-    response.ciStatus = environment === 'production' ? 'green' : 'development'
+    // Phase and status information from unified metadata
+    response.phase = buildMeta.phase
+    response.ciStatus = buildMeta.ciStatus
     response.mocks = process.env.MOCKS_DISABLED === '1' ? false : true
     response.trainingEnabled = true // Database integration complete
 
@@ -62,14 +60,15 @@ export async function GET() {
     )
   } catch (error) {
     console.error('Health check failed:', error);
+    const buildMeta = getBuildMeta()
     return NextResponse.json(
       {
         status: 'error',
-        commit: '1604e587',
-        buildTime: new Date().toISOString(),
+        commit: buildMeta.commit,
+        buildTime: buildMeta.buildTime,
         timestamp: new Date().toISOString(),
         database: { connected: false, error: 'Database connection failed' },
-        phase: 'stage1',
+        phase: buildMeta.phase,
         trainingEnabled: false
       },
       {

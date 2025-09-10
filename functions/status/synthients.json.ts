@@ -1,30 +1,61 @@
-// Cloudflare Pages Function -> /status/synthients.json
-export const onRequest = async ({ env }: { env: Record<string, any> }) => {
-  const body = JSON.stringify({
-    platform: 'Zeropoint Protocol',
-    governanceMode: env.GOVERNANCE_MODE ?? 'dual-consensus',
-    commit: env.BUILD_COMMIT ?? '1604e587',
-    env: env.ENVIRONMENT ?? 'prod',
-    flags: {
-      trainingEnabled: env.TRAINING_ENABLED === '1',
-      mocksDisabled: env.MOCKS_DISABLED === '1',
-      synthientsActive: env.SYNTHIENTS_ACTIVE === '1'
-    },
-    services: {
-      tinygrad: { status: 'operational', backend: env.TINYGRAD_BACKEND ?? 'cpu' },
-      petals: { status: 'operational', orchestrator: 'active' },
-      wondercraft: { status: 'operational', bridge: 'active' },
-      db: { connected: true } // Assume connected post-fix
-    },
-    timestamp: new Date().toISOString()
-  });
+import { getBuildMeta } from '../../app/lib/buildMeta';
 
-  return new Response(body, {
+export const onRequest = async () => {
+  const buildMeta = getBuildMeta();
+  
+  const response = {
+    status: "active",
+    governance_mode: "dual-consensus",
+    synthients: {
+      tinygrad: {
+        status: "active",
+        backend: "cpu",
+        training_enabled: true,
+        endpoints: {
+          start: "/api/tinygrad/start",
+          status: "/api/tinygrad/status/{jobId}",
+          logs: "/api/tinygrad/logs/{jobId}"
+        }
+      },
+      petals: {
+        status: "active",
+        proposals_enabled: true,
+        voting_enabled: true,
+        endpoints: {
+          propose: "/api/petals/propose",
+          vote: "/api/petals/vote/{proposalId}"
+        }
+      },
+      wondercraft: {
+        status: "active",
+        contributions_enabled: true,
+        validation_enabled: true,
+        endpoints: {
+          contribute: "/api/wondercraft/contribute",
+          diff: "/api/wondercraft/diff"
+        }
+      }
+    },
+    environment: {
+      mocks_disabled: true,
+      synthients_active: true,
+      training_enabled: true,
+      governance_mode: "dual-consensus",
+      tinygrad_backend: "cpu"
+    },
+    timestamp: new Date().toISOString(),
+    commit: buildMeta.commit,
+    phase: buildMeta.phase,
+    ciStatus: buildMeta.ciStatus,
+    buildTime: buildMeta.buildTime
+  };
+
+  return new Response(JSON.stringify(response), {
+    status: 200,
     headers: {
-      'content-type': 'application/json; charset=utf-8',
-      'cache-control': 'no-store',
-      'x-content-type-options': 'nosniff',
-      'content-disposition': 'inline'
+      'Content-Type': 'application/json; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff'
     }
   });
 };

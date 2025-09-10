@@ -19,6 +19,16 @@ jobs:
           test "$SHORT" = "$LIVE" || (echo "✗ Commit mismatch: expected $SHORT, got $LIVE" && exit 1)
       - name: Check API responses return JSON
         run: |
+          echo "Checking /api/healthz..."
+          HEALTHZ_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/healthz | head -n1)
+          echo "$HEALTHZ_RESPONSE" | grep -q "200" || (echo "✗ /api/healthz not returning 200" && exit 1)
+          echo "$HEALTHZ_RESPONSE" | grep -q "application/json" || (echo "✗ /api/healthz not returning JSON" && exit 1)
+          
+          echo "Checking /api/readyz..."
+          READYZ_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/readyz | head -n1)
+          echo "$READYZ_RESPONSE" | grep -q "200" || (echo "✗ /api/readyz not returning 200" && exit 1)
+          echo "$READYZ_RESPONSE" | grep -q "application/json" || (echo "✗ /api/readyz not returning JSON" && exit 1)
+          
           echo "Checking /api/synthient/status..."
           STATUS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/synthient/status | head -n1)
           echo "$STATUS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/status not returning 200" && exit 1)
@@ -29,9 +39,34 @@ jobs:
           echo "$PROPOSALS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/proposals not returning 200" && exit 1)
           echo "$PROPOSALS_RESPONSE" | grep -q "application/json" || (echo "✗ /api/synthient/proposals not returning JSON" && exit 1)
           
-          echo "Checking /api/synthient/consensus..."
-          CONSENSUS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/synthient/consensus | head -n1)
-          echo "$CONSENSUS_RESPONSE" | grep -q "200" || (echo "✗ /api/synthient/consensus not returning 200" && exit 1)
-          echo "$CONSENSUS_RESPONSE" | grep -q "application/json" || (echo "✗ /api/synthient/consensus not returning JSON" && exit 1)
-          
           echo "✓ All API endpoints returning JSON"
+      - name: Check service endpoints return 405 on GET
+        run: |
+          echo "Checking /api/tinygrad/start returns 405 on GET..."
+          TINYGRAD_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/tinygrad/start | head -n1)
+          echo "$TINYGRAD_RESPONSE" | grep -q "405" || (echo "✗ /api/tinygrad/start not returning 405 on GET" && exit 1)
+          
+          echo "Checking /api/petals/propose returns 405 on GET..."
+          PETALS_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/petals/propose | head -n1)
+          echo "$PETALS_RESPONSE" | grep -q "405" || (echo "✗ /api/petals/propose not returning 405 on GET" && exit 1)
+          
+          echo "Checking /api/wondercraft/contribute returns 405 on GET..."
+          WONDERCRAFT_RESPONSE=$(curl -si https://zeropointprotocol.ai/api/wondercraft/contribute | head -n1)
+          echo "$WONDERCRAFT_RESPONSE" | grep -q "405" || (echo "✗ /api/wondercraft/contribute not returning 405 on GET" && exit 1)
+          
+          echo "✓ All service endpoints returning 405 on GET"
+      - name: Check evidence index exists for HEAD
+        run: |
+          SHORT="${{ steps.head.outputs.short }}"
+          echo "Checking evidence index for commit: $SHORT"
+          
+          EVIDENCE_RESPONSE=$(curl -si https://zeropointprotocol.ai/evidence/phase2/verify/$SHORT/index.json | head -n1)
+          echo "$EVIDENCE_RESPONSE" | grep -q "200" || (echo "✗ Evidence index not found for commit $SHORT" && exit 1)
+          echo "$EVIDENCE_RESPONSE" | grep -q "application/json" || (echo "✗ Evidence index not returning JSON" && exit 1)
+          echo "$EVIDENCE_RESPONSE" | grep -q "no-store" || (echo "✗ Evidence index missing no-store header" && exit 1)
+          
+          # Verify commit matches
+          EVIDENCE_COMMIT=$(curl -fsSL https://zeropointprotocol.ai/evidence/phase2/verify/$SHORT/index.json | jq -r '.commit')
+          test "$SHORT" = "$EVIDENCE_COMMIT" || (echo "✗ Evidence commit mismatch: expected $SHORT, got $EVIDENCE_COMMIT" && exit 1)
+          
+          echo "✓ Evidence index exists and matches HEAD commit"

@@ -43,15 +43,12 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json(
     { 
-      service: 'wondercraft-bridge',
-      status: 'operational',
-      endpoints: {
-        contribute: 'POST /api/wondercraft/contribute',
-        status: 'GET /api/wondercraft/status/{contributionId}',
-        diff: 'GET /api/wondercraft/diff/{assetId}?versionA={v1}&versionB={v2}'
-      }
+      error: 'Method Not Allowed',
+      message: 'This endpoint only accepts POST requests',
+      allowed_methods: ['POST']
     },
     {
+      status: 405,
       headers: {
         'content-type': 'application/json; charset=utf-8',
         'cache-control': 'no-store',

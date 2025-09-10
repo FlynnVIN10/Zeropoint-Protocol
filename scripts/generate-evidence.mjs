@@ -20,23 +20,34 @@ fs.writeFileSync(path.join('public','status','version.json'), JSON.stringify(ver
 
 // prevent drift: delete any other SHA dirs under phase2/verify
 const root = path.join('public','evidence','phase2','verify');
-for (const d of fs.readdirSync(root, { withFileTypes:true })) {
-  if (d.isDirectory() && d.name !== short) fs.rmSync(path.join(root,d.name), { recursive:true, force:true });
+try {
+  for (const d of fs.readdirSync(root, { withFileTypes:true })) {
+    if (d.isDirectory() && d.name !== short) fs.rmSync(path.join(root,d.name), { recursive:true, force:true });
+  }
+} catch (e) {
+  // Ignore cleanup errors
 }
 
 // stamp a marker file in the current SHA dir
 fs.writeFileSync(path.join(outDir,'ok.txt'), `ok ${short}\n${buildTime}\n`);
 
-// create index.json for evidence directory
+// create index.json for evidence directory with proper structure
 const evidenceIndex = {
-  commit: short,
-  buildTime,
   phase: process.env.PHASE || 'stage2',
+  commit: short,
   ciStatus: process.env.CI_STATUS || 'green',
+  buildTime,
   generated: buildTime,
   evidence: {
     version: version,
-    status: 'verified'
+    status: 'verified',
+    endpoints: {
+      healthz: '/api/healthz',
+      readyz: '/api/readyz',
+      synthient_status: '/api/synthient/status',
+      synthient_proposals: '/api/synthient/proposals',
+      synthient_consensus: '/api/synthient/consensus'
+    }
   }
 };
 fs.writeFileSync(path.join(outDir,'index.json'), JSON.stringify(evidenceIndex, null, 2));

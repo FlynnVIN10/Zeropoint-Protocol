@@ -42,15 +42,12 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json(
     { 
-      service: 'tinygrad-trainer',
-      status: 'operational',
-      endpoints: {
-        start: 'POST /api/tinygrad/start',
-        status: 'GET /api/tinygrad/status/{jobId}',
-        logs: 'GET /api/tinygrad/logs/{jobId}'
-      }
+      error: 'Method Not Allowed',
+      message: 'This endpoint only accepts POST requests',
+      allowed_methods: ['POST']
     },
     {
+      status: 405,
       headers: {
         'content-type': 'application/json; charset=utf-8',
         'cache-control': 'no-store',

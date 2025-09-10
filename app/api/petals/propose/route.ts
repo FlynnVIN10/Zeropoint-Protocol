@@ -43,16 +43,12 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   return NextResponse.json(
     { 
-      service: 'petals-orchestrator',
-      status: 'operational',
-      endpoints: {
-        propose: 'POST /api/petals/propose',
-        vote: 'POST /api/petals/vote/{proposalId}',
-        status: 'GET /api/petals/status/{proposalId}',
-        tally: 'GET /api/petals/tally/{proposalId}'
-      }
+      error: 'Method Not Allowed',
+      message: 'This endpoint only accepts POST requests',
+      allowed_methods: ['POST']
     },
     {
+      status: 405,
       headers: {
         'content-type': 'application/json; charset=utf-8',
         'cache-control': 'no-store',

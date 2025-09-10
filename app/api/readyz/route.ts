@@ -1,21 +1,19 @@
 import { NextResponse } from 'next/server'
+import { getBuildMeta } from '../../../lib/buildMeta'
 
 export async function GET() {
-  const commit = process.env.VERCEL_GIT_COMMIT_SHA || 
-                 process.env.GIT_COMMIT_SHA || 
-                 '1e4d82fdcf869c9ed0e57a7eb2ae811c7b717f9d' // Fallback to known commit
-  const buildTime = new Date().toISOString()
+  const buildMeta = getBuildMeta()
   const timestamp = new Date().toISOString()
   const environment = process.env.NODE_ENV || 'development'
   
   return NextResponse.json(
     {
       ready: true,
-      commit,
-      buildTime,
+      commit: buildMeta.commit,
+      buildTime: buildMeta.buildTime,
       timestamp,
-      phase: 'stage1',
-      ciStatus: environment === 'production' ? 'green' : 'development',
+      phase: buildMeta.phase,
+      ciStatus: buildMeta.ciStatus,
       mocks: false,
       services: {
         database: 'healthy',

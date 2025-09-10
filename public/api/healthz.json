@@ -1,19 +1,13 @@
 {
   "status": "ok",
-  "commit": "799f4987",
-  "buildTime": "2025-09-09T18:00:00Z",
-  "timestamp": "2025-09-10T00:00:00Z",
-  "uptime": 3600,
-  "environment": "production",
+  "commit": "07acd3ef",
   "phase": "stage1",
+  "buildTime": "2025-09-10T18:45:00Z",
+  "timestamp": "2025-09-10T18:45:00Z",
+  "dbConnected": true,
   "ciStatus": "green",
   "mocks": false,
   "trainingEnabled": true,
-  "database": {
-    "connected": true,
-    "tables": ["proposals", "ai_models", "training_jobs"],
-    "lastHealthCheck": "2025-09-10T00:00:00Z"
-  },
   "db": "ok",
   "services": [
     { "name": "database", "status": "ok" },

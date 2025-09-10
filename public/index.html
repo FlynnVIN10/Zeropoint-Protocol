@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zeropoint Protocol</title>
     <meta name="description" content="Zeropoint Protocol: Dual-Consensus Agentic AI Platform with ethical governance and verified evidence.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://zeropoint-protocol.pages.dev/">
     <style>
-      :root { --bg:#1e1e1e; --fg:#f0f0f0; --accent:#6e00ff; }
+      :root { --bg:#1e1e1e; --fg:#ffffff; --accent:#6e00ff; --muted:#e0e0e0; }
       html,body{margin:0;padding:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif}
       .container{max-width:100%;width:100%;margin:0;padding:0}
       h1{margin:0 0 8px 0}
@@ -15,7 +17,7 @@
       .btn{border:1px solid var(--accent);padding:10px 14px;border-radius:8px;color:var(--fg);text-decoration:none}
       .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:24px}
       .card{border:1px solid #333;border-radius:10px;padding:16px;background:#111}
-      .muted{color:#bbb;font-size:.9em}
+      .muted{color:var(--muted);font-size:.9em}
       
       /* Panel Layout */
       .panel-container {
@@ -118,11 +120,6 @@
     <div id="top-ticker" style="white-space:nowrap; overflow:hidden; border-bottom:1px solid #333; padding:8px 12px"></div>
     
     <div class="panel-container">
-      <aside class="left-panel">
-        <h3 style="margin-top:0">Consensus Queue</h3>
-        <div id="consensus-queue" class="muted">Synthient proposals will appear here.</div>
-      </aside>
-      
       <main class="center-panel">
         <h1 style="margin-top:0">Zeropoint Protocol</h1>
         
@@ -138,8 +135,13 @@
         </div>
       </main>
       
+      <aside class="left-panel">
+        <h2 style="margin-top:0">Consensus Queue</h2>
+        <div id="consensus-queue" class="muted">Synthient proposals will appear here.</div>
+      </aside>
+      
       <aside class="right-panel">
-        <h3 style="margin-top:0">Training</h3>
+        <h2 style="margin-top:0">Training</h2>
         <dl>
           <div><dt class="muted">Active Runs</dt><dd id="ts-active-runs" class="font-mono"></dd></div>
           <div><dt class="muted">Completed Today</dt><dd id="ts-completed-today" class="font-mono"></dd></div>

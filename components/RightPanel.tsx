@@ -112,8 +112,8 @@ export default function RightPanel({ initialTrainingData }: RightPanelProps) {
     const immediateFetch = async () => {
       try {
         console.log('RightPanel: Immediate fetch triggered')
-        // Use the working static JSON endpoint
-        const response = await fetch('/api/training/status.json')
+        // Use the dynamic API endpoint
+        const response = await fetch('/api/training/status')
         if (response.ok) {
           const data = await response.json()
           console.log('RightPanel: Immediate fetch successful:', data)
@@ -176,12 +176,12 @@ export default function RightPanel({ initialTrainingData }: RightPanelProps) {
   useEffect(() => {
     const fetchHealthStatus = async () => {
       try {
-        // Use the working endpoints that return correct data structure
+        // Use the dynamic API endpoints that return current data
         const [healthz, readyz, version, training, petals, wondercraft] = await Promise.all([
-          fetch('/api/healthz.json').then(r => r.ok), // Use static JSON file
-          fetch('/api/readyz.json').then(r => r.ok),  // Use static JSON file
+          fetch('/api/healthz').then(r => r.ok), // Use dynamic API route
+          fetch('/api/readyz').then(r => r.ok),  // Use dynamic API route
           fetch('/status/version.json').then(r => r.ok),
-          fetch('/api/training/status.json').then(r => r.ok), // Use working training endpoint
+          fetch('/api/training/status').then(r => r.ok), // Use dynamic API route
           fetch('/petals/status.json').then(r => r.ok),
           fetch('/wondercraft/status.json').then(r => r.ok)
         ])

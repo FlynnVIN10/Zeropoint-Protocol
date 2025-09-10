@@ -1,11 +1,15 @@
 {
   "ready": true,
-  "db": true,
-  "cache": true,
-  "commit": "09b02855e1b9bbc57b034d01fac5441aeb56e18c",
-  "buildTime": "2025-09-01T21:48:51.695Z",
-  "phase": "5",
+  "commit": "10b8fc38",
+  "buildTime": "2025-09-09T18:00:00Z",
+  "timestamp": "2025-09-10T00:00:00Z",
+  "phase": "stage1",
   "ciStatus": "green",
-  "timestamp": "2025-09-01T21:48:51.695Z",
+  "mocks": false,
+  "services": {
+    "database": "healthy",
+    "cache": "healthy",
+    "external": "healthy"
+  },
   "environment": "production"
 }

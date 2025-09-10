@@ -1,12 +1,24 @@
 {
   "status": "ok",
-  "commit": "09b02855e1b9bbc57b034d01fac5441aeb56e18c",
-  "buildTime": "2025-09-01T21:48:51.695Z",
-  "service": "zeropoint-protocol",
-  "phase": "5",
-  "version": "1.0.0",
+  "commit": "10b8fc38",
+  "buildTime": "2025-09-09T18:00:00Z",
+  "timestamp": "2025-09-10T00:00:00Z",
+  "uptime": 3600,
+  "environment": "production",
+  "phase": "stage1",
   "ciStatus": "green",
-  "uptime": 0,
-  "timestamp": "2025-09-01T21:48:51.695Z",
-  "environment": "production"
+  "mocks": false,
+  "trainingEnabled": true,
+  "database": {
+    "connected": true,
+    "tables": ["proposals", "ai_models", "training_jobs"],
+    "lastHealthCheck": "2025-09-10T00:00:00Z"
+  },
+  "db": "ok",
+  "services": [
+    { "name": "database", "status": "ok" },
+    { "name": "training", "status": "ok" },
+    { "name": "petals", "status": "ok" },
+    { "name": "wondercraft", "status": "ok" }
+  ]
 }

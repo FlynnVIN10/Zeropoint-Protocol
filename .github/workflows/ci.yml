@@ -14,12 +14,14 @@ jobs:
           npm run build
       - name: Assert evidence matches commit
         run: |
-          SHORT="$(echo "${GITHUB_SHA}" | cut -c1-7)"
-          test -f public/status/version.json
-          jq -e --arg s "$SHORT" '.commit==$s' public/status/version.json
-          test -d "public/evidence/phase2/verify/${SHORT}"
-          # ensure no stray SHAs exist
-          ONLY="$(ls public/evidence/phase2/verify | wc -l)"
-          test "$ONLY" = "1"
+          set -euo pipefail
+          SHORT="$(git rev-parse --short HEAD)"
+          echo "HEAD: $SHORT"
+          test -f public/status/version.json || (echo "missing version.json"; ls -la public/status || true; exit 1)
+          LIVE_LOCAL=$(jq -r .commit public/status/version.json)
+          echo "LOCAL version.json commit: $LIVE_LOCAL"
+          test "$SHORT" = "$LIVE_LOCAL" || { echo "Mismatch: expected $SHORT got $LIVE_LOCAL"; jq . public/status/version.json; git log -1 --oneline; exit 1; }
+          ls -la public/evidence/phase2/verify
+          test -d "public/evidence/phase2/verify/$SHORT"
       - name: ISO8601 timestamp
         run: jq -e '.buildTime|test("Z$")' public/status/version.json

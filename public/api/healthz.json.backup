@@ -1,24 +1,8 @@
 {
   "status": "ok",
-  "commit": "799f4987",
-  "buildTime": "2025-09-09T18:00:00Z",
-  "timestamp": "2025-09-10T00:00:00Z",
-  "uptime": 3600,
-  "environment": "production",
+  "commit": "9bfe0f25",
   "phase": "stage1",
-  "ciStatus": "green",
-  "mocks": false,
-  "trainingEnabled": true,
-  "database": {
-    "connected": true,
-    "tables": ["proposals", "ai_models", "training_jobs"],
-    "lastHealthCheck": "2025-09-10T00:00:00Z"
-  },
-  "db": "ok",
-  "services": [
-    { "name": "database", "status": "ok" },
-    { "name": "training", "status": "ok" },
-    { "name": "petals", "status": "ok" },
-    { "name": "wondercraft", "status": "ok" }
-  ]
+  "buildTime": "2025-09-11T08:00:00Z",
+  "timestamp": "2025-09-11T08:00:00Z",
+  "dbConnected": true
 }

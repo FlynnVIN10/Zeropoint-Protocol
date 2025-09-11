@@ -4,6 +4,10 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  COMMIT_SHA: ${{ github.sha }}
+  BUILD_TIME: ${{ github.event.head_commit.timestamp }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -42,14 +46,67 @@ jobs:
             code=$(printf "%s" "$out" | head -1 | awk '{print $2}');
             ctype=$(printf "%s" "$out" | awk 'tolower($0) ~ /^content-type:/{print tolower($0)}' | awk '{print $2}');
             cache=$(printf "%s" "$out" | awk 'tolower($0) ~ /^cf-cache-status:/{print $2}');
-            test "$code" = "200" || { head -120 body.txt; exit 1; }
-            echo "$u ok ($ctype, CF=$cache)"; 
+            test "$code" = "200" || { echo "❌ FAIL: $u returned $code"; head -120 body.txt; exit 1; }
+            echo "✅ PASS: $u ($ctype, CF=$cache)"; 
           }
           
-          echo "=== Status Endpoints ==="
+          echo "=== Status Endpoints (Worker) ==="
           probe https://zeropointprotocol.ai/status/version.json
           probe https://zeropointprotocol.ai/status/synthients.json
           
-          echo "=== API Endpoints ==="
+          echo "=== API Endpoints (Pages) ==="
           probe https://zeropointprotocol.ai/api/healthz
           probe https://zeropointprotocol.ai/api/readyz
+          probe https://zeropointprotocol.ai/api/training
+          probe https://zeropointprotocol.ai/api/proposals
+          
+          echo "✅ All endpoints verified"
+
+  ui-commit-check:
+    runs-on: ubuntu-latest
+    needs: [deploy, purge]
+    steps:
+      - name: Check UI Commit Display
+        run: |
+          echo "Checking UI commit display..."
+          HEAD=$(git rev-parse --short HEAD)
+          echo "Expected commit: $HEAD"
+          
+          # Check if version.json shows correct commit
+          VERSION_COMMIT=$(curl -s "https://zeropointprotocol.ai/status/version.json?cb=$(date +%s)" | jq -r .commit)
+          echo "Version.json commit: $VERSION_COMMIT"
+          
+          if [ "$VERSION_COMMIT" = "$HEAD" ]; then
+            echo "✅ PASS: UI commit matches HEAD"
+          else
+            echo "❌ FAIL: UI commit ($VERSION_COMMIT) != HEAD ($HEAD)"
+            exit 1
+          fi
+
+  lighthouse-a11y:
+    runs-on: ubuntu-latest
+    needs: [deploy, purge]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Lighthouse
+        run: npm install -g lighthouse
+      - name: Run Lighthouse A11y Check
+        run: |
+          lighthouse https://zeropointprotocol.ai/synthients --only-categories=accessibility --output=html --output-path=lighthouse-a11y.html --chrome-flags="--headless"
+          A11Y_SCORE=$(lighthouse https://zeropointprotocol.ai/synthients --only-categories=accessibility --output=json --chrome-flags="--headless" | jq -r '.categories.accessibility.score * 100')
+          echo "A11y Score: $A11Y_SCORE"
+          if (( $(echo "$A11Y_SCORE >= 95" | bc -l) )); then
+            echo "✅ PASS: A11y score $A11Y_SCORE >= 95"
+          else
+            echo "❌ FAIL: A11y score $A11Y_SCORE < 95"
+            exit 1
+          fi
+      - name: Upload Lighthouse Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-a11y-report
+          path: lighthouse-a11y.html

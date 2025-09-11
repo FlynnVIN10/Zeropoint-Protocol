@@ -8,6 +8,7 @@
     "adapt": "npx @cloudflare/next-on-pages",
     "build:site": "next build",
     "build:pages": "echo 'Building for Cloudflare Pages...' && npm run build && echo 'Build complete'",
+    "deploy": "npm run build && node scripts/update-worker-env.mjs && npx wrangler pages deploy . --project-name zeropoint-protocol --commit-dirty=true",
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",

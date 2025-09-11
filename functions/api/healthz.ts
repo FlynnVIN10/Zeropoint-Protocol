@@ -1,12 +1,13 @@
 export const onRequest = async ({ env }: { env: Env }) => {
   const commit = env.COMMIT_SHA || (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined) || env.BUILD_COMMIT || '0cf3c811';
   const status = {
-    status: 'ok',
+    status: 'offline',
     commit,
-    phase: 'stage2',
+    phase: 'offline',
     buildTime: env.BUILD_TIME ?? new Date().toISOString(),
     timestamp: new Date().toISOString(),
-    dbConnected: await checkDbConnection(env)
+    dbConnected: false,
+    message: 'Platform taken offline by CEO directive'
   };
   
   return new Response(JSON.stringify(status), {

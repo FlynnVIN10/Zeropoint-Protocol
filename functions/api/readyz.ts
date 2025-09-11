@@ -4,19 +4,20 @@ export const onRequest = async ({ env }: { env: Env }) => {
   const timestamp = new Date().toISOString();
 
   const response = {
-    ready: true,
+    ready: false,
     commit,
     buildTime,
     timestamp,
-    phase: 'stage2',
-    ciStatus: env.CI_STATUS ?? 'green',
-    mocks: env.MOCKS_DISABLED === '1' ? false : true,
+    phase: 'offline',
+    ciStatus: 'offline',
+    mocks: false,
     services: {
-      database: 'healthy',
-      cache: 'healthy',
-      external: 'healthy'
+      database: 'offline',
+      cache: 'offline',
+      external: 'offline'
     },
-    environment: env.ENVIRONMENT ?? 'production'
+    environment: env.ENVIRONMENT ?? 'production',
+    message: 'Platform taken offline by CEO directive'
   };
 
   return new Response(JSON.stringify(response), {

@@ -1,8 +1,8 @@
-import { buildMeta } from '../../app/lib/buildMeta';
+import { getBuildMeta } from '../../app/lib/buildMeta';
 
 export const onRequest = async () => {
-  // Use the same buildMeta as other endpoints
-  const meta = buildMeta;
+  // Use the same getBuildMeta as other endpoints
+  const meta = getBuildMeta();
   
   const response = {
     status: "active",

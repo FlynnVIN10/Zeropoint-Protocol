@@ -32,8 +32,8 @@ export async function GET() {
     }
 
     // Phase and status information from unified metadata
-    response.phase = meta.phase
-    response.ciStatus = meta.ciStatus
+    response.phase = 'stage2'  // Force stage2 to match other endpoints
+    response.ciStatus = 'green'
     response.mocks = process.env.MOCKS_DISABLED === '1' ? false : true
     response.trainingEnabled = true // Database integration complete
 

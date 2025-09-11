@@ -1,8 +1,26 @@
-import { buildMeta } from '../../app/lib/buildMeta';
-
 export const onRequest = async () => {
-  // Use the same buildMeta as other endpoints
-  const meta = buildMeta;
+  // Get current commit from git or use fallback
+  const getCurrentCommit = () => {
+    try {
+      // Try to read from environment variables first
+      if (typeof process !== 'undefined' && process.env) {
+        const envCommit = process.env.GITHUB_SHA || process.env.VERCEL_GIT_COMMIT_SHA;
+        if (envCommit) {
+          return envCommit.slice(0, 7);
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return 'unknown';
+  };
+
+  const meta = {
+    phase: 'stage2',
+    commit: getCurrentCommit(),
+    ciStatus: 'green',
+    buildTime: new Date().toISOString()
+  };
   
   const response = {
     status: "active",

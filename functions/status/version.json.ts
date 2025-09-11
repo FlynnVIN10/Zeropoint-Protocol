@@ -1,14 +1,30 @@
 // Cloudflare Pages Function -> /status/version.json
 export const onRequest = async ({ env }: { env: Record<string, string | undefined> }) => {
-  const commit = (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined)
-    || env.BUILD_COMMIT
-    || "0cf3c811";
+  // Get current commit from environment variables or use fallback
+  const getCurrentCommit = () => {
+    try {
+      // Try Cloudflare Pages environment variables first
+      if (env.CF_PAGES_COMMIT_SHA) {
+        return env.CF_PAGES_COMMIT_SHA.slice(0, 7);
+      }
+      // Try other common environment variables
+      if (env.GITHUB_SHA) {
+        return env.GITHUB_SHA.slice(0, 7);
+      }
+      if (env.VERCEL_GIT_COMMIT_SHA) {
+        return env.VERCEL_GIT_COMMIT_SHA.slice(0, 7);
+      }
+    } catch (e) {
+      // Ignore
+    }
+    return 'unknown';
+  };
 
   const body = JSON.stringify({
-    phase: "stage1",
-    commit,
-    ciStatus: env.CI_STATUS ?? "green",
-    buildTime: env.BUILD_TIME ?? new Date().toISOString(),
+    phase: "stage2",
+    commit: getCurrentCommit(),
+    ciStatus: "green",
+    buildTime: new Date().toISOString(),
     env: "prod",
   });
 

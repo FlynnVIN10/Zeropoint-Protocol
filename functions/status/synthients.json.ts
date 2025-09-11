@@ -1,11 +1,8 @@
+import { buildMeta } from '../../app/lib/buildMeta';
+
 export const onRequest = async () => {
-  // Read unified metadata from static file
-  let meta = { commit: 'unknown', phase: 'stage2', ciStatus: 'green', buildTime: new Date().toISOString() };
-  try {
-    meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json());
-  } catch (e) {
-    console.warn('Could not read version.json, using fallback');
-  }
+  // Use the same buildMeta as other endpoints
+  const meta = buildMeta;
   
   const response = {
     status: "active",

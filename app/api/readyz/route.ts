@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   // Read unified metadata from static file
-  const meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json())
+  const meta = await fetch('/status/version.json').then(r => r.json())
   
   const timestamp = new Date().toISOString()
   const environment = process.env.NODE_ENV || 'development'

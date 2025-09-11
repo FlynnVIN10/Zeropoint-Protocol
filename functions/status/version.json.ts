@@ -3,6 +3,7 @@ export const onRequest = async ({ env }: { env: Record<string, string | undefine
   // Get current commit from environment variables or use fallback
   // Use unified metadata source
   const commit = env.COMMIT_SHA || (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined) || env.BUILD_COMMIT || 'unknown';
+  console.log('Environment variables:', { COMMIT_SHA: env.COMMIT_SHA, CF_PAGES_COMMIT_SHA: env.CF_PAGES_COMMIT_SHA, BUILD_COMMIT: env.BUILD_COMMIT });
   const phase = env.PHASE || 'stage2';
   const buildTime = env.BUILD_TIME ?? new Date().toISOString();
 

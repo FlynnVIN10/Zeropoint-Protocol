@@ -13,7 +13,7 @@ export default {
     if (p === "/status/version.json") {
       return new Response(JSON.stringify({
         phase: env.PHASE ?? "stage2",
-        commit: (env.COMMIT_SHA ?? "unknown").slice(0,7),
+        commit: env.COMMIT_SHA ?? "unknown",
         ciStatus: env.CI_STATUS ?? "green",
         buildTime: env.BUILD_TIME ?? new Date().toISOString(),
         env: "prod",
@@ -38,7 +38,7 @@ export default {
           tinygrad_backend: "cpu"
         },
         timestamp: new Date().toISOString(),
-        commit: (env.COMMIT_SHA ?? "unknown").slice(0,7),
+        commit: env.COMMIT_SHA ?? "unknown",
         phase: env.PHASE ?? "stage2",
         ciStatus: env.CI_STATUS ?? "green",
         buildTime: env.BUILD_TIME ?? new Date().toISOString()

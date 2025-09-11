@@ -43,37 +43,51 @@ const RightPanel: React.FC = () => {
   const fetchLiveData = async () => {
     try {
       setLoading(true);
+      setError(null);
       
-      // Fetch real-time Synthient activity logs
-      const logsResponse = await fetch('/api/synthients-syslog?limit=5');
+      // Fetch all live data in parallel with cache busting
+      const cacheBuster = `?cb=${Date.now()}`;
+      const [logsResponse, trainingResponse, proposalsResponse, statusResponse, versionResponse] = await Promise.all([
+        fetch(`/api/synthients-syslog?limit=5${cacheBuster}`),
+        fetch(`/api/training${cacheBuster}`),
+        fetch(`/api/proposals${cacheBuster}`),
+        fetch(`/api/healthz${cacheBuster}`),
+        fetch(`/status/version.json${cacheBuster}`)
+      ]);
+
+      // Process Synthient activity logs
       if (logsResponse.ok) {
         const logsData = await logsResponse.json();
         setSynthientLogs(logsData.logs || []);
       }
 
-      // Fetch live training metrics
-      const trainingResponse = await fetch('/api/training/metrics');
+      // Process training metrics
       if (trainingResponse.ok) {
         const trainingData = await trainingResponse.json();
         setTrainingMetrics(trainingData);
       }
 
-      // Fetch active proposals
-      const proposalsResponse = await fetch('/api/consensus/proposals');
+      // Process proposals
       if (proposalsResponse.ok) {
         const proposalsData = await proposalsResponse.json();
-        setProposals(proposalsData.proposals || []);
+        setProposals(Array.isArray(proposalsData) ? proposalsData : [proposalsData]);
       }
 
-      // Fetch system status
-      const statusResponse = await fetch('/api/healthz');
+      // Process system status
       if (statusResponse.ok) {
         const statusData = await statusResponse.json();
         setSystemStatus(statusData);
       }
 
+      // Process version info for commit/buildTime display
+      if (versionResponse.ok) {
+        const versionData = await versionResponse.json();
+        setSystemStatus(prev => ({ ...prev, ...versionData }));
+      }
+
     } catch (err) {
       setError('Unable to load live data. Please try again later.');
+      console.error('Error fetching live data:', err);
     } finally {
       setLoading(false);
     }

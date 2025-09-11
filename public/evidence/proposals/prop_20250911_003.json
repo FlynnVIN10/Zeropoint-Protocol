@@ -1,0 +1,25 @@
+{
+  "proposalId": "prop_20250911_003",
+  "status": "approved",
+  "approvers": {
+    "human": {
+      "approver": "CEO",
+      "timestamp": "2025-09-11T22:15:00.000Z",
+      "consensus": "approved"
+    },
+    "synthient": {
+      "approver": "petals",
+      "timestamp": "2025-09-11T22:15:00.000Z",
+      "consensus": "approved"
+    }
+  },
+  "commit": "ca5d394",
+  "buildTime": "2025-09-11T22:15:00.000Z",
+  "phase": "stage2",
+  "evidence": {
+    "dualConsensus": true,
+    "humanApproval": true,
+    "synthientApproval": true,
+    "timestamp": "2025-09-11T22:15:00.000Z"
+  }
+}

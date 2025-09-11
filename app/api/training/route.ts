@@ -7,13 +7,14 @@ export async function GET() {
     
     const timestamp = new Date().toISOString()
     
-    // Mock proposal metrics - replace with real database queries
-    const proposalMetrics = {
-      proposalsPending: 1,
-      proposalsApproved: 2,
-      proposalsExecuted: 1,
-      latestProposalId: "prop_20250911_003",
-      latestProposalStatus: "approved",
+    // Mock training metrics - replace with real database queries
+    const trainingMetrics = {
+      activeRuns: 2,
+      runsCompletedToday: 1,
+      totalRuns: 3,
+      lastModel: "petals",
+      lastAccuracy: 0.95,
+      lastLoss: 0.12,
       lastUpdated: timestamp,
       commit: meta.commit,
       buildTime: meta.buildTime,
@@ -21,7 +22,7 @@ export async function GET() {
       ciStatus: meta.ciStatus
     }
 
-    return NextResponse.json(proposalMetrics, {
+    return NextResponse.json(trainingMetrics, {
       status: 200,
       headers: {
         'content-type': 'application/json; charset=utf-8',
@@ -31,15 +32,16 @@ export async function GET() {
       }
     })
   } catch (error) {
-    console.error('Proposal metrics failed:', error);
+    console.error('Training metrics failed:', error);
     
     return NextResponse.json(
       {
-        proposalsPending: 0,
-        proposalsApproved: 0,
-        proposalsExecuted: 0,
-        latestProposalId: "none",
-        latestProposalStatus: "none",
+        activeRuns: 0,
+        runsCompletedToday: 0,
+        totalRuns: 0,
+        lastModel: "unknown",
+        lastAccuracy: 0,
+        lastLoss: 0,
         lastUpdated: new Date().toISOString(),
         commit: 'unknown',
         buildTime: new Date().toISOString(),

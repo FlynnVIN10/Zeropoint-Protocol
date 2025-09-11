@@ -3,6 +3,7 @@ import BottomTicker from '../components/BottomTicker'
 import LeftPanel from '../components/LeftPanel'
 import PromptPane from '../components/PromptPane'
 import RightPanel from '../components/RightPanel'
+import Footer from '../components/Footer'
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
@@ -21,6 +22,7 @@ export default async function HomePage() {
       </div>
       
       <BottomTicker />
+      <Footer />
     </div>
   )
 }

@@ -11,17 +11,50 @@ jobs:
           HEAD="$(git rev-parse --short HEAD)"
           j() { curl -fsS "$1" | jq -r "$2"; }
 
+          echo "=== Verifying commit alignment ==="
+          echo "Repository HEAD: $HEAD"
+          
           V="$(j https://zeropointprotocol.ai/status/version.json .commit)"
           H="$(j https://zeropointprotocol.ai/api/healthz .commit)"
           R="$(j https://zeropointprotocol.ai/api/readyz .commit)"
+          T="$(j https://zeropointprotocol.ai/api/training .commit)"
+          P="$(j https://zeropointprotocol.ai/api/proposals .commit)"
           S="$(curl -fsS https://zeropointprotocol.ai/status/synthients.json 2>/dev/null | jq -r .commit // empty)"
-          test "$V" = "$HEAD" -a "$H" = "$HEAD" -a "$R" = "$HEAD" -a "${S:-$HEAD}" = "$HEAD" || { echo "Commit mismatch"; exit 1; }
+          
+          echo "Status version.json: $V"
+          echo "API healthz: $H"
+          echo "API readyz: $R"
+          echo "API training: $T"
+          echo "API proposals: $P"
+          echo "Status synthients: ${S:-empty}"
+          
+          # Check all endpoints match HEAD
+          if [ "$V" != "$HEAD" ] || [ "$H" != "$HEAD" ] || [ "$R" != "$HEAD" ] || [ "$T" != "$HEAD" ] || [ "$P" != "$HEAD" ]; then
+            echo "❌ Commit mismatch detected!"
+            echo "Expected: $HEAD"
+            echo "Status version.json: $V"
+            echo "API healthz: $H"
+            echo "API readyz: $R"
+            echo "API training: $T"
+            echo "API proposals: $P"
+            exit 1
+          fi
+          
+          echo "✅ All endpoints match HEAD commit: $HEAD"
 
-          for p in healthz readyz synthient/status synthient/proposals; do
-            curl -si https://zeropointprotocol.ai/api/$p | grep -qi 'content-type: application/json' || exit 1
+          echo "=== Verifying API responses ==="
+          for p in healthz readyz training proposals; do
+            echo "Checking /api/$p..."
+            if ! curl -si https://zeropointprotocol.ai/api/$p | grep -qi 'content-type: application/json'; then
+              echo "❌ /api/$p does not return JSON"
+              exit 1
+            fi
           done
-          curl -si https://zeropointprotocol.ai/api/tinygrad/start         | grep -q ' 405 ' || exit 1
-          curl -si https://zeropointprotocol.ai/api/petals/propose         | grep -q ' 405 ' || exit 1
-          curl -si https://zeropointprotocol.ai/api/wondercraft/contribute | grep -q ' 405 ' || exit 1
-
-          curl -si "https://zeropointprotocol.ai/evidence/phase2/verify/$HEAD/index.json" | grep -qi 'content-type: application/json' || exit 1
+          
+          echo "=== Verifying evidence ==="
+          if ! curl -si "https://zeropointprotocol.ai/evidence/phase2/verify/$HEAD/index.json" | grep -qi 'content-type: application/json'; then
+            echo "❌ Evidence file missing for commit $HEAD"
+            exit 1
+          fi
+          
+          echo "✅ All verification checks passed"

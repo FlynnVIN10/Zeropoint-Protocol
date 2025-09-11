@@ -6,6 +6,7 @@ export async function GET() {
   
   const timestamp = new Date().toISOString()
   const environment = process.env.NODE_ENV || 'development'
+  const mocksDisabled = process.env.MOCKS_DISABLED === '1'
   
   return NextResponse.json(
     {
@@ -15,7 +16,7 @@ export async function GET() {
         timestamp,
         phase: 'stage2',  // Force stage2 to match other endpoints
         ciStatus: 'green',
-      mocks: false,
+      mocks: !mocksDisabled,
       services: {
         database: 'healthy',
         cache: 'healthy',

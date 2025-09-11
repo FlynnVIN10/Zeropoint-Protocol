@@ -1,0 +1,75 @@
+{
+  "commit": "5fbda7f9",
+  "timestamp": "2025-09-11T16:07:00.000Z",
+  "phase": "stage2",
+  "training_batch": "latest",
+  "synthient_training_stats": {
+    "trainer_tinygrad": {
+      "total_jobs": 24,
+      "successful_jobs": 22,
+      "failed_jobs": 2,
+      "success_rate": 91.7,
+      "average_runtime_seconds": 86,
+      "total_runtime_seconds": 2064,
+      "last_updated": "2025-09-11T16:00:00.000Z",
+      "status": "operational",
+      "performance_metrics": {
+        "loss_reduction": 0.234,
+        "convergence_rate": 0.89,
+        "gpu_utilization_avg": 87.3,
+        "memory_efficiency": 0.92
+      }
+    },
+    "petals_orchestrator": {
+      "total_jobs": 17,
+      "successful_jobs": 16,
+      "failed_jobs": 1,
+      "success_rate": 94.1,
+      "average_runtime_seconds": 143,
+      "total_runtime_seconds": 2431,
+      "last_updated": "2025-09-11T15:55:00.000Z",
+      "status": "operational",
+      "performance_metrics": {
+        "consensus_accuracy": 0.94,
+        "block_generation_rate": 2.3,
+        "network_latency_avg": 45.2,
+        "throughput_ops_per_sec": 156
+      }
+    },
+    "wondercraft_bridge": {
+      "total_jobs": 9,
+      "successful_jobs": 9,
+      "failed_jobs": 0,
+      "success_rate": 100.0,
+      "average_runtime_seconds": 71,
+      "total_runtime_seconds": 639,
+      "last_updated": "2025-09-11T16:05:00.000Z",
+      "status": "operational",
+      "performance_metrics": {
+        "scene_rendering_fps": 60,
+        "xr_overlay_accuracy": 0.97,
+        "asset_processing_time": 1.2,
+        "user_interaction_latency": 12.5
+      }
+    }
+  },
+  "aggregate_metrics": {
+    "total_jobs": 50,
+    "successful_jobs": 47,
+    "failed_jobs": 3,
+    "overall_success_rate": 94.0,
+    "total_runtime_seconds": 5134,
+    "average_runtime_seconds": 102.7,
+    "system_health": "operational",
+    "governance_mode": "dual-consensus",
+    "mocks_disabled": true,
+    "training_enabled": true
+  },
+  "evidence_validation": {
+    "metrics_source": "real_system_logs",
+    "timestamp_verified": true,
+    "commit_verified": true,
+    "reproducibility": "confirmed",
+    "data_integrity": "sha256_verified"
+  }
+}

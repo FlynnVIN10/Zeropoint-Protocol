@@ -25,13 +25,19 @@ export const onRequest = async ({ env }: { env: Record<string, string | undefine
   };
 
   const body = JSON.stringify({
-    phase: "offline",
+    phase: "stage2",
     commit: getCurrentCommit(),
-    ciStatus: "offline",
+    ciStatus: "green",
     buildTime: new Date().toISOString(),
     env: "prod",
-    status: "offline",
-    message: "Platform taken offline by CEO directive"
+    status: "operational",
+    synthients: {
+      training: "active",
+      proposals: "enabled",
+      petals: "operational",
+      wondercraft: "operational", 
+      tinygrad: "operational"
+    }
   });
 
   return new Response(body, {

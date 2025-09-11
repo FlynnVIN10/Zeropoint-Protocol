@@ -45,6 +45,20 @@ const RightPanel: React.FC = () => {
       <h2>System Status</h2>
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
+      
+      {/* Navigation Links */}
+      <div className="nav-section">
+        <h3>Navigation</h3>
+        <ul className="nav-links">
+          <li><a href="/synthients">Synthients Dashboard</a></li>
+          <li><a href="/synthients/monitor">Live Monitor</a></li>
+          <li><a href="/status/version.json" target="_blank">Version Info</a></li>
+          <li><a href="/api/synthients-syslog" target="_blank">Synthient Logs</a></li>
+          <li><a href="/api/consensus/proposals" target="_blank">Proposals API</a></li>
+          <li><a href="/api/training/metrics" target="_blank">Training Metrics</a></li>
+        </ul>
+      </div>
+
       <div>
         <h3>Health</h3>
         {health ? (

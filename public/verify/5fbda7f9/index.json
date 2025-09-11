@@ -1,0 +1,21 @@
+{
+  "commit": "5fbda7f9",
+  "checks": {
+    "healthz": {
+      "status": "ok",
+      "headersFile": "evidence/restart/5fbda7f9/healthz.headers.txt",
+      "bodyFile": "evidence/restart/5fbda7f9/healthz.body.json"
+    },
+    "readyz": {
+      "status": true,
+      "headersFile": "evidence/restart/5fbda7f9/readyz.headers.txt",
+      "bodyFile": "evidence/restart/5fbda7f9/readyz.body.json"
+    },
+    "version": {
+      "status": "ok",
+      "headersFile": "evidence/restart/5fbda7f9/version.headers.txt",
+      "bodyFile": "evidence/restart/5fbda7f9/version.body.json"
+    }
+  },
+  "generatedAt": "2025-09-11T16:07:15Z"
+}

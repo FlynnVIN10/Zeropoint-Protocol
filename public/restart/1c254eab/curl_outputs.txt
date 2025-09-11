@@ -1,0 +1,48 @@
+HTTP/2 200 
+date: Thu, 11 Sep 2025 15:46:18 GMT
+content-type: application/json; charset=utf-8
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=kOJXDy6asrdA2VzhyYl3j%2F18Lr3R%2BwdTQyspqpmtSwHRXjL4C9C62gx0m34qP6BUO%2BDGHN2yKNiS2LskUrqaaUOrrUcdI5YMFfmb9KylRwcYOa86yL5615ofGosNAQraThvIJ%2BBDYNQ%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: 97d84c11cd6769c6-DFW
+alt-svc: h3=":443"; ma=86400
+
+HTTP/2 200 
+date: Thu, 11 Sep 2025 15:46:19 GMT
+content-type: application/json; charset=utf-8
+cache-control: no-store
+content-disposition: inline
+x-content-type-options: nosniff
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=KBuCHKVyAysfICSdny3P635mLkhaIwFGPKK4u8pjE21dUjyfEL1XUsha4z8juVb3t4MkL3vI29oeSOs0OxdZqqdvhMlmfZdLn8ykHDPBnr1J2SnZJIZwpxuZdfkm64NSI3%2FWwiP%2FWrA%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: 97d84c17a99a4778-DFW
+alt-svc: h3=":443"; ma=86400
+
+HTTP/2 200 
+date: Thu, 11 Sep 2025 15:46:20 GMT
+content-type: application/json
+content-length: 32
+cf-ray: 97d84c1c6d77462c-DFW
+cf-cache-status: HIT
+access-control-allow-origin: *
+age: 69848
+cache-control: public, s-maxage=604800
+etag: "eb49674177dc288686e6e9021ef7157d"
+server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains; preload
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: no-referrer
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-robots-tag: noindex
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=05Xfpt5TDo8VJM2lZUXSov7V94OmAH15Wi8arhm2EdPt79rJh0KWTf6w%2F8qWk5Mvv3glLrLaHt6m08iqjENZnhsjEfAKyOp2FA9ApKeAxREmUr56Wq5GSw%2BYwpNEbmO2VfJsL5EC1Hs%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+alt-svc: h3=":443"; ma=86400
+

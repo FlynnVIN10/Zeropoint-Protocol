@@ -58,3 +58,156 @@ body {
   background-color: rgba(139, 92, 246, 0.1);
   text-decoration: underline;
 }
+
+/* Live Data Styling */
+.live-section {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.activity-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  margin: 8px 0;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  border-left: 3px solid #8b5cf6;
+}
+
+.activity-item.critical {
+  border-left-color: #ef4444;
+}
+
+.activity-item.high {
+  border-left-color: #f97316;
+}
+
+.activity-item.medium {
+  border-left-color: #eab308;
+}
+
+.activity-item.low {
+  border-left-color: #22c55e;
+}
+
+.activity-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9em;
+  margin-bottom: 4px;
+}
+
+.synthient-id {
+  font-weight: bold;
+  color: #8b5cf6;
+}
+
+.timestamp {
+  color: #9ca3af;
+  font-size: 0.8em;
+}
+
+.activity-action {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.activity-details {
+  font-size: 0.8em;
+  color: #9ca3af;
+  word-break: break-all;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.metric-label {
+  color: #9ca3af;
+  font-size: 0.9em;
+}
+
+.metric-value {
+  font-weight: bold;
+  color: #8b5cf6;
+}
+
+.proposals-list {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.proposal-item {
+  margin: 8px 0;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.proposal-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.proposal-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8em;
+  color: #9ca3af;
+}
+
+.proposal-status {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.proposal-votes {
+  color: #8b5cf6;
+}
+
+.system-status {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.status-label {
+  color: #9ca3af;
+  font-size: 0.9em;
+}
+
+.status-value {
+  font-weight: bold;
+}
+
+.status-value.healthy {
+  color: #22c55e;
+}
+
+.status-value.error {
+  color: #ef4444;
+}

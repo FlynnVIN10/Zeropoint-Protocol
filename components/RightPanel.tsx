@@ -2,48 +2,94 @@
 
 import React, { useState, useEffect } from 'react';
 
-interface StatusData {
-  status?: string;
-  ready?: boolean;
-  active_runs?: number;
-  commit: string;
-  phase: string;
-  buildTime: string;
+interface SynthientLog {
+  id: string;
   timestamp: string;
-  dbConnected?: boolean;
+  synthient_id: string;
+  synthient_type: string;
+  action: string;
+  status: string;
+  details: any;
+  severity: string;
+}
+
+interface TrainingMetrics {
+  active_runs: number;
+  completed_today: number;
+  total_runs: number;
+  last_run_model: string;
+  last_run_accuracy: number;
+  last_run_loss: number;
+  commit: string;
+  last_update: string;
+}
+
+interface Proposal {
+  id: string;
+  title: string;
+  status: string;
+  votes: number;
+  created_at: string;
 }
 
 const RightPanel: React.FC = () => {
-  const [health, setHealth] = useState<StatusData | null>(null);
-  const [ready, setReady] = useState<StatusData | null>(null);
-  const [training, setTraining] = useState<StatusData | null>(null);
+  const [synthientLogs, setSynthientLogs] = useState<SynthientLog[]>([]);
+  const [trainingMetrics, setTrainingMetrics] = useState<TrainingMetrics | null>(null);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
+  const [systemStatus, setSystemStatus] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchData = async (url: string, setter: React.Dispatch<React.SetStateAction<StatusData | null>>) => {
-      try {
-        setLoading(true);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error(`Failed to fetch ${url}`);
-        const data = await response.json();
-        setter(data);
-      } catch (err) {
-        setError(`Unable to load data from ${url}. Please try again later.`);
-      } finally {
-        setLoading(false);
+  const fetchLiveData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch real-time Synthient activity logs
+      const logsResponse = await fetch('/api/synthients-syslog?limit=5');
+      if (logsResponse.ok) {
+        const logsData = await logsResponse.json();
+        setSynthientLogs(logsData.logs || []);
       }
-    };
 
-    fetchData('/api/healthz', setHealth);
-    fetchData('/api/readyz', setReady);
-    fetchData('/api/training/status', setTraining);
+      // Fetch live training metrics
+      const trainingResponse = await fetch('/api/training/metrics');
+      if (trainingResponse.ok) {
+        const trainingData = await trainingResponse.json();
+        setTrainingMetrics(trainingData);
+      }
+
+      // Fetch active proposals
+      const proposalsResponse = await fetch('/api/consensus/proposals');
+      if (proposalsResponse.ok) {
+        const proposalsData = await proposalsResponse.json();
+        setProposals(proposalsData.proposals || []);
+      }
+
+      // Fetch system status
+      const statusResponse = await fetch('/api/healthz');
+      if (statusResponse.ok) {
+        const statusData = await statusResponse.json();
+        setSystemStatus(statusData);
+      }
+
+    } catch (err) {
+      setError('Unable to load live data. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveData();
+    // Refresh data every 30 seconds
+    const interval = setInterval(fetchLiveData, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <div className="right-panel">
-      <h2>System Status</h2>
-      {loading && <p>Loading...</p>}
+      <h2>Live System Status</h2>
+      {loading && <p>Loading live data...</p>}
       {error && <p className="error">{error}</p>}
       
       {/* Navigation Links */}
@@ -59,40 +105,110 @@ const RightPanel: React.FC = () => {
         </ul>
       </div>
 
-      <div>
-        <h3>Health</h3>
-        {health ? (
-          <pre>
-            Status: {health.status}
-            Commit: {health.commit}
-            DB Connected: {health.dbConnected ? 'Yes' : 'No'}
-          </pre>
+      {/* Live Synthient Activity */}
+      <div className="live-section">
+        <h3>Recent Synthient Activity</h3>
+        {synthientLogs.length > 0 ? (
+          <div className="activity-list">
+            {synthientLogs.map((log) => (
+              <div key={log.id} className={`activity-item ${log.severity}`}>
+                <div className="activity-header">
+                  <span className="synthient-id">{log.synthient_id}</span>
+                  <span className="timestamp">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                </div>
+                <div className="activity-action">{log.action}</div>
+                <div className="activity-details">{JSON.stringify(log.details)}</div>
+              </div>
+            ))}
+          </div>
         ) : (
-          <p>No health data available</p>
+          <p>No recent activity</p>
         )}
       </div>
-      <div>
-        <h3>Readiness</h3>
-        {ready ? (
-          <pre>
-            Ready: {ready.ready ? 'Yes' : 'No'}
-            Commit: {ready.commit}
-          </pre>
-        ) : (
-          <p>No readiness data available</p>
-        )}
-      </div>
-      <div>
-        <h3>Training</h3>
-        {training ? (
-          <pre>
-            Active Runs: {training.active_runs}
-            Commit: {training.commit}
-          </pre>
+
+      {/* Live Training Metrics */}
+      <div className="live-section">
+        <h3>Training Status</h3>
+        {trainingMetrics ? (
+          <div className="metrics-grid">
+            <div className="metric-item">
+              <span className="metric-label">Active Runs:</span>
+              <span className="metric-value">{trainingMetrics.active_runs || 0}</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-label">Completed Today:</span>
+              <span className="metric-value">{trainingMetrics.completed_today || 0}</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-label">Total Runs:</span>
+              <span className="metric-value">{trainingMetrics.total_runs || 0}</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-label">Last Model:</span>
+              <span className="metric-value">{trainingMetrics.last_run_model || 'N/A'}</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-label">Last Accuracy:</span>
+              <span className="metric-value">{trainingMetrics.last_run_accuracy || 'N/A'}</span>
+            </div>
+            <div className="metric-item">
+              <span className="metric-label">Last Loss:</span>
+              <span className="metric-value">{trainingMetrics.last_run_loss || 'N/A'}</span>
+            </div>
+          </div>
         ) : (
           <p>No training data available</p>
         )}
       </div>
+
+      {/* Live Proposals */}
+      <div className="live-section">
+        <h3>Active Proposals</h3>
+        {proposals.length > 0 ? (
+          <div className="proposals-list">
+            {proposals.map((proposal) => (
+              <div key={proposal.id} className="proposal-item">
+                <div className="proposal-title">{proposal.title}</div>
+                <div className="proposal-meta">
+                  <span className="proposal-status">{proposal.status}</span>
+                  <span className="proposal-votes">{proposal.votes} votes</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No active proposals</p>
+        )}
+      </div>
+
+      {/* System Status */}
+      {systemStatus && (
+        <div className="live-section">
+          <h3>System Health</h3>
+          <div className="system-status">
+            <div className="status-item">
+              <span className="status-label">Status:</span>
+              <span className={`status-value ${systemStatus.status === 'ok' ? 'healthy' : 'error'}`}>
+                {systemStatus.status}
+              </span>
+            </div>
+            <div className="status-item">
+              <span className="status-label">Commit:</span>
+              <span className="status-value">{systemStatus.commit}</span>
+            </div>
+            <div className="status-item">
+              <span className="status-label">Phase:</span>
+              <span className="status-value">{systemStatus.phase}</span>
+            </div>
+            <div className="status-item">
+              <span className="status-label">DB Connected:</span>
+              <span className={`status-value ${systemStatus.dbConnected ? 'healthy' : 'error'}`}>
+                {systemStatus.dbConnected ? 'Yes' : 'No'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

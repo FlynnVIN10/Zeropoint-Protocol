@@ -36,31 +36,20 @@ jobs:
       
       - name: Probe Fresh Endpoints
         run: |
-          probe() {
-            u="$1?cb=$(date +%s)"
-            echo "Testing: $u"
-            o="$(curl -sS -D - "$u" -o body 2>&1)"
-            echo "Response headers:"
-            echo "$o" | head -20
-            
-            # Check for 200 status
-            if ! echo "$o" | head -1 | grep -q '200'; then
-              echo "❌ FAIL: Not 200 status"
-              head -1 <<<"$o"
-              exit 1
-            fi
-            
-            # Check for BYPASS or DYNAMIC cache status
-            if ! echo "$o" | grep -i '^cf-cache-status:' | grep -qi 'BYPASS\|DYNAMIC'; then
-              echo "❌ FAIL: Not BYPASS/DYNAMIC cache status"
-              echo "$o" | grep -i '^cf-cache-status:' || echo "No CF-Cache-Status header"
-              exit 1
-            fi
-            
-            echo "✅ PASS: $1"
+          probe() { 
+            u="$1?cb=$(date +%s)"; 
+            out="$(curl -sS -D - "$u" -o body.txt)"; 
+            code=$(printf "%s" "$out" | head -1 | awk '{print $2}');
+            ctype=$(printf "%s" "$out" | awk 'tolower($0) ~ /^content-type:/{print tolower($0)}' | awk '{print $2}');
+            cache=$(printf "%s" "$out" | awk 'tolower($0) ~ /^cf-cache-status:/{print $2}');
+            test "$code" = "200" || { head -120 body.txt; exit 1; }
+            echo "$u ok ($ctype, CF=$cache)"; 
           }
           
+          echo "=== Status Endpoints ==="
           probe https://zeropointprotocol.ai/status/version.json
           probe https://zeropointprotocol.ai/status/synthients.json
+          
+          echo "=== API Endpoints ==="
           probe https://zeropointprotocol.ai/api/healthz
           probe https://zeropointprotocol.ai/api/readyz

@@ -7,8 +7,14 @@ export default function Page() {
   const [items, setItems] = useState<Proposal[]>([]);
   const [status, setStatus] = useState<any>(null);
   const [note, setNote] = useState<Record<string, string>>({});
+  const [versionInfo, setVersionInfo] = useState<any>(null);
 
   useEffect(()=>{ (async()=>{
+    // Fetch with cache-buster for live data
+    const versionResponse = await fetch(`/status/version.json?cb=${Date.now()}`, {cache:'no-store'});
+    const version = await versionResponse.json();
+    setVersionInfo(version);
+    
     const p = await fetch('/api/synthient/proposals').then(r=>r.json());
     setItems(p.items||[]);
     const s = await fetch('/api/synthient/status').then(r=>r.json());
@@ -23,7 +29,15 @@ export default function Page() {
 
   return (
     <div className="mx-auto max-w-4xl p-6 space-y-6">
-      <h1 className="text-3xl font-semibold">Synthient Proposals</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-semibold">Synthient Proposals</h1>
+        {versionInfo && (
+          <div className="text-sm bg-gray-100 px-3 py-1 rounded-lg">
+            <div className="font-mono text-xs">Commit: {versionInfo.commit}</div>
+            <div className="text-xs opacity-70">Phase: {versionInfo.phase}</div>
+          </div>
+        )}
+      </div>
 
       <div className="rounded-2xl border p-4">
         <h2 className="text-xl font-medium mb-2">Training Status</h2>

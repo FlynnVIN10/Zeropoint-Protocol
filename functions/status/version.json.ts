@@ -1,34 +1,16 @@
 // Cloudflare Pages Function -> /status/version.json
 export const onRequest = async ({ env }: { env: Record<string, string | undefined> }) => {
   // Get current commit from environment variables or use fallback
-  const getCurrentCommit = () => {
-    try {
-      // Try COMMIT_SHA first (set in wrangler.toml)
-      if (env.COMMIT_SHA) {
-        return env.COMMIT_SHA;
-      }
-      // Try Cloudflare Pages environment variables
-      if (env.CF_PAGES_COMMIT_SHA) {
-        return env.CF_PAGES_COMMIT_SHA.slice(0, 7);
-      }
-      // Try other common environment variables
-      if (env.GITHUB_SHA) {
-        return env.GITHUB_SHA.slice(0, 7);
-      }
-      if (env.VERCEL_GIT_COMMIT_SHA) {
-        return env.VERCEL_GIT_COMMIT_SHA.slice(0, 7);
-      }
-    } catch (e) {
-      // Ignore
-    }
-    return 'unknown';
-  };
+  // Use unified metadata source
+  const commit = env.COMMIT_SHA || (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined) || env.BUILD_COMMIT || 'unknown';
+  const phase = env.PHASE || 'stage2';
+  const buildTime = env.BUILD_TIME ?? new Date().toISOString();
 
   const body = JSON.stringify({
-    phase: "stage2",
-    commit: getCurrentCommit(),
-    ciStatus: "green",
-    buildTime: new Date().toISOString(),
+    phase,
+    commit,
+    ciStatus: env.CI_STATUS ?? 'green',
+    buildTime,
     env: "prod",
     status: "operational",
     synthients: {

@@ -11,19 +11,16 @@ function getEnv(key: string, defaultValue: string): string {
 
 // Get current commit from git or environment
 function getCurrentCommit(): string {
-  const envCommit = getEnv('GITHUB_SHA', getEnv('VERCEL_GIT_COMMIT_SHA', ''));
-  if (envCommit) {
-    return envCommit.slice(0, 7);
+  // Prioritize COMMIT_SHA from wrangler.toml
+  const commitSha = getEnv('COMMIT_SHA', '');
+  if (commitSha) {
+    return commitSha;
   }
   
-  // Fallback: try to read from static version.json
-  try {
-    if (typeof fetch !== 'undefined') {
-      // This will work in Edge Runtime
-      return 'unknown'; // Will be overridden by fetch in functions
-    }
-  } catch (e) {
-    // Ignore
+  // Fallback to CI environment variables
+  const envCommit = getEnv('GITHUB_SHA', getEnv('VERCEL_GIT_COMMIT_SHA', getEnv('CF_PAGES_COMMIT_SHA', '')));
+  if (envCommit) {
+    return envCommit.slice(0, 8);
   }
   
   return 'unknown';

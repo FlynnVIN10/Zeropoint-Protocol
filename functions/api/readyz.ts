@@ -1,5 +1,7 @@
 export const onRequest = async ({ env }: { env: Env }) => {
-  const commit = env.COMMIT_SHA || (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined) || env.BUILD_COMMIT || '0cf3c811';
+  // Use unified metadata source
+  const commit = env.COMMIT_SHA || (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined) || env.BUILD_COMMIT || 'unknown';
+  const phase = env.PHASE || 'stage2';
   const buildTime = env.BUILD_TIME ?? new Date().toISOString();
   const timestamp = new Date().toISOString();
 
@@ -8,7 +10,7 @@ export const onRequest = async ({ env }: { env: Env }) => {
     commit,
     buildTime,
     timestamp,
-    phase: 'stage2',
+    phase,
     ciStatus: env.CI_STATUS ?? 'green',
     mocks: env.MOCKS_DISABLED === '1' ? false : true,
     services: {

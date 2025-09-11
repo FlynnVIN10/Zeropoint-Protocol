@@ -10,7 +10,7 @@ export async function GET() {
     const dbHealth = await dbManager.healthCheck();
 
     // Read unified metadata from static file
-    const meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json())
+    const meta = await fetch('/status/version.json').then(r => r.json())
 
     const timestamp = new Date().toISOString()
     const uptime = process.uptime()
@@ -63,7 +63,7 @@ export async function GET() {
     // Fallback to reading static file if fetch fails
     let meta = { commit: 'unknown', buildTime: new Date().toISOString(), phase: 'stage2' };
     try {
-      meta = await fetch('/status/version.json', { cf: 'bypass' }).then(r => r.json());
+      meta = await fetch('/status/version.json').then(r => r.json());
     } catch (e) {
       console.warn('Could not read version.json, using fallback');
     }

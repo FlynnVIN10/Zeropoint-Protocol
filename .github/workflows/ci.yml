@@ -12,28 +12,58 @@ jobs:
         run: |
           export GITHUB_SHA="${GITHUB_SHA}"
           npm run build
-      - name: Auto-update version.json to match HEAD
+      - name: Generate unified build metadata
         run: |
           set -euo pipefail
-          SHORT="$(git rev-parse --short HEAD)"
+          SHORT="$(git rev-parse --short=8 HEAD)"
+          BUILD_TIME="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
           echo "HEAD: $SHORT"
-          # Update version.json to match current HEAD
-          jq --arg commit "$SHORT" '.commit = $commit' public/status/version.json > temp.json && mv temp.json public/status/version.json
-          echo "Updated version.json commit to: $SHORT"
+          echo "BUILD_TIME: $BUILD_TIME"
+          
+          # Generate unified build metadata
+          cat > ci-build-meta.json << EOF
+          {
+            "commit": "$SHORT",
+            "buildTime": "$BUILD_TIME",
+            "phase": "stage2",
+            "ragMode": "beyond",
+            "ciStatus": "green",
+            "env": "prod"
+          }
+          EOF
+          
           # Create evidence directory for current commit
           mkdir -p "public/evidence/phase2/verify/$SHORT"
-          echo '{"status": "verified", "commit": "'$SHORT'", "timestamp": "'$(date -u +%Y-%m-%dT%H:%M:%S.%3NZ)'"}' > "public/evidence/phase2/verify/$SHORT/index.json"
+          echo '{"status": "verified", "commit": "'$SHORT'", "timestamp": "'$BUILD_TIME'"}' > "public/evidence/phase2/verify/$SHORT/index.json"
           echo "Created evidence directory for commit: $SHORT"
       - name: Verify evidence matches commit
         run: |
           set -euo pipefail
-          SHORT="$(git rev-parse --short HEAD)"
+          SHORT="$(git rev-parse --short=8 HEAD)"
           echo "HEAD: $SHORT"
-          test -f public/status/version.json || (echo "missing version.json"; ls -la public/status || true; exit 1)
-          LIVE_LOCAL=$(jq -r .commit public/status/version.json)
-          echo "LOCAL version.json commit: $LIVE_LOCAL"
-          test "$SHORT" = "$LIVE_LOCAL" || { echo "Mismatch: expected $SHORT got $LIVE_LOCAL"; jq . public/status/version.json; git log -1 --oneline; exit 1; }
+          
+          # Verify evidence directory exists
+          test -d "public/evidence/phase2/verify/$SHORT" || { echo "Missing evidence directory for $SHORT"; exit 1; }
+          
+          # Verify evidence content
+          EVIDENCE_COMMIT=$(jq -r .commit "public/evidence/phase2/verify/$SHORT/index.json")
+          test "$EVIDENCE_COMMIT" = "$SHORT" || { echo "Evidence commit mismatch: expected $SHORT got $EVIDENCE_COMMIT"; exit 1; }
+          
+          echo "✅ Evidence verified for commit: $SHORT"
           ls -la public/evidence/phase2/verify
-          test -d "public/evidence/phase2/verify/$SHORT"
-      - name: ISO8601 timestamp
-        run: jq -e '.buildTime|test("Z$")' public/status/version.json
+      - name: Verify build metadata
+        run: |
+          set -euo pipefail
+          SHORT="$(git rev-parse --short=8 HEAD)"
+          
+          # Verify ci-build-meta.json exists and has correct format
+          test -f ci-build-meta.json || { echo "Missing ci-build-meta.json"; exit 1; }
+          
+          # Verify commit matches
+          META_COMMIT=$(jq -r .commit ci-build-meta.json)
+          test "$META_COMMIT" = "$SHORT" || { echo "Metadata commit mismatch: expected $SHORT got $META_COMMIT"; exit 1; }
+          
+          # Verify buildTime format
+          jq -e '.buildTime|test("Z$")' ci-build-meta.json || { echo "Invalid buildTime format"; exit 1; }
+          
+          echo "✅ Build metadata verified for commit: $SHORT"

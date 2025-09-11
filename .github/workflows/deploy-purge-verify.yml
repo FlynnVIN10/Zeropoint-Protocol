@@ -22,14 +22,23 @@ jobs:
   purge:
     runs-on: ubuntu-latest
     needs: deploy
-    if: env.CF_API_TOKEN != ''
+    if: secrets.CF_API_TOKEN != '' && secrets.CF_ZONE_ID != ''
     steps:
-      - name: Purge Status Endpoints Cache
+      - name: Purge All Caches
         run: |
-          URLS='["https://zeropointprotocol.ai/status/version.json","https://zeropointprotocol.ai/status/synthients.json"]'
+          echo "Purging all caches..."
+          # Purge everything
+          curl -sX POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
+           -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" -H "Content-Type: application/json" \
+           --data '{"purge_everything":true}'
+          
+          # Also purge specific endpoints
+          URLS='["https://zeropointprotocol.ai/status/version.json","https://zeropointprotocol.ai/status/synthients.json","https://zeropointprotocol.ai/api/healthz","https://zeropointprotocol.ai/api/readyz","https://zeropointprotocol.ai/api/training","https://zeropointprotocol.ai/api/proposals"]'
           curl -sX POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
            -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" -H "Content-Type: application/json" \
            --data "{\"files\":$URLS}"
+          
+          echo "Cache purge completed"
 
   verify:
     runs-on: ubuntu-latest

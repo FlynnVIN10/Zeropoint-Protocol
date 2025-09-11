@@ -8,7 +8,7 @@ jobs:
       - name: Verify alignment and API hygiene
         run: |
           set -euo pipefail
-          HEAD="$(git rev-parse --short HEAD)"
+          HEAD="$(git rev-parse --short=8 HEAD)"
           j() { curl -fsS "$1" | jq -r "$2"; }
 
           echo "=== Verifying commit alignment ==="
@@ -41,6 +41,26 @@ jobs:
           fi
           
           echo "✅ All endpoints match HEAD commit: $HEAD"
+
+          echo "=== Verifying phase alignment ==="
+          PHASE_V="$(j https://zeropointprotocol.ai/status/version.json .phase)"
+          PHASE_H="$(j https://zeropointprotocol.ai/api/healthz .phase)"
+          PHASE_R="$(j https://zeropointprotocol.ai/api/readyz .phase)"
+          PHASE_T="$(j https://zeropointprotocol.ai/api/training .phase)"
+          PHASE_P="$(j https://zeropointprotocol.ai/api/proposals .phase)"
+          
+          echo "Status version.json phase: $PHASE_V"
+          echo "API healthz phase: $PHASE_H"
+          echo "API readyz phase: $PHASE_R"
+          echo "API training phase: $PHASE_T"
+          echo "API proposals phase: $PHASE_P"
+          
+          if [ "$PHASE_V" != "stage2" ] || [ "$PHASE_H" != "stage2" ] || [ "$PHASE_R" != "stage2" ] || [ "$PHASE_T" != "stage2" ] || [ "$PHASE_P" != "stage2" ]; then
+            echo "❌ Phase mismatch detected! Expected: stage2"
+            exit 1
+          fi
+          
+          echo "✅ All endpoints have correct phase: stage2"
 
           echo "=== Verifying API responses ==="
           for p in healthz readyz training proposals; do

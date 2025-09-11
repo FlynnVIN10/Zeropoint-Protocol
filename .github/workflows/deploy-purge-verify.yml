@@ -1,0 +1,66 @@
+name: Deploy, Purge Cache, and Verify
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Cloudflare Pages
+        run: |
+          npm ci
+          npm run build
+          npx wrangler pages deploy . --project-name zeropoint-protocol --commit-dirty=true
+
+  purge:
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: env.CF_API_TOKEN != ''
+    steps:
+      - name: Purge Status Endpoints Cache
+        run: |
+          URLS='["https://zeropointprotocol.ai/status/version.json","https://zeropointprotocol.ai/status/synthients.json"]'
+          curl -sX POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CF_ZONE_ID }}/purge_cache" \
+           -H "Authorization: Bearer ${{ secrets.CF_API_TOKEN }}" -H "Content-Type: application/json" \
+           --data "{\"files\":$URLS}"
+
+  verify:
+    runs-on: ubuntu-latest
+    needs: [deploy, purge]
+    steps:
+      - name: Wait for deployment
+        run: sleep 30
+      
+      - name: Probe Fresh Endpoints
+        run: |
+          probe() {
+            u="$1?cb=$(date +%s)"
+            echo "Testing: $u"
+            o="$(curl -sS -D - "$u" -o body 2>&1)"
+            echo "Response headers:"
+            echo "$o" | head -20
+            
+            # Check for 200 status
+            if ! echo "$o" | head -1 | grep -q '200'; then
+              echo "❌ FAIL: Not 200 status"
+              head -1 <<<"$o"
+              exit 1
+            fi
+            
+            # Check for BYPASS or DYNAMIC cache status
+            if ! echo "$o" | grep -i '^cf-cache-status:' | grep -qi 'BYPASS\|DYNAMIC'; then
+              echo "❌ FAIL: Not BYPASS/DYNAMIC cache status"
+              echo "$o" | grep -i '^cf-cache-status:' || echo "No CF-Cache-Status header"
+              exit 1
+            fi
+            
+            echo "✅ PASS: $1"
+          }
+          
+          probe https://zeropointprotocol.ai/status/version.json
+          probe https://zeropointprotocol.ai/status/synthients.json
+          probe https://zeropointprotocol.ai/api/healthz
+          probe https://zeropointprotocol.ai/api/readyz

@@ -32,8 +32,11 @@ export const onRequest = async ({ env }: { env: Record<string, string | undefine
     status: 200,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "no-store",
+      "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+      "Pragma": "no-cache",
+      "Expires": "0",
       "X-Content-Type-Options": "nosniff",
+      "X-Cache-Status": "BYPASS"
     },
   });
 };

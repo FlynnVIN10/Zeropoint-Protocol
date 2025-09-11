@@ -1,0 +1,13 @@
+{
+  "commit": "443ea3c8",
+  "generated": "2025-09-11T18:28:02Z",
+  "lighthouse": {
+    "accessibility": 98,
+    "performance": 95,
+    "bestPractices": 100,
+    "seo": 92,
+    "overall": 96
+  },
+  "url": "https://zeropointprotocol.ai",
+  "timestamp": "2025-09-11T18:28:02Z"
+}

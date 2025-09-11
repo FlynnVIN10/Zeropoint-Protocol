@@ -1,0 +1,67 @@
+{
+  "commit": "443ea3c8",
+  "generated": "2025-09-11T18:27:50Z",
+  "endpoints": {
+    "healthz": {
+      "headers": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host zeropointprotocol.ai:443 was resolved.\n* IPv6: 2606:4700:3030::6815:5001, 2606:4700:3030::6815:3001, 2606:4700:3030::6815:2001, 2606:4700:3030::6815:6001, 2606:4700:3030::6815:7001, 2606:4700:3030::6815:1001, 2606:4700:3030::6815:4001\n* IPv4: 104.21.48.1, 104.21.96.1, 104.21.64.1, 104.21.112.1, 104.21.32.1, 104.21.80.1, 104.21.16.1\n*   Trying [2606:4700:3030::6815:5001]:443...\n* Connected to zeropointprotocol.ai (2606:4700:3030::6815:5001) port 443\n* ALPN: curl offers h2,http/1.1\n* (304) (OUT), TLS handshake, Client hello (1):\n} [325 bytes data]\n*  CAfile: /etc/ssl/cert.pem\n*  CApath: none\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* (304) (IN), TLS handshake, Server hello (2):\n{ [122 bytes data]\n* (304) (IN), TLS handshake, Unknown (8):\n{ [19 bytes data]\n* (304) (IN), TLS handshake, Certificate (11):\n{ [2533 bytes data]\n* (304) (IN), TLS handshake, CERT verify (15):\n{ [78 bytes data]\n* (304) (IN), TLS handshake, Finished (20):\n{ [52 bytes data]\n* (304) (OUT), TLS handshake, Finished (20):\n} [52 bytes data]\n* SSL connection using TLSv1.3 / AEAD-AES256-GCM-SHA384 / [blank] / UNDEF\n* ALPN: server accepted h2\n* Server certificate:\n*  subject: CN=zeropointprotocol.ai\n*  start date: Aug 17 20:05:37 2025 GMT\n*  expire date: Nov 15 21:05:26 2025 GMT\n*  subjectAltName: host \"zeropointprotocol.ai\" matched cert's \"zeropointprotocol.ai\"\n*  issuer: C=US; O=Google Trust Services; CN=WE1\n*  SSL certificate verify ok.\n* using HTTP/2\n* [HTTP/2] [1] OPENED stream for https://zeropointprotocol.ai/api/healthz\n* [HTTP/2] [1] [:method: GET]\n* [HTTP/2] [1] [:scheme: https]\n* [HTTP/2] [1] [:authority: zeropointprotocol.ai]\n* [HTTP/2] [1] [:path: /api/healthz]\n* [HTTP/2] [1] [user-agent: curl/8.7.1]\n* [HTTP/2] [1] [accept: */*]\n> GET /api/healthz HTTP/2\r\n> Host: zeropointprotocol.ai\r\n> User-Agent: curl/8.7.1\r\n> Accept: */*\r\n> \r\n* Request completely sent off\n< HTTP/2 200 \r\n< date: Thu, 11 Sep 2025 18:27:41 GMT\r\n< content-type: application/json; charset=utf-8\r\n< content-length: 367\r\n< cache-control: no-store\r\n< content-disposition: inline\r\n< x-content-type-options: nosniff\r\n< vary: accept-encoding\r\n< report-to: {\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=EyA6oh1SJvWFf2cpLDz35urFZiycVxO%2BXN2grreis3hQLa7dtQqekaFWwdQqH2XyflEGk5F%2Bpo0nvpzXhRf%2FUT0WyChq9Ev5kjjk1dVIK%2BchhYbh8PXnxnvxSd3446Wb\"}]}\r\n< nel: {\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}\r\n< server: cloudflare\r\n< cf-cache-status: DYNAMIC\r\n< cf-ray: 97d93875a98b2d11-IAD\r\n< alt-svc: h3=\":443\"; ma=86400\r\n< \r\n{ [367 bytes data]\n\r100   367  100   367    0     0   1283      0 --:--:-- --:--:-- --:--:--  1283\n* Connection #0 to host zeropointprotocol.ai left intact",
+      "body": {
+        "status": "ok",
+        "commit": "443ea3c8",
+        "phase": "stage2",
+        "buildTime": "2025-09-11T18:25:52.971Z",
+        "timestamp": "2025-09-11T18:27:41.098Z",
+        "dbConnected": true,
+        "synthients": {
+          "training": "active",
+          "proposals": "enabled",
+          "petals": "operational",
+          "wondercraft": "operational",
+          "tinygrad": "operational"
+        },
+        "message": "Platform fully operational with Synthients training and proposal systems"
+      }
+    },
+    "readyz": {
+      "headers": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host zeropointprotocol.ai:443 was resolved.\n* IPv6: 2606:4700:3030::6815:3001, 2606:4700:3030::6815:2001, 2606:4700:3030::6815:6001, 2606:4700:3030::6815:7001, 2606:4700:3030::6815:1001, 2606:4700:3030::6815:4001, 2606:4700:3030::6815:5001\n* IPv4: 104.21.48.1, 104.21.96.1, 104.21.64.1, 104.21.112.1, 104.21.32.1, 104.21.80.1, 104.21.16.1\n*   Trying [2606:4700:3030::6815:3001]:443...\n* Connected to zeropointprotocol.ai (2606:4700:3030::6815:3001) port 443\n* ALPN: curl offers h2,http/1.1\n* (304) (OUT), TLS handshake, Client hello (1):\n} [325 bytes data]\n*  CAfile: /etc/ssl/cert.pem\n*  CApath: none\n* (304) (IN), TLS handshake, Server hello (2):\n{ [122 bytes data]\n* (304) (IN), TLS handshake, Unknown (8):\n{ [19 bytes data]\n* (304) (IN), TLS handshake, Certificate (11):\n{ [2533 bytes data]\n* (304) (IN), TLS handshake, CERT verify (15):\n{ [79 bytes data]\n* (304) (IN), TLS handshake, Finished (20):\n{ [52 bytes data]\n* (304) (OUT), TLS handshake, Finished (20):\n} [52 bytes data]\n* SSL connection using TLSv1.3 / AEAD-AES256-GCM-SHA384 / [blank] / UNDEF\n* ALPN: server accepted h2\n* Server certificate:\n*  subject: CN=zeropointprotocol.ai\n*  start date: Aug 17 20:05:37 2025 GMT\n*  expire date: Nov 15 21:05:26 2025 GMT\n*  subjectAltName: host \"zeropointprotocol.ai\" matched cert's \"zeropointprotocol.ai\"\n*  issuer: C=US; O=Google Trust Services; CN=WE1\n*  SSL certificate verify ok.\n* using HTTP/2\n* [HTTP/2] [1] OPENED stream for https://zeropointprotocol.ai/api/readyz\n* [HTTP/2] [1] [:method: GET]\n* [HTTP/2] [1] [:scheme: https]\n* [HTTP/2] [1] [:authority: zeropointprotocol.ai]\n* [HTTP/2] [1] [:path: /api/readyz]\n* [HTTP/2] [1] [user-agent: curl/8.7.1]\n* [HTTP/2] [1] [accept: */*]\n> GET /api/readyz HTTP/2\r\n> Host: zeropointprotocol.ai\r\n> User-Agent: curl/8.7.1\r\n> Accept: */*\r\n> \r\n* Request completely sent off\n< HTTP/2 200 \r\n< date: Thu, 11 Sep 2025 18:27:42 GMT\r\n< content-type: application/json; charset=utf-8\r\n< content-length: 508\r\n< cache-control: no-store\r\n< content-disposition: inline\r\n< x-content-type-options: nosniff\r\n< vary: accept-encoding\r\n< report-to: {\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=iqjPwqXYZ71o1Cd8zIPkByg4a%2FB78XZJvlppw4ntokf71axakz7K83WdU2Ky3ySEjoaq0osOlH9yECOoKUQ4PMu0KoQSMgT%2BkubRJU0Z5bj16Mf20NRtTYM51FQd44t6\"}]}\r\n< nel: {\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}\r\n< server: cloudflare\r\n< cf-cache-status: DYNAMIC\r\n< cf-ray: 97d9387cc9d4126a-IAD\r\n< alt-svc: h3=\":443\"; ma=86400\r\n< \r\n{ [508 bytes data]\n\r100   508  100   508    0     0   1781      0 --:--:-- --:--:-- --:--:--  1782\n* Connection #0 to host zeropointprotocol.ai left intact",
+      "body": {
+        "ready": true,
+        "commit": "443ea3c8",
+        "buildTime": "2025-09-11T18:25:52.971Z",
+        "timestamp": "2025-09-11T18:27:42.241Z",
+        "phase": "stage2",
+        "ciStatus": "green",
+        "mocks": false,
+        "services": {
+          "database": "healthy",
+          "cache": "healthy",
+          "external": "healthy",
+          "petals": "operational",
+          "wondercraft": "operational",
+          "tinygrad": "operational"
+        },
+        "environment": "production",
+        "synthients": {
+          "training": "active",
+          "proposals": "enabled",
+          "selfImprovement": "enabled"
+        },
+        "message": "Platform fully operational with Synthients training and proposal systems"
+      }
+    },
+    "version": {
+      "headers": "  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current\n                                 Dload  Upload   Total   Spent    Left  Speed\n\r  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Host zeropointprotocol.ai:443 was resolved.\n* IPv6: 2606:4700:3030::6815:2001, 2606:4700:3030::6815:6001, 2606:4700:3030::6815:7001, 2606:4700:3030::6815:1001, 2606:4700:3030::6815:4001, 2606:4700:3030::6815:5001, 2606:4700:3030::6815:3001\n* IPv4: 104.21.48.1, 104.21.96.1, 104.21.64.1, 104.21.112.1, 104.21.32.1, 104.21.80.1, 104.21.16.1\n*   Trying [2606:4700:3030::6815:2001]:443...\n* Connected to zeropointprotocol.ai (2606:4700:3030::6815:2001) port 443\n* ALPN: curl offers h2,http/1.1\n* (304) (OUT), TLS handshake, Client hello (1):\n} [325 bytes data]\n*  CAfile: /etc/ssl/cert.pem\n*  CApath: none\n* (304) (IN), TLS handshake, Server hello (2):\n{ [122 bytes data]\n* (304) (IN), TLS handshake, Unknown (8):\n{ [19 bytes data]\n* (304) (IN), TLS handshake, Certificate (11):\n{ [2533 bytes data]\n* (304) (IN), TLS handshake, CERT verify (15):\n{ [78 bytes data]\n* (304) (IN), TLS handshake, Finished (20):\n{ [52 bytes data]\n* (304) (OUT), TLS handshake, Finished (20):\n} [52 bytes data]\n* SSL connection using TLSv1.3 / AEAD-AES256-GCM-SHA384 / [blank] / UNDEF\n* ALPN: server accepted h2\n* Server certificate:\n*  subject: CN=zeropointprotocol.ai\n*  start date: Aug 17 20:05:37 2025 GMT\n*  expire date: Nov 15 21:05:26 2025 GMT\n*  subjectAltName: host \"zeropointprotocol.ai\" matched cert's \"zeropointprotocol.ai\"\n*  issuer: C=US; O=Google Trust Services; CN=WE1\n*  SSL certificate verify ok.\n* using HTTP/2\n* [HTTP/2] [1] OPENED stream for https://zeropointprotocol.ai/status/version.json\n* [HTTP/2] [1] [:method: GET]\n* [HTTP/2] [1] [:scheme: https]\n* [HTTP/2] [1] [:authority: zeropointprotocol.ai]\n* [HTTP/2] [1] [:path: /status/version.json]\n* [HTTP/2] [1] [user-agent: curl/8.7.1]\n* [HTTP/2] [1] [accept: */*]\n> GET /status/version.json HTTP/2\r\n> Host: zeropointprotocol.ai\r\n> User-Agent: curl/8.7.1\r\n> Accept: */*\r\n> \r\n* Request completely sent off\n< HTTP/2 200 \r\n< date: Thu, 11 Sep 2025 18:27:43 GMT\r\n< content-type: application/json; charset=utf-8\r\n< content-length: 108\r\n< vary: accept-encoding\r\n< report-to: {\"group\":\"cf-nel\",\"max_age\":604800,\"endpoints\":[{\"url\":\"https://a.nel.cloudflare.com/report/v4?s=GMP4weSmgwdIkVziPPVREDBkm86eqZiVzhLCEEmNVqUZvSdaob6frXJ%2B2rx%2BfHiNkZJqAq5k4Vf2N8RfYg7dAi9g5diwrjkj2T2Ig0TNiIGFtJvo6kV%2FtOPDJ7aB9uIZ\"}]}\r\n< nel: {\"report_to\":\"cf-nel\",\"success_fraction\":0.0,\"max_age\":604800}\r\n< cache-control: no-store, no-cache, must-revalidate, max-age=0\r\n< expires: 0\r\n< pragma: no-cache\r\n< x-content-type-options: nosniff\r\n< server: cloudflare\r\n< cf-ray: 97d938840b381ee4-ORD\r\n< \r\n{ [108 bytes data]\n\r100   108  100   108    0     0    476      0 --:--:-- --:--:-- --:--:--   477\n* Connection #0 to host zeropointprotocol.ai left intact",
+      "body": {
+        "phase": "stage2",
+        "commit": "443ea3c",
+        "ciStatus": "green",
+        "buildTime": "2025-09-11T18:25:52.971Z",
+        "env": "prod"
+      }
+    }
+  },
+  "verification": {
+    "commitAlignment": true,
+    "phaseAlignment": true,
+    "synthientsOperational": true
+  }
+}

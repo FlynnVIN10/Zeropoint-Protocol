@@ -1,5 +1,5 @@
 export default {
-  async fetch(req: Request, env: any) {
+  async fetch(req: Request, env: any): Promise<Response> {
     const h = {
       "Content-Type": "application/json; charset=utf-8",
       "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
@@ -46,4 +46,4 @@ export default {
     
     return new Response(JSON.stringify({error: "not found"}), {status: 404, headers: h});
   }
-} satisfies ExportedHandler;
+};

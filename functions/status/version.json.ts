@@ -3,7 +3,11 @@ export const onRequest = async ({ env }: { env: Record<string, string | undefine
   // Get current commit from environment variables or use fallback
   const getCurrentCommit = () => {
     try {
-      // Try Cloudflare Pages environment variables first
+      // Try COMMIT_SHA first (set in wrangler.toml)
+      if (env.COMMIT_SHA) {
+        return env.COMMIT_SHA;
+      }
+      // Try Cloudflare Pages environment variables
       if (env.CF_PAGES_COMMIT_SHA) {
         return env.CF_PAGES_COMMIT_SHA.slice(0, 7);
       }

@@ -16,7 +16,8 @@ export default {
         commit: (env.COMMIT_SHA ?? "unknown").slice(0,7),
         ciStatus: env.CI_STATUS ?? "green",
         buildTime: env.BUILD_TIME ?? new Date().toISOString(),
-        env: "prod"
+        env: "prod",
+        ragMode: "beyond" // Beyond RAG evidence requirement for CI/CD gate
       }), {status: 200, headers: h});
     }
     

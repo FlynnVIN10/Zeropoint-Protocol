@@ -14,6 +14,7 @@ export const onRequest = async ({ env }: { env: Record<string, string | undefine
     buildTime,
     env: "prod",
     status: "operational",
+    ragMode: "beyond", // Beyond RAG evidence requirement for CI/CD gate
     synthients: {
       training: "active",
       proposals: "enabled",

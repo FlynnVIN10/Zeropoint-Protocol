@@ -1,0 +1,15 @@
+HTTP/2 200 
+date: Thu, 11 Sep 2025 02:18:22 GMT
+content-type: application/json; charset=utf-8
+content-length: 585
+vary: accept-encoding
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=XDG5uM7Wc1YbdADghf5DZPgFThgdOBUyKzc52J357B%2Bbs0MjN1tx%2F5DnsjVO68G2hF%2FWZ3A2%2BodxWK8773XjLDZNYsCvpcDtTnlf6PXIJ0jLnA6kzekB1lU6wwCySPmZ"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cache-control: no-store, no-cache, must-revalidate, max-age=0
+expires: 0
+pragma: no-cache
+x-content-type-options: nosniff
+server: cloudflare
+cf-ray: 97d3ac932f3469c5-DFW
+
+{"status":"active","governance_mode":"dual-consensus","synthients":{"tinygrad":{"status":"active","backend":"cpu","training_enabled":true},"petals":{"status":"active","proposals_enabled":true,"voting_enabled":true},"wondercraft":{"status":"active","contributions_enabled":true,"validation_enabled":true}},"environment":{"mocks_disabled":true,"synthients_active":true,"training_enabled":true,"governance_mode":"dual-consensus","tinygrad_backend":"cpu"},"timestamp":"2025-09-11T02:18:22.607Z","commit":"12b7909","phase":"stage2","ciStatus":"green","buildTime":"2025-09-11T02:17:00.000Z"}

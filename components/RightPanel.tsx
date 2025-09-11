@@ -82,7 +82,7 @@ const RightPanel: React.FC = () => {
       // Process version info for commit/buildTime display
       if (versionResponse.ok) {
         const versionData = await versionResponse.json();
-        setSystemStatus(prev => ({ ...prev, ...versionData }));
+        setSystemStatus((prev: any) => ({ ...prev, ...versionData }));
       }
 
     } catch (err) {

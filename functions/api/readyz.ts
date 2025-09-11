@@ -8,7 +8,7 @@ export const onRequest = async ({ env }: { env: Env }) => {
     commit,
     buildTime,
     timestamp,
-    phase: 'stage1',
+    phase: 'stage2',
     ciStatus: env.CI_STATUS ?? 'green',
     mocks: env.MOCKS_DISABLED === '1' ? false : true,
     services: {

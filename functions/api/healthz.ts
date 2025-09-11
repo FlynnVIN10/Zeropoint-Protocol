@@ -3,7 +3,7 @@ export const onRequest = async ({ env }: { env: Env }) => {
   const status = {
     status: 'ok',
     commit,
-    phase: 'stage1',
+    phase: 'stage2',
     buildTime: env.BUILD_TIME ?? new Date().toISOString(),
     timestamp: new Date().toISOString(),
     dbConnected: await checkDbConnection(env)

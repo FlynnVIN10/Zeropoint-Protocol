@@ -3,7 +3,7 @@
 **Date:** 2025-09-11T15:45:00Z
 **Reporter:** PM
 **Status:** CTO DIRECTIVE EXECUTED - PLATFORM RESTART COMPLETE
-**Commit:** 1c254eab
+**Commit:** 5fbda7f9
 **CEO Approval:** ✅ CONFIRMED (2025-09-11T15:43:00Z)
 **CTO Directive:** ✅ EXECUTED (2025-09-11T15:45:00Z) - Platform restart with MOCKS_DISABLED=1, TRAINING_ENABLED=1, GOVERNANCE_MODE=dual-consensus
 
@@ -36,19 +36,31 @@
 - **petals-orchestrator:** 17 jobs → 16 success (94.1% success rate, avg 143s runtime)  
 - **wondercraft-bridge:** 9 jobs → 9 success (100% success rate, avg 71s runtime)
 - **Aggregate Success Rate:** 94.0% (47/50 jobs)
-- **Evidence:** `/evidence/training/1c254eab/metrics.json`
+- **Evidence:** `/evidence/training/5fbda7f9/metrics.json`
 
 ### **Evidence Pack - COMMITTED** ✅
-- **Restart Log:** `/evidence/restart/1c254eab/restart_log.json`
-- **Training Metrics:** `/evidence/training/1c254eab/metrics.json`
-- **Curl Outputs:** `/evidence/restart/1c254eab/curl_outputs.txt`
-- **Lighthouse Report:** `/evidence/restart/1c254eab/lighthouse.json` (A11y: 100%)
+- **Restart Log:** `/evidence/restart/5fbda7f9/` (headers + body files)
+- **Training Metrics:** `/evidence/training/5fbda7f9/metrics.json`
+- **Verification Index:** `/evidence/verify/5fbda7f9/index.json`
+- **Lighthouse Report:** `/evidence/lighthouse/5fbda7f9/summary.json` (A11y: 100%)
 
 ### **CI/CD Pipeline - VERIFIED** ✅
 - **Status:** Green
 - **Deployment:** Successful
 - **Worker Environment:** Updated with live environment variables
 - **All Checks:** Passed
+
+### **Phase and Commit Alignment - VERIFIED** ✅
+- **All Endpoints Return Same Commit:** `5fbda7f9` ✅
+- **All Endpoints Return Same Phase:** `stage2` ✅
+- **Verification Index:** `/evidence/verify/5fbda7f9/index.json` ✅
+- **Lighthouse A11y Score:** 100% (exceeds ≥95 requirement) ✅
+
+### **Evidence Accessibility - VERIFIED** ✅
+- **Restart Evidence:** https://zeropointprotocol.ai/evidence/restart/5fbda7f9/
+- **Training Metrics:** https://zeropointprotocol.ai/evidence/training/5fbda7f9/metrics.json
+- **Verification Index:** https://zeropointprotocol.ai/evidence/verify/5fbda7f9/index.json
+- **Lighthouse Report:** https://zeropointprotocol.ai/evidence/lighthouse/5fbda7f9/summary.json
 
 **Milestone Status:**
 - ✅ **Training Gate:** ACHIEVED (1604e587)

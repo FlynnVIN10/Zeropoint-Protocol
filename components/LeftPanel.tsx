@@ -154,7 +154,7 @@ export default function LeftPanel() {
       
       <div className="consensus-sections">
         <section style={{marginBottom: '20px'}}>
-          <h4 style={{color: '#6E00FF', marginBottom: '8px'}}>Pending Proposals ({getProposalsByState('pending').length})</h4>
+          <h3 style={{color: '#a855f7', marginBottom: '8px', fontSize: '14px'}}>Pending Proposals ({getProposalsByState('pending').length})</h3>
           {getProposalsByState('pending').length > 0 ? (
             getProposalsByState('pending').map(proposal => (
               <div key={proposal.id} style={{border: '1px solid #333', padding: '8px', marginBottom: '8px', borderRadius: '4px'}}>
@@ -198,7 +198,7 @@ export default function LeftPanel() {
         </section>
         
         <section style={{marginBottom: '20px'}}>
-          <h4 style={{color: '#6E00FF', marginBottom: '8px'}}>Synthiant Approved ({getProposalsByState('synthiant_approved').length})</h4>
+          <h3 style={{color: '#a855f7', marginBottom: '8px', fontSize: '14px'}}>Synthiant Approved ({getProposalsByState('synthiant_approved').length})</h3>
           {getProposalsByState('synthiant_approved').length > 0 ? (
             getProposalsByState('synthiant_approved').map(proposal => (
               <div key={proposal.id} style={{border: '1px solid #51cf66', padding: '8px', marginBottom: '8px', borderRadius: '4px', background: 'rgba(81, 207, 102, 0.1)'}}>
@@ -213,7 +213,7 @@ export default function LeftPanel() {
         </section>
         
         <section style={{marginBottom: '20px'}}>
-          <h4 style={{color: '#6E00FF', marginBottom: '8px'}}>Human Approved ({getProposalsByState('human_approved').length})</h4>
+          <h3 style={{color: '#a855f7', marginBottom: '8px', fontSize: '14px'}}>Human Approved ({getProposalsByState('human_approved').length})</h3>
           {getProposalsByState('human_approved').length > 0 ? (
             getProposalsByState('human_approved').map(proposal => (
               <div key={proposal.id} style={{border: '1px solid #51cf66', padding: '8px', marginBottom: '8px', borderRadius: '4px', background: 'rgba(81, 207, 102, 0.2)'}}>
@@ -228,7 +228,7 @@ export default function LeftPanel() {
         </section>
         
         <section style={{marginBottom: '20px'}}>
-          <h4 style={{color: '#6E00FF', marginBottom: '8px'}}>Vetoed ({getProposalsByState('synthiant_vetoed').length + getProposalsByState('human_vetoed').length})</h4>
+          <h3 style={{color: '#a855f7', marginBottom: '8px', fontSize: '14px'}}>Vetoed ({getProposalsByState('synthiant_vetoed').length + getProposalsByState('human_vetoed').length})</h3>
           {[...getProposalsByState('synthiant_vetoed'), ...getProposalsByState('human_vetoed')].length > 0 ? (
             [...getProposalsByState('synthiant_vetoed'), ...getProposalsByState('human_vetoed')].map(proposal => (
               <div key={proposal.id} style={{border: '1px solid #ff6b6b', padding: '8px', marginBottom: '8px', borderRadius: '4px', background: 'rgba(255, 107, 107, 0.1)'}}>
@@ -243,7 +243,7 @@ export default function LeftPanel() {
         </section>
         
         <section style={{marginBottom: '20px'}}>
-          <h4 style={{color: '#6E00FF', marginBottom: '8px'}}>Activity Summary</h4>
+          <h3 style={{color: '#a855f7', marginBottom: '8px', fontSize: '14px'}}>Activity Summary</h3>
           <div style={{fontSize: '11px', color: '#bbb'}}>
             <p>Total Proposals: {proposals.length}</p>
             <p>Pending Review: {getProposalsByState('pending').length}</p>

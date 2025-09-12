@@ -22,7 +22,9 @@ jobs:
           head -10 README.md
           echo ""
           echo "=== Evidence Directory Check ==="
-          ls -la evidence/phase1/verify/1604e587/ || echo "Evidence directory not found"
+          PHASE=$(grep -o '"current": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "stage2")
+          echo "Phase: $PHASE"
+          ls -la evidence/$PHASE/verify/${{ steps.head.outputs.head_commit }}/ || echo "Evidence directory not found"
           echo ""
           echo "=== Workflow Files Check ==="
           ls -la .github/workflows/
@@ -38,18 +40,20 @@ jobs:
       - name: Test local evidence file
         run: |
           echo "=== Testing local evidence file ==="
-          if [ -f "evidence/phase1/verify/1604e587/index.json" ]; then
+          PHASE=$(grep -o '"current": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "stage2")
+          echo "Phase: $PHASE"
+          if [ -f "evidence/$PHASE/verify/${{ steps.head.outputs.head_commit }}/index.json" ]; then
             echo "✅ Evidence file exists"
-            if jq empty evidence/phase1/verify/1604e587/index.json 2>/dev/null; then
+            if jq empty evidence/$PHASE/verify/${{ steps.head.outputs.head_commit }}/index.json 2>/dev/null; then
               echo "✅ Evidence file is valid JSON"
-              jq '.meta.commit' evidence/phase1/verify/1604e587/index.json
+              jq '.meta.commit' evidence/$PHASE/verify/${{ steps.head.outputs.head_commit }}/index.json
             else
               echo "❌ Evidence file is not valid JSON"
-              head -10 evidence/phase1/verify/1604e587/index.json
+              head -10 evidence/$PHASE/verify/${{ steps.head.outputs.head_commit }}/index.json
             fi
           else
             echo "❌ Evidence file does not exist"
-            ls -la evidence/phase1/verify/ || echo "Directory listing failed"
+            ls -la evidence/$PHASE/verify/ || echo "Directory listing failed"
           fi
 
       - name: Alignment check (HEAD vs live)
@@ -81,7 +85,9 @@ jobs:
       - name: Assert evidence JSON content-type (best-effort)
         run: |
           echo "=== Evidence Content-Type Check ==="
-          ct=$(curl -sI https://zeropointprotocol.ai/evidence/phase1/verify/${{ steps.head.outputs.head_commit }}/index.json | awk -F': ' 'tolower($1)=="content-type"{print tolower($2)}' | tr -d '\r')
+          PHASE=$(grep -o '"current": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "stage2")
+          echo "Phase: $PHASE"
+          ct=$(curl -sI https://zeropointprotocol.ai/evidence/$PHASE/verify/${{ steps.head.outputs.head_commit }}/index.json | awk -F': ' 'tolower($1)=="content-type"{print tolower($2)}' | tr -d '\r')
           echo "Content-Type: $ct"
           echo "$ct" | grep -q "application/json" || (echo "❌ Evidence endpoint does not serve JSON" && exit 1)
           echo "✅ Evidence endpoint serves JSON"
@@ -99,6 +105,9 @@ jobs:
           echo "Phase: $phase"
 
           [ "$commit" = "${{ steps.head.outputs.head_commit }}" ] || (echo "❌ Commit mismatch: expected ${{ steps.head.outputs.head_commit }}, got $commit" && exit 1)
-          [ "$phase" = "stage1" ] || (echo "❌ Phase mismatch: expected stage1, got $phase" && exit 1)
+          
+          # Get expected phase from centralized config
+          EXPECTED_PHASE=$(grep -o '"current": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "stage2")
+          [ "$phase" = "$EXPECTED_PHASE" ] || (echo "❌ Phase mismatch: expected $EXPECTED_PHASE, got $phase" && exit 1)
 
           echo "✅ Version JSON canonical values verified"

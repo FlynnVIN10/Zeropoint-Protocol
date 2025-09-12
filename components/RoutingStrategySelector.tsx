@@ -43,7 +43,7 @@ export default function RoutingStrategySelector({
   return (
     <div style={{marginBottom: '16px'}}>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px'}}>
-        <h4 style={{margin: 0, fontSize: '14px', color: '#6E00FF'}}>Routing Strategy</h4>
+        <h3 style={{margin: 0, fontSize: '14px', color: '#a855f7'}}>Routing Strategy</h3>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           style={{

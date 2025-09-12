@@ -20,37 +20,64 @@ jobs:
           echo "HEAD: $SHORT"
           echo "BUILD_TIME: $BUILD_TIME"
           
+          # Read phase from centralized config (extract from TypeScript file)
+          PHASE=$(grep -o '"current": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "stage2")
+          RAG_MODE=$(grep -o '"ragMode": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "beyond")
+          ENV=$(grep -o '"environment": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "prod")
+          
+          echo "Phase: $PHASE"
+          echo "RAG Mode: $RAG_MODE"
+          echo "Environment: $ENV"
+          
           # Generate unified build metadata
           cat > ci-build-meta.json << EOF
           {
             "commit": "$SHORT",
             "buildTime": "$BUILD_TIME",
-            "phase": "stage2",
-            "ragMode": "beyond",
+            "phase": "$PHASE",
+            "ragMode": "$RAG_MODE",
             "ciStatus": "green",
-            "env": "prod"
+            "env": "$ENV"
           }
           EOF
           
-          # Create evidence directory for current commit
-          mkdir -p "public/evidence/phase2/verify/$SHORT"
-          echo '{"status": "verified", "commit": "'$SHORT'", "timestamp": "'$BUILD_TIME'"}' > "public/evidence/phase2/verify/$SHORT/index.json"
-          echo "Created evidence directory for commit: $SHORT"
+          # Create evidence directories for current commit (both public and local)
+          mkdir -p "public/evidence/$PHASE/verify/$SHORT"
+          mkdir -p "evidence/$PHASE/verify/$SHORT"
+          
+          # Create evidence files with proper metadata
+          EVIDENCE_DATA='{"meta":{"commit":"'$SHORT'","timestamp":"'$BUILD_TIME'","phase":"'$PHASE'","ragMode":"'$RAG_MODE'"},"status":"verified","endpoints":["/status/version.json","/status/synthients.json","/api/healthz","/api/readyz","/api/training","/api/proposals"]}'
+          
+          echo "$EVIDENCE_DATA" > "public/evidence/$PHASE/verify/$SHORT/index.json"
+          echo "$EVIDENCE_DATA" > "evidence/$PHASE/verify/$SHORT/index.json"
+          
+          echo "Created evidence directories for commit: $SHORT"
       - name: Verify evidence matches commit
         run: |
           set -euo pipefail
           SHORT="$(git rev-parse --short=8 HEAD)"
           echo "HEAD: $SHORT"
           
-          # Verify evidence directory exists
-          test -d "public/evidence/phase2/verify/$SHORT" || { echo "Missing evidence directory for $SHORT"; exit 1; }
+          # Get phase from centralized config
+          PHASE=$(grep -o '"current": *"[^"]*"' lib/phase-config.ts | cut -d'"' -f4 || echo "stage2")
+          echo "Phase: $PHASE"
           
-          # Verify evidence content
-          EVIDENCE_COMMIT=$(jq -r .commit "public/evidence/phase2/verify/$SHORT/index.json")
-          test "$EVIDENCE_COMMIT" = "$SHORT" || { echo "Evidence commit mismatch: expected $SHORT got $EVIDENCE_COMMIT"; exit 1; }
+          # Verify evidence directories exist
+          test -d "public/evidence/$PHASE/verify/$SHORT" || { echo "Missing public evidence directory for $SHORT"; exit 1; }
+          test -d "evidence/$PHASE/verify/$SHORT" || { echo "Missing local evidence directory for $SHORT"; exit 1; }
+          
+          # Verify evidence content in both locations
+          PUBLIC_COMMIT=$(jq -r '.meta.commit' "public/evidence/$PHASE/verify/$SHORT/index.json")
+          LOCAL_COMMIT=$(jq -r '.meta.commit' "evidence/$PHASE/verify/$SHORT/index.json")
+          
+          test "$PUBLIC_COMMIT" = "$SHORT" || { echo "Public evidence commit mismatch: expected $SHORT got $PUBLIC_COMMIT"; exit 1; }
+          test "$LOCAL_COMMIT" = "$SHORT" || { echo "Local evidence commit mismatch: expected $SHORT got $LOCAL_COMMIT"; exit 1; }
           
           echo "✅ Evidence verified for commit: $SHORT"
-          ls -la public/evidence/phase2/verify
+          echo "Public evidence:"
+          ls -la public/evidence/$PHASE/verify
+          echo "Local evidence:"
+          ls -la evidence/$PHASE/verify
       - name: Verify build metadata
         run: |
           set -euo pipefail

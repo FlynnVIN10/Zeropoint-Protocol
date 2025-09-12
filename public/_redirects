@@ -1,11 +1,1 @@
-# Evidence directory - serve raw files with proper headers (remove nonstandard status code)
-/evidence/* /evidence/:splat 200
-
-# API routes (handled by Functions)
-/api/* /api/:splat 200
-
-# Status routes (handled by Functions)
-/status/* /status/:splat 200
-
-# Next.js pages fallback
-/synthients /synthients 200
+/synthients /synthients/ 301

@@ -1,11 +1,10 @@
 // Cloudflare Pages Function -> /status/version.json
 export const onRequest = async ({ env }: { env: Record<string, string | undefined> }) => {
-  // Get current commit from environment variables or use fallback
-  // Use unified metadata source
-  const commit = env.COMMIT_SHA || (env.CF_PAGES_COMMIT_SHA ? env.CF_PAGES_COMMIT_SHA.slice(0, 8) : undefined) || env.BUILD_COMMIT || 'unknown';
-  console.log('Environment variables:', { COMMIT_SHA: env.COMMIT_SHA, CF_PAGES_COMMIT_SHA: env.CF_PAGES_COMMIT_SHA, BUILD_COMMIT: env.BUILD_COMMIT });
+  // Get current commit from environment variables - no slicing, use COMMIT_SHA_SHORT
+  const commit = env.COMMIT_SHA_SHORT || 'unknown';
   const phase = env.PHASE || 'stage2';
   const buildTime = env.BUILD_TIME ?? new Date().toISOString();
+  const ragMode = env.RAG_MODE || 'beyond';
 
   const body = JSON.stringify({
     phase,
@@ -14,7 +13,7 @@ export const onRequest = async ({ env }: { env: Record<string, string | undefine
     buildTime,
     env: "prod",
     status: "operational",
-    ragMode: "beyond", // Beyond RAG evidence requirement for CI/CD gate
+    ragMode, // Use environment variable
     synthients: {
       training: "active",
       proposals: "enabled",

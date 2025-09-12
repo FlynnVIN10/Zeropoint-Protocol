@@ -1,1 +1,1 @@
-{ "version":1, "include":["/api/*","/status/*","/evidence/*","/consensus/*","/synthients*"], "exclude":["/_next/*","/assets/*"] }
+{ "version":1, "include":["/api/*","/status/*","/evidence/*","/consensus/*","/synthients*"], "exclude":["/_next/*","/assets/*","/public/*"] }

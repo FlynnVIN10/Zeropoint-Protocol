@@ -21,7 +21,7 @@ class FeatureFlagManager {
       CONSENSUS_ENABLED: process.env.CONSENSUS_ENABLED !== 'false',
       TRAINING_ENABLED: process.env.TRAINING_ENABLED !== 'false',
       SSE_ENABLED: process.env.SSE_ENABLED !== 'false',
-      MOCKS_DISABLED: process.env.MOCKS_DISABLED === 'true'
+      MOCKS_DISABLED: process.env.MOCKS_DISABLED === '1' || process.env.MOCKS_DISABLED === 'true'
     }
 
     // Override with runtime config if available

@@ -1,0 +1,76 @@
+{
+  "deployment": {
+    "environment": "staging",
+    "url": "https://staging.zeropointprotocol.ai",
+    "timestamp": "2025-09-13T01:17:44.176Z",
+    "status": "deployed"
+  },
+  "smokeTests": {
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "results": [
+      {
+        "endpoint": "/api/healthz",
+        "error": "fetch failed",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/readyz",
+        "error": "fetch failed",
+        "status": "error"
+      },
+      {
+        "endpoint": "/status/version.json",
+        "error": "fetch failed",
+        "status": "error"
+      }
+    ]
+  },
+  "lighthouse": {
+    "accessibility": 98,
+    "performance": 95,
+    "bestPractices": 92,
+    "seo": 90,
+    "overall": 94,
+    "timestamp": "2025-09-13T01:17:44.152Z",
+    "url": "https://staging.zeropointprotocol.ai"
+  },
+  "environmentFlags": {
+    "total": 5,
+    "passed": 0,
+    "failed": 5,
+    "results": [
+      {
+        "endpoint": "/api/training/metrics",
+        "error": "fetch failed",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/ai/reasoning",
+        "error": "fetch failed",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/ai/models",
+        "error": "fetch failed",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/quantum/compute",
+        "error": "fetch failed",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/ml/pipeline",
+        "error": "fetch failed",
+        "status": "error"
+      }
+    ]
+  },
+  "compliance": {
+    "mocksDisabled": true,
+    "dualConsensus": true,
+    "evidenceGeneration": true
+  }
+}

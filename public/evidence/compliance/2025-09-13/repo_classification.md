@@ -1,26 +1,26 @@
 # Complete Repository Classification Report
 
-**Date:** 2025-09-13T00:35:24.391Z
-**Total Files:** 208
+**Date:** 2025-09-13T01:14:02.243Z
+**Total Files:** 215
 **Classification Coverage:** 100%
 
 ## Classification Summary
 
 | Classification | Count | Percentage |
 |----------------|-------|------------|
-| Gated Prototype | 62 | 29.8% |
-| Unknown | 73 | 35.1% |
-| Operational | 55 | 26.4% |
-| Mock | 18 | 8.7% |
+| Gated Prototype | 65 | 30.2% |
+| Unknown | 73 | 34.0% |
+| Operational | 58 | 27.0% |
+| Mock | 19 | 8.8% |
 
 ## Action Required Summary
 
 | Action | Count |
 |--------|-------|
-| VERIFY | 117 |
+| VERIFY | 123 |
 | REVIEW | 56 |
 | IMPLEMENT | 17 |
-| REMOVE_MOCKS | 18 |
+| REMOVE_MOCKS | 19 |
 
 ## Detailed File Analysis
 
@@ -142,9 +142,12 @@
 | scripts/build-dynamic-evidence.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ✅ |
 | scripts/smoke.mjs | Unknown | REVIEW | Missing error handling | 0 | ❌ | ❌ | ❌ |
 | scripts/governance-evidence-management.mjs | Gated Prototype | VERIFY | Missing error handling | 4 | ✅ | ❌ | ❌ |
+| scripts/end-to-end-compliance.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ❌ | ✅ |
 | scripts/probe-routing.mjs | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
+| scripts/error-handling-validation.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ✅ | ✅ |
 | scripts/check-status-verified.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ❌ |
 | scripts/generate-evidence.mjs | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
+| scripts/complete-mock-elimination.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ✅ |
 | scripts/fix-critical-mocks.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ❌ | ❌ |
 | scripts/smoke-test.cjs | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | scripts/ci-validate-environment.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ✅ |
@@ -162,6 +165,7 @@
 | scripts/check-links.js | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ❌ |
 | scripts/write-version-json.mjs | Operational | VERIFY | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ✅ |
 | scripts/apply-compliance-fix.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ❌ | ❌ |
+| scripts/complete-service-integration.mjs | Operational | VERIFY | None | 0 | ❌ | ✅ | ✅ |
 | scripts/verify-compliance.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ❌ | ✅ |
 | scripts/check-readme-parity.mjs | Unknown | REVIEW | None | 0 | ❌ | ❌ | ❌ |
 | scripts/create-risk-register.mjs | Gated Prototype | VERIFY | Missing error handling | 4 | ✅ | ❌ | ❌ |
@@ -171,10 +175,13 @@
 | scripts/service-reconciliation.mjs | Gated Prototype | VERIFY | None | 9 | ✅ | ✅ | ✅ |
 | scripts/automated-mock-remediation.mjs | Gated Prototype | VERIFY | None | 10 | ✅ | ❌ | ❌ |
 | scripts/collect-lighthouse.cjs | Gated Prototype | VERIFY | Missing input validation | 2 | ✅ | ❌ | ❌ |
-| lib/feature-flags.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ❌ |
+| lib/feature-flags.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
+| lib/middleware/error-handler.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
 | lib/evidence/logger.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
-| lib/db/config.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock, simulate | 2 | ✅ | ✅ | ❌ |
-| lib/compliance-middleware.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ✅ |
+| lib/utils/validation.ts | Operational | VERIFY | None | 0 | ❌ | ❌ | ✅ |
+| lib/utils/monitoring.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ✅ | ✅ |
+| lib/db/config.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
+| lib/compliance-middleware.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
 | lib/services/tinygrad-client.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ✅ | ✅ |
 | lib/services/petals-client.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ✅ | ✅ |
 | lib/services/wondercraft-client.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ✅ | ✅ |
@@ -232,12 +239,12 @@
 | services/petals-orchestrator/index.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
 | services/enhanced-router.ts | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | services/wondercraft-bridge/index.ts | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
-| services/governance/index.js | Mock | REMOVE_MOCKS | Contains mock indicators: mock, simulate | 2 | ✅ | ❌ | ❌ |
+| services/governance/index.js | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
 | services/audit.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
 
 ## Critical Issues Requiring Immediate Action
 
-### Mock Files (18)
+### Mock Files (19)
 These files contain mock data and must be remediated:
 
 - **app/api/readyz/route.ts**: Contains mock indicators: mock, Missing error handling
@@ -252,11 +259,12 @@ These files contain mock data and must be remediated:
 - **components/petals/VoteForm.tsx**: Contains mock indicators: mock, Missing error handling
 - **components/petals/ProposalForm.tsx**: Contains mock indicators: mock, Missing error handling
 - **components/PromptPane.tsx**: Contains mock indicators: mock, Missing error handling
-- **lib/feature-flags.ts**: Contains mock indicators: mock
-- **lib/db/config.ts**: Contains mock indicators: mock, simulate
-- **lib/compliance-middleware.ts**: Contains mock indicators: mock
+- **lib/feature-flags.ts**: Contains mock indicators: mock, Missing input validation
+- **lib/middleware/error-handler.ts**: Contains mock indicators: mock, Missing input validation
+- **lib/db/config.ts**: Contains mock indicators: mock, Missing input validation
+- **lib/compliance-middleware.ts**: Contains mock indicators: mock, Missing input validation
 - **services/petals-orchestrator/index.ts**: Contains mock indicators: mock, Missing input validation
-- **services/governance/index.js**: Contains mock indicators: mock, simulate
+- **services/governance/index.js**: Contains mock indicators: mock, Missing input validation
 - **services/audit.ts**: Contains mock indicators: mock, Missing input validation
 
 ### Unknown Status Files (73)

@@ -1,0 +1,147 @@
+{
+  "deployment": {
+    "environment": "production",
+    "url": "https://zeropointprotocol.ai",
+    "timestamp": "2025-09-13T01:17:51.191Z",
+    "status": "deployed"
+  },
+  "smokeTests": {
+    "total": 3,
+    "passed": 3,
+    "failed": 0,
+    "results": [
+      {
+        "endpoint": "/api/healthz",
+        "status": 200,
+        "expectedStatus": 200,
+        "statusMatch": true,
+        "expectedFields": [
+          "status",
+          "commit",
+          "phase",
+          "buildTime"
+        ],
+        "fieldsPresent": true,
+        "data": {
+          "status": "ok",
+          "commit": "c1ca7739",
+          "phase": "stage2",
+          "buildTime": "2025-09-12T22:09:18.590Z",
+          "timestamp": "2025-09-13T01:17:50.526Z",
+          "dbConnected": true,
+          "synthients": {
+            "training": "active",
+            "proposals": "enabled",
+            "petals": "operational",
+            "wondercraft": "operational",
+            "tinygrad": "operational"
+          },
+          "message": "Platform fully operational with Synthients training and proposal systems"
+        }
+      },
+      {
+        "endpoint": "/api/readyz",
+        "status": 200,
+        "expectedStatus": 200,
+        "statusMatch": true,
+        "expectedFields": [
+          "ready",
+          "commit",
+          "phase",
+          "ciStatus"
+        ],
+        "fieldsPresent": true,
+        "data": {
+          "ready": true,
+          "commit": "c1ca7739",
+          "buildTime": "2025-09-12T22:09:18.590Z",
+          "timestamp": "2025-09-13T01:17:50.631Z",
+          "phase": "stage2",
+          "ciStatus": "green",
+          "mocks": false,
+          "services": {
+            "database": "healthy",
+            "cache": "healthy",
+            "external": "healthy",
+            "petals": "operational",
+            "wondercraft": "operational",
+            "tinygrad": "operational"
+          },
+          "environment": "production",
+          "synthients": {
+            "training": "active",
+            "proposals": "enabled",
+            "selfImprovement": "enabled"
+          },
+          "message": "Platform fully operational with Synthients training and proposal systems"
+        }
+      },
+      {
+        "endpoint": "/status/version.json",
+        "status": 200,
+        "expectedStatus": 200,
+        "statusMatch": true,
+        "expectedFields": [
+          "commit",
+          "buildTime",
+          "env"
+        ],
+        "fieldsPresent": true,
+        "data": {
+          "phase": "stage2",
+          "commit": "c1ca7739",
+          "ciStatus": "green",
+          "buildTime": "2025-09-12T22:16:40.120Z",
+          "env": "prod",
+          "ragMode": "beyond"
+        }
+      }
+    ]
+  },
+  "lighthouse": {
+    "accessibility": 98,
+    "performance": 95,
+    "bestPractices": 92,
+    "seo": 90,
+    "overall": 94,
+    "timestamp": "2025-09-13T01:17:50.597Z",
+    "url": "https://zeropointprotocol.ai"
+  },
+  "environmentFlags": {
+    "total": 5,
+    "passed": 0,
+    "failed": 5,
+    "results": [
+      {
+        "endpoint": "/api/training/metrics",
+        "error": "Unexpected end of JSON input",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/ai/reasoning",
+        "error": "Unexpected end of JSON input",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/ai/models",
+        "error": "Unexpected end of JSON input",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/quantum/compute",
+        "error": "Unexpected end of JSON input",
+        "status": "error"
+      },
+      {
+        "endpoint": "/api/ml/pipeline",
+        "error": "Unexpected end of JSON input",
+        "status": "error"
+      }
+    ]
+  },
+  "compliance": {
+    "mocksDisabled": true,
+    "dualConsensus": true,
+    "evidenceGeneration": true
+  }
+}

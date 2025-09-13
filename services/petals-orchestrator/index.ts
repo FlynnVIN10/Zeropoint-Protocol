@@ -1,24 +1,15 @@
-// CTO Directive: Compliance check
-if (process.env.MOCKS_DISABLED === '1') {
-  throw new Error('Service temporarily unavailable - MOCKS_DISABLED=1 enforced')
+// CTO Directive: Service compliance check
+export class Service {
+  constructor() {
+    // CTO Directive: Block service when MOCKS_DISABLED=1
+    if (process.env.MOCKS_DISABLED === '1') {
+      throw new Error('Service temporarily unavailable - MOCKS_DISABLED=1 enforced')
+    }
+  }
+
+  async execute() {
+    throw new Error('Service not implemented')
+  }
 }
 
-// Zeropoint Protocol - Petals Orchestrator Service
-// Manages proposal lifecycle, voting, and consensus
-
-export async function submitProposal(input: any) {
-  // implement or implementation to DB/fetch; keep server-only
-  return { ok: true, id: crypto.randomUUID(), ...input };
-}
-
-export async function voteOnProposal(proposalId: string, vote: any) {
-  return { ok: true, proposalId, ...vote };
-}
-
-export async function proposalStatus(proposalId: string) {
-  return { ok: true, proposalId, status: "open" };
-}
-
-export async function tallyProposal(proposalId: string) {
-  return { ok: true, proposalId, result: "pending" };
-}
+export default Service

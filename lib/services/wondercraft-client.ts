@@ -15,6 +15,7 @@ export class WondercraftClient {
     assetType: string
     content: string
     metadata: Record<string, any>
+    contributor: string
   }): Promise<{ contributionId: string; status: string }> {
     try {
       const response = await fetch(`${this.baseUrl}/api/contributions`, {
@@ -34,8 +35,12 @@ export class WondercraftClient {
       
       // Store contribution in database
       await dbManager.query(
-        'INSERT INTO contributions (contribution_id, title, description, asset_type, content, metadata, status) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-        [result.contributionId, contributionData.title, contributionData.description, contributionData.assetType, contributionData.content, JSON.stringify(contributionData.metadata), 'pending']
+        `INSERT INTO contributions 
+         (contribution_id, title, description, asset_type, content, metadata, contributor, status) 
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [result.contributionId, contributionData.title, contributionData.description, 
+         contributionData.assetType, contributionData.content, JSON.stringify(contributionData.metadata),
+         contributionData.contributor, 'pending']
       )
 
       return result
@@ -60,7 +65,16 @@ export class WondercraftClient {
         throw new Error(`Wondercraft API error: ${response.status}`)
       }
 
-      return await response.json()
+      const result = await response.json()
+      
+      // Store diff in database
+      await dbManager.query(
+        `INSERT INTO contribution_diffs (asset_id, diff_content, changes) 
+         VALUES ($1, $2, $3)`,
+        [assetId, result.diff, JSON.stringify(result.changes)]
+      )
+
+      return result
     } catch (error) {
       console.error('Wondercraft API error:', error)
       throw error
@@ -69,19 +83,43 @@ export class WondercraftClient {
 
   async getContributionStatus(contributionId: string): Promise<{ status: string; review: any; approved: boolean }> {
     try {
-      const response = await fetch(`${this.baseUrl}/api/contributions/${contributionId}/status`, {
-        headers: {
-          'Authorization': `Bearer ${this.apiKey}`
-        }
-      })
+      const result = await dbManager.query(
+        'SELECT * FROM contributions WHERE contribution_id = $1',
+        [contributionId]
+      )
 
-      if (!response.ok) {
-        throw new Error(`Wondercraft API error: ${response.status}`)
+      if (result.rows.length === 0) {
+        throw new Error('Contribution not found')
       }
 
-      return await response.json()
+      const contribution = result.rows[0]
+
+      return {
+        status: contribution.status,
+        review: {
+          reviewer: contribution.reviewer,
+          review_notes: contribution.review_notes,
+          reviewed_at: contribution.reviewed_at
+        },
+        approved: contribution.status === 'approved'
+      }
     } catch (error) {
-      console.error('Wondercraft API error:', error)
+      console.error('Database error:', error)
+      throw error
+    }
+  }
+
+  async getContributionHistory(limit: number = 100): Promise<any[]> {
+    try {
+      const result = await dbManager.query(
+        `SELECT * FROM contributions 
+         ORDER BY created_at DESC 
+         LIMIT $1`,
+        [limit]
+      )
+      return result.rows
+    } catch (error) {
+      console.error('Database error:', error)
       throw error
     }
   }

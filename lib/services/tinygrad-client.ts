@@ -30,9 +30,10 @@ export class TinygradClient {
 
       const result = await response.json()
       
-      // Store job in database
+      // Store job in database with enhanced tracking
       await dbManager.query(
-        'INSERT INTO training_jobs (job_id, model_name, dataset_path, hyperparameters, status) VALUES ($1, $2, $3, $4, $5)',
+        `INSERT INTO training_jobs (job_id, model_name, dataset_path, hyperparameters, status, started_at) 
+         VALUES ($1, $2, $3, $4, $5, NOW())`,
         [result.jobId, jobData.modelName, jobData.datasetPath, JSON.stringify(jobData.hyperparameters), 'started']
       )
 
@@ -57,11 +58,23 @@ export class TinygradClient {
 
       const result = await response.json()
       
-      // Update database
+      // Update database with progress and metrics
       await dbManager.query(
-        'UPDATE training_jobs SET status = $1, updated_at = NOW(), metrics = $2 WHERE job_id = $3',
-        [result.status, JSON.stringify(result.metrics || {}), jobId]
+        `UPDATE training_jobs 
+         SET status = $1, progress_percentage = $2, metrics = $3, updated_at = NOW() 
+         WHERE job_id = $4`,
+        [result.status, result.progress || 0, JSON.stringify(result.metrics || {}), jobId]
       )
+
+      // Store individual metrics
+      if (result.metrics) {
+        for (const [metricName, metricValue] of Object.entries(result.metrics)) {
+          await dbManager.query(
+            'INSERT INTO training_metrics (job_id, metric_name, metric_value) VALUES ($1, $2, $3)',
+            [jobId, metricName, metricValue]
+          )
+        }
+      }
 
       return result
     } catch (error) {
@@ -82,9 +95,32 @@ export class TinygradClient {
         throw new Error(`Tinygrad API error: ${response.status}`)
       }
 
-      return await response.json()
+      const logs = await response.json()
+      
+      // Store logs in database
+      await dbManager.query(
+        'UPDATE training_jobs SET logs = $1 WHERE job_id = $2',
+        [logs, jobId]
+      )
+
+      return logs
     } catch (error) {
       console.error('Tinygrad API error:', error)
+      throw error
+    }
+  }
+
+  async getJobHistory(limit: number = 100): Promise<any[]> {
+    try {
+      const result = await dbManager.query(
+        `SELECT * FROM training_jobs 
+         ORDER BY created_at DESC 
+         LIMIT $1`,
+        [limit]
+      )
+      return result.rows
+    } catch (error) {
+      console.error('Database error:', error)
       throw error
     }
   }

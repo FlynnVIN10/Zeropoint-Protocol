@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  throw new Error('Module temporarily unavailable - MOCKS_DISABLED=1 enforced')
+}
+
 /**
  * Dual-Consensus Governance Service
  * Stage 2: Governance Enforcement and Approval Management

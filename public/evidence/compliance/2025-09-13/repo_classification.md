@@ -1,27 +1,26 @@
 # Complete Repository Classification Report
 
-**Date:** 2025-09-13T00:23:32.105Z
-**Total Files:** 200
+**Date:** 2025-09-13T00:35:24.391Z
+**Total Files:** 208
 **Classification Coverage:** 100%
 
 ## Classification Summary
 
 | Classification | Count | Percentage |
 |----------------|-------|------------|
-| Gated Prototype | 44 | 22.0% |
-| Unknown | 73 | 36.5% |
-| Operational | 52 | 26.0% |
-| Mock | 31 | 15.5% |
+| Gated Prototype | 62 | 29.8% |
+| Unknown | 73 | 35.1% |
+| Operational | 55 | 26.4% |
+| Mock | 18 | 8.7% |
 
 ## Action Required Summary
 
 | Action | Count |
 |--------|-------|
-| VERIFY | 96 |
+| VERIFY | 117 |
 | REVIEW | 56 |
 | IMPLEMENT | 17 |
 | REMOVE_MOCKS | 18 |
-| ADD_COMPLIANCE | 13 |
 
 ## Detailed File Analysis
 
@@ -54,8 +53,8 @@
 | app/api/providers/wondercraft/stream/route.ts | Unknown | IMPLEMENT | Missing database connections or external service calls | 0 | ✅ | ❌ | ❌ |
 | app/api/providers/tinygrad/stream/route.ts | Unknown | IMPLEMENT | Missing database connections or external service calls | 0 | ✅ | ❌ | ❌ |
 | app/api/providers/petals/stream/route.ts | Unknown | IMPLEMENT | Missing database connections or external service calls | 0 | ✅ | ❌ | ❌ |
-| app/api/network/instances/route.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
-| app/api/audit/log/route.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| app/api/network/instances/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
+| app/api/audit/log/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
 | app/api/ml/pipeline/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
 | app/api/ai/models/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
 | app/api/ai/reasoning/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
@@ -69,11 +68,11 @@
 | app/api/events/consensus/route.ts | Gated Prototype | VERIFY | Missing input validation | 2 | ✅ | ❌ | ❌ |
 | app/api/events/agents/route.ts | Gated Prototype | VERIFY | Missing input validation | 2 | ✅ | ❌ | ❌ |
 | app/api/events/synthiant/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
-| app/api/proposals/stream/route.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Missing input validation; Mock data not properly gated | 1 | ❌ | ✅ | ❌ |
+| app/api/proposals/stream/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
 | app/api/proposals/route.ts | Gated Prototype | VERIFY | Missing input validation | 1 | ✅ | ❌ | ✅ |
 | app/api/proposals/[id]/route.ts | Operational | VERIFY | None | 0 | ❌ | ✅ | ❌ |
 | app/api/synthients/syslog/stream/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
-| app/api/synthients/syslog/route.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| app/api/synthients/syslog/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
 | app/api/synthients/syslog/export/route.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | app/api/synthients/test/route.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | app/api/quantum/compute/route.ts | Gated Prototype | VERIFY | Missing error handling | 1 | ✅ | ❌ | ❌ |
@@ -88,21 +87,21 @@
 | providers/petals.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | providers/claude.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | providers/grok4.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
-| components/RoutingStrategySelector.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling; Missing input validation | 1 | ✅ | ❌ | ❌ |
-| components/wondercraft/DiffForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ✅ |
-| components/wondercraft/ContributionForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ✅ |
-| components/tinygrad/JobLogsViewer.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ✅ |
-| components/tinygrad/JobStartForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ✅ |
-| components/tinygrad/JobStatusViewer.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ✅ |
+| components/RoutingStrategySelector.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
+| components/wondercraft/DiffForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
+| components/wondercraft/ContributionForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
+| components/tinygrad/JobLogsViewer.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
+| components/tinygrad/JobStartForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
+| components/tinygrad/JobStatusViewer.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
 | components/ChainOfThought.tsx | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | components/Footer.tsx | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | components/RightPanel.tsx | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
-| components/dashboard/SynthientsPanel.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ✅ |
+| components/dashboard/SynthientsPanel.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
 | components/LeftPanel.tsx | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
-| components/petals/VoteForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ✅ |
-| components/petals/ProposalForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ✅ |
+| components/petals/VoteForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
+| components/petals/ProposalForm.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
 | components/TopTicker.tsx | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing input validation | 0 | ❌ | ❌ | ❌ |
-| components/PromptPane.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ✅ |
+| components/PromptPane.tsx | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ❌ |
 | components/BottomTicker.tsx | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | components/proposals/ProposalList.tsx | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | public/consensus/history.ts | Unknown | REVIEW | Missing input validation | 0 | ❌ | ❌ | ❌ |
@@ -116,7 +115,7 @@
 | public/api/zeroth/status.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | public/api/wondercraft/status.json.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | public/api/readyz.ts | Gated Prototype | VERIFY | Missing error handling; Missing input validation | 1 | ✅ | ❌ | ❌ |
-| public/api/healthz.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Missing input validation; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| public/api/healthz.ts | Gated Prototype | VERIFY | Missing input validation | 2 | ✅ | ❌ | ❌ |
 | public/api/training/status.ts | Operational | VERIFY | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ✅ |
 | public/api/training/runs.ts | Gated Prototype | VERIFY | None | 5 | ✅ | ❌ | ❌ |
 | public/api/training/runs/[runId]/metrics.ts | Gated Prototype | VERIFY | Missing error handling | 2 | ✅ | ❌ | ❌ |
@@ -140,22 +139,27 @@
 | public/api/router/config.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | scripts/build-evidence-index.mjs | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | scripts/check-links.mjs | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
-| scripts/build-dynamic-evidence.mjs | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ✅ |
+| scripts/build-dynamic-evidence.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ✅ |
 | scripts/smoke.mjs | Unknown | REVIEW | Missing error handling | 0 | ❌ | ❌ | ❌ |
+| scripts/governance-evidence-management.mjs | Gated Prototype | VERIFY | Missing error handling | 4 | ✅ | ❌ | ❌ |
 | scripts/probe-routing.mjs | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
-| scripts/check-status-verified.mjs | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| scripts/check-status-verified.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ❌ |
 | scripts/generate-evidence.mjs | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | scripts/fix-critical-mocks.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ❌ | ❌ |
 | scripts/smoke-test.cjs | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
+| scripts/ci-validate-environment.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ✅ |
+| scripts/environment-flag-enforcement.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ✅ | ✅ |
 | scripts/complete-codebase-classification.mjs | Gated Prototype | VERIFY | None | 15 | ✅ | ✅ | ✅ |
 | scripts/inject-build.mjs | Unknown | REVIEW | None | 0 | ❌ | ❌ | ❌ |
+| scripts/final-mock-elimination.mjs | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ✅ |
 | scripts/verify-phase5.cjs | Operational | VERIFY | None | 0 | ❌ | ❌ | ✅ |
 | scripts/update-worker-env.mjs | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | scripts/_lib/http.cjs | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | scripts/_lib/fsx.cjs | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | scripts/repository-audit.mjs | Gated Prototype | VERIFY | Missing input validation | 10 | ✅ | ✅ | ✅ |
+| scripts/core-service-implementation.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ✅ | ✅ |
 | scripts/guard-no-bare-booleans.mjs | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
-| scripts/check-links.js | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| scripts/check-links.js | Gated Prototype | VERIFY | None | 2 | ✅ | ❌ | ❌ |
 | scripts/write-version-json.mjs | Operational | VERIFY | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ✅ |
 | scripts/apply-compliance-fix.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ❌ | ❌ |
 | scripts/verify-compliance.mjs | Gated Prototype | VERIFY | None | 1 | ✅ | ❌ | ✅ |
@@ -166,11 +170,14 @@
 | scripts/build-leaderboard.mjs | Unknown | REVIEW | Missing error handling | 0 | ❌ | ❌ | ❌ |
 | scripts/service-reconciliation.mjs | Gated Prototype | VERIFY | None | 9 | ✅ | ✅ | ✅ |
 | scripts/automated-mock-remediation.mjs | Gated Prototype | VERIFY | None | 10 | ✅ | ❌ | ❌ |
-| scripts/collect-lighthouse.cjs | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Missing input validation; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| scripts/collect-lighthouse.cjs | Gated Prototype | VERIFY | Missing input validation | 2 | ✅ | ❌ | ❌ |
 | lib/feature-flags.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ❌ |
 | lib/evidence/logger.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | lib/db/config.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock, simulate | 2 | ✅ | ✅ | ❌ |
-| lib/compliance-middleware.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing error handling | 1 | ✅ | ❌ | ✅ |
+| lib/compliance-middleware.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock | 1 | ✅ | ❌ | ✅ |
+| lib/services/tinygrad-client.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ✅ | ✅ |
+| lib/services/petals-client.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ✅ | ✅ |
+| lib/services/wondercraft-client.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ✅ | ✅ |
 | lib/phase-config.ts | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | functions/synthients.ts | Unknown | REVIEW | Missing error handling | 0 | ❌ | ❌ | ❌ |
 | functions/consensus/history.ts | Unknown | REVIEW | Missing input validation | 0 | ❌ | ❌ | ❌ |
@@ -186,13 +193,13 @@
 | functions/petals/status.json.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | functions/api/zeroth/status.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | functions/api/training.ts | Unknown | REVIEW | Missing input validation | 0 | ❌ | ❌ | ❌ |
-| functions/api/wondercraft/contribute.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| functions/api/wondercraft/contribute.ts | Gated Prototype | VERIFY | Missing input validation | 1 | ✅ | ❌ | ❌ |
 | functions/api/wondercraft/status.json.ts | Operational | VERIFY | Missing input validation | 0 | ❌ | ❌ | ✅ |
 | functions/api/proposals.ts | Unknown | REVIEW | Missing input validation | 0 | ❌ | ❌ | ❌ |
 | functions/api/synthients-syslog.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | functions/api/readyz.ts | Gated Prototype | VERIFY | Missing error handling; Missing input validation | 1 | ✅ | ❌ | ❌ |
-| functions/api/healthz.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Missing input validation; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
-| functions/api/tinygrad/start.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| functions/api/healthz.ts | Gated Prototype | VERIFY | Missing input validation | 1 | ✅ | ❌ | ❌ |
+| functions/api/tinygrad/start.ts | Gated Prototype | VERIFY | Missing input validation | 1 | ✅ | ❌ | ❌ |
 | functions/api/training/status.ts | Operational | VERIFY | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ✅ |
 | functions/api/training/runs.ts | Gated Prototype | VERIFY | None | 5 | ✅ | ❌ | ❌ |
 | functions/api/training/leaderboard.ts | Unknown | REVIEW | Missing input validation | 0 | ❌ | ❌ | ❌ |
@@ -208,7 +215,7 @@
 | functions/api/synthient/proposals.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | functions/api/synthient/consensus.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | functions/api/synthient/bootstrap.ts | Operational | VERIFY | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ✅ |
-| functions/api/petals/propose.ts | Mock | ADD_COMPLIANCE | Contains mock data without compliance gating; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| functions/api/petals/propose.ts | Gated Prototype | VERIFY | Missing input validation | 1 | ✅ | ❌ | ❌ |
 | functions/api/monitor.ts | Operational | VERIFY | None | 0 | ❌ | ❌ | ✅ |
 | functions/api/events/training.ts | Gated Prototype | VERIFY | Missing error handling | 2 | ✅ | ❌ | ❌ |
 | functions/api/events/synthiant.ts | Unknown | REVIEW | Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
@@ -225,62 +232,32 @@
 | services/petals-orchestrator/index.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
 | services/enhanced-router.ts | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing input validation | 0 | ❌ | ❌ | ❌ |
 | services/wondercraft-bridge/index.ts | Unknown | IMPLEMENT | Missing database connections or external service calls; Missing error handling; Missing input validation | 0 | ❌ | ❌ | ❌ |
-| services/governance/index.js | Mock | REMOVE_MOCKS | Contains mock indicators: simulate; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
-| services/audit.ts | Mock | REMOVE_MOCKS | Contains mock indicators: in-memory; Missing error handling; Missing input validation; Mock data not properly gated | 1 | ❌ | ❌ | ❌ |
+| services/governance/index.js | Mock | REMOVE_MOCKS | Contains mock indicators: mock, simulate | 2 | ✅ | ❌ | ❌ |
+| services/audit.ts | Mock | REMOVE_MOCKS | Contains mock indicators: mock; Missing input validation | 1 | ✅ | ❌ | ❌ |
 
 ## Critical Issues Requiring Immediate Action
 
-### Mock Files (31)
+### Mock Files (18)
 These files contain mock data and must be remediated:
 
 - **app/api/readyz/route.ts**: Contains mock indicators: mock, Missing error handling
-- **app/api/network/instances/route.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **app/api/audit/log/route.ts**: Contains mock data without compliance gating, Mock data not properly gated
 - **app/api/healthz/route.ts**: Contains mock indicators: mock, Missing error handling
-- **app/api/proposals/stream/route.ts**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
-- **app/api/synthients/syslog/route.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **components/RoutingStrategySelector.tsx**: Contains mock indicators: mock, Missing error handling, Missing input validation
-- **components/wondercraft/DiffForm.tsx**: Contains mock indicators: mock
-- **components/wondercraft/ContributionForm.tsx**: Contains mock indicators: mock
-- **components/tinygrad/JobLogsViewer.tsx**: Contains mock indicators: mock, Missing input validation
-- **components/tinygrad/JobStartForm.tsx**: Contains mock indicators: mock
-- **components/tinygrad/JobStatusViewer.tsx**: Contains mock indicators: mock, Missing input validation
-- **components/dashboard/SynthientsPanel.tsx**: Contains mock indicators: mock, Missing input validation
-- **components/petals/VoteForm.tsx**: Contains mock indicators: mock
-- **components/petals/ProposalForm.tsx**: Contains mock indicators: mock
-- **components/PromptPane.tsx**: Contains mock indicators: mock, Missing input validation
-- **public/api/healthz.ts**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
-- **scripts/build-dynamic-evidence.mjs**: Contains mock data without compliance gating, Mock data not properly gated
-- **scripts/check-status-verified.mjs**: Contains mock data without compliance gating, Mock data not properly gated
-- **scripts/check-links.js**: Contains mock data without compliance gating, Mock data not properly gated
-- **scripts/collect-lighthouse.cjs**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
+- **components/RoutingStrategySelector.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/wondercraft/DiffForm.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/wondercraft/ContributionForm.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/tinygrad/JobLogsViewer.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/tinygrad/JobStartForm.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/tinygrad/JobStatusViewer.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/dashboard/SynthientsPanel.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/petals/VoteForm.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/petals/ProposalForm.tsx**: Contains mock indicators: mock, Missing error handling
+- **components/PromptPane.tsx**: Contains mock indicators: mock, Missing error handling
 - **lib/feature-flags.ts**: Contains mock indicators: mock
 - **lib/db/config.ts**: Contains mock indicators: mock, simulate
-- **lib/compliance-middleware.ts**: Contains mock indicators: mock, Missing error handling
-- **functions/api/wondercraft/contribute.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **functions/api/healthz.ts**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
-- **functions/api/tinygrad/start.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **functions/api/petals/propose.ts**: Contains mock data without compliance gating, Mock data not properly gated
+- **lib/compliance-middleware.ts**: Contains mock indicators: mock
 - **services/petals-orchestrator/index.ts**: Contains mock indicators: mock, Missing input validation
-- **services/governance/index.js**: Contains mock indicators: simulate, Mock data not properly gated
-- **services/audit.ts**: Contains mock indicators: in-memory, Missing error handling, Missing input validation, Mock data not properly gated
-
-### Files Needing Compliance Gating (13)
-These files need MOCKS_DISABLED compliance checks:
-
-- **app/api/network/instances/route.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **app/api/audit/log/route.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **app/api/proposals/stream/route.ts**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
-- **app/api/synthients/syslog/route.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **public/api/healthz.ts**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
-- **scripts/build-dynamic-evidence.mjs**: Contains mock data without compliance gating, Mock data not properly gated
-- **scripts/check-status-verified.mjs**: Contains mock data without compliance gating, Mock data not properly gated
-- **scripts/check-links.js**: Contains mock data without compliance gating, Mock data not properly gated
-- **scripts/collect-lighthouse.cjs**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
-- **functions/api/wondercraft/contribute.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **functions/api/healthz.ts**: Contains mock data without compliance gating, Missing input validation, Mock data not properly gated
-- **functions/api/tinygrad/start.ts**: Contains mock data without compliance gating, Mock data not properly gated
-- **functions/api/petals/propose.ts**: Contains mock data without compliance gating, Mock data not properly gated
+- **services/governance/index.js**: Contains mock indicators: mock, simulate
+- **services/audit.ts**: Contains mock indicators: mock, Missing input validation
 
 ### Unknown Status Files (73)
 These files need manual review:

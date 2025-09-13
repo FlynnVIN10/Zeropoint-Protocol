@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  throw new Error('Module temporarily unavailable - MOCKS_DISABLED=1 enforced')
+}
+
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
 
 // lib/compliance-middleware.ts

@@ -1,76 +1,134 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// Force dynamic rendering for SSE endpoint
-export const dynamic = 'force-dynamic'
-
+// CTO Directive: Block mocked endpoints when MOCKS_DISABLED=1
 export async function GET(request: NextRequest) {
-  const encoder = new TextEncoder()
-  
-  const stream = new ReadableStream({
-    start(controller) {
-      // Send initial connection message
-      controller.enqueue(encoder.encode('data: {"type":"connected","message":"Synthiant activity stream connected"}\n\n'))
-      
-      // Simulate synthiant activity events every 3 seconds
-      const interval = setInterval(() => {
-        const events = [
-          {
-            type: 'training',
-            id: `t-${Date.now()}`,
-            actor: 'synthiant:gamma',
-            action: 'training_completed',
-            msg: 'Training run completed - loss: 0.234',
-            seq: Math.floor(Math.random() * 1000),
-            ts: new Date().toISOString()
-          },
-          {
-            type: 'inference',
-            id: `i-${Date.now()}`,
-            actor: 'synthiant:delta',
-            action: 'inference_request',
-            msg: 'Processing prompt via GPT-4',
-            seq: Math.floor(Math.random() * 1000),
-            ts: new Date().toISOString()
-          },
-          {
-            type: 'health',
-            id: `h-${Date.now()}`,
-            actor: 'synthiant:epsilon',
-            action: 'health_check',
-            msg: 'Provider health check passed',
-            seq: Math.floor(Math.random() * 1000),
-            ts: new Date().toISOString()
-          },
-          {
-            type: 'consensus',
-            id: `c-${Date.now()}`,
-            actor: 'synthiant:zeta',
-            action: 'proposal_review',
-            msg: 'Reviewing human approval request',
-            seq: Math.floor(Math.random() * 1000),
-            ts: new Date().toISOString()
-          }
-        ]
-        
-        const randomEvent = events[Math.floor(Math.random() * events.length)]
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(randomEvent)}\n\n`))
-      }, 3000)
-      
-      // Clean up on disconnect
-      request.signal.addEventListener('abort', () => {
-        clearInterval(interval)
-        controller.close()
-      })
-    }
-  })
-  
-  return new Response(stream, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Headers': 'Cache-Control'
-    }
-  })
+  if (process.env.MOCKS_DISABLED === '1') {
+    return NextResponse.json(
+      {
+        error: 'Endpoint temporarily unavailable',
+        message: 'This endpoint is currently being migrated to production services. MOCKS_DISABLED=1 is enforced.',
+        code: 'ENDPOINT_MIGRATION_IN_PROGRESS',
+        compliance: {
+          mocks_disabled: true,
+          dual_consensus_required: true,
+          production_ready: false
+        },
+        timestamp: new Date().toISOString()
+      },
+      {
+        status: 503,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff',
+          'content-disposition': 'inline',
+          'retry-after': '3600'
+        }
+      }
+    )
+  }
+
+  return NextResponse.json(
+    { error: 'Not implemented' },
+    { status: 501 }
+  )
+}
+
+export async function POST(request: NextRequest) {
+  if (process.env.MOCKS_DISABLED === '1') {
+    return NextResponse.json(
+      {
+        error: 'Endpoint temporarily unavailable',
+        message: 'This endpoint is currently being migrated to production services. MOCKS_DISABLED=1 is enforced.',
+        code: 'ENDPOINT_MIGRATION_IN_PROGRESS',
+        compliance: {
+          mocks_disabled: true,
+          dual_consensus_required: true,
+          production_ready: false
+        },
+        timestamp: new Date().toISOString()
+      },
+      {
+        status: 503,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff',
+          'content-disposition': 'inline',
+          'retry-after': '3600'
+        }
+      }
+    )
+  }
+
+  return NextResponse.json(
+    { error: 'Not implemented' },
+    { status: 501 }
+  )
+}
+
+export async function PUT(request: NextRequest) {
+  if (process.env.MOCKS_DISABLED === '1') {
+    return NextResponse.json(
+      {
+        error: 'Endpoint temporarily unavailable',
+        message: 'This endpoint is currently being migrated to production services. MOCKS_DISABLED=1 is enforced.',
+        code: 'ENDPOINT_MIGRATION_IN_PROGRESS',
+        compliance: {
+          mocks_disabled: true,
+          dual_consensus_required: true,
+          production_ready: false
+        },
+        timestamp: new Date().toISOString()
+      },
+      {
+        status: 503,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff',
+          'content-disposition': 'inline',
+          'retry-after': '3600'
+        }
+      }
+    )
+  }
+
+  return NextResponse.json(
+    { error: 'Not implemented' },
+    { status: 501 }
+  )
+}
+
+export async function DELETE(request: NextRequest) {
+  if (process.env.MOCKS_DISABLED === '1') {
+    return NextResponse.json(
+      {
+        error: 'Endpoint temporarily unavailable',
+        message: 'This endpoint is currently being migrated to production services. MOCKS_DISABLED=1 is enforced.',
+        code: 'ENDPOINT_MIGRATION_IN_PROGRESS',
+        compliance: {
+          mocks_disabled: true,
+          dual_consensus_required: true,
+          production_ready: false
+        },
+        timestamp: new Date().toISOString()
+      },
+      {
+        status: 503,
+        headers: {
+          'content-type': 'application/json; charset=utf-8',
+          'cache-control': 'no-store',
+          'x-content-type-options': 'nosniff',
+          'content-disposition': 'inline',
+          'retry-after': '3600'
+        }
+      }
+    )
+  }
+
+  return NextResponse.json(
+    { error: 'Not implemented' },
+    { status: 501 }
+  )
 }

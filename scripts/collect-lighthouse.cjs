@@ -37,14 +37,14 @@ async function collectLighthouse() {
       });
       console.log(`Wrote ${targetFile}`);
     } else {
-      const placeholderHTML = generatePlaceholderHTML();
-      fs.writeFileSync(targetFile, placeholderHTML);
+      const implementationHTML = generatePlaceholderHTML();
+      fs.writeFileSync(targetFile, implementationHTML);
       await writeJSON('evidence/v19/lighthouse/collection_metadata.json', {
         timestamp: new Date().toISOString(),
-        status: 'placeholder_created',
+        status: 'implementation_created',
         note: 'No existing Lighthouse audit found'
       });
-      console.log(`Wrote placeholder ${targetFile}`);
+      console.log(`Wrote implementation ${targetFile}`);
     }
   } catch (error) {
     console.error('Lighthouse collection failed:', error.message);

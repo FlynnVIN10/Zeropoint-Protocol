@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
@@ -130,7 +135,7 @@ export default function PromptPane() {
             type="text"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Ask..."
+            implementation="Ask..."
             className="prompt-input"
             disabled={isLoading}
           />

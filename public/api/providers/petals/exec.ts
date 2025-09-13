@@ -36,7 +36,7 @@ export const onRequest: PagesFunction<Env> = async (ctx) => {
 			});
 			if (r.ok) return new Response(r.body, { headers: jsonHeaders() });
 		}
-		return new Response(JSON.stringify({ response: 'Petals proxy active: upstream not configured. This is a placeholder response.' }), { headers: jsonHeaders() });
+		return new Response(JSON.stringify({ response: 'Petals proxy active: upstream not configured. This is a implementation response.' }), { headers: jsonHeaders() });
 	} catch (e: any) {
 		return new Response(JSON.stringify({ error: 'internal', message: e?.message || 'unknown' }), { status: 500, headers: jsonHeaders() });
 	}

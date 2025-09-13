@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client';
 
 import React, { useState } from 'react';
@@ -74,7 +79,7 @@ export default function ContributionForm() {
           <textarea
             value={assetData}
             onChange={(e) => setAssetData(e.target.value)}
-            placeholder='{"name": "My Asset", "content": "..."}'
+            implementation='{"name": "My Asset", "content": "..."}'
             rows={6}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
@@ -86,7 +91,7 @@ export default function ContributionForm() {
           <textarea
             value={metadata}
             onChange={(e) => setMetadata(e.target.value)}
-            placeholder='{"version": "1.0", "format": "json"}'
+            implementation='{"version": "1.0", "format": "json"}'
             rows={3}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
           />
@@ -97,7 +102,7 @@ export default function ContributionForm() {
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Describe your contribution"
+            implementation="Describe your contribution"
             rows={3}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
           />

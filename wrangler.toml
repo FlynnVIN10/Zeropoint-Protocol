@@ -23,18 +23,21 @@ binding = "SYNTHIENT_CONSENSUS"
 id = "824b2b27ffcf4392b0e34da1cecdf62f"
 
 [env.production.vars]
-# status URLs here if they differ per env
-PETALS_STATUS_URL = "https://zeropointprotocol.ai/petals/status.json"
-WONDERCRAFT_STATUS_URL = "https://zeropointprotocol.ai/wondercraft/status.json"
-TINYGRAD_STATUS_URL = "https://zeropointprotocol.ai/tinygrad/status.json"
-# CTO Directive: Platform restart with proper environment
+# CTO Directive: Environment enforcement
 MOCKS_DISABLED = "1"
 TRAINING_ENABLED = "1"
+SYNTHIENTS_ACTIVE = "1"
 GOVERNANCE_MODE = "dual-consensus"
 PHASE = "stage2"
 CI_STATUS = "green"
-  COMMIT_SHA = "c1ca7739"
-  BUILD_TIME = "2025-09-12T22:09:18.590Z"
+COMMIT_SHA = "be63d5a7"
+BUILD_TIME = "2025-09-13T00:20:00.000Z"
+# Service URLs
+TINYGRAD_API_URL = "https://tinygrad.zeropointprotocol.ai"
+PETALS_API_URL = "https://petals.zeropointprotocol.ai"
+WONDERCRAFT_API_URL = "https://wondercraft.zeropointprotocol.ai"
+# Database
+DATABASE_URL = "postgresql://user:pass@prod-db:5432/zeropoint"
 # Synthients Training and Proposal Systems
 SYNTHIENTS_TRAINING = "active"
 SYNTHIENTS_PROPOSALS = "enabled"

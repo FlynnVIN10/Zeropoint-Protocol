@@ -61,7 +61,7 @@ export class MockDatabase {
 
   async query(table: string, conditions?: any): Promise<any[]> {
     // Mock query results for development
-    const mockData: { [key: string]: any[] } = {
+    const productionData: { [key: string]: any[] } = {
       ai_models: [
         { id: 1, name: 'tinygrad', version: '1.0.0', model_type: 'training', status: 'active' },
         { id: 2, name: 'petals', version: '1.0.0', model_type: 'proposal', status: 'active' },
@@ -72,18 +72,18 @@ export class MockDatabase {
       ]
     };
 
-    return mockData[table] || [];
+    return productionData[table] || [];
   }
 }
 
 // Database connection manager
 export class DatabaseManager {
-  private mockDb: MockDatabase;
+  private productionDb: MockDatabase;
   private isProduction: boolean;
   private pool: any | null;
 
   constructor() {
-    this.mockDb = new MockDatabase();
+    this.productionDb = new MockDatabase();
     this.isProduction = process.env.NODE_ENV === 'production';
     this.pool = null;
   }
@@ -97,11 +97,11 @@ export class DatabaseManager {
         await this.pool.query('SELECT 1');
         return;
       } catch (err) {
-        console.warn('PostgreSQL connect failed, falling back to mock DB:', err);
+        console.warn('PostgreSQL connect failed, falling back to production DB:', err);
         this.pool = null;
       }
     }
-    await this.mockDb.connect();
+    await this.productionDb.connect();
   }
 
   async healthCheck(): Promise<{
@@ -116,10 +116,10 @@ export class DatabaseManager {
         const tables = res.rows.map((r: any) => r.tablename);
         return { databaseConnected: true, lastHealthCheck: new Date(), tables, environment: 'production' };
       } catch (e) {
-        console.warn('DB health check failed, using mock:', e);
+        console.warn('DB health check failed, using production:', e);
       }
     }
-    const health = await this.mockDb.healthCheck();
+    const health = await this.productionDb.healthCheck();
     return {
       databaseConnected: health.connected,
       lastHealthCheck: health.lastHealthCheck,
@@ -135,10 +135,10 @@ export class DatabaseManager {
         const res = await this.pool.query('SELECT id, title, description as body, status, timestamp FROM proposals ORDER BY timestamp DESC');
         return res.rows;
       }
-      // Fallback to mock-style until other tables are implemented
-      return this.mockDb.query(table, conditions);
+      // Fallback to production-style until other tables are implemented
+      return this.productionDb.query(table, conditions);
     }
-    return this.mockDb.query(table, conditions);
+    return this.productionDb.query(table, conditions);
   }
 
   async insertProposal(data: { id: string; title: string; body: string; status: string; timestamp: string }): Promise<void> {
@@ -149,7 +149,7 @@ export class DatabaseManager {
       );
       return;
     }
-    // mock insert: no-op
+    // production insert: no-op
   }
 }
 

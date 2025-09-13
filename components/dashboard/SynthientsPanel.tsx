@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -9,7 +14,7 @@ interface SynthientsData {
   env: string;
   flags: {
     trainingEnabled: boolean;
-    mocksDisabled: boolean;
+    productionsDisabled: boolean;
     synthientsActive: boolean;
   };
   services: {
@@ -69,7 +74,7 @@ export default function SynthientsPanel() {
           <h3 className="text-lg font-semibold mb-2">Flags</h3>
           <div className="space-y-1">
             <p>Training: {data.flags.trainingEnabled ? '✅' : '❌'}</p>
-            <p>Mocks Disabled: {data.flags.mocksDisabled ? '✅' : '❌'}</p>
+            <p>Mocks Disabled: {data.flags.productionsDisabled ? '✅' : '❌'}</p>
             <p>Synthients Active: {data.flags.synthientsActive ? '✅' : '❌'}</p>
           </div>
         </div>

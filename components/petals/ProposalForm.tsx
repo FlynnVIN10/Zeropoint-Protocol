@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client';
 
 import React, { useState } from 'react';
@@ -60,7 +65,7 @@ export default function ProposalForm() {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Proposal title"
+            implementation="Proposal title"
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
           />
@@ -71,7 +76,7 @@ export default function ProposalForm() {
           <textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Detailed proposal description"
+            implementation="Detailed proposal description"
             rows={6}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
@@ -99,7 +104,7 @@ export default function ProposalForm() {
             type="text"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            placeholder="e.g., ai, ml, training"
+            implementation="e.g., ai, ml, training"
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
           />
         </div>

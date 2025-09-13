@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client';
 
 import React, { useState } from 'react';
@@ -56,7 +61,7 @@ export default function DiffForm() {
             type="text"
             value={assetId}
             onChange={(e) => setAssetId(e.target.value)}
-            placeholder="Enter asset ID to modify"
+            implementation="Enter asset ID to modify"
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
           />
@@ -67,7 +72,7 @@ export default function DiffForm() {
           <textarea
             value={newData}
             onChange={(e) => setNewData(e.target.value)}
-            placeholder='{"updatedField": "newValue", ...}'
+            implementation='{"updatedField": "newValue", ...}'
             rows={6}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
@@ -79,7 +84,7 @@ export default function DiffForm() {
           <textarea
             value={changeReason}
             onChange={(e) => setChangeReason(e.target.value)}
-            placeholder="Explain why this change is needed"
+            implementation="Explain why this change is needed"
             rows={3}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required

@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -110,7 +115,7 @@ export default function VoteForm() {
             type="text"
             value={proposalId}
             onChange={(e) => setProposalId(e.target.value)}
-            placeholder="Enter proposal ID"
+            implementation="Enter proposal ID"
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
           />

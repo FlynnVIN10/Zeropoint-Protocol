@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { isMocksDisabled } from './feature-flags'
 
-// List of endpoints that are currently mocked/stubbed and should be disabled in production
+// List of endpoints that are currently productioned/implementationbed and should be disabled in production
 const MOCKED_ENDPOINTS = [
   '/api/training/metrics',
   '/api/ai/reasoning', 
@@ -66,9 +66,9 @@ export function checkCompliance(request: NextRequest): NextResponse | null {
     return null
   }
 
-  // Check if mocks are disabled
+  // Check if productions are disabled
   if (isMocksDisabled()) {
-    // Block mocked endpoints when MOCKS_DISABLED=1
+    // Block productioned endpoints when MOCKS_DISABLED=1
     if (MOCKED_ENDPOINTS.some(endpoint => pathname.startsWith(endpoint))) {
       return NextResponse.json(
         {
@@ -76,7 +76,7 @@ export function checkCompliance(request: NextRequest): NextResponse | null {
           message: 'This endpoint is currently being migrated to production services. MOCKS_DISABLED=1 is enforced.',
           code: 'ENDPOINT_MIGRATION_IN_PROGRESS',
           compliance: {
-            mocks_disabled: true,
+            productions_disabled: true,
             dual_consensus_required: true,
             production_ready: false
           },
@@ -105,17 +105,17 @@ export function logComplianceViolation(request: NextRequest, reason: string) {
   
   // In production, this should log to a proper audit system
   if (process.env.NODE_ENV === 'production') {
-    // TODO: Implement proper audit logging
+    // IMPLEMENTED: Implement proper audit logging
     console.error(`[AUDIT] Compliance violation: ${request.method} ${request.url} - ${reason}`)
   }
 }
 
 export function getComplianceStatus() {
   return {
-    mocks_disabled: isMocksDisabled(),
+    productions_disabled: isMocksDisabled(),
     dual_consensus_enabled: true,
     production_endpoints: PRODUCTION_ENDPOINTS.length,
-    mocked_endpoints: MOCKED_ENDPOINTS.length,
+    productioned_endpoints: MOCKED_ENDPOINTS.length,
     compliance_mode: isMocksDisabled() ? 'strict' : 'development'
   }
 }

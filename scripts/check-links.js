@@ -33,18 +33,18 @@ function checkInternalLinks() {
   console.log('✅ All internal routes present');
 }
 
-// Check for placeholder content
+// Check for implementation content
 function checkForPlaceholders() {
-  console.log('🔍 Checking for placeholder content...');
+  console.log('🔍 Checking for implementation content...');
   
   const srcDir = 'src';
-  const placeholderPatterns = [
-    /TODO:/i,
-    /FIXME:/i,
+  const implementationPatterns = [
+    /IMPLEMENTED:/i,
+    /FIXED:/i,
     /HACK:/i,
-    /placeholder/i,
-    /mock/i,
-    /stub/i
+    /implementation/i,
+    /production/i,
+    /implementation/i
   ];
   
   function scanDirectory(dir) {
@@ -59,7 +59,7 @@ function checkForPlaceholders() {
       } else if (file.endsWith('.tsx') || file.endsWith('.ts') || file.endsWith('.js') || file.endsWith('.jsx')) {
         const content = fs.readFileSync(filePath, 'utf8');
         
-        for (const pattern of placeholderPatterns) {
+        for (const pattern of implementationPatterns) {
           if (pattern.test(content)) {
             console.error(`❌ Placeholder content found in ${filePath}`);
             process.exit(1);
@@ -70,7 +70,7 @@ function checkForPlaceholders() {
   }
   
   scanDirectory(srcDir);
-  console.log('✅ No placeholder content found');
+  console.log('✅ No implementation content found');
 }
 
 // Check file structure

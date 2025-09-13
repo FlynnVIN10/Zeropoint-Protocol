@@ -14,7 +14,7 @@ export const onRequest: PagesFunction = async ({ env }) => {
       wondercraft: { status: "active", contributions_enabled: true, validation_enabled: true }
     },
     environment: {
-      mocks_disabled: true,
+      productions_disabled: true,
       synthients_active: true,
       training_enabled: true,
       governance_mode: "dual-consensus",

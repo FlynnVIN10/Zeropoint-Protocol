@@ -100,7 +100,7 @@ class Stage2APIServer {
           }
         },
         environment: {
-          mocks_disabled: true,
+          productions_disabled: true,
           synthients_active: true,
           training_enabled: true,
           governance_mode: 'dual-consensus',

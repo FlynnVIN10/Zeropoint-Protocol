@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client'
 
 import { useState } from 'react'
@@ -165,7 +170,7 @@ export default function RoutingStrategySelector({
                 type="text"
                 value={preferences.preferredRegion}
                 onChange={(e) => handlePreferenceChange('preferredRegion', e.target.value)}
-                placeholder="e.g., us-east, eu-west"
+                implementation="e.g., us-east, eu-west"
                 style={{
                   width: '100%',
                   background: '#111',

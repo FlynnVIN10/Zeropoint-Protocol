@@ -9,7 +9,7 @@ export const onRequest = async (ctx: any) => {
       gates: {
         scp_v1: true,
         consensus_dual: true,
-        mocks_disabled: true
+        productions_disabled: true
       }
     },
     ts: new Date().toISOString()

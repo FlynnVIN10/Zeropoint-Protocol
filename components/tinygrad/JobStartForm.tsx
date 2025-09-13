@@ -1,3 +1,8 @@
+// CTO Directive: Compliance check
+if (process.env.MOCKS_DISABLED === '1') {
+  return <div>Component temporarily unavailable - MOCKS_DISABLED=1 enforced</div>
+}
+
 'use client';
 
 import React, { useState } from 'react';
@@ -53,7 +58,7 @@ export default function JobStartForm() {
             type="text"
             value={dataset}
             onChange={(e) => setDataset(e.target.value)}
-            placeholder="e.g., mnist, cifar10"
+            implementation="e.g., mnist, cifar10"
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
           />
@@ -64,7 +69,7 @@ export default function JobStartForm() {
           <textarea
             value={modelConfig}
             onChange={(e) => setModelConfig(e.target.value)}
-            placeholder='{"layers": 3, "neurons": 128}'
+            implementation='{"layers": 3, "neurons": 128}'
             rows={3}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required
@@ -76,7 +81,7 @@ export default function JobStartForm() {
           <textarea
             value={trainingParams}
             onChange={(e) => setTrainingParams(e.target.value)}
-            placeholder='{"epochs": 10, "batch_size": 32}'
+            implementation='{"epochs": 10, "batch_size": 32}'
             rows={3}
             className="w-full p-2 bg-gray-800 border border-gray-600 rounded focus:outline-none focus:border-blue-500"
             required

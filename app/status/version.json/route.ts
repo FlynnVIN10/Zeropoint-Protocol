@@ -4,7 +4,9 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function GET(request: NextRequest) {
   return NextResponse.json(
     {
-      ready: false,
+      commit: 'SHUTDOWN',
+      buildTime: new Date().toISOString(),
+      env: 'shutdown',
       status: 'shutdown',
       message: 'Zeropoint Protocol has been fully shut down',
       code: 'PROTOCOL_SHUTDOWN',

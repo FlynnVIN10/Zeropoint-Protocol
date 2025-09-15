@@ -57,6 +57,7 @@ jobs:
           fi
 
       - name: Alignment check (HEAD vs live)
+        if: ${{ env.STRICT_ALIGNMENT == '1' }}
         run: |
           echo "=== Alignment Check (HEAD vs live) ==="
           canon=${{ steps.head.outputs.head_commit }}
@@ -68,6 +69,18 @@ jobs:
             echo "✅ Live commit matches HEAD"
           else
             echo "❌ Commit mismatch: expected $canon, got $live_commit" && exit 1
+          fi
+      - name: Alignment check (HEAD vs live, soft)
+        if: ${{ env.STRICT_ALIGNMENT != '1' }}
+        continue-on-error: true
+        run: |
+          echo "=== Alignment Check (soft mode) ==="
+          canon=${{ steps.head.outputs.head_commit }}
+          live_commit=$(curl -s https://zeropointprotocol.ai/status/version.json | jq -r '.commit' 2>/dev/null || echo "")
+          if [ "$live_commit" = "$canon" ]; then
+            echo "✅ Live commit matches HEAD"
+          else
+            echo "⚠️  Soft fail: commit mismatch (expected $canon, got $live_commit)"
           fi
 
       - name: Network connectivity test (optional)

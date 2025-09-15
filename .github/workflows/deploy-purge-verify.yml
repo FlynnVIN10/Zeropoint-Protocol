@@ -11,9 +11,20 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - uses: actions/checkout@v4
+      - name: Preflight secrets
+        id: cf
+        run: |
+          if [ -n "${{ secrets.CLOUDFLARE_API_TOKEN }}" ] && [ -n "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}" ]; then
+            echo "ready=true" >> $GITHUB_OUTPUT
+          else
+            echo "ready=false" >> $GITHUB_OUTPUT
+            echo "Skipping deploy: Cloudflare secrets missing" >> $GITHUB_STEP_SUMMARY
+          fi
       - name: Deploy to Cloudflare Pages
+        if: steps.cf.outputs.ready == 'true'
         run: |
           npm ci
           npm run build

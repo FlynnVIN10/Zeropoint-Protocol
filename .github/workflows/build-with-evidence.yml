@@ -31,7 +31,7 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
         run: |
           echo "🔧 Generating evidence files from commit: $GITHUB_SHA"
-          node scripts/generate-evidence.js
+          node scripts/generate-evidence.mjs
           
       - name: Verify Evidence Generation
         run: |

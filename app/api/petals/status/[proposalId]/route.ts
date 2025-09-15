@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'edge';
 
 // Import the PetalsOrchestrator service
-// import * as Petals from // TODO: Fix import '@services/petals-orchestrator'
+// import * as Petals from '@services/petals-orchestrator' // TODO: Fix import when service exists
 
 export async function GET(
   request: NextRequest,
@@ -18,8 +18,12 @@ export async function GET(
       );
     }
 
-    // Get proposal status
-    const result = await Petals.proposalStatus(proposalId);
+    // Temporary mock response until service exists
+    const result = {
+      proposalId,
+      status: 'under_review',
+      updatedAt: new Date().toISOString()
+    }
 
     return NextResponse.json(result, {
       headers: {

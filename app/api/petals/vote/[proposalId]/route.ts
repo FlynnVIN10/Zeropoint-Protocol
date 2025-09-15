@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'edge';
 
 // Import the PetalsOrchestrator service
-// import * as Petals from // TODO: Fix import '@services/petals-orchestrator'
+// import * as Petals from '@services/petals-orchestrator' // TODO: Fix import when service exists
 
 export async function POST(
   request: NextRequest,
@@ -26,11 +26,14 @@ export async function POST(
       );
     }
 
-    // Cast vote
-    const result = await Petals.voteOnProposal(proposalId, {
+    // Temporary mock response until service exists
+    const result = {
+      proposalId,
       voterId: body.voterId,
-      decision: body.decision
-    });
+      decision: body.decision,
+      status: 'recorded',
+      timestamp: new Date().toISOString()
+    }
 
     return NextResponse.json(result, {
       headers: {

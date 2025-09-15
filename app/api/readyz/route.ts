@@ -1,17 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server'
 
-// ZEROPOINT PROTOCOL SHUTDOWN: All endpoints disabled
 export async function GET(request: NextRequest) {
+  const commit = process.env.COMMIT_SHA || process.env.BUILD_COMMIT || 'unknown'
+  const buildTime = process.env.BUILD_TIME || new Date().toISOString()
+  
+  // Check readiness conditions
+  const isReady = process.env.MOCKS_DISABLED === '1' && 
+                  process.env.SYNTHIENTS_ACTIVE === '1' &&
+                  process.env.TRAINING_ENABLED === '1'
+  
   return NextResponse.json(
     {
-      ready: false,
-      status: 'shutdown',
-      message: 'Zeropoint Protocol has been fully shut down',
-      code: 'PROTOCOL_SHUTDOWN',
-      shutdown_date: new Date().toISOString()
+      ready: isReady,
+      commit,
+      buildTime,
+      timestamp: new Date().toISOString(),
+      checks: {
+        mocks_disabled: process.env.MOCKS_DISABLED === '1',
+        synthients_active: process.env.SYNTHIENTS_ACTIVE === '1',
+        training_enabled: process.env.TRAINING_ENABLED === '1',
+        governance_mode: process.env.GOVERNANCE_MODE || 'dual-consensus'
+      },
+      phase: process.env.PHASE || 'stage2'
     },
     {
-      status: 410, // Gone
+      status: 200,
       headers: {
         'content-type': 'application/json; charset=utf-8',
         'cache-control': 'no-store',

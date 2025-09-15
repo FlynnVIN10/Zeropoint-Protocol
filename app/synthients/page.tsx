@@ -57,7 +57,7 @@ export default function Page() {
             </div>
             <textarea
               className="mt-3 w-full rounded-xl border p-2 text-sm"
-              implementation="CEO feedback (optional)"
+              placeholder="CEO feedback (optional)"
               value={note[p.id]||''}
               onChange={(e)=>setNote({...note, [p.id]:e.target.value})}
             />

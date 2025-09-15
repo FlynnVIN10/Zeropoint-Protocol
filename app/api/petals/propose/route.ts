@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = 'edge';
 
 // Import the PetalsOrchestrator service
 import * as Petals from '@services/petals-orchestrator'

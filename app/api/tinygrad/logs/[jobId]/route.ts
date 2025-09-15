@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = 'edge';
 
 // Import the TinygradTrainer service
 import * as Tiny from '@services/trainer-tinygrad'

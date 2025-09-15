@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = 'edge';
 import { readFileSync, existsSync } from 'fs'
 import { join } from 'path'
 import { dbManager } from '../../../../lib/db/config'

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+export const runtime = 'edge';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function POST(request: NextRequest) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = 'edge';
 import { featureFlags } from '../../../../lib/feature-flags'
 
 export const dynamic = 'force-dynamic'

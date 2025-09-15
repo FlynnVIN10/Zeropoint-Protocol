@@ -1,4 +1,5 @@
 // © 2025 Zeropoint Protocol, Inc., a Texas C Corporation with principal offices in Austin, TX. All Rights Reserved. View-Only License: No clone, modify, run or distribute without signed agreement. See LICENSE.md and legal@zeropointprotocol.ai.
+export const runtime = 'edge';
 
 // app/api/providers/petals/stream/route.ts
 

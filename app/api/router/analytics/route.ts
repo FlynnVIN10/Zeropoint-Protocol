@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = 'edge';
 import { EnhancedProviderRouter } from '../../../../services/enhanced-router'
 
 const enhancedRouter = new EnhancedProviderRouter()

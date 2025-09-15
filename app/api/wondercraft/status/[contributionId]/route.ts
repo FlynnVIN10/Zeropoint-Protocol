@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+export const runtime = 'edge';
 
 // Import the WondercraftBridge service
 import * as Wondercraft from '@services/wondercraft-bridge'

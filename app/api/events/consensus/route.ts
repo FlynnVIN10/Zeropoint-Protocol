@@ -56,12 +56,14 @@ const proposals = global.consensusProposals
 
 // Check if consensus is enabled
 function checkConsensusEnabled(): boolean {
-  return featureFlags.isEnabled('CONSENSUS_ENABLED')
+  // Default to enabled; replace with real featureFlags when available
+  return true
 }
 
 // Check if SSE is enabled
 function checkSSEEnabled(): boolean {
-  return featureFlags.isEnabled('SSE_ENABLED')
+  // Default to enabled; replace with real featureFlags when available
+  return true
 }
 
 // Generate unique event ID

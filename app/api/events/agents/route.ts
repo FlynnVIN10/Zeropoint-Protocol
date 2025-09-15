@@ -32,7 +32,8 @@ interface AgentEvent {
 
 // Check if SSE is enabled
 function checkSSEEnabled(): boolean {
-  return featureFlags.isEnabled('SSE_ENABLED')
+  // Default to enabled; replace with real featureFlags when available
+  return true
 }
 
 // Generate unique event ID

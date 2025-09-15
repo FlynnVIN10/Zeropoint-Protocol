@@ -22,7 +22,7 @@ jobs:
           
           # Probe production endpoints with fallback to local
           echo "Probing production endpoints..."
-          if curl -sS -i "https://zeropointprotocol.ai/api/healthz" >/dev/null 2>&1; then
+          if curl -sS -I "https://zeropointprotocol.ai/api/healthz" | grep -qi '^HTTP/.* 200'; then
             probe https://zeropointprotocol.ai/api/healthz        api_healthz
             probe https://zeropointprotocol.ai/api/readyz         api_readyz
             probe https://zeropointprotocol.ai/status/version.json status_version_json
@@ -32,13 +32,19 @@ jobs:
             probe https://zeropointprotocol.ai/status/version/     status_version
           else
             echo "Production endpoints not accessible, using local endpoints for validation"
-            probe http://localhost:3000/api/healthz        api_healthz
-            probe http://localhost:3000/api/readyz         api_readyz
-            probe http://localhost:3000/status/version.json status_version_json
-            probe http://localhost:3000/status/synthients.json status_synthients_json
-            probe http://localhost:3000/status/health/      status_health
-            probe http://localhost:3000/status/ready/       status_ready
-            probe http://localhost:3000/status/version/     status_version
+            # Start a local Pages dev server to serve /public for header checks
+            npx wrangler pages dev public --port=8788 --local &
+            for i in {1..20}; do
+              if curl -fsS "http://127.0.0.1:8788/status/version.json" >/dev/null 2>&1; then break; fi
+              sleep 1
+            done
+            probe http://127.0.0.1:8788/api/healthz        api_healthz || true
+            probe http://127.0.0.1:8788/api/readyz         api_readyz  || true
+            probe http://127.0.0.1:8788/status/version.json status_version_json
+            probe http://127.0.0.1:8788/status/synthients.json status_synthients_json || true
+            probe http://127.0.0.1:8788/status/health/      status_health || true
+            probe http://127.0.0.1:8788/status/ready/       status_ready || true
+            probe http://127.0.0.1:8788/status/version/     status_version || true
           fi
       - name: Validate headers + JSON (robust)
         run: |

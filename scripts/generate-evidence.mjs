@@ -5,9 +5,9 @@ import path from 'node:path';
 const short = (process.env.GITHUB_SHA || execSync('git rev-parse --short HEAD')).toString().trim();
 const meta = { phase: process.env.PHASE||'stage2', commit: short, ciStatus: process.env.CI_STATUS||'green', buildTime: new Date().toISOString() };
 
-// Don't create static version.json - let the function handle it
-// fs.mkdirSync('public/status', { recursive:true });
-// fs.writeFileSync('public/status/version.json', JSON.stringify(meta, null, 2));
+// Also provide a static status/version.json for CI checks
+fs.mkdirSync('public/status', { recursive:true });
+fs.writeFileSync('public/status/version.json', JSON.stringify({ commit: short, buildTime: meta.buildTime, env: 'prod' }, null, 2));
 
 // Create both Stage 1 (legacy) and Stage 2 evidence structures expected by workflows
 const stage1Dir = `public/evidence/verify/${short}`;

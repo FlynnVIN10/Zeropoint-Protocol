@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-export const runtime = 'edge';
-import { execSync } from 'child_process';
+// Note: This route uses Node.js APIs and cannot use edge runtime
+// import { execSync } from 'child_process';
 
 
 export async function GET(request: NextRequest) {
   try {
-    // Get current commit SHA
-    const commit = execSync('git rev-parse --short HEAD', { encoding: 'utf8' }).trim();
-    const fullCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    // Get current commit SHA from environment variables
+    const commit = process.env.COMMIT_SHA || process.env.BUILD_COMMIT || 'unknown';
+    const fullCommit = process.env.COMMIT_SHA || process.env.BUILD_COMMIT || 'unknown';
     
     // Get build time
     const buildTime = new Date().toISOString();

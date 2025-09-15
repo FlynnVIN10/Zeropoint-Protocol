@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'edge'
+
 export async function GET(request: NextRequest) {
   const commit = process.env.COMMIT_SHA || process.env.BUILD_COMMIT || 'unknown'
   const buildTime = process.env.BUILD_TIME || new Date().toISOString()

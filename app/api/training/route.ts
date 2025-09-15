@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+export const runtime = 'edge'
+
 // CTO Directive: Block mocked endpoints when MOCKS_DISABLED=1
 export async function POST(request: NextRequest) {
   if (process.env.MOCKS_DISABLED === '1') {

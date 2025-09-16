@@ -13,6 +13,14 @@ export class BackendAPIClientManager {
     return BackendAPIClientManager.instance
   }
 
+  private static readonly INTEGRATION_SERVICES: ReadonlyArray<string> = [
+    'tinygrad',
+    'petals',
+    'wondercraft',
+    'ml_pipeline',
+    'quantum'
+  ]
+
   async getClient(service: string): Promise<any> {
     if (!this.clients.has(service)) {
       const client = await this.createClient(service)
@@ -94,7 +102,7 @@ export class BackendAPIClientManager {
   async testAllConnections(): Promise<Record<string, boolean>> {
     const results: Record<string, boolean> = {}
     
-    for (const service of Object.keys(BACKEND_INTEGRATIONS)) {
+    for (const service of BackendAPIClientManager.INTEGRATION_SERVICES) {
       try {
         const client = await this.getClient(service)
         results[service] = await client.healthCheck()

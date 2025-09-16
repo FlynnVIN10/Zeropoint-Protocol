@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-// Note: This route uses Node.js APIs and cannot use edge runtime
-// import { execSync } from 'child_process';
+export const runtime = 'edge';
 
 
 export async function GET(request: NextRequest) {

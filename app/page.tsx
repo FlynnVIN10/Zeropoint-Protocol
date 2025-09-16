@@ -7,6 +7,7 @@ import Footer from '../components/Footer'
 
 // Force dynamic rendering to prevent static generation issues
 export const dynamic = 'force-dynamic'
+export const runtime = 'edge'
 
 // No server-side props needed; the RightPanel fetches live data from dynamic APIs
 

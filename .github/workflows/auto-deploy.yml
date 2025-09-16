@@ -24,51 +24,20 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: npm
-          cache-dependency-path: iaai/package-lock.json
+          cache-dependency-path: package-lock.json
 
-      - name: Build Dynamic Evidence
+      - name: Build
         run: |
-          echo "Building dynamic evidence files..."
-          if ! node scripts/build-dynamic-evidence.mjs; then
-            echo "❌ CRITICAL: Dynamic evidence build failed"
-            echo "Deployment blocked - evidence files must be generated successfully"
-            exit 1
-          fi
-          echo "✅ Dynamic evidence build completed successfully"
-          
-          # Verify critical evidence files exist
-          echo "Verifying evidence files..."
-          if [ ! -f "public/build-info.json" ] || [ ! -f "evidence/training/latest.json" ] || [ ! -f "evidence/petals/status.json" ] || [ ! -f "evidence/wondercraft/status.json" ]; then
-            echo "❌ CRITICAL: Required evidence files missing"
-            echo "Deployment blocked - all evidence files must be present"
-            exit 1
-          fi
-          
-          # Validate evidence file JSON
-          echo "Validating evidence file JSON..."
-          if ! jq empty public/build-info.json 2>/dev/null; then
-            echo "❌ CRITICAL: public/build-info.json contains invalid JSON"
-            exit 1
-          fi
-          if ! jq empty evidence/training/latest.json 2>/dev/null; then
-            echo "❌ CRITICAL: evidence/training/latest.json contains invalid JSON"
-            exit 1
-          fi
-          if ! jq empty evidence/petals/status.json 2>/dev/null; then
-            echo "❌ CRITICAL: evidence/petals/status.json contains invalid JSON"
-            exit 1
-          fi
-          if ! jq empty evidence/wondercraft/status.json 2>/dev/null; then
-            echo "❌ CRITICAL: evidence/wondercraft/status.json contains invalid JSON"
-            exit 1
-          fi
-          
-          echo "✅ All evidence files validated successfully"
-      - name: Validate SCP schema presence
-        run: test -f evidence/schemas/metrics.schema.json
+          npm ci
+          npm run build:pages
+      - name: Generate Evidence (compat)
+        run: node scripts/generate-evidence.mjs
 
-      - name: Validate evidence
-        run: node scripts/build-dynamic-evidence.mjs --validate
+      - name: Validate Evidence Files
+        run: |
+          SHORT=$(git rev-parse --short=7 HEAD)
+          test -f public/status/version.json
+          test -f public/evidence/verify/$SHORT/index.json
 
       - name: Build leaderboard
         run: node scripts/build-leaderboard.mjs

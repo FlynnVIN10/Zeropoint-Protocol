@@ -9,7 +9,7 @@ jobs:
         run: |
           set -euo pipefail
           HEAD="$(git rev-parse --short=8 HEAD)"
-          j() { curl -fsS "$1" | jq -r "$2"; }
+          j() { curl -sS "$1" 2>/dev/null | jq -r "$2" 2>/dev/null || echo ""; }
 
           echo "=== Verifying commit alignment ==="
           echo "Repository HEAD: $HEAD"

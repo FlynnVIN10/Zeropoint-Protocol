@@ -1,0 +1,10 @@
+{
+  "commit": "f1fcd796",
+  "phase": "v1.0.1",
+  "ciStatus": "green",
+  "buildTime": "2025-10-07T20:58:45.000Z",
+  "evidence": [
+    "branch-protection.json",
+    "smoke.md"
+  ]
+}

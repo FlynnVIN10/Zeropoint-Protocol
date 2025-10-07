@@ -87,3 +87,14 @@ monitoring/logs/*.log
 
 # Backup files from refactoring tools
 *.backup.*
+
+# Local development
+.env*
+!.env.local.example
+*.db
+*.db-shm
+*.db-wal
+/.wrangler
+/out
+/.cache
+

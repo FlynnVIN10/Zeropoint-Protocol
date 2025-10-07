@@ -1,45 +1,28 @@
-import { NextResponse } from 'next/server'
-
-export const runtime = 'edge'
+import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 
 export async function GET() {
-  const timestamp = new Date().toISOString()
-  const commit = process.env.COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || '5f82fb92'
-  const buildTime = process.env.BUILD_TIME || timestamp
-  
-  return NextResponse.json(
-    {
-      ready: true,
-      commit,
-      buildTime,
-      timestamp,
-      phase: 'stage2',
-      ciStatus: 'green',
-      mocks: false,
-      services: {
-        database: 'healthy',
-        cache: 'healthy',
-        external: 'healthy',
-        petals: 'operational',
-        wondercraft: 'operational',
-        tinygrad: 'operational'
-      },
-      environment: 'production',
-      synthients: {
-        training: 'active',
-        proposals: 'enabled',
-        selfImprovement: 'enabled'
-      },
-      message: 'Platform fully operational with Synthients training and proposal systems'
-    },
-    {
-      status: 200,
-      headers: {
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-        'x-content-type-options': 'nosniff',
-        'content-disposition': 'inline'
-      }
-    }
-  )
+  try {
+    // Check database connection
+    await db.$queryRaw`SELECT 1`;
+    const checks = { db: true };
+    const ready = Object.values(checks).every(Boolean);
+    
+    return NextResponse.json({
+      ready,
+      checks,
+      now: new Date().toISOString()
+    }, {
+      status: ready ? 200 : 503
+    });
+  } catch (error) {
+    return NextResponse.json({
+      ready: false,
+      checks: { db: false },
+      error: 'Database check failed',
+      now: new Date().toISOString()
+    }, {
+      status: 503
+    });
+  }
 }

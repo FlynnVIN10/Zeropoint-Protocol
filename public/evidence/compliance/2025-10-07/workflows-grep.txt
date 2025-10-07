@@ -1,0 +1,4 @@
+.github/workflows/ci-local.yml:37:      - name: Verify no deploy steps
+.github/workflows/ci-local.yml:39:          if grep -r "wrangler\|cloudflare\|pages deploy" .github/workflows/*.yml; then
+.github/workflows/ci-local.yml:40:            echo "❌ Deploy steps found in workflows"
+.github/workflows/ci-local.yml:43:          echo "✅ No deploy steps found"

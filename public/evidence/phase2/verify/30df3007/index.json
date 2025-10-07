@@ -1,1 +1,0 @@
-{"meta":{"commit":"30df3007","timestamp":"2025-09-12T01:56:05Z","phase":"stage2","ragMode":"beyond"},"status":"verified","endpoints":["/status/version.json","/status/synthients.json","/api/healthz","/api/readyz","/api/training","/api/proposals"]}

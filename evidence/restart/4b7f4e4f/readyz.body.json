@@ -1,1 +1,0 @@
-{"ready":true,"commit":"f2abfc52","buildTime":"2025-09-11T16:30:13.575Z","timestamp":"2025-09-11T16:33:05.898Z","phase":"stage2","ciStatus":"green","mocks":false,"services":{"database":"healthy","cache":"healthy","external":"healthy"},"environment":"production"}

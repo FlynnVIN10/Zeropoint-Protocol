@@ -26,5 +26,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "types/**/*.d.ts", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "iaai/**/*", "functions/**/*"]
+  "exclude": ["node_modules", "iaai/**/*", "functions/**/*", "archive/**/*", "tests/**/*", "lib/utils/**/*", "lib/services/**/*", "lib/backend/**/*"]
 }

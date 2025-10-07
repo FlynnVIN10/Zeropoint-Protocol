@@ -34,14 +34,6 @@ jobs:
         env:
           DATABASE_URL: "file:./test.db"
           
-      - name: Verify no deploy steps
-        run: |
-          if grep -r "wrangler\|cloudflare\|pages deploy" .github/workflows/*.yml; then
-            echo "❌ Deploy steps found in workflows"
-            exit 1
-          fi
-          echo "✅ No deploy steps found"
-          
       - name: Assert status/version.json fields
         run: |
           test -f public/status/version.json

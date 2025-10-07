@@ -1,101 +1,31 @@
-# Smoke Commands (Localhost Testing)
-
-**Date:** 2025-10-07  
-**Status:** ⏳ PENDING (requires `npm run dev`)
-
----
-
-## Commands to Execute
-
-### 1. Start Server
-```bash
-npm run dev
-# Wait for: Ready on http://localhost:3000
-```
-
-### 2. Test /api/healthz
-```bash
-curl -si http://localhost:3000/api/healthz | grep -Ei 'HTTP/1.1 200|application/json|no-store|nosniff|content-disposition: inline'
-```
-
-**Expected Output:**
-```
+### healthz
 HTTP/1.1 200 OK
-content-type: application/json; charset=utf-8
+vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch
 cache-control: no-store
-x-content-type-options: nosniff
 content-disposition: inline
-```
+content-type: application/json; charset=utf-8
+x-content-type-options: nosniff
+Date: Tue, 07 Oct 2025 20:25:30 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
 
-### 3. Test /api/readyz
-```bash
-curl -si http://localhost:3000/api/readyz | grep -Ei 'HTTP/1.1 200|application/json|no-store|nosniff|content-disposition: inline'
-```
-
-**Expected Output:**
-```
+{"ok":true,"service":"web","now":"2025-10-07T20:25:30.575Z"}
+### readyz
 HTTP/1.1 200 OK
-content-type: application/json; charset=utf-8
+vary: RSC, Next-Router-State-Tree, Next-Router-Prefetch, Next-Router-Segment-Prefetch
 cache-control: no-store
-x-content-type-options: nosniff
 content-disposition: inline
-```
+content-type: application/json; charset=utf-8
+x-content-type-options: nosniff
+Date: Tue, 07 Oct 2025 20:25:35 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+Transfer-Encoding: chunked
 
-### 4. Verify version.json
-```bash
-jq -r '.phase,.commit,.ciStatus,.buildTime' public/status/version.json
-```
-
-**Expected Output:**
-```
+{"ready":true,"checks":{"db":true},"now":"2025-10-07T20:25:35.713Z"}
+### version
 Dev
 local
 local
 2025-10-07T19:30:00.000Z
-```
-
-### 5. Test Full Responses
-```bash
-curl -s http://localhost:3000/api/healthz | jq .
-curl -s http://localhost:3000/api/readyz | jq .
-```
-
-**Expected healthz:**
-```json
-{
-  "ok": true,
-  "service": "web",
-  "now": "2025-10-07T..."
-}
-```
-
-**Expected readyz:**
-```json
-{
-  "ready": true,
-  "checks": {
-    "db": true
-  },
-  "now": "2025-10-07T..."
-}
-```
-
----
-
-## Acceptance
-
-**All tests must pass:**
-- ✅ healthz returns 200 with all required headers
-- ✅ readyz returns 200 with all required headers
-- ✅ version.json fields present and correct
-- ✅ JSON responses valid
-
-**Once complete:**
-1. Paste actual outputs into this file
-2. Commit updated smoke.md
-3. Reference in SCRA verification
-
----
-
-**Status:** ⏳ Awaiting localhost test execution
-

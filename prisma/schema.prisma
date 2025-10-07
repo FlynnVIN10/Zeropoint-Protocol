@@ -23,20 +23,20 @@ model TrainingRun {
   startedAt   DateTime  @default(now())
   finishedAt  DateTime?
   status      String    @default("running") // running | success | failed
-  metrics     Json?
+  metricsJson String?   // JSON as text for SQLite
   Synthient   Synthient @relation(fields: [synthientId], references: [id], onDelete: Cascade)
   createdAt   DateTime  @default(now())
 }
 
 model Proposal {
-  id        String   @id @default(cuid())
-  title     String
-  body      String
-  createdAt DateTime @default(now())
-  status    String   @default("open") // open | approved | vetoed
-  votes     Vote[]
-  evidence  Json?
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  title        String
+  body         String
+  createdAt    DateTime @default(now())
+  status       String   @default("open") // open | approved | vetoed
+  votes        Vote[]
+  evidenceJson String?  // JSON as text for SQLite
+  updatedAt    DateTime @updatedAt
 }
 
 model Vote {

@@ -27,7 +27,7 @@ export async function POST(_: Request, { params }: { params: { id: string } }) {
       data: {
         status: "success",
         finishedAt: new Date(),
-        metrics: { loss: 0.12, accuracy: 0.94 }
+        metricsJson: JSON.stringify({ loss: 0.12, accuracy: 0.94 })
       }
     });
     

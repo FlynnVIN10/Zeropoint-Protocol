@@ -41,4 +41,10 @@ jobs:
             exit 1
           fi
           echo "✅ No deploy steps found"
+          
+      - name: Assert status/version.json fields
+        run: |
+          test -f public/status/version.json
+          jq -e '.commit and .buildTime and .phase and (.ciStatus=="green" or .ciStatus=="local")' public/status/version.json >/dev/null
+          echo "✅ version.json fields validated"
 

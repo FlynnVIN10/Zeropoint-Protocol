@@ -128,6 +128,26 @@ npm update
 
 ---
 
+## Security Advisories
+
+### Active Vulnerabilities (2025-10-07)
+
+| Package | Installed | CVE | Severity | Path | Fixed Version | Action Taken |
+|---------|-----------|-----|----------|------|---------------|--------------|
+| next | 15.0.4 | CVE-2025-XXXXX | Critical | Direct dependency | 15.1.0+ (when available) | Monitoring upstream; DoS mitigation via rate limiting planned |
+
+**Details:**
+- **Vulnerability:** Next.js Server Actions Denial of Service
+- **Impact:** Potential DoS attack vector via Server Actions
+- **Mitigation:** Local-only deployment (not exposed to public internet), rate limiting to be implemented
+- **Status:** Monitoring Next.js releases for patch
+- **Evidence:** `/public/evidence/compliance/2025-10-07/npm-audit.json`
+
+**Last Audit:** 2025-10-07  
+**Next Review:** Weekly (Fridays) or on Next.js release
+
+---
+
 ## Incident Response
 
 ### If Secrets Committed

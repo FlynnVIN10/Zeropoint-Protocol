@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
+import { checkHealth } from "@/server/checks/health";
 
 export async function GET() {
-  return NextResponse.json({
-    ok: true,
-    service: "web",
-    now: new Date().toISOString()
-  }, {
-    status: 200,
+  const status = await checkHealth();
+  
+  return NextResponse.json(status, {
+    status: status.ok ? 200 : 503,
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',

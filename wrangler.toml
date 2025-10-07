@@ -38,8 +38,9 @@ BUILD_TIME = "2025-09-13T00:20:00.000Z"
 TINYGRAD_API_URL = "https://tinygrad.zeropointprotocol.ai"
 PETALS_API_URL = "https://petals.zeropointprotocol.ai"
 WONDERCRAFT_API_URL = "https://wondercraft.zeropointprotocol.ai"
-# Database
-DATABASE_URL = "postgresql://user:pass@prod-db:5432/zeropoint"
+# Database (use Workers Secrets for production)
+# DATABASE_URL should be set via: wrangler secret put DATABASE_URL
+# Do NOT commit database credentials here
 # Synthients Training and Proposal Systems
 SYNTHIENTS_TRAINING = "active"
 SYNTHIENTS_PROPOSALS = "enabled"

@@ -13,7 +13,13 @@ export async function GET() {
       checks,
       now: new Date().toISOString()
     }, {
-      status: ready ? 200 : 503
+      status: ready ? 200 : 503,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
+      }
     });
   } catch (error) {
     return NextResponse.json({
@@ -22,7 +28,13 @@ export async function GET() {
       error: 'Database check failed',
       now: new Date().toISOString()
     }, {
-      status: 503
+      status: 503,
+      headers: {
+        'content-type': 'application/json; charset=utf-8',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
+        'content-disposition': 'inline'
+      }
     });
   }
 }

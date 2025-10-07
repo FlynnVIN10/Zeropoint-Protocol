@@ -1,6 +1,6 @@
 {
-  "commit": "local",
-  "buildTime": "1970-01-01T00:00:00Z",
   "phase": "Dev",
-  "ciStatus": "local"
+  "commit": "local",
+  "ciStatus": "local",
+  "buildTime": "2025-10-07T19:30:00.000Z"
 }

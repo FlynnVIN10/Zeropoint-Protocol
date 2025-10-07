@@ -1,0 +1,7 @@
+.next/cache
+node_modules
+.git
+*.backup.*
+*.log
+.DS_Store
+

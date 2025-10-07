@@ -1,29 +1,22 @@
-# Zeropoint Protocol Headers Configuration
-# Ensures proper headers for JSON endpoints and security
-
-# Global headers for all routes
 /*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https:; font-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
   X-Frame-Options: DENY
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-
-/status/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   Cache-Control: no-store
-  Content-Type: application/json; charset=utf-8
-  X-Content-Type-Options: nosniff
-
-/evidence/*
-  Cache-Control: no-store
-  Content-Type: application/json; charset=utf-8
-  X-Content-Type-Options: nosniff
 
 /api/*
-  Cache-Control: no-store
   Content-Type: application/json; charset=utf-8
+  Cache-Control: no-store
   X-Content-Type-Options: nosniff
+  Content-Disposition: inline
 
-# Root JSON files
-/*.json
-  Cache-Control: no-store
+/status/*
   Content-Type: application/json; charset=utf-8
+  Cache-Control: no-store, no-cache, must-revalidate, max-age=0
+  Pragma: no-cache
+  Expires: 0
   X-Content-Type-Options: nosniff
+  X-Cache-Status: BYPASS

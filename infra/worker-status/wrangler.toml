@@ -8,5 +8,5 @@ routes = [
 [vars]
 PHASE = "stage2"
 CI_STATUS = "green"
-COMMIT_SHA = "c1ca7739"
-BUILD_TIME = "2025-09-12T22:16:40.120Z"
+COMMIT_SHA = "fde0421e"
+BUILD_TIME = "2025-10-07T16:34:35.584Z"

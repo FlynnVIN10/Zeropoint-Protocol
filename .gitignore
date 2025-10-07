@@ -68,3 +68,19 @@ monitoring/logs/*.log
 
 # Ignore Vercel/Next build output
 .vercel/
+.next/cache/
+/.next/cache/
+
+# Environment files
+.env.backend
+.env.local
+.env*.local
+*.pem
+*.key
+
+# Cache and build artifacts
+.next/cache/
+.wrangler/
+
+# Backup files
+*.backup.*

@@ -1,6 +1,5 @@
-# SHUTDOWN: Zeropoint Protocol disabled
-# name = "zeropoint-protocol"
-# pages_build_output_dir = "."
+name = "zeropoint-protocol"
+pages_build_output_dir = "."
 
 # global (dev/preview) bindings
 [[kv_namespaces]]

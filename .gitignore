@@ -84,3 +84,6 @@ monitoring/logs/*.log
 
 # Backup files
 *.backup.*
+
+# Backup files from refactoring tools
+*.backup.*

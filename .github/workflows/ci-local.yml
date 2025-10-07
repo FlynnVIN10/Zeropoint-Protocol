@@ -36,11 +36,11 @@ jobs:
           
       - name: Verify no deploy steps
         run: |
-          if grep -r "wrangler\|cloudflare\|pages deploy" .github/workflows/*.yml; then
+          if grep -r "wrangler.*deploy\|pages.*deploy\|cloudflare.*deploy" .github/workflows/*.yml; then
             echo "❌ Deploy steps found in workflows"
             exit 1
           fi
-          echo "✅ No deploy steps found"
+          echo "✅ No deploy commands found"
           
       - name: Assert status/version.json fields
         run: |

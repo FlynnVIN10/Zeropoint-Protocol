@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/server/db";
 import { NextResponse } from "next/server";
 
 export async function POST(_: Request, context: { params: Promise<{ id: string }> }) {

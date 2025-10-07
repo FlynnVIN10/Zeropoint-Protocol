@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test:
+  ci-local:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,4 +39,7 @@ jobs:
           test -f public/status/version.json
           jq -e '.commit and .buildTime and .phase and (.ciStatus=="green" or .ciStatus=="local")' public/status/version.json >/dev/null
           echo "✅ version.json fields validated"
+          
+      - name: Verify version.json
+        run: node scripts/verify-version.ts
 

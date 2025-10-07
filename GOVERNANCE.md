@@ -19,16 +19,95 @@
 - Priorities: (1) alignment & safety, (2) consensus integrity, (3) AI integration, (4) risk mitigation.
 
 **Quality Gates**
-- CI green; tests meet coverage; `/healthz` and `/readyz` return 200.
+- CI green (`ci-local` workflow); tests meet coverage; `/healthz` and `/readyz` return 200.
 - No mocks in production (`MOCKS_DISABLED=1`).
-- Website deploy healthy; Lighthouse A11y ≥95; copy matches repo evidence.
-- Dual‑consensus approval recorded in audit log.
+- Local runtime healthy (localhost:3000); Lighthouse A11y ≥95; copy matches repo evidence.
+- Dual‑consensus approval recorded in `/public/evidence/compliance/YYYY-MM-DD/`.
+- All evidence at canonical paths: `/public/status/version.json`, `/public/evidence/verify/<shortSHA>/`, `/public/evidence/compliance/YYYY-MM-DD/`.
 
 **Non‑Negotiables**
 - No consensus bypass. No hidden capabilities. No dark patterns.
-- Route and version parity between repo and public site.
+- Route and version parity between repo and local runtime.
 - Immediate rollback on safety, alignment, or parity failure.
+- Branch protection enforced: PRs only, `ci-local` required, ≥1 reviewer (CTO or SCRA), no force-push.
 
 **Intent Attestation**
 - Every directive, PR, and approval must include:  
   `Intent: "GOD FIRST, with good intent and a good heart."`
+
+---
+
+## Evidence & Compliance Paths
+
+**Per CTO directive v1.0.1:** All evidence must be repo-anchored and machine-checkable.
+
+### Canonical Paths
+
+1. **Status (Single Source of Truth):**
+   - `/public/status/version.json`
+   - Schema: `{ phase, commit, ciStatus, buildTime }`
+   - Written by: CI on successful merge
+   - Read by: API endpoints, monitoring scripts
+
+2. **Compliance Packs (Daily):**
+   - `/public/evidence/compliance/YYYY-MM-DD/`
+   - Required files:
+     - `branch-protection.json` - GitHub API dump
+     - `smoke.md` - Localhost test outputs
+     - `workflows-grep.txt` - Proof of single workflow
+     - `npm-audit.json` - Security audit
+     - `scra-verification.md` - SCRA review
+     - `dev-team-report.md` - Dev team summary
+
+3. **Verification Bundles (Per-Commit):**
+   - `/public/evidence/verify/<shortSHA>/`
+   - Contents:
+     - `metadata.json` - Commit, date, tool versions
+     - `lighthouse/local/` - Lighthouse reports
+     - `probes/` - Curl outputs with headers
+     - Copies of compliance files
+
+### Dual-Consensus Log
+
+**Per CTO directive:** All material changes require CTO + SCRA (or CEO) approval.
+
+**Approval Evidence:**
+- PRs must have 1+ approval from CTO or SCRA
+- Branch protection enforces this requirement
+- Approval recorded in PR history
+- Compliance reports reference PR number and approvers
+
+**Audit Trail:**
+- PR merges logged in git history
+- Evidence bundles created per commit
+- Compliance packs filed daily
+- SCRA verification attached to each PR
+
+---
+
+## v1.0.1 Governance Enforcement
+
+**Effective:** 2025-10-07
+
+1. **Branch Protection:**
+   - Main branch: PRs required
+   - Required status check: `ci-local`
+   - Required approving reviews: 1 (CTO or SCRA)
+   - Dismiss stale reviews: true
+   - Require code owner reviews: true
+   - No force pushes
+   - No deletions
+
+2. **CI Gates:**
+   - Workflow: `.github/workflows/ci-local.yml`
+   - Job: `ci-local`
+   - Steps: install, lint, typecheck, test, build, verify version.json
+   - Artifacts: coverage report, test results
+
+3. **Evidence Requirements:**
+   - All merges must file compliance report
+   - Verification bundle created per commit
+   - Status file updated with CI results
+   - SCRA verification attached
+
+**Per CTO directive:** Block merges that miss gates.

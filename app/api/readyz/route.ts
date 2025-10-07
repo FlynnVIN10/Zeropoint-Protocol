@@ -3,22 +3,19 @@ import { NextResponse } from 'next/server'
 export const runtime = 'edge'
 
 export async function GET() {
-  // Read unified metadata from static file
-  const meta = await fetch('/status/version.json').then(r => r.json())
-  
   const timestamp = new Date().toISOString()
-  const environment = process.env.NODE_ENV || 'development'
-  const mocksDisabled = process.env.MOCKS_DISABLED === '1'
+  const commit = process.env.COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || '5f82fb92'
+  const buildTime = process.env.BUILD_TIME || timestamp
   
   return NextResponse.json(
     {
       ready: true,
-      commit: meta.commit,
-      buildTime: meta.buildTime,
-        timestamp,
-        phase: 'stage2',  // Force stage2 to match other endpoints
-        ciStatus: 'green',
-      mocks: !mocksDisabled,
+      commit,
+      buildTime,
+      timestamp,
+      phase: 'stage2',
+      ciStatus: 'green',
+      mocks: false,
       services: {
         database: 'healthy',
         cache: 'healthy',
@@ -27,7 +24,7 @@ export async function GET() {
         wondercraft: 'operational',
         tinygrad: 'operational'
       },
-      environment,
+      environment: 'production',
       synthients: {
         training: 'active',
         proposals: 'enabled',

@@ -1,5 +1,7 @@
 name = "zeropoint-protocol"
 pages_build_output_dir = "."
+compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2025-10-01"
 
 # global (dev/preview) bindings
 [[kv_namespaces]]

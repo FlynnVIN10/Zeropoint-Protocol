@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/FlynnVIN10/Zeropoint-Protocol/compare/v1.0.0...v1.0.1) (2025-10-07)
+
+
+### Bug Fixes
+
+* SQLite compatibility for Prisma schema and seed script ([d4df928](https://github.com/FlynnVIN10/Zeropoint-Protocol/commit/d4df9285f7a9995c1a4da9dea270766f116294c6))
+
 # 1.0.0 (2025-10-07)
 
 

@@ -14,10 +14,10 @@ This index lists all canonical documentation files for Zeropoint Protocol. Docum
 
 | Document | Purpose | CI-Updated | Location |
 |----------|---------|------------|----------|
-| `README.md` | Project overview, quick start | Stage, Commit, Services | `/README.md` |
+| `README.md` | Project overview, quick start | No | `/README.md` |
 | `GOVERNANCE.md` | Dual-consensus governance rules | No | `/GOVERNANCE.md` |
 | `EXECUTIVE_SUMMARY.md` | High-level platform summary | No | `/EXECUTIVE_SUMMARY.md` |
-| `DEPLOYMENT.md` | Single source for deployment | Yes (provenance footer) | `/DEPLOYMENT.md` |
+| `RUNBOOK_LOCAL.md` | Local deployment & operations | No | `/docs/RUNBOOK_LOCAL.md` |
 | `PM_RULESET.md` | PM execution directives | No | `/PM_RULESET.md` |
 | `CODEOWNERS` | Code ownership assignments | No | `/CODEOWNERS` |
 
@@ -25,10 +25,10 @@ This index lists all canonical documentation files for Zeropoint Protocol. Docum
 
 | Document | Purpose | Location |
 |----------|---------|----------|
-| `ARCHITECTURE.md` | System architecture overview | `/docs/ARCHITECTURE.md` |
+| `ARCHITECTURE.md` | Local runtime architecture | `/docs/ARCHITECTURE.md` |
+| `RUNBOOK_LOCAL.md` | Local deployment guide | `/docs/RUNBOOK_LOCAL.md` |
 | `CONTRIBUTING.md` | Contribution guidelines | `/docs/CONTRIBUTING.md` |
-| `SECURITY.md` | Security policies & procedures | `/docs/SECURITY.md` |
-| `STATUS_ENDPOINTS.md` | Health/readiness/version API specs | `/docs/STATUS_ENDPOINTS.md` |
+| `SECURITY.md` | Security policies & procedures | `/SECURITY.md` |
 
 ### Operational Guides ✅
 

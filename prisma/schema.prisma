@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Synthient {
+  id            String        @id @default(cuid())
+  name          String
+  status        String        @default("idle") // idle | training | ready
+  lastHeartbeat DateTime?
+  runs          TrainingRun[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
+
+model TrainingRun {
+  id          String    @id @default(cuid())
+  synthientId String
+  startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
+  status      String    @default("running") // running | success | failed
+  metricsJson String?   // JSON as text for SQLite
+  Synthient   Synthient @relation(fields: [synthientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+model Proposal {
+  id           String   @id @default(cuid())
+  title        String
+  body         String
+  createdAt    DateTime @default(now())
+  status       String   @default("open") // open | approved | vetoed
+  votes        Vote[]
+  evidenceJson String?  // JSON as text for SQLite
+  updatedAt    DateTime @updatedAt
+}
+
+model Vote {
+  id         String   @id @default(cuid())
+  proposalId String
+  voter      String
+  decision   String // approve | veto
+  reason     String?
+  createdAt  DateTime @default(now())
+  Proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+}
+

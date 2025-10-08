@@ -4,7 +4,7 @@ export const runtime = 'edge';
 // app/api/providers/wondercraft/stream/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import WondercraftProvider from '../../../../../providers/wondercraft'
+import WondercraftProvider from '../../../src/config/wondercraft'
 
 export const dynamic = 'force-dynamic'
 

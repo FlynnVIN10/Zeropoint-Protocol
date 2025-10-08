@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 export const runtime = 'edge';
-import { providerRouter } from '../../../../services/router'
+import { providerRouter } from '../../../../src/server/services/router'
 
 export async function GET(request: NextRequest) {
   try {

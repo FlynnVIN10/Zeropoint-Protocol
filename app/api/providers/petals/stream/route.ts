@@ -4,7 +4,7 @@ export const runtime = 'edge';
 // app/api/providers/petals/stream/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import PetalsProvider from '../../../../../providers/petals'
+import PetalsProvider from '../../../src/config/petals'
 
 export const dynamic = 'force-dynamic'
 

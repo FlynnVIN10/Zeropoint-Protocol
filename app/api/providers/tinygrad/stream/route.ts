@@ -4,7 +4,7 @@ export const runtime = 'edge';
 // app/api/providers/tinygrad/stream/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
-import TinygradProvider from '../../../../../providers/tinygrad'
+import TinygradProvider from '../../../src/config/tinygrad'
 
 export const dynamic = 'force-dynamic'
 

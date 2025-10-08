@@ -1,280 +1,253 @@
-# Security Documentation
-
-## Overview
-Zeropoint Protocol implements comprehensive security measures to protect against threats while maintaining transparency and accountability. Security is built into every layer of the system, from code development to deployment and monitoring.
-
-## Security Principles
-
-### 1. Defense in Depth
-- **Multiple Layers**: Security controls at every system level
-- **Fail-Safe Defaults**: Secure by default, require explicit permission
-- **Principle of Least Privilege**: Minimum necessary access and permissions
-- **Separation of Concerns**: Isolate security functions from business logic
-
-### 2. Zero Trust Architecture
-- **Never Trust, Always Verify**: Authenticate and authorize every request
-- **Continuous Monitoring**: Real-time threat detection and response
-- **Micro-Segmentation**: Isolate systems and limit lateral movement
-- **Identity-Based Access**: Use identity as the security perimeter
-
-### 3. Transparency and Accountability
-- **Soulchain Logging**: Immutable audit trail of all security events
-- **Public Evidence**: Security posture visible to stakeholders
-- **Regular Audits**: Independent security assessments
-- **Incident Disclosure**: Transparent reporting of security issues
-
-## Threat Model
-
-### Attack Vectors
-1. **Web Application Attacks**
-   - SQL Injection
-   - Cross-Site Scripting (XSS)
-   - Cross-Site Request Forgery (CSRF)
-   - Server-Side Request Forgery (SSRF)
-
-2. **Infrastructure Attacks**
-   - DDoS attacks
-   - Man-in-the-middle attacks
-   - DNS hijacking
-   - Cloud infrastructure compromise
-
-3. **Social Engineering**
-   - Phishing attacks
-   - Credential theft
-   - Insider threats
-   - Supply chain attacks
-
-### Risk Assessment
-- **High Risk**: Unauthenticated access to sensitive data
-- **Medium Risk**: Denial of service attacks
-- **Low Risk**: Information disclosure in public endpoints
-
-## Security Controls
-
-### 1. Input Validation and Sanitization
-```typescript
-// Example: Secure input validation
-export const onRequest = async (ctx: any) => {
-  try {
-    // Validate and sanitize input
-    const input = ctx.url.searchParams.get('input');
-    if (!input || input.length > 100) {
-      return new Response('Invalid input', { status: 400 });
-    }
-    
-    // Sanitize input before processing
-    const sanitizedInput = DOMPurify.sanitize(input);
-    
-    // Process sanitized input
-    const result = processInput(sanitizedInput);
-    
-    return new Response(JSON.stringify(result), {
-      headers: {
-        "content-type": "application/json; charset=utf-8",
-        "cache-control": "no-store",
-        "x-content-type-options": "nosniff"
-      }
-    });
-  } catch (error) {
-    // Log error securely
-    console.error('Input processing error:', error.message);
-    return new Response('Internal error', { status: 500 });
-  }
-};
-```
-
-### 2. Output Encoding
-- **HTML Encoding**: Prevent XSS in HTML output
-- **JavaScript Encoding**: Secure JavaScript injection
-- **URL Encoding**: Safe URL construction
-- **Content Security Policy**: Restrict resource loading
-
-### 3. Authentication and Authorization
-- **Multi-Factor Authentication**: Require multiple verification methods
-- **Role-Based Access Control**: Granular permission management
-- **Session Management**: Secure session handling and timeout
-- **API Key Management**: Secure API access control
-
-### 4. Data Protection
-- **Encryption at Rest**: Encrypt sensitive data in storage
-- **Encryption in Transit**: TLS 1.3 for all communications
-- **Data Classification**: Categorize data by sensitivity
-- **Data Retention**: Implement data lifecycle management
-
-## Security Headers
-
-### Required Headers
-All endpoints must return these security headers:
-
-```typescript
-const securityHeaders = {
-  "content-type": "application/json; charset=utf-8",
-  "cache-control": "no-store",
-  "x-content-type-options": "nosniff",
-  "content-disposition": "inline",
-  "access-control-allow-origin": "*"
-};
-```
-
-### Additional Security Headers
-```typescript
-const additionalHeaders = {
-  "X-Frame-Options": "DENY",
-  "X-Content-Type-Options": "nosniff",
-  "Referrer-Policy": "strict-origin-when-cross-origin",
-  "Permissions-Policy": "geolocation=(), microphone=()"
-};
-```
-
-## Vulnerability Management
-- **Scanning**: Automated vulnerability assessments triggered at T2 (endpoints live) and after each merge (T4).
-- **Patch Management**: Apply critical fixes immediately upon discovery. High and medium priority patches addressed ASAP.
-- **Incident Response**: Immediate triage and mitigation. Use "detect → analyze → contain → eradicate → recover → learn" cycle.
-
-## Security Monitoring
-
-### 1. Logging and Monitoring
-- **Access Logs**: Record all system access attempts
-- **Error Logs**: Monitor for security-related errors
-- **Performance Logs**: Track system performance metrics
-- **Security Events**: Log security incidents and alerts
-
-### 2. Alerting
-- **Real-Time Alerts**: Immediate notification of security events
-- **Escalation Procedures**: Defined response escalation paths
-- **On-Call Rotation**: 24/7 security incident response
-- **Automated Response**: Automated threat containment
-
-### 3. Threat Intelligence
-- **External Feeds**: Subscribe to threat intelligence services
-- **Internal Analysis**: Analyze internal security data
-- **Community Sharing**: Participate in security communities
-- **Trend Analysis**: Monitor emerging threat patterns
-
-## Compliance and Auditing
-
-### 1. Regulatory Compliance
-- **GDPR**: Data protection and privacy compliance
-- **SOC 2**: Security and availability controls
-- **ISO 27001**: Information security management
-- **OWASP**: Web application security standards
-
-### 2. Security Audits
-- **Internal Audits**: Regular internal security assessments
-- **External Audits**: Independent third-party audits
-- **Penetration Testing**: Regular security testing
-- **Code Reviews**: Security-focused code review process
-
-### 3. Evidence Collection
-- **Compliance Evidence**: Document security controls
-- **Audit Trails**: Maintain comprehensive audit logs
-- **Performance Metrics**: Track security performance
-- **Incident Reports**: Document security incidents
-
-## Security Training and Awareness
-
-### 1. Developer Training
-- **Secure Coding**: Training on secure development practices
-- **Threat Awareness**: Understanding of current threats
-- **Tool Usage**: Training on security tools and processes
-- **Incident Response**: Security incident handling training
-
-### 2. Security Champions
-- **Developer Champions**: Security advocates in development teams
-- **Security Reviews**: Peer security review process
-- **Best Practices**: Sharing security best practices
-- **Continuous Learning**: Ongoing security education
-
-### 3. Security Culture
-- **Security First**: Security as a core value
-- **Open Communication**: Transparent security discussions
-- **Continuous Improvement**: Regular security process updates
-- **Accountability**: Clear security responsibilities
-
-## Security Tools and Technologies
-
-### 1. Development Tools
-- **Static Analysis**: ESLint, SonarQube for code quality
-- **Dependency Scanning**: npm audit, Snyk for vulnerabilities
-- **Code Signing**: GPG for code integrity verification
-- **Secure Repositories**: GitHub Security features
-
-### 2. Runtime Protection
-- **Web Application Firewall**: Cloudflare WAF protection
-- **DDoS Protection**: Cloudflare DDoS mitigation
-- **Bot Protection**: Automated threat detection
-- **Rate Limiting**: API abuse prevention
-
-### 3. Monitoring and Response
-- **SIEM**: Security Information and Event Management
-- **Vulnerability Scanners**: Automated security testing
-- **Incident Response**: Automated threat response
-- **Forensics**: Digital evidence collection and analysis
-
-## Security Metrics and KPIs
-
-### 1. Security Performance
-- **Mean Time to Detection (MTTD)**: Time to detect security incidents
-- **Mean Time to Response (MTTR)**: Time to respond to incidents
-- **Vulnerability Remediation**: Time to fix security issues
-- **Security Test Coverage**: Percentage of code security tested
-
-### 2. Risk Metrics
-- **Risk Score**: Overall security risk assessment
-- **Threat Level**: Current threat environment assessment
-- **Vulnerability Count**: Number of open security issues
-- **Compliance Score**: Regulatory compliance percentage
-
-### 3. Operational Metrics
-- **Security Incidents**: Number and severity of incidents
-- **False Positives**: Rate of incorrect security alerts
-- **Security Training**: Completion rates and effectiveness
-- **Tool Utilization**: Security tool adoption and usage
-
-## Incident Response Plan
-
-### 1. Incident Classification
-- **P0 (Critical)**: Data breach, system compromise
-- **P1 (High)**: Unauthorized access, service disruption
-- **P2 (Medium)**: Security policy violation, minor issues
-- **P3 (Low)**: Information disclosure, configuration issues
-
-### 2. Response Timeline
-- **P0**: Immediate response (ASAP)
-- **P1**: Rapid response (ASAP)
-- **P2**: Standard response (ASAP)
-- **P3**: Routine response (ASAP)
-
-### 3. Communication Plan
-- **Internal**: Immediate notification to security team
-- **Management**: Escalation to senior leadership
-- **Stakeholders**: Communication to affected parties
-- **Public**: Transparent disclosure when appropriate
-
-## Security Checklist
-
-### Pre-Deployment
-- [ ] Security code review completed
-- [ ] Vulnerability scan passed
-- [ ] Security tests passing
-- [ ] Headers properly configured
-- [ ] Input validation implemented
-- [ ] Error handling secure
-- [ ] Logging configured
-- [ ] Access controls verified
-
-### Post-Deployment
-- [ ] Security monitoring active
-- [ ] Logs being collected
-- [ ] Alerts configured
-- [ ] Performance monitoring
-- [ ] Backup verification
-- [ ] Incident response ready
-- [ ] Documentation updated
-- [ ] Team notified
+# Security Policy
+**Zeropoint Protocol - Local Runtime**
 
 ---
 
-**Security is everyone's responsibility.**
+## Security Principles
 
-Maintain vigilance, report suspicious activity, and help build a secure foundation for ethical AI development.
+### 1. No Secrets in Repository ✅
+
+- **Never commit** `.env` files with real credentials
+- **Use** `.env.local.example` as template only
+- **Store** secrets in `.env.local` (gitignored)
+
+### 2. Local Development Security
+
+**Default Security Posture:**
+- Runs on localhost:3000 (not exposed to network)
+- No authentication required (single-user local)
+- SQLite database with standard file permissions
+- No TLS (local HTTP only)
+
+### 3. Reporting Security Issues
+
+**Process:**
+1. Create GitHub issue with tag `security`
+2. Tag `@CTO` in PR comment
+3. Do not disclose vulnerabilities publicly until patched
+
+**Response Time:**
+- Critical: 24 hours
+- High: 72 hours
+- Medium: 1 week
+
+---
+
+## CI Security Gates
+
+### Pre-Merge Checks
+
+CI will **block merge** if:
+- ✅ Secrets detected (`.env` files, API keys, passwords)
+- ✅ Backup files present (`*.backup.*`)
+- ✅ Database files committed (`*.db`)
+- ✅ Build fails
+- ✅ Type check fails
+
+### Detection Rules
+
+```bash
+# Secrets detection
+git diff --cached | grep -E 'API_KEY|PASSWORD|SECRET|TOKEN'
+
+# Backup files
+git ls-files | grep '\.backup\.'
+
+# Database files
+git ls-files | grep '\.db$'
+```
+
+---
+
+## Local Security Checklist
+
+### Development
+
+- [ ] Copy `.env.local.example` to `.env.local`
+- [ ] Never commit `.env.local`
+- [ ] Use random secrets for JWT/session (if implemented)
+- [ ] Keep `dev.db` in `.gitignore`
+- [ ] Run on localhost only (not 0.0.0.0)
+
+### Production (Tinybox Green)
+
+- [ ] Use strong secrets
+- [ ] Enable firewall rules
+- [ ] Consider reverse proxy (nginx)
+- [ ] Implement rate limiting
+- [ ] Add authentication
+- [ ] Enable HTTPS
+- [ ] Regular security updates
+
+---
+
+## Sensitive Data
+
+### Never Commit
+
+- `.env*` files (except `.env.local.example`)
+- `*.db` database files
+- `*.pem`, `*.key` certificate files
+- API keys, tokens, passwords
+- Session secrets
+
+### Always `.gitignore`
+
+```gitignore
+.env*
+!.env.local.example
+*.db
+*.db-shm
+*.db-wal
+*.pem
+*.key
+```
+
+---
+
+## Dependency Security
+
+### Audit Commands
+
+```bash
+# NPM audit
+npm audit
+
+# Check for outdated packages
+npm outdated
+
+# Update dependencies
+npm update
+```
+
+### CI Automation
+
+- **npm audit** runs on every PR
+- **Dependency Review** (GitHub Action)
+- **CodeQL** scanning for vulnerabilities
+
+---
+
+## Security Advisories
+
+### Active Vulnerabilities (2025-10-07)
+
+| Package | Installed | CVE | Severity | Path | Fixed Version | Action Taken |
+|---------|-----------|-----|----------|------|---------------|--------------|
+| next | 15.0.4 | CVE-2025-XXXXX | Critical | Direct dependency | 15.1.0+ (when available) | Monitoring upstream; DoS mitigation via rate limiting planned |
+
+**Details:**
+- **Vulnerability:** Next.js Server Actions Denial of Service
+- **Impact:** Potential DoS attack vector via Server Actions
+- **Mitigation:** Local-only deployment (not exposed to public internet), rate limiting to be implemented
+- **Status:** Monitoring Next.js releases for patch
+- **Evidence:** `/public/evidence/compliance/2025-10-07/npm-audit.json`
+
+**Last Audit:** 2025-10-07  
+**Next Review:** Weekly (Fridays) or on Next.js release
+
+---
+
+## Incident Response
+
+### If Secrets Committed
+
+1. **Immediately rotate** the exposed secret
+2. **Remove from git history:**
+   ```bash
+   git filter-repo --path .env --invert-paths
+   ```
+3. **Force push** (if absolutely necessary)
+4. **Notify team** via issue
+
+### If Vulnerability Found
+
+1. **Create security issue** (private if critical)
+2. **Tag @CTO** for review
+3. **Implement fix** ASAP
+4. **Deploy patch** immediately
+5. **Document** in CHANGELOG
+
+---
+
+## Best Practices
+
+### Code
+
+- ✅ Validate all user inputs
+- ✅ Use parameterized queries (Prisma handles this)
+- ✅ Sanitize output for XSS prevention
+- ✅ Implement CSRF protection (if adding auth)
+
+### Dependencies
+
+- ✅ Regular updates (`npm update`)
+- ✅ Audit before merge (`npm audit`)
+- ✅ Minimal dependencies
+- ✅ Pin versions in production
+
+### Operations
+
+- ✅ Run as non-root user
+- ✅ Limit file permissions (chmod 600 .env.local)
+- ✅ Monitor logs for suspicious activity
+- ✅ Regular backups of dev.db
+
+---
+
+## Future Security Enhancements
+
+### Authentication & Authorization
+
+- [ ] JWT-based authentication
+- [ ] Role-based access control (RBAC)
+- [ ] Session management
+- [ ] Password hashing (bcrypt/argon2)
+
+### Network Security
+
+- [ ] HTTPS (Let's Encrypt)
+- [ ] CORS configuration
+- [ ] Rate limiting (express-rate-limit)
+- [ ] DDoS protection
+
+### Data Security
+
+- [ ] Encryption at rest (SQLCipher)
+- [ ] Encryption in transit (TLS)
+- [ ] Secure session storage
+- [ ] Data anonymization
+
+---
+
+## Compliance
+
+### Current Status
+
+- ✅ No secrets in repository
+- ✅ `.gitignore` comprehensive
+- ✅ CI security gates active
+- ✅ Dependency audit automated
+
+### SCRA Requirements
+
+- ✅ Dual-consensus governance
+- ✅ Evidence trail maintained
+- ✅ Audit logs preserved
+- ✅ Truth-to-repo alignment
+
+---
+
+## Contact
+
+**Security Issues:** Create GitHub issue with `security` tag  
+**CTO Escalation:** Tag `@CTO` in issue/PR  
+**Emergency:** Contact CTO directly via approved channels
+
+---
+
+**Document Version:** 1.0  
+**Last Updated:** 2025-10-07  
+**Platform:** Local macOS Runtime  
+**Status:** Post-Cloudflare Migration
+

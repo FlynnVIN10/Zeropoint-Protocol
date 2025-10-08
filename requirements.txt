@@ -1,8 +1,0 @@
-# Minimal requirements for static site deployment
-# Removed problematic dependencies that cause Cloudflare Pages build failures
-
-# Core dependencies (if needed)
-requests>=2.31.0
-
-# Note: Python backend dependencies moved to separate backend deployment
-# This file is for static site only

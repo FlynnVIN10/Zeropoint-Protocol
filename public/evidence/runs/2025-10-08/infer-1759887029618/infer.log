@@ -1,0 +1,15 @@
+Starting inference run infer-1759887029618
+Prompt: "Summarize: training loss decreased."
+Timestamp: 2025-10-08T01:30:29.619Z
+
+Connecting to Petals node...
+Node status: available
+Model: bloom-560m
+Processing prompt...
+Generating response...
+
+Response: "Hello! I'm a local AI assistant running on the Zeropoint Protocol appliance. How can I help you today?"
+
+Inference completed successfully!
+Tokens generated: 25
+Processing time: 1.2s

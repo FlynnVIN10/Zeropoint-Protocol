@@ -2,9 +2,9 @@
 
 // services/router.ts
 
-import PetalsProvider from '../providers/petals'
-import WondercraftProvider from '../providers/wondercraft'
-import TinygradProvider from '../providers/tinygrad'
+import PetalsProvider from '../../config/petals'
+import WondercraftProvider from '../../config/wondercraft'
+import TinygradProvider from '../../config/tinygrad'
 
 export interface ProviderRequest {
   prompt: string

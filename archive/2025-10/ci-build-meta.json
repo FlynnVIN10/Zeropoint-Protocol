@@ -1,8 +1,0 @@
-{
-  "commit": "0722311c",
-  "buildTime": "2025-09-11T22:54:52Z",
-  "phase": "stage2",
-  "ragMode": "beyond",
-  "ciStatus": "green",
-  "env": "prod"
-}

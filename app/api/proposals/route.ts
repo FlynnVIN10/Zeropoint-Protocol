@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const rows = await db.proposal.findMany({
     orderBy: { createdAt: 'desc' },
-    include: { votes: true }
+    include: { Vote: true }
   });
   return NextResponse.json(rows);
 }
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   }
   
   const p = await db.proposal.create({
-    data: { title, body }
+    data: { id: `proposal-${Date.now()}`, title, body }
   });
   
   return NextResponse.json(p, { status: 201 });

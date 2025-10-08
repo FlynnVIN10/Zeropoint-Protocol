@@ -19,6 +19,7 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
   
   const v = await db.vote.create({
     data: {
+      id: `vote-${Date.now()}`,
       proposalId: params.id,
       voter,
       decision,

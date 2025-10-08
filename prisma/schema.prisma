@@ -11,10 +11,10 @@ model Proposal {
   id           String   @id
   title        String
   body         String
-  createdAt    DateTime @default(now()) @db.Timestamp(6)
+  createdAt    DateTime @default(now())
   status       String   @default("open")
   evidenceJson String?
-  updatedAt    DateTime @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime @default(now())
   Vote         Vote[]
 }
 
@@ -22,21 +22,21 @@ model Synthient {
   id            String        @id
   name          String
   status        String        @default("idle")
-  lastHeartbeat DateTime?     @db.Timestamp(6)
-  createdAt     DateTime      @default(now()) @db.Timestamp(6)
-  updatedAt     DateTime      @default(now()) @db.Timestamp(6)
+  lastHeartbeat DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now())
   TrainingRun   TrainingRun[]
 }
 
 model TrainingRun {
   id          String    @id
   synthientId String
-  startedAt   DateTime  @default(now()) @db.Timestamp(6)
-  finishedAt  DateTime? @db.Timestamp(6)
+  startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
   status      String    @default("running")
   metricsJson String?
-  createdAt   DateTime  @default(now()) @db.Timestamp(6)
-  Synthient   Synthient @relation(fields: [synthientId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  createdAt   DateTime  @default(now())
+  Synthient   Synthient @relation(fields: [synthientId], references: [id], onDelete: Cascade)
 }
 
 model Vote {
@@ -45,70 +45,6 @@ model Vote {
   voter      String
   decision   String
   reason     String?
-  createdAt  DateTime @default(now()) @db.Timestamp(6)
-  Proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model audit_logs {
-  id            String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  user_id       String?   @db.Uuid
-  action        String    @db.VarChar(100)
-  resource      String?   @db.VarChar(100)
-  resource_id   String?   @db.Uuid
-  ip_address    String?   @db.Inet
-  user_agent    String?   @db.VarChar(500)
-  details       Json?
-  level         String?   @default("info") @db.VarChar(20)
-  status        String?   @default("success") @db.VarChar(50)
-  error_message String?
-  created_at    DateTime? @default(now()) @db.Timestamp(6)
-  users         users?    @relation(fields: [user_id], references: [id], onUpdate: NoAction)
-
-  @@index([action], map: "idx_audit_logs_action")
-  @@index([created_at], map: "idx_audit_logs_created_at")
-  @@index([ip_address], map: "idx_audit_logs_ip_address")
-  @@index([level], map: "idx_audit_logs_level")
-  @@index([user_id], map: "idx_audit_logs_user_id")
-}
-
-model sessions {
-  id           String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  token        String    @unique @db.VarChar(255)
-  user_id      String    @db.Uuid
-  ip_address   String?   @db.Inet
-  user_agent   String?   @db.VarChar(500)
-  is_active    Boolean?  @default(true)
-  expires_at   DateTime  @db.Timestamp(6)
-  last_used_at DateTime? @db.Timestamp(6)
-  created_at   DateTime? @default(now()) @db.Timestamp(6)
-  users        users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-  @@index([expires_at], map: "idx_sessions_expires_at")
-  @@index([is_active], map: "idx_sessions_is_active")
-  @@index([token], map: "idx_sessions_token")
-  @@index([user_id], map: "idx_sessions_user_id")
-}
-
-model users {
-  id                String       @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  username          String       @unique @db.VarChar(50)
-  email             String       @unique @db.VarChar(100)
-  password          String       @db.VarChar(255)
-  first_name        String?      @db.VarChar(100)
-  last_name         String?      @db.VarChar(100)
-  is_active         Boolean?     @default(true)
-  is_verified       Boolean?     @default(false)
-  last_login_at     DateTime?    @db.Timestamp(6)
-  email_verified_at DateTime?    @db.Timestamp(6)
-  preferences       Json?
-  roles             String[]     @default(["user"])
-  created_at        DateTime?    @default(now()) @db.Timestamp(6)
-  updated_at        DateTime?    @default(now()) @db.Timestamp(6)
-  audit_logs        audit_logs[]
-  sessions          sessions[]
-
-  @@index([created_at], map: "idx_users_created_at")
-  @@index([email], map: "idx_users_email")
-  @@index([is_active], map: "idx_users_is_active")
-  @@index([username], map: "idx_users_username")
+  createdAt  DateTime @default(now())
+  Proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 }

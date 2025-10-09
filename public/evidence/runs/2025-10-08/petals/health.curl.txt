@@ -1,0 +1,6 @@
+HTTP/1.0 200 OK
+Server: BaseHTTP/0.6 Python/3.10.12
+Date: Wed, 08 Oct 2025 21:19:58 GMT
+Content-Type: application/json
+
+{"status": "ok", "model": "bloom-560m", "petals_available": true}

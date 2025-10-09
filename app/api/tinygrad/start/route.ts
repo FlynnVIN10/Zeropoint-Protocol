@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-export const runtime = 'edge';
+// Removed edge runtime to support Node.js child_process for real training
 
 // Import the TinygradTrainer service
 import * as Tiny from '@services/trainer-tinygrad'
@@ -8,20 +8,17 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     
-    // Validate required fields
-    if (!body.dataset || !body.modelConfig) {
-      return NextResponse.json(
-        { error: 'Missing required fields: dataset, modelConfig' },
-        { status: 400 }
-      )
-    }
+    // For CPU demo training: accept epochs/lr directly
+    // For full training: accept dataset/modelConfig
+    const params = {
+      epochs: body.epochs || body.trainingParams?.epochs || 50,
+      lr: body.lr || body.trainingParams?.lr || 0.01,
+      dataset: body.dataset,
+      modelConfig: body.modelConfig
+    };
 
     // Start training job
-    const result = await Tiny.startTraining({
-      dataset: body.dataset,
-      modelConfig: body.modelConfig,
-      trainingParams: body.trainingParams || {}
-    })
+    const result = await Tiny.startTraining(params)
 
     return NextResponse.json(result, {
       headers: {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-export const runtime = 'edge';
+// Removed edge runtime to support Node.js child_process for real training
 
 // Import the TinygradTrainer service
 import * as Tiny from '@services/trainer-tinygrad'

@@ -1,0 +1,184 @@
+{
+  "runId": "cmgi2gjxk0005wej15d97gonj",
+  "synthientId": "cmgi2374i0001wej1sdat66qd",
+  "timestamp": "2025-10-08T14:10:50.892Z",
+  "totals": {
+    "filesScanned": 156,
+    "lines": 20231,
+    "bytes": 658371
+  },
+  "providerHealth": {
+    "petalsHealthy": false,
+    "tinygradHealthy": false,
+    "petalsUrl": "http://localhost:8000",
+    "tinygradUrl": "http://localhost:8002"
+  },
+  "insights": [
+    "Consider splitting 4 large files (>500 lines).",
+    "Reduce unsafe TypeScript 'any' in 1 files.",
+    "Resolve TODO/FIXME in 11 files (replace with issues or implement).",
+    "Remove console.log in 44 files; prefer structured logging."
+  ],
+  "topHotspots": [
+    {
+      "filepath": "scripts/complete-service-integration.mjs",
+      "sizeBytes": 29494,
+      "numLines": 901,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/backend-integration-finalization.mjs",
+      "sizeBytes": 27098,
+      "numLines": 790,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/core-service-implementation.mjs",
+      "sizeBytes": 21982,
+      "numLines": 661,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/error-handling-validation.mjs",
+      "sizeBytes": 19180,
+      "numLines": 559,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/compliance-governance-verification.mjs",
+      "sizeBytes": 18371,
+      "numLines": 498,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/complete-mock-elimination.mjs",
+      "sizeBytes": 16593,
+      "numLines": 494,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/final-mock-elimination.mjs",
+      "sizeBytes": 15431,
+      "numLines": 465,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/end-to-end-compliance.mjs",
+      "sizeBytes": 16950,
+      "numLines": 437,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/operational-deployment.mjs",
+      "sizeBytes": 14923,
+      "numLines": 426,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/environment-flag-enforcement.mjs",
+      "sizeBytes": 14782,
+      "numLines": 425,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/governance-evidence-management.mjs",
+      "sizeBytes": 18534,
+      "numLines": 420,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "app/page.tsx",
+      "sizeBytes": 16998,
+      "numLines": 415,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/automated-mock-remediation.mjs",
+      "sizeBytes": 11254,
+      "numLines": 387,
+      "hasTodo": true,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/service-reconciliation.mjs",
+      "sizeBytes": 11623,
+      "numLines": 373,
+      "hasTodo": true,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "scripts/complete-codebase-classification.mjs",
+      "sizeBytes": 12972,
+      "numLines": 372,
+      "hasTodo": true,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "src/server/services/router.ts",
+      "sizeBytes": 9598,
+      "numLines": 334,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": false
+    },
+    {
+      "filepath": "scripts/repository-audit.mjs",
+      "sizeBytes": 11539,
+      "numLines": 316,
+      "hasTodo": true,
+      "usesAny": false,
+      "hasConsoleLog": true
+    },
+    {
+      "filepath": "src/server/services/enhanced-router.ts",
+      "sizeBytes": 10200,
+      "numLines": 313,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": false
+    },
+    {
+      "filepath": "app/synthients/monitor/page.tsx",
+      "sizeBytes": 12938,
+      "numLines": 305,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": false
+    },
+    {
+      "filepath": "tests/test_phase2_integration.py",
+      "sizeBytes": 12065,
+      "numLines": 304,
+      "hasTodo": false,
+      "usesAny": false,
+      "hasConsoleLog": false
+    }
+  ]
+}

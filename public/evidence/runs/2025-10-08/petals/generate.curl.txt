@@ -1,0 +1,5 @@
+HTTP/1.0 500 Internal Server Error
+Server: BaseHTTP/0.6 Python/3.10.12
+Date: Wed, 08 Oct 2025 21:22:45 GMT
+Content-Type: application/json
+

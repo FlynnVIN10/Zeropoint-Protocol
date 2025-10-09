@@ -1,0 +1,21 @@
+{
+  "run_id": "d4a5a6f7-71d8-447a-811f-437a80753988",
+  "framework": "numpy-fallback",
+  "started_at": "2025-10-09T17:55:25.092608Z",
+  "ended_at": "2025-10-09T17:55:35.938591Z",
+  "epochs": 30,
+  "learning_rate": 0.02,
+  "loss_start": 7.329655620274291,
+  "loss_end": 0.9928832592391845,
+  "loss_delta": 6.3367723610351065,
+  "converged": false,
+  "final_params": {
+    "w": 1.2843163224556922,
+    "b": 2.208278147649679
+  },
+  "evidence": {
+    "log_path": "/Users/Flynn/Documents/GitHub/Zeropoint-Protocol/public/evidence/runs/2025-10-09/tinygrad-d4a5a6f7-71d8-447a-811f-437a80753988/tinygrad.log",
+    "real_training": true,
+    "no_mocks": true
+  }
+}

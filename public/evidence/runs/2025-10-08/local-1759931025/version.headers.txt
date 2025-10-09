@@ -1,0 +1,16 @@
+HTTP/1.1 200 OK
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self';
+permissions-policy: camera=(), microphone=(), geolocation=()
+referrer-policy: no-referrer
+x-content-type-options: nosniff
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Wed, 08 Oct 2025 01:22:02 GMT
+ETag: W/"66-199c1693803"
+Content-Type: application/json; charset=UTF-8
+Content-Length: 102
+Vary: Accept-Encoding
+Date: Wed, 08 Oct 2025 13:43:45 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+

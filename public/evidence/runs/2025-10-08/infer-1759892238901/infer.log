@@ -1,0 +1,15 @@
+Starting inference run infer-1759892238901
+Prompt: "Write a short poem about artificial intelligence"
+Timestamp: 2025-10-08T02:57:18.902Z
+
+Connecting to Petals node...
+Node status: available
+Model: bloom-560m
+Processing prompt...
+Generating response...
+
+Response: "Hello! I'm a local AI assistant running on the Zeropoint Protocol appliance. How can I help you today?"
+
+Inference completed successfully!
+Tokens generated: 25
+Processing time: 1.2s

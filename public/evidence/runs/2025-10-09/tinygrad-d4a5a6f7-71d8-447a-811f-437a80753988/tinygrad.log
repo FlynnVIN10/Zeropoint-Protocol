@@ -1,0 +1,14 @@
+Tinygrad Real Training — Run ID: d4a5a6f7-71d8-447a-811f-437a80753988
+Started: 2025-10-09T17:55:25.092608Z
+Epochs: 30, Learning Rate: 0.02
+------------------------------------------------------------
+
+⚠ Tinygrad not available; using NumPy for real training
+Epoch   0: loss=7.329656
+Epoch  10: loss=3.639222
+Epoch  20: loss=1.827571
+Epoch  29: loss=0.992883
+
+Training complete at 2025-10-09T17:55:35.938591Z
+Final weights: w=1.2843, b=2.2083
+Target: w=2.0, b=3.0

@@ -1,0 +1,1 @@
+{"error":"no_active_block_holders","reason":"Petals public swarm unavailable - all models timeout waiting for peers","timestamp":"2025-10-09T17:50:04Z","duration_seconds":1095,"evidence":"All allowlisted models attempted; zero peers found. See container logs."}

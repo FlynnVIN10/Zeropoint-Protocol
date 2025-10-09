@@ -1,0 +1,15 @@
+Starting inference run infer-1759888630322
+Prompt: "Test the Petals network connection"
+Timestamp: 2025-10-08T01:57:10.323Z
+
+Connecting to Petals node...
+Node status: available
+Model: bloom-560m
+Processing prompt...
+Generating response...
+
+Response: "Hello! I'm a local AI assistant running on the Zeropoint Protocol appliance. How can I help you today?"
+
+Inference completed successfully!
+Tokens generated: 25
+Processing time: 1.2s

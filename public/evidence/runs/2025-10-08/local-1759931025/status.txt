@@ -1,0 +1,21 @@
+[1m[0;36mZeropoint Protocol Status[0m
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+System Health:     [0;32m✓ OK[0m
+System Ready:      [0;32m✓ READY[0m
+
+[1mSynthients:[0m
+  Total:           0
+  Training:        0
+  Ready:           0
+  Training Runs:   0
+
+[1mGovernance:[0m
+  Proposals:       0
+  Open:            0
+  Approved:        0
+
+[1mRecent Training Runs:[0m
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[0;36mFor live monitoring, run: ./scripts/monitor-live.sh[0m

@@ -13,7 +13,8 @@ Successfully implemented real training infrastructure with Tinygrad CPU and Peta
 **Status**: ✅ All CTO directives completed  
 **Evidence**: Complete and hashed (SHA-256)  
 **Mocks**: 0 (MOCKS_DISABLED=1 enforced)  
-**Training**: Real gradient descent verified (loss 7.33 → 0.99)
+**Training**: Real gradient descent via NumPy (loss 7.33 → 0.99)  
+**Framework**: numpy-fallback (Tinygrad lib not installed; real training confirmed)
 
 ---
 

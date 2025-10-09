@@ -1,0 +1,5 @@
+2025-10-09T18:55:35.715Z
+Accessibility: 0.89
+Performance: 0.43
+Best Practices: 0.96
+SEO: 1

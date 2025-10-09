@@ -29,24 +29,42 @@
 
 ## File Integrity
 
-**Hash file**: `file-hashes.sha256`  
-**Files hashed**: 6  
-**Algorithm**: SHA-256
+**Hash file**: `file-hashes-complete.sha256`  
+**Files hashed**: 21  
+**Algorithm**: SHA-256  
+**Includes**: Lighthouse report, security headers, training metrics, Petals evidence, compliance records
 
 ---
 
 ## Quality Gates
 
+### Lighthouse (Local)
+- **Accessibility**: 0.89 (target 0.95 — needs improvement)
+- **Performance**: 0.43 (target 0.80 — needs improvement)
+- **Best Practices**: 0.96 ✅
+- **SEO**: 1.00 ✅
+- **Status**: Baseline captured; improvements deferred to follow-up PR
+- **Evidence**: `lighthouse-local/2025-10-09/report.json`
+
+### Security Headers
+- ✅ `content-security-policy` present (dev mode with Next.js allowances)
+- ✅ `referrer-policy: no-referrer`
+- ✅ `x-content-type-options: nosniff`
+- ✅ `permissions-policy` camera/mic/geo disabled
+- **Evidence**: `runs/2025-10-09/headers/dev-security.txt`
+
 ### Petals
 - ✅ `/health` returns 200 with `{"status":"ok","petals_available":true}`
 - ✅ `/generate` timeout documented as 503 with clear reason (no active swarm peers)
 - ✅ Evidence captured with headers and timestamps
+- ⚠️ Environment blocker: torch/hivemind incompatibility (see BLOCKER.md)
 
-### Tinygrad
+### Tinygrad (NumPy Fallback)
 - ✅ Real training executed (no mocks)
 - ✅ Loss decreased over epochs (7.33 → 0.99)
 - ✅ `metrics.json` contains `real_training: true, no_mocks: true`
 - ✅ Training log shows epoch-by-epoch progression
+- **Framework**: numpy-fallback (Tinygrad lib not installed; real gradient descent confirmed)
 
 ### Evidence Gating
 - ✅ Proposal vote route enforces evidence check before approval

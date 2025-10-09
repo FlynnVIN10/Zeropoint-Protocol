@@ -1,9 +1,4 @@
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    88    0    88    0     0  14772      0 --:--:-- --:--:-- --:--:-- 17600
-HTTP/1.0 200 OK
-Server: BaseHTTP/0.6 Python/3.10.12
-Date: Thu, 09 Oct 2025 17:27:53 GMT
-Content-Type: application/json
-
-{"status": "ok", "petals_available": true, "models_allowed": 5, "cache_age_seconds": 24}
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (7) Failed to connect to localhost port 8000 after 0 ms: Couldn't connect to server

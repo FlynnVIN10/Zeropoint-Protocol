@@ -1,6 +1,8 @@
 {
-  "commit": "c176dea2",
-  "buildTime": "2025-10-09T17:58:12Z",
+  "commit": "46a004cc",
+  "buildTime": "2025-10-09T19:00:00Z",
   "phase": "Local-Appliance-Training",
-  "ciStatus": "green"
+  "ciStatus": "green",
+  "trainer": "numpy-fallback",
+  "notes": "Real gradient descent via NumPy; Tinygrad lib not installed"
 }

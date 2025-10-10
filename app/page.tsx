@@ -514,8 +514,11 @@ export default function Dashboard() {
               </div>
               <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
                 <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2">Simulation</div>
-                <div className="text-sm text-zinc-300">
-                  {simTicks > 0 ? `${simTicks}/50 ticks` : 'Idle'}
+                <div className="flex items-center space-x-2">
+                  <Dot status={simTicks > 0 ? 'online' : 'idle'} />
+                  <span className="text-sm text-zinc-300">
+                    {simTicks > 0 ? `${simTicks}/50 ticks` : 'Idle'}
+                  </span>
                 </div>
               </div>
             </div>

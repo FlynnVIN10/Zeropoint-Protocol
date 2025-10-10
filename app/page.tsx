@@ -116,6 +116,9 @@ export default function Dashboard() {
                   series: newSeries
                 };
               });
+            } else if (data.type === 'idle') {
+              // Clear training stats when no active training
+              setTrainStats(null);
             }
           } catch (error) {
             console.error('SSE message parse error:', error);
@@ -430,8 +433,10 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-3">
                 <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase">Training Progress</div>
                 <div className="flex items-center space-x-2">
-                  <Dot ok={sseConnected} />
-                  <span className="text-xs text-zinc-500">{sseConnected ? 'Live' : 'Offline'}</span>
+                  <Dot ok={sseConnected && trainerRunning} />
+                  <span className="text-xs text-zinc-500">
+                    {sseConnected && trainerRunning ? 'Live' : 'Offline'}
+                  </span>
                 </div>
               </div>
               {trainStats ? (

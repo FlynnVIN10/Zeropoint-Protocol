@@ -6,9 +6,26 @@ export async function GET(request: NextRequest) {
 
   const stream = new ReadableStream({
     start(controller) {
-      // Data interval: emit training step every 1s
+      // Data interval: emit training step every 1s ONLY when training is active
       const dataInterval = setInterval(async () => {
         try {
+          // Check if there's an active training run first
+          const { getTrainerStatus } = await import('@/src/server/trainer');
+          const trainerStatus = getTrainerStatus();
+          
+          if (!trainerStatus.running) {
+            // No active training - send idle status
+            const idleData = {
+              type: 'idle',
+              message: 'No active training',
+              timestamp: new Date().toISOString()
+            };
+            const chunk = `data: ${JSON.stringify(idleData)}\n\n`;
+            controller.enqueue(encoder.encode(chunk));
+            return;
+          }
+          
+          // Training is active - get latest step
           const latestStep = await getLatestTrainingStep();
           
           if (latestStep) {

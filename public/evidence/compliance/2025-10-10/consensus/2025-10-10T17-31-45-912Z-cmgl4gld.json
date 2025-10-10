@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-10-10T17:31:45.912Z",
+  "proposalId": "cmgl4gldb008x59p3r1xux24r",
+  "runId": "cmgl4fvzq008l59p3ozsfa6tx",
+  "decision": "veto",
+  "reason": "Insufficient improvement: 17.96% over 5 steps (threshold: 20%)",
+  "improvement": 0.17957538180669225,
+  "window": 5,
+  "threshold": 0.2
+}

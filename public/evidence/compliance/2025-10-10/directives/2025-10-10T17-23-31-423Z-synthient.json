@@ -1,0 +1,9 @@
+{
+  "timestamp": "2025-10-10T17:23:31.423Z",
+  "runId": "cmgl44rnc000159p35n5uexhp",
+  "oldLR": 0.05,
+  "newLR": 0.04,
+  "reason": "Insufficient improvement: 8.90% over 5 steps (threshold: 20%)",
+  "directive": "Auto-retrain due to insufficient progress",
+  "source": "synthient"
+}

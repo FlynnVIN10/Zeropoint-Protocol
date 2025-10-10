@@ -164,3 +164,7 @@ button:hover {
   background-size: 200% 200%;
   animation: gradient-shift 3s ease infinite;
 }
+
+.dashboard {
+  contain: layout paint;
+}

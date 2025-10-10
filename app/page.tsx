@@ -379,12 +379,11 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Main Grid */}
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="grid grid-cols-12 grid-rows-6 gap-4 h-[calc(100vh-120px)] transition-all duration-300">
+      {/* Main Dashboard Grid */}
+      <main className="dashboard grid grid-cols-4 lg:grid-cols-4 md:grid-cols-2 grid-rows-[auto_auto_1fr] gap-4 h-[100dvh] p-4">
           
-          {/* System Status - Top Left */}
-          <div className="col-span-3 row-span-2">
+          {/* System Health — top-left, spans two columns */}
+          <section id="sys-health" className="col-span-2 row-start-1">
             <Kpi 
               label="System Health" 
               value={
@@ -395,7 +394,7 @@ export default function Dashboard() {
               }
               hint="Zeropoint Protocol"
             />
-          </div>
+          </section>
 
           {/* Metrics - Top Center */}
           <div className="col-span-6 row-span-2">
@@ -418,95 +417,94 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Synthient Actions Feed - Right Side (Full Height) */}
-          <div className="col-span-3 row-span-6">
+          {/* Actions Feed — right rail full height */}
+          <aside id="actions-feed" className="col-start-3 col-span-2 row-start-1 row-span-3 md:col-span-2 md:col-start-1 md:row-start-auto md:row-span-1 overflow-y-auto">
             <SynthientActionsFeed />
-          </div>
+          </aside>
 
-          {/* Service Panels - Under System Health */}
-          <div className="col-span-3 row-span-4 row-start-3">
-            <div className="grid grid-rows-3 gap-3 h-full">
-              {/* Training Progress - Compact */}
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] flex flex-col">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
-                    <span>🧠</span>
-                    <span>Tinygrad</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Dot status={trainerRunning ? 'online' : 'offline'} />
-                    <span className="text-[0.6rem] text-zinc-500">
-                      {trainerRunning ? 'Live' : 'Off'}
-                    </span>
-                  </div>
+          {/* Service cards stacked below System Health */}
+          <section id="svc-tinygrad" className="col-start-1 row-start-2">
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] flex flex-col h-full">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
+                  <span>🧠</span>
+                  <span>Tinygrad</span>
                 </div>
-                {trainStats ? (
-                  <div className="space-y-1 flex-1">
-                    <div className="text-xs text-zinc-300">
-                      Loss: {trainStats.last?.toFixed(4)}
-                    </div>
-                    <Spark values={trainStats.series?.slice(-10) || []} />
-                  </div>
-                ) : (
-                  <div className="text-zinc-500 text-xs flex-1">No data</div>
-                )}
-                <div className="flex gap-1 mt-2">
-                  <button 
-                    onClick={runTrain}
-                    disabled={busy || trainerRunning}
-                    className="flex-1 px-2 py-1 rounded border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-[0.6rem] transition">
-                    {trainerRunning ? 'Run...' : 'Start'}
-                  </button>
-                  <button 
-                    onClick={stopTrain}
-                    disabled={busy || !trainerRunning}
-                    className="flex-1 px-2 py-1 rounded border border-amber-500/50 text-amber-300 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-[0.6rem] transition">
-                    Stop
-                  </button>
+                <div className="flex items-center space-x-1">
+                  <Dot status={trainerRunning ? 'online' : 'offline'} />
+                  <span className="text-[0.6rem] text-zinc-500">
+                    {trainerRunning ? 'Live' : 'Off'}
+                  </span>
                 </div>
               </div>
-
-              {/* Inference - Compact */}
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
-                    <span>🌸</span>
-                    <span>Petals</span>
+              {trainStats ? (
+                <div className="space-y-1 flex-1">
+                  <div className="text-xs text-zinc-300">
+                    Loss: {trainStats.last?.toFixed(4)}
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <Dot status={inferStatus === 'done' ? 'online' : inferStatus === 'idle' ? 'idle' : 'offline'} />
-                    <span className="text-[0.6rem] text-zinc-300 capitalize">{inferStatus}</span>
-                  </div>
+                  <Spark values={trainStats.series?.slice(-10) || []} />
                 </div>
-                <div className="text-xs text-zinc-500">
-                  {inferStatus === 'done' ? 'Ready for inference' : 'Standby'}
-                </div>
-              </div>
-
-              {/* Simulation - Compact */}
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
-                    <span>🎮</span>
-                    <span>Wondercraft</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Dot status={simTicks > 0 ? 'online' : 'idle'} />
-                    <span className="text-[0.6rem] text-zinc-300">
-                      {simTicks > 0 ? `${simTicks}/50` : 'Idle'}
-                    </span>
-                  </div>
-                </div>
-                <div className="text-xs text-zinc-500">
-                  {simTicks > 0 ? 'Simulation active' : 'Ready'}
-                </div>
+              ) : (
+                <div className="text-zinc-500 text-xs flex-1">No data</div>
+              )}
+              <div className="flex gap-1 mt-2">
+                <button 
+                  onClick={runTrain}
+                  disabled={busy || trainerRunning}
+                  className="flex-1 px-2 py-1 rounded border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-[0.6rem] transition">
+                  {trainerRunning ? 'Run...' : 'Start'}
+                </button>
+                <button 
+                  onClick={stopTrain}
+                  disabled={busy || !trainerRunning}
+                  className="flex-1 px-2 py-1 rounded border border-amber-500/50 text-amber-300 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-[0.6rem] transition">
+                  Stop
+                </button>
               </div>
             </div>
-          </div>
+          </section>
+
+          <section id="svc-petals" className="col-start-2 row-start-2">
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
+                  <span>🌸</span>
+                  <span>Petals</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Dot status={inferStatus === 'done' ? 'online' : inferStatus === 'idle' ? 'idle' : 'offline'} />
+                  <span className="text-[0.6rem] text-zinc-300 capitalize">{inferStatus}</span>
+                </div>
+              </div>
+              <div className="text-xs text-zinc-500">
+                {inferStatus === 'done' ? 'Ready for inference' : 'Standby'}
+              </div>
+            </div>
+          </section>
+
+          <section id="svc-wondercraft" className="col-span-2 row-start-3">
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
+                  <span>🎮</span>
+                  <span>Wondercraft</span>
+                </div>
+                <div className="flex items-center space-x-1">
+                  <Dot status={simTicks > 0 ? 'online' : 'idle'} />
+                  <span className="text-[0.6rem] text-zinc-300">
+                    {simTicks > 0 ? `${simTicks}/50` : 'Idle'}
+                  </span>
+                </div>
+              </div>
+              <div className="text-xs text-zinc-500">
+                {simTicks > 0 ? 'Simulation active' : 'Ready'}
+              </div>
+            </div>
+          </section>
 
 
           {/* Active Synthients - Bottom Left */}
-          <div className="col-span-6 row-span-2 row-start-3">
+          <div className="col-span-2 row-start-4">
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
               <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-3">Active Synthients</div>
               <div className="space-y-2 max-h-32 overflow-y-auto">
@@ -531,7 +529,7 @@ export default function Dashboard() {
           </div>
 
           {/* Proposals - Bottom Right */}
-          <div className="col-span-6 row-span-2 row-start-5">
+          <div className="col-span-2 row-start-6">
             <button
               onClick={() => setGovOpen(true)}
               className="w-full h-full bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-left cursor-pointer"
@@ -562,8 +560,7 @@ export default function Dashboard() {
               </div>
             </button>
           </div>
-        </div>
-      </div>
+      </main>
 
       <GovernanceOverlay open={govOpen} onClose={() => setGovOpen(false)} />
 

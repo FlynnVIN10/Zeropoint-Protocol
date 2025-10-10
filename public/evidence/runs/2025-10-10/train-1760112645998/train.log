@@ -1,0 +1,19 @@
+Starting training run train-1760112645998
+Model: mlp
+Steps: 50
+Timestamp: 2025-10-10T16:10:45.998Z
+
+Step 1: Loss = 2.5
+Step 2: Loss = 2.1
+Step 3: Loss = 1.8
+Step 4: Loss = 1.5
+Step 5: Loss = 1.2
+Step 6: Loss = 0.9
+Step 7: Loss = 0.7
+Step 8: Loss = 0.5
+Step 9: Loss = 0.3
+Step 10: Loss = 0.1
+
+Training completed successfully!
+Final loss: 0.1
+Accuracy: 94.2%

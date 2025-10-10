@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ConsensusPulse } from "@/src/components/governance/ConsensusPulse";
 import GovernanceOverlay from "@/src/components/governance/GovernanceOverlay";
+import SyslogFeed from "@/src/components/SyslogFeed";
 
 // Single-screen, no-scroll, black UI dashboard for Next.js App Router.
 // Drop this as app/page.tsx or app/(dashboard)/page.tsx.
@@ -417,83 +418,92 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Syslog Feed - Top Right */}
+          <div className="col-span-3 row-span-6">
+            <SyslogFeed />
+          </div>
 
-          {/* Training Stats - Middle Left */}
-          <div className="col-span-6 row-span-2">
-            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full flex flex-col">
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase flex items-center space-x-2">
-                  <span>🧠</span>
-                  <span>Tinygrad Training</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Dot status={trainerRunning ? 'online' : 'offline'} />
-                  <span className="text-xs text-zinc-500">
-                    {trainerRunning ? 'Live' : 'Offline'}
-                  </span>
-                </div>
-              </div>
-              {trainStats ? (
-                <div className="space-y-2 flex-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-zinc-300">Loss: {trainStats.first?.toFixed(6)} → {trainStats.last?.toFixed(6)}</span>
-                    <span className="text-emerald-400">Δ {trainStats.delta?.toFixed(6)}</span>
+          {/* Service Panels - Under System Health */}
+          <div className="col-span-3 row-span-4">
+            <div className="grid grid-rows-3 gap-3 h-full">
+              {/* Training Progress - Compact */}
+              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] flex flex-col">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
+                    <span>🧠</span>
+                    <span>Tinygrad</span>
                   </div>
-                  <Spark values={trainStats.series || []} />
+                  <div className="flex items-center space-x-1">
+                    <Dot status={trainerRunning ? 'online' : 'offline'} />
+                    <span className="text-[0.6rem] text-zinc-500">
+                      {trainerRunning ? 'Live' : 'Off'}
+                    </span>
+                  </div>
                 </div>
-              ) : (
-                <div className="text-zinc-500 text-sm flex-1">No training data</div>
-              )}
-              <div className="mt-3 pt-3 border-t border-zinc-800 space-y-2">
-                <div className="text-xs text-zinc-500 font-mono">
-                  LR=0.05 • Batch=64 • Pause=8000ms
-                  {currentRunId && <div className="mt-1">Run: {currentRunId.substring(0,6)}</div>}
-                </div>
-                <div className="flex gap-2">
+                {trainStats ? (
+                  <div className="space-y-1 flex-1">
+                    <div className="text-xs text-zinc-300">
+                      Loss: {trainStats.last?.toFixed(4)}
+                    </div>
+                    <Spark values={trainStats.series?.slice(-10) || []} />
+                  </div>
+                ) : (
+                  <div className="text-zinc-500 text-xs flex-1">No data</div>
+                )}
+                <div className="flex gap-1 mt-2">
                   <button 
                     onClick={runTrain}
                     disabled={busy || trainerRunning}
-                    className="flex-1 px-3 py-1.5 rounded border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition">
-                    {trainerRunning ? 'Running...' : 'Start'}
+                    className="flex-1 px-2 py-1 rounded border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-[0.6rem] transition">
+                    {trainerRunning ? 'Run...' : 'Start'}
                   </button>
                   <button 
                     onClick={stopTrain}
                     disabled={busy || !trainerRunning}
-                    className="flex-1 px-3 py-1.5 rounded border border-amber-500/50 text-amber-300 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition">
+                    className="flex-1 px-2 py-1 rounded border border-amber-500/50 text-amber-300 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-[0.6rem] transition">
                     Stop
                   </button>
+                </div>
+              </div>
+
+              {/* Inference - Compact */}
+              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
+                    <span>🌸</span>
+                    <span>Petals</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Dot status={inferStatus === 'done' ? 'online' : inferStatus === 'idle' ? 'idle' : 'offline'} />
+                    <span className="text-[0.6rem] text-zinc-300 capitalize">{inferStatus}</span>
+                  </div>
+                </div>
+                <div className="text-xs text-zinc-500">
+                  {inferStatus === 'done' ? 'Ready for inference' : 'Standby'}
+                </div>
+              </div>
+
+              {/* Simulation - Compact */}
+              <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
+                    <span>🎮</span>
+                    <span>Wondercraft</span>
+                  </div>
+                  <div className="flex items-center space-x-1">
+                    <Dot status={simTicks > 0 ? 'online' : 'idle'} />
+                    <span className="text-[0.6rem] text-zinc-300">
+                      {simTicks > 0 ? `${simTicks}/50` : 'Idle'}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-xs text-zinc-500">
+                  {simTicks > 0 ? 'Simulation active' : 'Ready'}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Status Indicators - Middle Right */}
-          <div className="col-span-6 row-span-2">
-            <div className="grid grid-cols-2 gap-4 h-full">
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
-                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2 flex items-center space-x-2">
-                  <span>🌸</span>
-                  <span>Petals Inference</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Dot status={inferStatus === 'done' ? 'online' : inferStatus === 'idle' ? 'idle' : 'offline'} />
-                  <span className="text-sm text-zinc-300 capitalize">{inferStatus}</span>
-                </div>
-              </div>
-              <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
-                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2 flex items-center space-x-2">
-                  <span>🎮</span>
-                  <span>Wondercraft Simulation</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Dot status={simTicks > 0 ? 'online' : 'idle'} />
-                  <span className="text-sm text-zinc-300">
-                    {simTicks > 0 ? `${simTicks}/50 ticks` : 'Idle'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
 
           {/* Active Synthients - Bottom Left */}
           <div className="col-span-6 row-span-2">

@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ConsensusPulse } from "@/components/governance/ConsensusPulse";
+import { ConsensusPulse } from "@/src/components/governance/ConsensusPulse";
 
 // Single-screen, no-scroll, black UI dashboard for Next.js App Router.
 // Drop this as app/page.tsx or app/(dashboard)/page.tsx.

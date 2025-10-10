@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ProposalsTable } from '@/components/governance/ProposalsTable';
-import { ProposalDrawer } from '@/components/governance/ProposalDrawer';
-import { ConsensusPulse } from '@/components/governance/ConsensusPulse';
-import EvidenceFooter from '@/components/governance/EvidenceFooter';
+import { ProposalsTable } from '@/src/components/governance/ProposalsTable';
+import { ProposalDrawer } from '@/src/components/governance/ProposalDrawer';
+import { ConsensusPulse } from '@/src/components/governance/ConsensusPulse';
+import EvidenceFooter from '@/src/components/governance/EvidenceFooter';
 
 const qc = new QueryClient();
 

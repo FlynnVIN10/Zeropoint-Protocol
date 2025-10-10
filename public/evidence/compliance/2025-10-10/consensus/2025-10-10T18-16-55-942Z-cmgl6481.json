@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-10-10T18:16:55.942Z",
+  "proposalId": "cmgl6481h000dphvaaa19i40w",
+  "runId": "cmgl63irq0001phvacuo2rrtr",
+  "decision": "approve",
+  "reason": "Loss improved by 40.94% over 5 steps (0.846542 → 0.500006)",
+  "improvement": 0.4093547911679905,
+  "window": 5,
+  "threshold": 0.2
+}

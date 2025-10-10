@@ -56,13 +56,16 @@ class TrainerService {
     return synthient.id;
   }
 
-  private async createTrainingRun(): Promise<string> {
+  private async createTrainingRun(lr?: number): Promise<string> {
     const synthientId = await this.ensureSynthient();
+    
+    const learningRate = lr || parseFloat(process.env.TRAIN_LR || '0.05');
     
     const run = await db.trainingRun.create({
       data: {
         synthientId,
-        status: 'running'
+        status: 'running',
+        lr: learningRate
       }
     });
 
@@ -178,23 +181,30 @@ class TrainerService {
     }
   }
 
-  async start(): Promise<{ started: boolean; runId?: string }> {
+  async start(lr?: number): Promise<{ started: boolean; runId?: string }> {
     if (this.process) {
       return { started: false };
     }
 
     try {
-      this.currentRun = await this.createTrainingRun();
+      this.currentRun = await this.createTrainingRun(lr);
       this.stepCount = 0;
 
       const cmd = this.getPythonCommand();
       console.log('Starting trainer with command:', cmd.join(' '));
 
+      // If custom LR provided, override env var
+      const spawnEnv = {
+        ...process.env,
+        TRAIN_ENABLED: '1'
+      };
+      
+      if (lr !== undefined) {
+        spawnEnv.TRAIN_LR = lr.toString();
+      }
+
       this.process = spawn(cmd[0], cmd.slice(1), {
-        env: {
-          ...process.env,
-          TRAIN_ENABLED: '1'
-        },
+        env: spawnEnv,
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
@@ -312,8 +322,8 @@ class TrainerService {
 export const trainerService = new TrainerService();
 
 // Export functions for API use
-export async function startTrainer() {
-  return trainerService.start();
+export async function startTrainer(lr?: number) {
+  return trainerService.start(lr);
 }
 
 export async function stopTrainer() {

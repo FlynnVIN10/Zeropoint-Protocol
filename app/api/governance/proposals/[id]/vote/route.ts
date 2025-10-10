@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { writeVoteEvidence, writeUiEvent } from '@/lib/evidence';
+import { handleHumanVetoRetrain } from '@/src/server/consensus';
 
 export async function POST(_: Request,{ params }:{params:Promise<{id:string}>}) {
   const paramsResolved = await params;
   const body = await _.json().catch(()=>null);
-  const { actor, decision, reason } = body || {};
+  const { actor, decision, reason, directive } = body || {};
   if(!paramsResolved.id||!actor||!decision||!reason) return NextResponse.json({error:'bad_request'}, {status:400});
 
   try {
@@ -43,10 +44,15 @@ export async function POST(_: Request,{ params }:{params:Promise<{id:string}>}) 
         throw new Error('Synthient has already voted - proposal is in human review');
       }
 
-      const vote = await tx.vote.create({ data:{ proposalId: paramsResolved.id, actor, decision, reason }});
+      // If human veto with directive, append directive to reason
+      const finalReason = (actor === 'human' && decision === 'veto' && directive) 
+        ? `${reason}\n\nDirective: ${directive}`
+        : reason;
+      
+      const vote = await tx.vote.create({ data:{ proposalId: paramsResolved.id, actor, decision, reason: finalReason }});
 
       // Evidence writes inside transaction - failure will rollback
-      writeVoteEvidence(paramsResolved.id, actor, decision, reason);
+      writeVoteEvidence(paramsResolved.id, actor, decision, finalReason);
       writeUiEvent('vote', { proposalId: paramsResolved.id, actor, decision });
 
       // Determine next status based on dual-consensus flow
@@ -67,8 +73,16 @@ export async function POST(_: Request,{ params }:{params:Promise<{id:string}>}) 
       }
       if(next!==prop.status) await tx.proposal.update({ where:{ id: paramsResolved.id }, data:{ status: next }});
 
-      return { status: next, voteId: vote.id };
+      return { status: next, voteId: vote.id, runId: prop.title.match(/run ([a-z0-9]+)/)?.[1] };
     });
+
+    // If human veto with directive, trigger retrain (outside transaction)
+    if(actor === 'human' && decision === 'veto' && directive && out.runId) {
+      // Fire and forget - don't block response
+      handleHumanVetoRetrain(out.runId, directive).catch(err => {
+        console.error('[VOTE] Failed to handle retrain directive:', err);
+      });
+    }
 
     return NextResponse.json({ recorded:true, status: out.status, id: out.voteId }, { status:200 });
   } catch(e:any){

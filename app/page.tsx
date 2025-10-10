@@ -73,6 +73,9 @@ export default function Dashboard() {
   const [trainStats, setTrainStats] = useState<{ first?: number; last?: number; delta?: number; series?: number[] } | null>(null);
   const [sseConnected, setSseConnected] = useState<boolean>(false);
   const [sseReconnectDelay, setSseReconnectDelay] = useState<number>(1000);
+  const [trainerRunning, setTrainerRunning] = useState<boolean>(false);
+  const [currentRunId, setCurrentRunId] = useState<string>("");
+  const [trainEnv, setTrainEnv] = useState<{lr?:string; batch?:string; pause?:string}>({});
   const [inferStatus, setInferStatus] = useState<string>("idle");
   const [simTicks, setSimTicks] = useState<number>(0);
 
@@ -208,13 +211,30 @@ export default function Dashboard() {
 
   // ---------- Actions ----------
   const runTrain = async () => {
-    if (busy) return;
+    if (busy || trainerRunning) return;
     setBusy(true);
     try {
       const res = await postJSON("/api/trainer/start", {});
-      setToast(`Training started: ${res.runId}`);
+      setToast(`Training started: ${res.runId?.substring(0,8)}`);
+      setTrainerRunning(true);
+      setCurrentRunId(res.runId || '');
     } catch (e) {
       setToast(`Train failed: ${e}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+  
+  const stopTrain = async () => {
+    if (busy || !trainerRunning) return;
+    setBusy(true);
+    try {
+      await postJSON("/api/trainer/stop", {});
+      setToast(`Training stopped`);
+      setTrainerRunning(false);
+      setCurrentRunId('');
+    } catch (e) {
+      setToast(`Stop failed: ${e}`);
     } finally {
       setBusy(false);
     }
@@ -396,7 +416,7 @@ export default function Dashboard() {
 
           {/* Training Stats - Middle Left */}
           <div className="col-span-6 row-span-2">
-            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
+            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full flex flex-col">
               <div className="flex items-center justify-between mb-3">
                 <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase">Training Progress</div>
                 <div className="flex items-center space-x-2">
@@ -405,7 +425,7 @@ export default function Dashboard() {
                 </div>
               </div>
               {trainStats ? (
-                <div className="space-y-2">
+                <div className="space-y-2 flex-1">
                   <div className="flex justify-between text-sm">
                     <span className="text-zinc-300">Loss: {trainStats.first?.toFixed(6)} → {trainStats.last?.toFixed(6)}</span>
                     <span className="text-emerald-400">Δ {trainStats.delta?.toFixed(6)}</span>
@@ -413,8 +433,28 @@ export default function Dashboard() {
                   <Spark values={trainStats.series || []} />
                 </div>
               ) : (
-                <div className="text-zinc-500 text-sm">No training data</div>
+                <div className="text-zinc-500 text-sm flex-1">No training data</div>
               )}
+              <div className="mt-3 pt-3 border-t border-zinc-800 space-y-2">
+                <div className="text-xs text-zinc-500 font-mono">
+                  LR={trainEnv.lr || '0.05'} • Batch={trainEnv.batch || '64'} • Pause={trainEnv.pause || '8000'}ms
+                  {currentRunId && <div className="mt-1">Run: {currentRunId.substring(0,6)}</div>}
+                </div>
+                <div className="flex gap-2">
+                  <button 
+                    onClick={runTrain}
+                    disabled={busy || trainerRunning}
+                    className="flex-1 px-3 py-1.5 rounded border border-emerald-500/50 text-emerald-300 hover:bg-emerald-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition">
+                    {trainerRunning ? 'Running...' : 'Start'}
+                  </button>
+                  <button 
+                    onClick={stopTrain}
+                    disabled={busy || !trainerRunning}
+                    className="flex-1 px-3 py-1.5 rounded border border-amber-500/50 text-amber-300 hover:bg-amber-500/10 disabled:opacity-50 disabled:cursor-not-allowed text-sm transition">
+                    Stop
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 

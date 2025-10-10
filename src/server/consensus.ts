@@ -7,9 +7,11 @@ import { db } from '@/lib/db';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { stopTrainer, startTrainer } from './trainer';
 
 const WINDOW_SIZE = 5;
 const IMPROVEMENT_THRESHOLD = 0.20; // 20% improvement
+const RETRAIN_IMPROVEMENT_THRESHOLD = 0.10; // 10% - below this triggers retrain
 const ROOT = process.cwd();
 
 interface ConsensusResult {
@@ -64,6 +66,35 @@ async function writeConsensusEvidence(
     improvement,
     window: WINDOW_SIZE,
     threshold: IMPROVEMENT_THRESHOLD
+  };
+  
+  fs.writeFileSync(file, JSON.stringify(evidence, null, 2), 'utf8');
+  return file;
+}
+
+async function writeDirectiveEvidence(
+  runId: string,
+  oldLR: number,
+  newLR: number,
+  reason: string,
+  directive: string,
+  source: 'synthient' | 'human'
+): Promise<string> {
+  const base = todayDir();
+  const dir = path.join(base, 'directives');
+  ensureDir(dir);
+  
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const file = path.join(dir, `${ts}-${source}.json`);
+  
+  const evidence = {
+    timestamp: new Date().toISOString(),
+    runId,
+    oldLR,
+    newLR,
+    reason,
+    directive,
+    source
   };
   
   fs.writeFileSync(file, JSON.stringify(evidence, null, 2), 'utf8');
@@ -201,7 +232,92 @@ export async function evaluateConsensus(runId: string): Promise<void> {
       appendHash(evidencePath);
     });
 
+    // Check if synthient veto with low improvement triggers retrain
+    if (result.decision === 'veto' && result.improvement < RETRAIN_IMPROVEMENT_THRESHOLD && run.lr) {
+      console.log(`[CONSENSUS] Synthient veto with <10% improvement - triggering retrain`);
+      await handleRetrainDirective(runId, run.lr, result.reason, 'Auto-retrain due to insufficient progress');
+    }
+
   } catch (error) {
     console.error('[CONSENSUS] Error evaluating consensus:', error);
+  }
+}
+
+async function handleRetrainDirective(
+  runId: string,
+  oldLR: number,
+  reason: string,
+  directive: string
+): Promise<void> {
+  try {
+    // Calculate new LR: max(0.005, round(LR * 0.8, 5))
+    const newLR = Math.max(0.005, Math.round(oldLR * 0.8 * 100000) / 100000);
+    
+    console.log(`[RETRAIN] Adjusting LR: ${oldLR} → ${newLR}`);
+    
+    // Write directive evidence
+    const evidencePath = await writeDirectiveEvidence(
+      runId,
+      oldLR,
+      newLR,
+      reason,
+      directive,
+      'synthient'
+    );
+    appendHash(evidencePath);
+    
+    // Stop current run
+    await stopTrainer();
+    console.log(`[RETRAIN] Stopped training run ${runId.substring(0, 8)}`);
+    
+    // Wait a moment for cleanup
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Start new run with adjusted LR
+    const result = await startTrainer(newLR);
+    console.log(`[RETRAIN] Started new training run ${result.runId?.substring(0, 8)} with LR=${newLR}`);
+    
+  } catch (error) {
+    console.error('[RETRAIN] Error handling retrain directive:', error);
+  }
+}
+
+export async function handleHumanVetoRetrain(
+  runId: string,
+  directive: string
+): Promise<void> {
+  try {
+    const run = await db.trainingRun.findUnique({
+      where: { id: runId }
+    });
+    
+    if (!run || !run.lr) {
+      console.error(`[RETRAIN] Run ${runId} not found or has no LR`);
+      return;
+    }
+    
+    // Calculate new LR
+    const newLR = Math.max(0.005, Math.round(run.lr * 0.8 * 100000) / 100000);
+    
+    // Write directive evidence
+    const evidencePath = await writeDirectiveEvidence(
+      runId,
+      run.lr,
+      newLR,
+      'Human veto',
+      directive,
+      'human'
+    );
+    appendHash(evidencePath);
+    
+    // Stop and restart
+    await stopTrainer();
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await startTrainer(newLR);
+    
+    console.log(`[RETRAIN] Human directive executed: LR ${run.lr} → ${newLR}`);
+    
+  } catch (error) {
+    console.error('[RETRAIN] Error handling human veto retrain:', error);
   }
 }

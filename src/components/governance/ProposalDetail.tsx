@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import useSWR from 'swr';
 const fetcher=(u:string)=>fetch(u).then(r=>r.json());
 
@@ -7,17 +8,41 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
   id:string; apiBase:string; onClose:()=>void;
 }) {
   const { data, mutate, error, isLoading } = useSWR(`${apiBase}/proposals/${id}`, fetcher);
+  const [directive, setDirective] = useState('');
+  const [showDirective, setShowDirective] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   if (isLoading) return <div className="p-6">Loading…</div>;
   if (error || !data?.proposal) return <div className="p-6 text-rose-300">Failed to load.</div>;
   const p = data.proposal;
 
   async function vote(decision:'approve'|'veto', reason:string){
-    const res = await fetch(`${apiBase}/proposals/${id}/vote`, {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ actor:'human', decision, reason })
-    });
-    if(!res.ok) { const j=await res.json().catch(()=>({})); throw new Error(j.error||'vote failed'); }
-    await mutate();
+    setIsSubmitting(true);
+    try {
+      const payload: any = { actor:'human', decision, reason };
+      if (decision === 'veto' && directive.trim()) {
+        payload.directive = directive.trim();
+      }
+      
+      const res = await fetch(`${apiBase}/proposals/${id}/vote`, {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok) { const j=await res.json().catch(()=>({})); throw new Error(j.error||'vote failed'); }
+      await mutate();
+      setShowDirective(false);
+      setDirective('');
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+  
+  function handleVeto() {
+    setShowDirective(true);
+  }
+  
+  function submitVeto() {
+    vote('veto', directive.trim() || 'Insufficient evidence');
   }
 
   return (
@@ -66,12 +91,51 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
           
           {/* Only show vote buttons if human hasn't voted yet */}
           {!p.votes?.find((v: any) => v.actor === 'human') ? (
-            <div className="flex items-center gap-2">
-              <button onClick={()=>vote('approve','Meets gates')}
-                className="px-3 py-1 rounded border border-emerald-400/50 text-emerald-300 hover:scale-[1.02] transition">Approve</button>
-              <button onClick={()=>vote('veto','Insufficient evidence')}
-                className="px-3 py-1 rounded border border-amber-400/50 text-amber-200 hover:scale-[1.02] transition">Veto</button>
-            </div>
+            showDirective ? (
+              <div className="space-y-2">
+                <label className="block text-sm text-zinc-300">
+                  Veto Directive (optional - will trigger retrain with adjusted LR):
+                </label>
+                <textarea
+                  name="directive"
+                  value={directive}
+                  onChange={(e) => setDirective(e.target.value)}
+                  placeholder="Provide instructions for retraining (optional)"
+                  className="w-full px-3 py-2 bg-black/40 border border-zinc-700 rounded text-sm text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-amber-500"
+                  rows={3}
+                  disabled={isSubmitting}
+                />
+                <div className="flex items-center gap-2">
+                  <button 
+                    onClick={submitVeto}
+                    disabled={isSubmitting}
+                    className="px-3 py-1 rounded border border-amber-400/50 text-amber-200 hover:scale-[1.02] transition disabled:opacity-50">
+                    {isSubmitting ? 'Submitting...' : 'Submit Veto'}
+                  </button>
+                  <button 
+                    onClick={() => {setShowDirective(false); setDirective('');}}
+                    disabled={isSubmitting}
+                    className="px-3 py-1 rounded border border-zinc-600 text-zinc-400 hover:scale-[1.02] transition disabled:opacity-50">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button 
+                  onClick={()=>vote('approve','Meets gates')}
+                  disabled={isSubmitting}
+                  className="px-3 py-1 rounded border border-emerald-400/50 text-emerald-300 hover:scale-[1.02] transition disabled:opacity-50">
+                  Approve
+                </button>
+                <button 
+                  onClick={handleVeto}
+                  disabled={isSubmitting}
+                  className="px-3 py-1 rounded border border-amber-400/50 text-amber-200 hover:scale-[1.02] transition disabled:opacity-50">
+                  Veto
+                </button>
+              </div>
+            )
           ) : (
             <div className="text-center">
               <div className="px-3 py-2 rounded-lg bg-blue-600/20 text-blue-300 border border-blue-500/30 text-sm">

@@ -6,7 +6,8 @@ export async function GET(request: NextRequest) {
 
   const stream = new ReadableStream({
     start(controller) {
-      const interval = setInterval(async () => {
+      // Data interval: emit training step every 1s
+      const dataInterval = setInterval(async () => {
         try {
           const latestStep = await getLatestTrainingStep();
           
@@ -30,12 +31,23 @@ export async function GET(request: NextRequest) {
           const errorChunk = `data: ${JSON.stringify({ type: 'error', message: 'Failed to get latest step' })}\n\n`;
           controller.enqueue(encoder.encode(errorChunk));
         }
-      }, 1000); // Emit every 1 second
+      }, 1000);
+      
+      // Heartbeat interval: send comment every 10s to keep connection alive
+      const heartbeatInterval = setInterval(() => {
+        try {
+          controller.enqueue(encoder.encode(`: heartbeat ${Date.now()}\n\n`));
+        } catch (error) {
+          console.error('SSE heartbeat error:', error);
+        }
+      }, 10000);
 
       // Clean up on close
       request.signal.addEventListener('abort', () => {
-        clearInterval(interval);
+        clearInterval(dataInterval);
+        clearInterval(heartbeatInterval);
         controller.close();
+        console.log('SSE client disconnected.');
       });
     }
   });
@@ -43,8 +55,9 @@ export async function GET(request: NextRequest) {
   return new Response(stream, {
     headers: {
       'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
+      'Cache-Control': 'no-cache, no-transform',
       'Connection': 'keep-alive',
+      'X-Accel-Buffering': 'no',
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Headers': 'Cache-Control'
     }

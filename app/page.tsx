@@ -2,7 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { ConsensusPulse } from "@/src/components/governance/ConsensusPulse";
 import GovernanceOverlay from "@/src/components/governance/GovernanceOverlay";
-import SyslogFeed from "@/src/components/SyslogFeed";
+import SynthientActionsFeed from "@/src/components/SynthientActionsFeed";
 
 // Single-screen, no-scroll, black UI dashboard for Next.js App Router.
 // Drop this as app/page.tsx or app/(dashboard)/page.tsx.
@@ -418,13 +418,13 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Syslog Feed - Right Side (Full Height) */}
+          {/* Synthient Actions Feed - Right Side (Full Height) */}
           <div className="col-span-3 row-span-6">
-            <SyslogFeed />
+            <SynthientActionsFeed />
           </div>
 
           {/* Service Panels - Under System Health */}
-          <div className="col-span-3 row-span-4">
+          <div className="col-span-3 row-span-4 row-start-3">
             <div className="grid grid-rows-3 gap-3 h-full">
               {/* Training Progress - Compact */}
               <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] flex flex-col">

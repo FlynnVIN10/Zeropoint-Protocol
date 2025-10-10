@@ -50,8 +50,6 @@ export function ProposalsTable({ onOpen, apiBase='/api/governance' }:{
                         ? 'px-2 py-0.5 rounded text-purple-300 bg-purple-700/30'
                         : p.status === 'human-review'
                         ? 'px-2 py-0.5 rounded text-blue-300 bg-blue-700/30'
-                        : p.status === 'open'
-                        ? 'px-2 py-0.5 rounded text-orange-300 bg-orange-700/30'
                         : 'px-2 py-0.5 rounded text-zinc-200 bg-zinc-700/30'
                     }
                   >

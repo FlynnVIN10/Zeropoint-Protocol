@@ -417,50 +417,15 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* AI Services - Top Right */}
-          <div className="col-span-3 row-span-2">
-            <div className="space-y-3 h-full">
-              <button
-                onClick={runTrain}
-                disabled={busy}
-                className="w-full bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 rounded-xl p-3 transition-all duration-200 hover:border-orange-500/50 hover:shadow-[0_0_20px_rgba(251,146,60,0.2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500/60"
-                aria-label="Start Tinygrad training"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-lg">🧠</span>
-                  <span className="font-medium text-sm">Tinygrad Training</span>
-                </div>
-              </button>
-              <button
-                onClick={runInfer}
-                disabled={busy}
-                className="w-full bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 rounded-xl p-3 transition-all duration-200 hover:border-cyan-500/50 hover:shadow-[0_0_20px_rgba(34,211,238,0.2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500/60"
-                aria-label="Start Petals inference"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-lg">🌸</span>
-                  <span className="font-medium text-sm">Petals Inference</span>
-                </div>
-              </button>
-              <button
-                onClick={runSim}
-                disabled={busy}
-                className="w-full bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 disabled:cursor-not-allowed border border-zinc-700 rounded-xl p-3 transition-all duration-200 hover:border-pink-500/50 hover:shadow-[0_0_20px_rgba(236,72,153,0.2)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-500/60"
-                aria-label="Start Wondercraft simulation"
-              >
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-lg">🎮</span>
-                  <span className="font-medium text-sm">Wondercraft Simulation</span>
-                </div>
-              </button>
-            </div>
-          </div>
 
           {/* Training Stats - Middle Left */}
           <div className="col-span-6 row-span-2">
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full flex flex-col">
               <div className="flex items-center justify-between mb-3">
-                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase">Training Progress</div>
+                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase flex items-center space-x-2">
+                  <span>🧠</span>
+                  <span>Tinygrad Training</span>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Dot status={trainerRunning ? 'online' : 'offline'} />
                   <span className="text-xs text-zinc-500">
@@ -506,14 +471,20 @@ export default function Dashboard() {
           <div className="col-span-6 row-span-2">
             <div className="grid grid-cols-2 gap-4 h-full">
               <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
-                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2">Inference</div>
+                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2 flex items-center space-x-2">
+                  <span>🌸</span>
+                  <span>Petals Inference</span>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Dot status={inferStatus === 'done' ? 'online' : inferStatus === 'idle' ? 'idle' : 'offline'} />
                   <span className="text-sm text-zinc-300 capitalize">{inferStatus}</span>
                 </div>
               </div>
               <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
-                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2">Simulation</div>
+                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2 flex items-center space-x-2">
+                  <span>🎮</span>
+                  <span>Wondercraft Simulation</span>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Dot status={simTicks > 0 ? 'online' : 'idle'} />
                   <span className="text-sm text-zinc-300">

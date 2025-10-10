@@ -380,7 +380,7 @@ export default function Dashboard() {
       </div>
 
       {/* Main Dashboard Grid */}
-      <main className="dashboard grid grid-cols-4 lg:grid-cols-4 md:grid-cols-2 grid-rows-[auto_auto_1fr] gap-4 h-[100dvh] p-4">
+      <main className="dashboard grid grid-cols-6 lg:grid-cols-6 md:grid-cols-2 grid-rows-[auto_auto_auto_auto] gap-4 h-[100dvh] p-4">
           
           {/* System Health — top-left, spans two columns */}
           <section id="sys-health" className="col-span-2 row-start-1">
@@ -418,7 +418,7 @@ export default function Dashboard() {
           </div>
 
           {/* Actions Feed — right rail full height */}
-          <aside id="actions-feed" className="col-start-3 col-span-2 row-start-1 row-span-3 md:col-span-2 md:col-start-1 md:row-start-auto md:row-span-1 overflow-y-auto">
+          <aside id="actions-feed" className="col-start-3 col-span-4 row-start-1 row-span-4 md:col-span-2 md:col-start-1 md:row-start-auto md:row-span-1 overflow-y-auto">
             <SynthientActionsFeed />
           </aside>
 
@@ -529,7 +529,7 @@ export default function Dashboard() {
           </div>
 
           {/* Proposals - Bottom Right */}
-          <div className="col-span-2 row-start-6">
+          <div className="col-span-2 row-start-4">
             <button
               onClick={() => setGovOpen(true)}
               className="w-full h-full bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-left cursor-pointer"

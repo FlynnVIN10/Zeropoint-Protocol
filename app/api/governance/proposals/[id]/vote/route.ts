@@ -23,12 +23,34 @@ export async function POST(_: Request,{ params }:{params:{id:string}}) {
         throw new Error(`${actor} has already voted on this proposal`);
       }
 
+      // Enforce dual-consensus flow: synthient must vote first
+      if(actor === 'human' && prop.status === 'synthient-review') {
+        throw new Error('Human cannot vote until synthient has reviewed the proposal');
+      }
+
+      // Enforce dual-consensus flow: synthient cannot vote after human review
+      if(actor === 'synthient' && prop.status === 'human-review') {
+        throw new Error('Synthient has already voted - proposal is in human review');
+      }
+
       const vote = await tx.vote.create({ data:{ proposalId: params.id, actor, decision, reason }});
 
-      const hasVeto = decision==='veto' || prop.Vote.some(v=>v.decision==='veto');
-      const hasHumanApprove = (actor==='human'&&decision==='approve') || prop.Vote.some(v=>v.actor==='human'&&v.decision==='approve');
-      const hasSynthApprove = prop.Vote.some(v=>v.actor==='synthient'&&v.decision==='approve');
-      const next = hasVeto ? 'rejected' : (hasHumanApprove && hasSynthApprove ? 'approved' : prop.status);
+      // Determine next status based on dual-consensus flow
+      let next = prop.status;
+      
+      if(actor === 'synthient') {
+        if(decision === 'veto') {
+          next = 'rejected';
+        } else if(decision === 'approve') {
+          next = 'human-review';
+        }
+      } else if(actor === 'human') {
+        if(decision === 'veto') {
+          next = 'rejected';
+        } else if(decision === 'approve') {
+          next = 'approved';
+        }
+      }
       if(next!==prop.status) await tx.proposal.update({ where:{ id: params.id }, data:{ status: next }});
 
       return { status: next, voteId: vote.id };

@@ -36,7 +36,11 @@ export async function POST(request: NextRequest) {
     }
     
     const p = await db.proposal.create({
-      data: { title, body: proposalBody }
+      data: { 
+        title, 
+        body: proposalBody,
+        status: 'synthient-review' // New proposals start in synthient review
+      }
     });
     
     writeUiEvent('proposal-create', { id: p.id, title });

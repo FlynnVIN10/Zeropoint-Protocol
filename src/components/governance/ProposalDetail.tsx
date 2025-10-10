@@ -47,12 +47,21 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
         </ul>
       </div>
 
-      {p.status === 'open' ? (
+      {p.status === 'synthient-review' ? (
+        <div className="text-center">
+          <div className="px-3 py-2 rounded-lg bg-purple-600/20 text-purple-300 border border-purple-500/30 text-sm">
+            🔍 Awaiting Synthient Review
+          </div>
+          <div className="text-xs text-zinc-400 mt-1">
+            Synthient must review and vote before human review
+          </div>
+        </div>
+      ) : p.status === 'human-review' ? (
         <div className="space-y-2">
           {/* Show voting status */}
           <div className="text-xs text-zinc-400">
-            Human: {p.votes?.find(v => v.actor === 'human')?.decision || 'pending'} | 
-            Synthient: {p.votes?.find(v => v.actor === 'synthient')?.decision || 'pending'}
+            Synthient: {p.votes?.find(v => v.actor === 'synthient')?.decision || 'pending'} | 
+            Human: {p.votes?.find(v => v.actor === 'human')?.decision || 'pending'}
           </div>
           
           {/* Only show vote buttons if human hasn't voted yet */}
@@ -66,10 +75,7 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
           ) : (
             <div className="text-center">
               <div className="px-3 py-2 rounded-lg bg-blue-600/20 text-blue-300 border border-blue-500/30 text-sm">
-                Awaiting synthient consensus
-              </div>
-              <div className="text-xs text-zinc-400 mt-1">
-                Human has voted - waiting for synthient approval/veto
+                Human has voted - processing consensus
               </div>
             </div>
           )}

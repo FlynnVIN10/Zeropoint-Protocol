@@ -8,6 +8,7 @@ import { db } from '@/lib/db';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import { evaluateConsensus } from './consensus';
 
 const ROOT = process.cwd();
 
@@ -128,6 +129,13 @@ class TrainerService {
       
       this.stepCount++;
       
+      // Trigger consensus evaluation after each step
+      if (this.currentRun) {
+        evaluateConsensus(this.currentRun).catch(err => {
+          console.error('Consensus evaluation failed:', err);
+        });
+      }
+      
     } catch (error) {
       console.error('Failed to persist training step:', error);
     }
@@ -151,12 +159,13 @@ class TrainerService {
 
   private getPythonCommand(): string[] {
     // Try nice -n 10 first, fallback to plain python3
+    // Always use -u flag for unbuffered Python output
     const pythonPath = path.join(ROOT, 'trainer', 'tinygrad_train.py');
     
     // Check if nice is available
     try {
       require('child_process').execSync('which nice', { stdio: 'ignore' });
-      return ['nice', '-n', '10', 'python3', pythonPath];
+      return ['nice', '-n', '10', 'python3', '-u', pythonPath];
     } catch {
       // nice not available, check if we should double TRAIN_PAUSE_MS
       const currentPause = parseInt(process.env.TRAIN_PAUSE_MS || '8000');
@@ -165,7 +174,7 @@ class TrainerService {
       console.log(`nice not available, doubling TRAIN_PAUSE_MS from ${currentPause} to ${doubledPause}ms`);
       process.env.TRAIN_PAUSE_MS = doubledPause.toString();
       
-      return ['python3', pythonPath];
+      return ['python3', '-u', pythonPath];
     }
   }
 

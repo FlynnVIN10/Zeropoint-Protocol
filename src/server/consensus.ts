@@ -1,6 +1,6 @@
 /**
  * Synthient Consensus Engine
- * Evaluates training progress and creates auto-proposals with synthient votes
+ * Evaluates training progress and creates/updates auto-proposals with synthient votes
  */
 
 import { db } from '@/lib/db';
@@ -8,297 +8,200 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 
+const WINDOW_SIZE = 5;
+const IMPROVEMENT_THRESHOLD = 0.20; // 20% improvement
 const ROOT = process.cwd();
-const WINDOW_SIZE = 5; // Last 5 steps
-const IMPROVEMENT_THRESHOLD = 20; // 20% improvement required
 
-class ConsensusEngine {
-  private synthientId: string;
-
-  constructor() {
-    this.synthientId = process.env.SYNTHIENT_ID || 'synth-1';
-  }
-
-  private todayDir(): string {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return path.join(ROOT, 'public', 'evidence', 'compliance', `${y}-${m}-${day}`);
-  }
-
-  private ensureDir(p: string): void {
-    fs.mkdirSync(p, { recursive: true });
-  }
-
-  private appendHash(filePath: string): void {
-    const base = this.todayDir();
-    this.ensureDir(base);
-    
-    const hash = crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
-    const rel = filePath.replace(`${ROOT}${path.sep}`, '');
-    const line = `${hash}  ${rel}\n`;
-    const hashFile = path.join(base, 'file-hashes-complete.sha256');
-    fs.appendFileSync(hashFile, line, 'utf8');
-  }
-
-  private async getSynthient(): Promise<string> {
-    let synthient = await db.synthient.findFirst({
-      where: { name: this.synthientId }
-    });
-
-    if (!synthient) {
-      synthient = await db.synthient.create({
-        data: {
-          name: this.synthientId,
-          status: 'idle'
-        }
-      });
-    }
-
-    return synthient.id;
-  }
-
-  private async getTrainingSteps(runId: string, limit: number = WINDOW_SIZE): Promise<any[]> {
-    return db.trainingStep.findMany({
-      where: { runId },
-      orderBy: { step: 'desc' },
-      take: limit
-    });
-  }
-
-  private calculateImprovement(steps: any[]): number {
-    if (steps.length < 2) return 0;
-
-    const firstLoss = steps[steps.length - 1].loss;
-    const lastLoss = steps[0].loss;
-
-    if (firstLoss <= 0) return 0; // Avoid division by zero
-
-    return ((firstLoss - lastLoss) / firstLoss) * 100;
-  }
-
-  private async findExistingProposal(runId: string): Promise<any | null> {
-    // Look for existing auto-proposal for this run
-    const proposals = await db.proposal.findMany({
-      where: {
-        title: {
-          contains: `Auto: Tune LR (run ${runId.substring(0, 8)})`
-        }
-      },
-      include: {
-        SynthientVote: true
-      }
-    });
-
-    return proposals.length > 0 ? proposals[0] : null;
-  }
-
-  private async createOrUpdateProposal(
-    runId: string,
-    improvement: number,
-    steps: any[]
-  ): Promise<string> {
-    const synthientId = await this.getSynthient();
-    const shortRunId = runId.substring(0, 8);
-    
-    const existingProposal = await this.findExistingProposal(runId);
-    
-    const title = `Auto: Tune LR (run ${shortRunId})`;
-    const body = `**Synthient Training Analysis**
-
-Run ID: ${runId}
-Steps Analyzed: ${steps.length}
-Improvement: ${improvement.toFixed(2)}%
-
-**Latest Metrics:**
-- Final Loss: ${steps[0]?.loss.toFixed(6) || 'N/A'}
-- Initial Loss: ${steps[steps.length - 1]?.loss.toFixed(6) || 'N/A'}
-- Parameters: w=${steps[0]?.parameters ? JSON.parse(steps[0].parameters).w.toFixed(4) : 'N/A'}, b=${steps[0]?.parameters ? JSON.parse(steps[0].parameters).b.toFixed(4) : 'N/A'}
-
-**Consensus Decision:**
-${improvement >= IMPROVEMENT_THRESHOLD ? '✅ APPROVE: Training shows significant improvement' : '❌ VETO: Insufficient improvement detected'}`;
-
-    if (existingProposal) {
-      // Update existing proposal
-      await db.proposal.update({
-        where: { id: existingProposal.id },
-        data: {
-          body,
-          updatedAt: new Date()
-        }
-      });
-      return existingProposal.id;
-    } else {
-      // Create new proposal
-      const proposal = await db.proposal.create({
-        data: {
-          title,
-          body,
-          status: 'synthient-review'
-        }
-      });
-      return proposal.id;
-    }
-  }
-
-  private async recordSynthientVote(
-    proposalId: string,
-    decision: 'approve' | 'veto',
-    reason: string
-  ): Promise<void> {
-    const synthientId = await this.getSynthient();
-
-    // Check if synthient already voted on this proposal
-    const existingVote = await db.synthientVote.findFirst({
-      where: {
-        proposalId,
-        synthientId
-      }
-    });
-
-    if (existingVote) {
-      // Update existing vote
-      await db.synthientVote.update({
-        where: { id: existingVote.id },
-        data: {
-          decision,
-          reason
-        }
-      });
-    } else {
-      // Create new vote
-      await db.synthientVote.create({
-        data: {
-          proposalId,
-          synthientId,
-          decision,
-          reason
-        }
-      });
-    }
-  }
-
-  private async updateProposalStatus(proposalId: string, decision: 'approve' | 'veto'): Promise<void> {
-    let newStatus: string;
-
-    if (decision === 'veto') {
-      newStatus = 'rejected';
-    } else {
-      // Check if there are any vetoes
-      const vetoes = await db.synthientVote.findMany({
-        where: {
-          proposalId,
-          decision: 'veto'
-        }
-      });
-
-      if (vetoes.length > 0) {
-        newStatus = 'rejected';
-      } else {
-        newStatus = 'human-review';
-      }
-    }
-
-    await db.proposal.update({
-      where: { id: proposalId },
-      data: { status: newStatus }
-    });
-  }
-
-  private async writeConsensusEvidence(
-    runId: string,
-    improvement: number,
-    decision: 'approve' | 'veto',
-    steps: any[]
-  ): Promise<void> {
-    const base = this.todayDir();
-    const dir = path.join(base, 'consensus');
-    this.ensureDir(dir);
-    
-    const ts = new Date().toISOString().replace(/[:.]/g, '-');
-    const file = path.join(dir, `${ts}-consensus-${runId.substring(0, 8)}.json`);
-    
-    const evidence = {
-      timestamp: new Date().toISOString(),
-      runId,
-      windowSize: WINDOW_SIZE,
-      stepsAnalyzed: steps.length,
-      improvement: improvement,
-      threshold: IMPROVEMENT_THRESHOLD,
-      decision,
-      reasoning: improvement >= IMPROVEMENT_THRESHOLD 
-        ? `Training shows ${improvement.toFixed(2)}% improvement, exceeding ${IMPROVEMENT_THRESHOLD}% threshold`
-        : `Training shows only ${improvement.toFixed(2)}% improvement, below ${IMPROVEMENT_THRESHOLD}% threshold`,
-      steps: steps.map(s => ({
-        step: s.step,
-        loss: s.loss,
-        parameters: s.parameters
-      }))
-    };
-    
-    fs.writeFileSync(file, JSON.stringify(evidence, null, 2), 'utf8');
-    this.appendHash(file);
-  }
-
-  async evaluateConsensus(runId: string): Promise<{
-    evaluated: boolean;
-    improvement?: number;
-    decision?: 'approve' | 'veto';
-    proposalId?: string;
-  }> {
-    try {
-      // Get recent training steps
-      const steps = await this.getTrainingSteps(runId, WINDOW_SIZE);
-      
-      if (steps.length < WINDOW_SIZE) {
-        return { evaluated: false };
-      }
-
-      // Calculate improvement
-      const improvement = this.calculateImprovement(steps);
-      
-      // Make decision
-      const decision: 'approve' | 'veto' = improvement >= IMPROVEMENT_THRESHOLD ? 'approve' : 'veto';
-      const reason = decision === 'approve' 
-        ? `Training shows ${improvement.toFixed(2)}% improvement, exceeding ${IMPROVEMENT_THRESHOLD}% threshold`
-        : `Training shows only ${improvement.toFixed(2)}% improvement, below ${IMPROVEMENT_THRESHOLD}% threshold`;
-
-      // Use transaction for atomic operations
-      const result = await db.$transaction(async (tx) => {
-        // Create or update proposal
-        const proposalId = await this.createOrUpdateProposal(runId, improvement, steps);
-        
-        // Record synthient vote
-        await this.recordSynthientVote(proposalId, decision, reason);
-        
-        // Update proposal status
-        await this.updateProposalStatus(proposalId, decision);
-        
-        return { proposalId };
-      });
-
-      // Write evidence outside transaction
-      await this.writeConsensusEvidence(runId, improvement, decision, steps);
-
-      return {
-        evaluated: true,
-        improvement,
-        decision,
-        proposalId: result.proposalId
-      };
-
-    } catch (error) {
-      console.error('Consensus evaluation failed:', error);
-      return { evaluated: false };
-    }
-  }
+interface ConsensusResult {
+  decision: 'approve' | 'veto';
+  reason: string;
+  improvement: number;
 }
 
-// Singleton instance
-export const consensusEngine = new ConsensusEngine();
+function todayDir(): string {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return path.join(ROOT, 'public', 'evidence', 'compliance', `${y}-${m}-${day}`);
+}
 
-// Export function for API use
-export async function evaluateConsensus(runId: string) {
-  return consensusEngine.evaluateConsensus(runId);
+function ensureDir(p: string): void {
+  fs.mkdirSync(p, { recursive: true });
+}
+
+function appendHash(filePath: string): void {
+  const base = todayDir();
+  ensureDir(base);
+  
+  const hash = crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
+  const rel = filePath.replace(`${ROOT}${path.sep}`, '');
+  const line = `${hash}  ${rel}\n`;
+  const hashFile = path.join(base, 'file-hashes-complete.sha256');
+  fs.appendFileSync(hashFile, line, 'utf8');
+}
+
+async function writeConsensusEvidence(
+  proposalId: string,
+  runId: string,
+  decision: string,
+  reason: string,
+  improvement: number
+): Promise<string> {
+  const base = todayDir();
+  const dir = path.join(base, 'consensus');
+  ensureDir(dir);
+  
+  const ts = new Date().toISOString().replace(/[:.]/g, '-');
+  const file = path.join(dir, `${ts}-${proposalId.substring(0, 8)}.json`);
+  
+  const evidence = {
+    timestamp: new Date().toISOString(),
+    proposalId,
+    runId,
+    decision,
+    reason,
+    improvement,
+    window: WINDOW_SIZE,
+    threshold: IMPROVEMENT_THRESHOLD
+  };
+  
+  fs.writeFileSync(file, JSON.stringify(evidence, null, 2), 'utf8');
+  return file;
+}
+
+async function evaluateWindow(steps: any[]): Promise<ConsensusResult> {
+  // Steps should be sorted ascending by step number
+  const firstLoss = steps[0].loss;
+  const lastLoss = steps[steps.length - 1].loss;
+  
+  const improvement = (firstLoss - lastLoss) / firstLoss;
+  const decision = improvement >= IMPROVEMENT_THRESHOLD ? 'approve' : 'veto';
+  
+  const reason = decision === 'approve'
+    ? `Loss improved by ${(improvement * 100).toFixed(2)}% over ${WINDOW_SIZE} steps (${firstLoss.toFixed(6)} → ${lastLoss.toFixed(6)})`
+    : `Insufficient improvement: ${(improvement * 100).toFixed(2)}% over ${WINDOW_SIZE} steps (threshold: ${(IMPROVEMENT_THRESHOLD * 100).toFixed(0)}%)`;
+  
+  return { decision, reason, improvement };
+}
+
+export async function evaluateConsensus(runId: string): Promise<void> {
+  try {
+    // Get the latest WINDOW_SIZE steps for this run
+    const steps = await db.trainingStep.findMany({
+      where: { runId },
+      orderBy: { step: 'desc' },
+      take: WINDOW_SIZE
+    });
+
+    if (steps.length < WINDOW_SIZE) {
+      console.log(`[CONSENSUS] Not enough steps (${steps.length}/${WINDOW_SIZE}) for run ${runId}`);
+      return;
+    }
+
+    // Sort ascending by step
+    const sortedSteps = steps.sort((a, b) => a.step - b.step);
+    
+    // Evaluate the window
+    const result = await evaluateWindow(sortedSteps);
+    
+    // Get the synthient for this run
+    const run = await db.trainingRun.findUnique({
+      where: { id: runId },
+      include: { Synthient: true }
+    });
+
+    if (!run) {
+      console.error(`[CONSENSUS] Run ${runId} not found`);
+      return;
+    }
+
+    // Transaction: create/update proposal, create vote, update status, write evidence
+    await db.$transaction(async (tx) => {
+      // Check if there's already a proposal for this run
+      const proposalTitle = `Auto: Tune LR (run ${runId.substring(0, 8)})`;
+      let proposal = await tx.proposal.findFirst({
+        where: { title: proposalTitle },
+        orderBy: { createdAt: 'desc' }
+      });
+
+      const proposalBody = `**Objective:** Automatically tune learning rate based on training performance
+
+**Latest Metrics:**
+- Run ID: \`${runId}\`
+- Steps evaluated: ${sortedSteps[0].step} - ${sortedSteps[WINDOW_SIZE - 1].step}
+- Initial Loss: ${sortedSteps[0].loss.toFixed(6)}
+- Final Loss: ${sortedSteps[WINDOW_SIZE - 1].loss.toFixed(6)}
+- Improvement: ${(result.improvement * 100).toFixed(2)}%
+
+**Synthient Decision:** ${result.decision.toUpperCase()}
+
+**Reason:** ${result.reason}`;
+
+      if (!proposal) {
+        // Create new proposal
+        proposal = await tx.proposal.create({
+          data: {
+            title: proposalTitle,
+            body: proposalBody,
+            status: 'synthient-review'
+          }
+        });
+        console.log(`[CONSENSUS] Created auto-proposal: ${proposal.id}`);
+      } else {
+        // Update existing proposal
+        await tx.proposal.update({
+          where: { id: proposal.id },
+          data: { 
+            body: proposalBody,
+            updatedAt: new Date()
+          }
+        });
+        console.log(`[CONSENSUS] Updated auto-proposal: ${proposal.id}`);
+      }
+
+      // Create synthient vote
+      await tx.synthientVote.create({
+        data: {
+          proposalId: proposal.id,
+          synthientId: run.synthientId,
+          decision: result.decision,
+          reason: result.reason
+        }
+      });
+      console.log(`[CONSENSUS] Synthient vote recorded: ${result.decision}`);
+
+      // Determine next status
+      let nextStatus = proposal.status;
+      if (result.decision === 'veto') {
+        nextStatus = 'rejected';
+      } else if (result.decision === 'approve' && proposal.status === 'synthient-review') {
+        nextStatus = 'human-review';
+      }
+
+      if (nextStatus !== proposal.status) {
+        await tx.proposal.update({
+          where: { id: proposal.id },
+          data: { 
+            status: nextStatus,
+            updatedAt: new Date()
+          }
+        });
+        console.log(`[CONSENSUS] Proposal ${proposal.id} status: ${proposal.status} → ${nextStatus}`);
+      }
+
+      // Write consensus evidence (outside transaction to avoid deadlock)
+      const evidencePath = await writeConsensusEvidence(
+        proposal.id,
+        runId,
+        result.decision,
+        result.reason,
+        result.improvement
+      );
+      appendHash(evidencePath);
+    });
+
+  } catch (error) {
+    console.error('[CONSENSUS] Error evaluating consensus:', error);
+  }
 }

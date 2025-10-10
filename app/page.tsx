@@ -205,7 +205,7 @@ export default function Dashboard() {
       try {
         const [syn, prop] = await Promise.all([
           fetchJSON("/api/synthients"),
-          fetchJSON("/api/proposals")
+          fetchJSON("/api/governance/proposals")
         ]);
         console.log("Lists poll:", syn, prop); // Debug log
         setSynthients(syn?.synthients || []);
@@ -514,7 +514,12 @@ export default function Dashboard() {
                   <div key={synthient.id} className="flex items-center justify-between bg-zinc-800/50 rounded-lg p-2">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-zinc-300">{synthient.name}</span>
-                      <Dot status={synthient.isRunning || synthient.status === 'active' ? 'online' : 'offline'} />
+                      <Dot status={
+                        synthient.isRunning ? 'online' : 
+                        synthient.status === 'active' ? 'online' :
+                        synthient.status === 'idle' ? 'idle' : 
+                        'offline'
+                      } />
                     </div>
                     <div className="text-xs text-zinc-500">
                       {synthient.runsCount || 0} runs

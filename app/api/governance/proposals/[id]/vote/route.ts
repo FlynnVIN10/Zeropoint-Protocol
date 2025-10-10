@@ -1,101 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { writeUiEvent, writeVoteEvidence } from '@/lib/evidence';
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/db';
+import { writeVoteEvidence, writeUiEvent } from '@/lib/evidence';
 
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
-  const params = await context.params;
-  const id = params.id;
-  
+export async function POST(_: Request,{ params }:{params:{id:string}}) {
+  const body = await _.json().catch(()=>null);
+  const { actor, decision, reason } = body || {};
+  if(!params.id||!actor||!decision||!reason) return NextResponse.json({error:'bad_request'}, {status:400});
+
   try {
-    const body = await request.json();
-    const { actor, decision, reason } = body ?? {};
-    
-    if (!actor || !decision || !reason) {
-      return NextResponse.json(
-        { error: 'actor/decision/reason required' },
-        { status: 400 }
-      );
-    }
-    
-    if (!['human', 'synthient'].includes(actor)) {
-      return NextResponse.json(
-        { error: 'actor must be "human" or "synthient"' },
-        { status: 400 }
-      );
-    }
-    
-    if (!['approve', 'veto'].includes(decision)) {
-      return NextResponse.json(
-        { error: 'decision must be "approve" or "veto"' },
-        { status: 400 }
-      );
-    }
-    
-    const prop = await db.proposal.findUnique({
-      where: { id },
-      include: { Vote: true }
+    const out = await prisma.$transaction(async (tx)=>{
+      const prop = await tx.proposal.findUnique({ where:{ id: params.id }, include:{ votes:true }});
+      if(!prop) throw new Error('not_found');
+
+      const vote = await tx.vote.create({ data:{ proposalId: params.id, actor, decision, reason }});
+
+      const hasVeto = decision==='veto' || prop.votes.some(v=>v.decision==='veto');
+      const hasHumanApprove = (actor==='human'&&decision==='approve') || prop.votes.some(v=>v.actor==='human'&&v.decision==='approve');
+      const hasSynthApprove = prop.votes.some(v=>v.actor==='synthient'&&v.decision==='approve');
+      const next = hasVeto ? 'rejected' : (hasHumanApprove && hasSynthApprove ? 'approved' : prop.status);
+      if(next!==prop.status) await tx.proposal.update({ where:{ id: params.id }, data:{ status: next }});
+
+      // Evidence must succeed or transaction aborts
+      writeVoteEvidence(params.id, actor, decision, reason);
+      writeUiEvent('vote', { proposalId: params.id, actor, decision });
+
+      return { status: next, voteId: vote.id };
     });
-    
-    if (!prop) {
-      return NextResponse.json(
-        { error: 'proposal not found' },
-        { status: 404 }
-      );
-    }
-    
-    const vote = await db.vote.create({
-      data: {
-        proposalId: id,
-        actor,
-        decision,
-        reason
-      }
-    });
-    
-    // Dual-consensus logic
-    const votes = await db.vote.findMany({ where: { proposalId: id } });
-    const hasVeto = votes.some(v => v.decision === 'veto');
-    const hasHumanApprove = votes.some(v => v.actor === 'human' && v.decision === 'approve');
-    const hasSynthApprove = votes.some(v => v.actor === 'synthient' && v.decision === 'approve');
-    
-    let status = prop.status;
-    if (hasVeto) {
-      status = 'rejected';
-    } else if (hasHumanApprove && hasSynthApprove) {
-      status = 'approved';
-    }
-    
-    if (status !== prop.status) {
-      await db.proposal.update({
-        where: { id },
-        data: { status }
-      });
-    }
-    
-    // Write evidence
-    writeVoteEvidence(id, actor, decision, reason);
-    writeUiEvent('vote', { proposalId: id, actor, decision });
-    
-    return NextResponse.json({
-      recorded: true,
-      status
-    }, {
-      headers: {
-        'content-type': 'application/json; charset=utf-8',
-        'cache-control': 'no-store',
-        'x-content-type-options': 'nosniff',
-        'content-disposition': 'inline'
-      }
-    });
-  } catch (error) {
-    console.error('Vote error:', error);
-    return NextResponse.json(
-      { error: 'Failed to record vote' },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ recorded:true, status: out.status, id: out.voteId }, { status:200 });
+  } catch(e:any){
+    return NextResponse.json({ error:'evidence_or_db_failure', detail: String(e.message||e) }, { status:500 });
   }
 }
-

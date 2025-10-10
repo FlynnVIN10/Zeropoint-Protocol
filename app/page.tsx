@@ -1,8 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { ConsensusPulse } from "@/src/components/governance/ConsensusPulse";
-import { ProposalDrawer } from "@/src/components/governance/ProposalDrawer";
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import GovernanceOverlay from "@/src/components/governance/GovernanceOverlay";
 
 // Single-screen, no-scroll, black UI dashboard for Next.js App Router.
 // Drop this as app/page.tsx or app/(dashboard)/page.tsx.
@@ -69,26 +68,9 @@ export default function Dashboard() {
   const [status, setStatus] = useState<any>(null);
   
   // Governance state
-  const [governanceExpanded, setGovernanceExpanded] = useState<boolean>(false);
-  const [selectedProposal, setSelectedProposal] = useState<any>(null);
+  const [govOpen, setGovOpen] = useState<boolean>(false);
 
   const [trainStats, setTrainStats] = useState<{ first?: number; last?: number; delta?: number; series?: number[] } | null>(null);
-  
-  // Governance handlers
-  const handleProposalClick = async (proposal: any) => {
-    try {
-      const response = await fetch(`/api/governance/proposals/${proposal.id}`);
-      const data = await response.json();
-      setSelectedProposal(data.proposal);
-    } catch (error) {
-      console.error('Failed to fetch proposal:', error);
-    }
-  };
-
-  const handleGovernanceExpand = () => {
-    setGovernanceExpanded(!governanceExpanded);
-    setSelectedProposal(null);
-  };
   const [inferStatus, setInferStatus] = useState<string>("idle");
   const [simTicks, setSimTicks] = useState<number>(0);
 
@@ -232,8 +214,7 @@ export default function Dashboard() {
 
   // ---------- Render ----------
   return (
-    <QueryClientProvider client={new QueryClient()}>
-      <div className="min-h-screen bg-black text-zinc-100 overflow-hidden">
+    <div className="min-h-screen bg-black text-zinc-100 overflow-hidden">
       {/* Header */}
       <div className="border-b border-zinc-800 bg-zinc-950/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
@@ -256,7 +237,7 @@ export default function Dashboard() {
                 <Dot ok={ready?.ready ?? false} />
                 <span className="text-sm text-zinc-400">Database</span>
               </div>
-              <ConsensusPulse onClick={handleGovernanceExpand} />
+              <ConsensusPulse onClick={() => setGovOpen(true)} />
               <div className="text-xs text-zinc-500">
                 {health?.now ? new Date(health.now).toLocaleTimeString() : 'N/A'}
               </div>
@@ -405,20 +386,16 @@ export default function Dashboard() {
           {/* Proposals - Bottom Right */}
           <div className="col-span-6 row-span-2">
             <button
-              onClick={handleGovernanceExpand}
-              className="w-full h-full bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-left"
-              aria-label="Expand Governance"
+              onClick={() => setGovOpen(true)}
+              className="w-full h-full bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-left cursor-pointer"
+              aria-label="Open Governance"
             >
               <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-3">Governance</div>
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 {proposals.slice(0, 3).map((proposal) => (
                   <div 
                     key={proposal.id} 
-                    className="bg-zinc-800/50 hover:bg-zinc-700/50 rounded-lg p-2 cursor-pointer transition-colors"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleProposalClick(proposal);
-                    }}
+                    className="bg-zinc-800/50 rounded-lg p-2"
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-sm text-zinc-300 truncate">{proposal.title}</span>
@@ -441,83 +418,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Expanded Governance Panel */}
-      {governanceExpanded && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 flex items-center justify-center p-6">
-          <div className="bg-zinc-950 border border-zinc-800 rounded-2xl w-full max-w-6xl h-full max-h-[80vh] flex">
-            {/* Proposals List */}
-            <div className="w-1/2 p-6 border-r border-zinc-800">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-zinc-100">Proposals</h2>
-                <button
-                  onClick={handleGovernanceExpand}
-                  className="text-zinc-400 hover:text-zinc-200 px-3 py-1 rounded border border-zinc-700 hover:border-zinc-600 transition-colors"
-                >
-                  Close
-                </button>
-              </div>
-              <div className="space-y-3 max-h-[calc(80vh-120px)] overflow-y-auto">
-                {proposals.map((proposal) => (
-                  <div
-                    key={proposal.id}
-                    className={`p-4 rounded-lg border cursor-pointer transition-all ${
-                      selectedProposal?.id === proposal.id
-                        ? 'bg-emerald-900/20 border-emerald-500/50'
-                        : 'bg-zinc-900/50 border-zinc-700 hover:bg-zinc-800/50'
-                    }`}
-                    onClick={() => handleProposalClick(proposal)}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-sm font-medium text-zinc-200 truncate">{proposal.title}</h3>
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        proposal.status === 'open' ? 'bg-green-500/20 text-green-400' : 
-                        proposal.status === 'approved' ? 'bg-blue-500/20 text-blue-400' : 
-                        'bg-red-500/20 text-red-400'
-                      }`}>
-                        {proposal.status}
-                      </span>
-                    </div>
-                    <div className="text-xs text-zinc-500">
-                      {proposal.Vote?.length || 0} votes • {new Date(proposal.createdAt).toLocaleDateString()}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Proposal Detail */}
-            <div className="w-1/2 p-6">
-              {selectedProposal ? (
-                <div>
-                  <h2 className="text-xl font-semibold text-zinc-100 mb-4">{selectedProposal.title}</h2>
-                  <div className="text-sm text-zinc-300 whitespace-pre-wrap bg-zinc-900/30 rounded-lg p-4 mb-4">
-                    {selectedProposal.body}
-                  </div>
-                  <div className="mb-4">
-                    <h3 className="text-sm font-semibold text-zinc-200 mb-2">Votes</h3>
-                    <div className="space-y-2">
-                      {selectedProposal.votes?.map((vote: any) => (
-                        <div key={vote.id} className="flex items-center gap-3 text-xs">
-                          <span className={`px-2 py-1 rounded ${
-                            vote.decision === 'approve' ? 'bg-emerald-600/30 text-emerald-300' : 'bg-amber-600/30 text-amber-200'
-                          }`}>
-                            {vote.actor}:{vote.decision}
-                          </span>
-                          <span className="text-zinc-400">{new Date(vote.createdAt).toLocaleString()}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="flex items-center justify-center h-full text-zinc-500">
-                  Select a proposal to view details
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <GovernanceOverlay open={govOpen} onClose={() => setGovOpen(false)} />
 
       {/* Toast Notifications */}
       {toast && (
@@ -526,6 +427,5 @@ export default function Dashboard() {
         </div>
       )}
     </div>
-    </QueryClientProvider>
   );
 }

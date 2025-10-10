@@ -4,8 +4,10 @@ import useSWR from 'swr';
 
 const fetcher = (u: string) => fetch(u).then(r => r.json());
 
-export function ProposalsTable({ onOpen }: { onOpen: (p: any) => void }) {
-  const { data, mutate } = useSWR('/api/governance/proposals', fetcher, { refreshInterval: 4000 });
+export function ProposalsTable({ onOpen, apiBase='/api/governance' }:{
+  onOpen:(p:any)=>void; apiBase?:string;
+}) {
+  const { data, mutate } = useSWR(`${apiBase}/proposals`, fetcher, { refreshInterval: 4000 });
   const proposals = data?.proposals ?? [];
   
   return (

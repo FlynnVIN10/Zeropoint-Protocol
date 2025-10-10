@@ -140,7 +140,7 @@ export async function POST(_: Request, context: { params: Promise<{ id: string }
       data: {
         id: `vote-${Date.now()}`,
         proposalId: proposal.id,
-        voter: id,
+        actor: id,
         decision: 'approve',
         reason: 'SYNTHIENT CONSENSUS: Proceed to human review with improvements plan.',
       }

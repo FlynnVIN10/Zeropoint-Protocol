@@ -52,7 +52,7 @@ async function verifyEvidence(): Promise<{ valid: boolean; reason?: string }> {
 
 export async function POST(req: Request, context: { params: Promise<{ id: string }> }) {
   const params = await context.params;
-  const { voter, decision, reason } = await req.json();
+  const { actor, decision, reason } = await req.json();
   
   if (!["approve", "veto"].includes(decision)) {
     return NextResponse.json({
@@ -60,7 +60,7 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
     }, { status: 400 });
   }
   
-  if (!voter) {
+  if (!actor) {
     return NextResponse.json({
       error: "Voter is required"
     }, { status: 400 });
@@ -70,7 +70,7 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
     data: {
       id: `vote-${Date.now()}`,
       proposalId: params.id,
-      voter,
+      actor,
       decision,
       reason
     }
@@ -88,8 +88,8 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
 
   const isSynthient = (voterId: string) => synthientIds.has(voterId);
   const anyVeto = votes.some(v => v.decision === 'veto');
-  const synthientApproved = votes.some(v => v.decision === 'approve' && isSynthient(v.voter));
-  const humanApproved = votes.some(v => v.decision === 'approve' && !isSynthient(v.voter));
+  const synthientApproved = votes.some(v => v.decision === 'approve' && isSynthient(v.actor));
+  const humanApproved = votes.some(v => v.decision === 'approve' && !isSynthient(v.actor));
 
   let newStatus: "open" | "approved" | "vetoed" = "open";
   

@@ -49,11 +49,11 @@ export async function GET(
   }
   
   // Transform Vote to votes for frontend compatibility
+  const { Vote, ...restProposal } = proposal;
   const transformedProposal = {
-    ...proposal,
-    votes: proposal.Vote
+    ...restProposal,
+    votes: Vote
   };
-  delete transformedProposal.Vote;
 
   return NextResponse.json({ proposal: transformedProposal }, {
     headers: {

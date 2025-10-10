@@ -22,7 +22,7 @@ export function writeUiEvent(name: string, data: unknown) {
   ensureDir(dir);
   const ts = new Date().toISOString().replace(/[:.]/g, '-');
   const file = path.join(dir, `${name}-${ts}.json`);
-  fs.writeFileSync(file, JSON.stringify({ ts: new Date().toISOString(), ...data }, null, 2), 'utf8');
+  fs.writeFileSync(file, JSON.stringify({ ts: new Date().toISOString(), ...(data as object) }, null, 2), 'utf8');
   appendHash(file);
 }
 

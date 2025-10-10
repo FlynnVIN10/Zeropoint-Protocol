@@ -6,7 +6,9 @@ const fetcher = (u: string) => fetch(u).then(r => r.json());
 
 export function ConsensusPulse({ onClick }: { onClick: () => void }) {
   const { data } = useSWR('/api/governance/consensus/state', fetcher, { refreshInterval: 2000 });
-  const state = data ? (data.open === 0 ? 'green' : 'amber') : 'amber';
+  
+  // Green only when no human-review or synthient-review items remain
+  const state = data ? (data.healthy ? 'green' : 'amber') : 'amber';
   const cls = state === 'green' ? 'bg-[#00ff88]' : 'bg-[#ffaa00]';
   
   return (

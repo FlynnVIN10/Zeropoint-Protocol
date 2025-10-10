@@ -71,6 +71,8 @@ export default function Dashboard() {
   const [govOpen, setGovOpen] = useState<boolean>(false);
 
   const [trainStats, setTrainStats] = useState<{ first?: number; last?: number; delta?: number; series?: number[] } | null>(null);
+  const [sseConnected, setSseConnected] = useState<boolean>(false);
+  const [sseReconnectDelay, setSseReconnectDelay] = useState<number>(1000);
   const [inferStatus, setInferStatus] = useState<string>("idle");
   const [simTicks, setSimTicks] = useState<number>(0);
 
@@ -79,6 +81,77 @@ export default function Dashboard() {
   const [busy, setBusy] = useState<boolean>(false);
   const [toast, setToast] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+
+  // ---------- SSE Connection with Exponential Backoff ----------
+  useEffect(() => {
+    let eventSource: EventSource | null = null;
+    let reconnectTimeout: NodeJS.Timeout | null = null;
+
+    const connectSSE = () => {
+      try {
+        eventSource = new EventSource('/api/synthients/feed');
+        
+        eventSource.onopen = () => {
+          console.log('SSE connected');
+          setSseConnected(true);
+          setSseReconnectDelay(1000); // Reset delay on successful connection
+        };
+
+        eventSource.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            
+            if (data.type === 'step') {
+              setTrainStats(prev => {
+                const series = prev?.series || [];
+                const newSeries = [...series, data.loss].slice(-20); // Keep last 20 values
+                
+                return {
+                  first: series.length > 0 ? series[0] : data.loss,
+                  last: data.loss,
+                  delta: series.length > 0 ? series[0] - data.loss : 0,
+                  series: newSeries
+                };
+              });
+            }
+          } catch (error) {
+            console.error('SSE message parse error:', error);
+          }
+        };
+
+        eventSource.onerror = () => {
+          console.log('SSE connection error, reconnecting...');
+          setSseConnected(false);
+          
+          if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+          }
+
+          // Exponential backoff: 1s → 2s → 4s → 8s (max)
+          reconnectTimeout = setTimeout(() => {
+            setSseReconnectDelay(prev => Math.min(prev * 2, 8000));
+            connectSSE();
+          }, sseReconnectDelay);
+        };
+
+      } catch (error) {
+        console.error('SSE connection failed:', error);
+        setSseConnected(false);
+      }
+    };
+
+    connectSSE();
+
+    return () => {
+      if (eventSource) {
+        eventSource.close();
+      }
+      if (reconnectTimeout) {
+        clearTimeout(reconnectTimeout);
+      }
+    };
+  }, [sseReconnectDelay]);
 
   // ---------- Pollers ----------
   useEffect(() => {
@@ -138,11 +211,8 @@ export default function Dashboard() {
     if (busy) return;
     setBusy(true);
     try {
-      const res = await postJSON("/api/train", { model: "mlp", steps: 50, lr: 0.01 });
-      setToast(`Training: ${res.runId}`);
-      // Simulate loss progression
-      const series = Array.from({ length: 20 }, (_, i) => 2.5 - (i / 20) * 2.3 + Math.random() * 0.1);
-      setTrainStats({ first: series[0], last: series[19], delta: series[0] - series[19], series });
+      const res = await postJSON("/api/trainer/start", {});
+      setToast(`Training started: ${res.runId}`);
     } catch (e) {
       setToast(`Train failed: ${e}`);
     } finally {
@@ -239,7 +309,7 @@ export default function Dashboard() {
               </div>
               <ConsensusPulse onClick={() => setGovOpen(true)} />
               <div className="text-xs text-zinc-500">
-                {health?.now ? new Date(health.now).toLocaleTimeString() : 'N/A'}
+                {health ? new Date().toLocaleTimeString() : 'N/A'}
               </div>
             </div>
           </div>
@@ -260,7 +330,7 @@ export default function Dashboard() {
                   <span className="text-sm">{health?.ok ? 'Operational' : 'Offline'}</span>
                 </div>
               }
-              hint={health?.service || 'Unknown'}
+              hint="Zeropoint Protocol"
             />
           </div>
 
@@ -327,12 +397,18 @@ export default function Dashboard() {
           {/* Training Stats - Middle Left */}
           <div className="col-span-6 row-span-2">
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
-              <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-3">Training Progress</div>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase">Training Progress</div>
+                <div className="flex items-center space-x-2">
+                  <Dot ok={sseConnected} />
+                  <span className="text-xs text-zinc-500">{sseConnected ? 'Live' : 'Offline'}</span>
+                </div>
+              </div>
               {trainStats ? (
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-zinc-300">Loss: {trainStats.first?.toFixed(2)} → {trainStats.last?.toFixed(2)}</span>
-                    <span className="text-emerald-400">Δ {trainStats.delta?.toFixed(2)}</span>
+                    <span className="text-zinc-300">Loss: {trainStats.first?.toFixed(6)} → {trainStats.last?.toFixed(6)}</span>
+                    <span className="text-emerald-400">Δ {trainStats.delta?.toFixed(6)}</span>
                   </div>
                   <Spark values={trainStats.series || []} />
                 </div>

@@ -12,10 +12,11 @@ model Proposal {
   title        String
   body         String
   createdAt    DateTime @default(now())
-  status       String   @default("open")
+  status       String   @default("synthient-review") // synthient-review | human-review | approved | rejected
   evidenceJson String?  // Storing JSON as string for SQLite compatibility
   updatedAt    DateTime @default(now())
   Vote         Vote[]
+  SynthientVote SynthientVote[]
 }
 
 model Synthient {
@@ -26,17 +27,41 @@ model Synthient {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @default(now())
   TrainingRun   TrainingRun[]
+  SynthientVote SynthientVote[]
 }
 
 model TrainingRun {
-  id          String    @id @default(cuid())
+  id          String        @id @default(cuid())
   synthientId String
-  startedAt   DateTime  @default(now())
+  startedAt   DateTime      @default(now())
   finishedAt  DateTime?
-  status      String    @default("running")
-  metricsJson String?   // Storing JSON as string for SQLite compatibility
-  createdAt   DateTime  @default(now())
-  Synthient   Synthient @relation(fields: [synthientId], references: [id])
+  status      String        @default("running")
+  metricsJson String?       // Storing JSON as string for SQLite compatibility
+  createdAt   DateTime      @default(now())
+  Synthient   Synthient     @relation(fields: [synthientId], references: [id])
+  TrainingStep TrainingStep[]
+}
+
+model TrainingStep {
+  id         String      @id @default(cuid())
+  runId      String
+  step       Int
+  loss       Float
+  elapsedMs  Int
+  parameters String      // JSON: {w: number, b: number}
+  createdAt  DateTime    @default(now())
+  TrainingRun TrainingRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+}
+
+model SynthientVote {
+  id         String   @id @default(cuid())
+  proposalId String
+  synthientId String
+  decision   String   // "approve" | "veto"
+  reason     String
+  createdAt  DateTime @default(now())
+  Proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  Synthient  Synthient @relation(fields: [synthientId], references: [id])
 }
 
 model Vote {

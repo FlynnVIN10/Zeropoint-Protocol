@@ -60,12 +60,12 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
         <div className="space-y-2">
           {/* Show voting status */}
           <div className="text-xs text-zinc-400">
-            Synthient: {p.votes?.find(v => v.actor === 'synthient')?.decision || 'pending'} | 
-            Human: {p.votes?.find(v => v.actor === 'human')?.decision || 'pending'}
+            Synthient: {p.votes?.find((v: any) => v.actor === 'synthient')?.decision || 'pending'} | 
+            Human: {p.votes?.find((v: any) => v.actor === 'human')?.decision || 'pending'}
           </div>
           
           {/* Only show vote buttons if human hasn't voted yet */}
-          {!p.votes?.find(v => v.actor === 'human') ? (
+          {!p.votes?.find((v: any) => v.actor === 'human') ? (
             <div className="flex items-center gap-2">
               <button onClick={()=>vote('approve','Meets gates')}
                 className="px-3 py-1 rounded border border-emerald-400/50 text-emerald-300 hover:scale-[1.02] transition">Approve</button>

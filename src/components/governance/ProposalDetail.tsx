@@ -47,12 +47,30 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
         </ul>
       </div>
 
-      <div className="flex items-center gap-2">
-        <button onClick={()=>vote('approve','Meets gates')}
-          className="px-3 py-1 rounded border border-emerald-400/50 text-emerald-300 hover:scale-[1.02] transition">Approve</button>
-        <button onClick={()=>vote('veto','Insufficient evidence')}
-          className="px-3 py-1 rounded border border-amber-400/50 text-amber-200 hover:scale-[1.02] transition">Veto</button>
-      </div>
+      {p.status === 'open' ? (
+        <div className="flex items-center gap-2">
+          <button onClick={()=>vote('approve','Meets gates')}
+            className="px-3 py-1 rounded border border-emerald-400/50 text-emerald-300 hover:scale-[1.02] transition">Approve</button>
+          <button onClick={()=>vote('veto','Insufficient evidence')}
+            className="px-3 py-1 rounded border border-amber-400/50 text-amber-200 hover:scale-[1.02] transition">Veto</button>
+        </div>
+      ) : (
+        <div className="text-center">
+          <div className={`px-4 py-2 rounded-lg font-semibold ${
+            p.status === 'approved' 
+              ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'
+              : 'bg-amber-600/20 text-amber-300 border border-amber-500/30'
+          }`}>
+            Proposal {p.status === 'approved' ? '✅ APPROVED' : '❌ REJECTED'}
+          </div>
+          <div className="text-xs text-zinc-400 mt-2">
+            {p.status === 'approved' 
+              ? 'Dual consensus achieved - ready for implementation'
+              : 'Proposal rejected - no further action required'
+            }
+          </div>
+        </div>
+      )}
     </div>
   );
 }

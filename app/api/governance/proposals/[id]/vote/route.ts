@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
+import { db } from '@/lib/db';
 import { writeVoteEvidence, writeUiEvent } from '@/lib/evidence';
 
 export async function POST(_: Request,{ params }:{params:{id:string}}) {
@@ -8,24 +8,40 @@ export async function POST(_: Request,{ params }:{params:{id:string}}) {
   if(!params.id||!actor||!decision||!reason) return NextResponse.json({error:'bad_request'}, {status:400});
 
   try {
-    const out = await prisma.$transaction(async (tx)=>{
-      const prop = await tx.proposal.findUnique({ where:{ id: params.id }, include:{ votes:true }});
+    const out = await db.$transaction(async (tx)=>{
+      const prop = await tx.proposal.findUnique({ where:{ id: params.id }, include:{ Vote:true }});
       if(!prop) throw new Error('not_found');
+
+      // Check if proposal is already in final state
+      if(prop.status === 'approved' || prop.status === 'rejected') {
+        throw new Error(`Proposal already ${prop.status}`);
+      }
+
+      // Check if this actor has already voted
+      const existingVote = prop.Vote.find(v => v.actor === actor);
+      if(existingVote) {
+        throw new Error(`${actor} has already voted on this proposal`);
+      }
 
       const vote = await tx.vote.create({ data:{ proposalId: params.id, actor, decision, reason }});
 
-      const hasVeto = decision==='veto' || prop.votes.some(v=>v.decision==='veto');
-      const hasHumanApprove = (actor==='human'&&decision==='approve') || prop.votes.some(v=>v.actor==='human'&&v.decision==='approve');
-      const hasSynthApprove = prop.votes.some(v=>v.actor==='synthient'&&v.decision==='approve');
+      const hasVeto = decision==='veto' || prop.Vote.some(v=>v.decision==='veto');
+      const hasHumanApprove = (actor==='human'&&decision==='approve') || prop.Vote.some(v=>v.actor==='human'&&v.decision==='approve');
+      const hasSynthApprove = prop.Vote.some(v=>v.actor==='synthient'&&v.decision==='approve');
       const next = hasVeto ? 'rejected' : (hasHumanApprove && hasSynthApprove ? 'approved' : prop.status);
       if(next!==prop.status) await tx.proposal.update({ where:{ id: params.id }, data:{ status: next }});
 
-      // Evidence must succeed or transaction aborts
-      writeVoteEvidence(params.id, actor, decision, reason);
-      writeUiEvent('vote', { proposalId: params.id, actor, decision });
-
       return { status: next, voteId: vote.id };
     });
+
+    // Evidence writing after successful transaction
+    try {
+      writeVoteEvidence(params.id, actor, decision, reason);
+      writeUiEvent('vote', { proposalId: params.id, actor, decision });
+    } catch (evidenceError: any) {
+      console.error('Evidence write failed:', evidenceError);
+      // Don't fail the vote if evidence writing fails
+    }
 
     return NextResponse.json({ recorded:true, status: out.status, id: out.voteId }, { status:200 });
   } catch(e:any){

@@ -248,9 +248,7 @@ export default function Dashboard() {
 
       {/* Main Grid */}
       <div className="max-w-7xl mx-auto p-6">
-        <div className={`grid grid-cols-12 grid-rows-6 gap-4 h-[calc(100vh-120px)] transition-all duration-300 ${
-          governanceExpanded ? 'grid-rows-8' : ''
-        }`}>
+        <div className="grid grid-cols-12 grid-rows-6 gap-4 h-[calc(100vh-120px)] transition-all duration-300">
           
           {/* System Status - Top Left */}
           <div className="col-span-3 row-span-2">

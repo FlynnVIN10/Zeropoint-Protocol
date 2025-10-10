@@ -422,7 +422,7 @@ export default function Dashboard() {
             <SynthientActionsFeed />
           </aside>
 
-          {/* Service cards stacked below System Health */}
+          {/* Service cards stacked vertically below System Health */}
           <section id="svc-tinygrad" className="col-start-1 row-start-2">
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] flex flex-col h-full">
               <div className="flex items-center justify-between mb-2">
@@ -464,7 +464,7 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section id="svc-petals" className="col-start-2 row-start-2">
+          <section id="svc-petals" className="col-start-1 row-start-3">
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
               <div className="flex items-center justify-between mb-2">
                 <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
@@ -482,7 +482,7 @@ export default function Dashboard() {
             </div>
           </section>
 
-          <section id="svc-wondercraft" className="col-span-2 row-start-3">
+          <section id="svc-wondercraft" className="col-start-1 row-start-4">
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-xl p-3 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
               <div className="flex items-center justify-between mb-2">
                 <div className="text-zinc-400 text-[0.65rem] tracking-wide uppercase flex items-center space-x-1">
@@ -503,8 +503,8 @@ export default function Dashboard() {
           </section>
 
 
-          {/* Active Synthients - Bottom Left */}
-          <div className="col-span-2 row-start-4">
+          {/* Active Synthients - Column 2 */}
+          <div className="col-start-2 row-start-2">
             <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
               <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-3">Active Synthients</div>
               <div className="space-y-2 max-h-32 overflow-y-auto">
@@ -528,8 +528,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Proposals - Bottom Right */}
-          <div className="col-span-2 row-start-4">
+          {/* Governance - Column 2 */}
+          <div className="col-start-2 row-start-3">
             <button
               onClick={() => setGovOpen(true)}
               className="w-full h-full bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-left cursor-pointer"

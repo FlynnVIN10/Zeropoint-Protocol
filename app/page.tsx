@@ -418,7 +418,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* Syslog Feed - Top Right */}
+          {/* Syslog Feed - Right Side (Full Height) */}
           <div className="col-span-3 row-span-6">
             <SyslogFeed />
           </div>

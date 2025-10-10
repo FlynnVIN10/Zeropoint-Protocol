@@ -9,7 +9,8 @@ export async function GET() {
     service: "web",
     now: new Date().toISOString(),
     trainerPid: trainerStatus.running ? process.pid : null,
-    runStatus: trainerStatus.running ? 'running' : 'stopped'
+    runStatus: trainerStatus.running ? 'running' : 'stopped',
+    runId: trainerStatus.runId
   }, {
     status: 200,
     headers: {

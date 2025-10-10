@@ -32,14 +32,24 @@ function Kpi({ label, value, hint }: { label: string; value: React.ReactNode; hi
   );
 }
 
-// Status dot
-function Dot({ ok }: { ok: boolean }) {
+// Status dot with three states: red (offline), yellow (idle), green (online)
+function Dot({ status }: { status: 'online' | 'idle' | 'offline' }) {
+  const getColorClasses = (status: string) => {
+    switch (status) {
+      case 'online':
+        return "bg-emerald-500 shadow-[0_0_12px_#10b981]";
+      case 'idle':
+        return "bg-amber-500 shadow-[0_0_12px_#f59e0b]";
+      case 'offline':
+      default:
+        return "bg-rose-500 shadow-[0_0_12px_#f43f5e]";
+    }
+  };
+
   return (
     <span
-      className={
-        "inline-block h-2.5 w-2.5 rounded-full " + (ok ? "bg-emerald-500 shadow-[0_0_12px_#10b981]" : "bg-rose-500 shadow-[0_0_12px_#f43f5e]")
-      }
-      aria-label={ok ? "ok" : "fail"}
+      className={`inline-block h-2.5 w-2.5 rounded-full ${getColorClasses(status)}`}
+      aria-label={status}
     />
   );
 }
@@ -174,6 +184,7 @@ export default function Dashboard() {
         // Update trainer status from health response
         if (h?.runStatus === 'running') {
           setTrainerRunning(true);
+          setCurrentRunId(h?.runId || "active");
         } else {
           setTrainerRunning(false);
           setCurrentRunId("");
@@ -207,9 +218,27 @@ export default function Dashboard() {
       }
     };
 
-    // Initial polls
+    // Initial polls with immediate sync
     pollHealth();
     pollLists();
+    
+    // Immediate trainer status check on page load
+    const checkTrainerStatus = async () => {
+      try {
+        const health = await fetchJSON("/api/healthz");
+        if (health?.runStatus === 'running') {
+          setTrainerRunning(true);
+          setCurrentRunId(health?.runId || "active");
+        } else {
+          setTrainerRunning(false);
+          setCurrentRunId("");
+        }
+      } catch (error) {
+        console.warn("Failed to check trainer status on load:", error);
+      }
+    };
+    
+    checkTrainerStatus();
     
     // Health polling every 5s
     const healthInterval = setInterval(pollHealth, 5000);
@@ -333,11 +362,11 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Dot ok={health?.ok ?? false} />
+                <Dot status={health?.ok ? 'online' : 'offline'} />
                 <span className="text-sm text-zinc-400">System</span>
               </div>
               <div className="flex items-center space-x-2">
-                <Dot ok={ready?.ready ?? false} />
+                <Dot status={ready?.ready ? 'online' : 'offline'} />
                 <span className="text-sm text-zinc-400">Database</span>
               </div>
               <ConsensusPulse onClick={() => setGovOpen(true)} />
@@ -359,7 +388,7 @@ export default function Dashboard() {
               label="System Health" 
               value={
                 <div className="flex items-center space-x-2">
-                  <Dot ok={health?.ok ?? false} />
+                  <Dot status={health?.ok ? 'online' : 'offline'} />
                   <span className="text-sm">{health?.ok ? 'Operational' : 'Offline'}</span>
                 </div>
               }
@@ -433,9 +462,9 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-3">
                 <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase">Training Progress</div>
                 <div className="flex items-center space-x-2">
-                  <Dot ok={sseConnected && trainerRunning} />
+                  <Dot status={trainerRunning ? 'online' : 'offline'} />
                   <span className="text-xs text-zinc-500">
-                    {sseConnected && trainerRunning ? 'Live' : 'Offline'}
+                    {trainerRunning ? 'Live' : 'Offline'}
                   </span>
                 </div>
               </div>
@@ -479,7 +508,7 @@ export default function Dashboard() {
               <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)]">
                 <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-2">Inference</div>
                 <div className="flex items-center space-x-2">
-                  <Dot ok={inferStatus === 'done'} />
+                  <Dot status={inferStatus === 'done' ? 'online' : inferStatus === 'idle' ? 'idle' : 'offline'} />
                   <span className="text-sm text-zinc-300 capitalize">{inferStatus}</span>
                 </div>
               </div>
@@ -501,7 +530,7 @@ export default function Dashboard() {
                   <div key={synthient.id} className="flex items-center justify-between bg-zinc-800/50 rounded-lg p-2">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-zinc-300">{synthient.name}</span>
-                      <Dot ok={synthient.isRunning || synthient.status === 'active'} />
+                      <Dot status={synthient.isRunning || synthient.status === 'active' ? 'online' : 'offline'} />
                     </div>
                     <div className="text-xs text-zinc-500">
                       {synthient.runsCount || 0} runs

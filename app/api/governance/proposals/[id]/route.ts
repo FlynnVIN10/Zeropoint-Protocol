@@ -20,7 +20,14 @@ export async function GET(
     );
   }
   
-  return NextResponse.json({ proposal }, {
+  // Transform Vote to votes for frontend compatibility
+  const transformedProposal = {
+    ...proposal,
+    votes: proposal.Vote
+  };
+  delete transformedProposal.Vote;
+
+  return NextResponse.json({ proposal: transformedProposal }, {
     headers: {
       'content-type': 'application/json; charset=utf-8',
       'cache-control': 'no-store',

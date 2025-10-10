@@ -48,11 +48,31 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
       </div>
 
       {p.status === 'open' ? (
-        <div className="flex items-center gap-2">
-          <button onClick={()=>vote('approve','Meets gates')}
-            className="px-3 py-1 rounded border border-emerald-400/50 text-emerald-300 hover:scale-[1.02] transition">Approve</button>
-          <button onClick={()=>vote('veto','Insufficient evidence')}
-            className="px-3 py-1 rounded border border-amber-400/50 text-amber-200 hover:scale-[1.02] transition">Veto</button>
+        <div className="space-y-2">
+          {/* Show voting status */}
+          <div className="text-xs text-zinc-400">
+            Human: {p.votes?.find(v => v.actor === 'human')?.decision || 'pending'} | 
+            Synthient: {p.votes?.find(v => v.actor === 'synthient')?.decision || 'pending'}
+          </div>
+          
+          {/* Only show vote buttons if human hasn't voted yet */}
+          {!p.votes?.find(v => v.actor === 'human') ? (
+            <div className="flex items-center gap-2">
+              <button onClick={()=>vote('approve','Meets gates')}
+                className="px-3 py-1 rounded border border-emerald-400/50 text-emerald-300 hover:scale-[1.02] transition">Approve</button>
+              <button onClick={()=>vote('veto','Insufficient evidence')}
+                className="px-3 py-1 rounded border border-amber-400/50 text-amber-200 hover:scale-[1.02] transition">Veto</button>
+            </div>
+          ) : (
+            <div className="text-center">
+              <div className="px-3 py-2 rounded-lg bg-blue-600/20 text-blue-300 border border-blue-500/30 text-sm">
+                Awaiting synthient consensus
+              </div>
+              <div className="text-xs text-zinc-400 mt-1">
+                Human has voted - waiting for synthient approval/veto
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="text-center">

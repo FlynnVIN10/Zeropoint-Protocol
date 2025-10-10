@@ -167,11 +167,21 @@ export default function Dashboard() {
         console.log("Health poll:", h, r); // Debug log
         setHealth(h);
         setReady(r);
+        
+        // Update trainer status from health response
+        if (h?.runStatus === 'running') {
+          setTrainerRunning(true);
+        } else {
+          setTrainerRunning(false);
+          setCurrentRunId("");
+        }
+        
         setLoading(false);
       } catch (e) {
         console.warn("Health poll failed:", e);
         setHealth({ ok: false });
         setReady({ ready: false });
+        setTrainerRunning(false);
         setLoading(false);
       }
     };
@@ -183,8 +193,8 @@ export default function Dashboard() {
           fetchJSON("/api/proposals")
         ]);
         console.log("Lists poll:", syn, prop); // Debug log
-        setSynthients(syn);
-        setProposals(prop);
+        setSynthients(syn?.synthients || []);
+        setProposals(prop?.proposals || []);
         setLoading(false);
       } catch (e) {
         console.warn("Lists poll failed:", e);
@@ -437,7 +447,7 @@ export default function Dashboard() {
               )}
               <div className="mt-3 pt-3 border-t border-zinc-800 space-y-2">
                 <div className="text-xs text-zinc-500 font-mono">
-                  LR={trainEnv.lr || '0.05'} • Batch={trainEnv.batch || '64'} • Pause={trainEnv.pause || '8000'}ms
+                  LR=0.05 • Batch=64 • Pause=8000ms
                   {currentRunId && <div className="mt-1">Run: {currentRunId.substring(0,6)}</div>}
                 </div>
                 <div className="flex gap-2">
@@ -486,10 +496,10 @@ export default function Dashboard() {
                   <div key={synthient.id} className="flex items-center justify-between bg-zinc-800/50 rounded-lg p-2">
                     <div className="flex items-center space-x-2">
                       <span className="text-sm text-zinc-300">{synthient.name}</span>
-                      <Dot ok={synthient.status === 'ready'} />
+                      <Dot ok={synthient.isRunning || synthient.status === 'active'} />
                     </div>
                     <div className="text-xs text-zinc-500">
-                      {synthient.TrainingRun?.length || 0} runs
+                      {synthient.runsCount || 0} runs
                     </div>
                   </div>
                 ))}

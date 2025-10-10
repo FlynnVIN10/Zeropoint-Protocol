@@ -36,9 +36,11 @@ class TrainerService {
   private instanceId: string;
 
   constructor() {
-    this.synthientId = process.env.SYNTHIENT_ID || 'synth-1';
+    // Use only the first synthient for training (synth-1)
+    const synthientIds = (process.env.SYNTHIENT_ID || 'synth-1').split(',');
+    this.synthientId = synthientIds[0].trim(); // Primary training synthient
     this.instanceId = Math.random().toString(36).substring(7);
-    console.log(`[TRAINER] TrainerService instance created with ID: ${this.instanceId}`);
+    console.log(`[TRAINER] TrainerService instance created with ID: ${this.instanceId}, using synthient: ${this.synthientId}`);
   }
 
   private async ensureSynthient(): Promise<string> {

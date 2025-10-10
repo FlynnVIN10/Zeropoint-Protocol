@@ -76,15 +76,20 @@ export async function POST(_: Request,{ params }:{params:Promise<{id:string}>}) 
       return { status: next, voteId: vote.id, runId: prop.title.match(/run ([a-z0-9]+)/)?.[1] };
     });
 
-    // If human veto with directive, trigger retrain (outside transaction)
-    if(actor === 'human' && decision === 'veto' && directive && out.runId) {
-      // Fire and forget - don't block response
-      handleHumanVetoRetrain(out.runId, directive).catch(err => {
-        console.error('[VOTE] Failed to handle retrain directive:', err);
-      });
-    }
+        // If human veto with directive, trigger retrain (outside transaction)
+        if(actor === 'human' && decision === 'veto' && directive && out.runId) {
+          // Fire and forget - don't block response
+          handleHumanVetoRetrain(out.runId, directive).catch(err => {
+            console.error('[VOTE] Failed to handle retrain directive:', err);
+          });
+        }
 
-    return NextResponse.json({ recorded:true, status: out.status, id: out.voteId }, { status:200 });
+        // If human approval, log that consensus can resume for new training runs
+        if(actor === 'human' && decision === 'approve') {
+          console.log(`[VOTE] Human approved proposal ${paramsResolved.id} - consensus can resume for new training runs`);
+        }
+
+        return NextResponse.json({ recorded:true, status: out.status, id: out.voteId }, { status:200 });
   } catch(e:any){
     const errorMsg = String(e.message||e);
     

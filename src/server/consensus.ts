@@ -118,6 +118,21 @@ async function evaluateWindow(steps: any[]): Promise<ConsensusResult> {
 
 export async function evaluateConsensus(runId: string): Promise<void> {
   try {
+    // CRITICAL: Check if there's already a pending human-review proposal
+    // This prevents continuous proposal generation without human feedback
+    const pendingProposal = await db.proposal.findFirst({
+      where: { 
+        status: 'human-review',
+        title: { contains: 'Auto: Tune LR' }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    if (pendingProposal) {
+      console.log(`[CONSENSUS] Skipping evaluation - human-review proposal pending: ${pendingProposal.id}`);
+      return;
+    }
+
     // Get the latest WINDOW_SIZE steps for this run
     const steps = await db.trainingStep.findMany({
       where: { runId },
@@ -179,8 +194,9 @@ export async function evaluateConsensus(runId: string): Promise<void> {
           }
         });
         console.log(`[CONSENSUS] Created auto-proposal: ${proposal.id}`);
-      } else {
-        // Update existing proposal
+      } else if (proposal.status === 'synthient-review') {
+        // Only update proposals that are still in synthient-review
+        // Don't update proposals that are already in human-review or beyond
         await tx.proposal.update({
           where: { id: proposal.id },
           data: { 
@@ -189,6 +205,9 @@ export async function evaluateConsensus(runId: string): Promise<void> {
           }
         });
         console.log(`[CONSENSUS] Updated auto-proposal: ${proposal.id}`);
+      } else {
+        console.log(`[CONSENSUS] Skipping update - proposal ${proposal.id} is in ${proposal.status} status`);
+        return; // Exit early, don't create votes for proposals beyond synthient-review
       }
 
       // Create synthient vote

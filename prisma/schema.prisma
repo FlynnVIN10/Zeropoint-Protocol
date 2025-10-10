@@ -42,9 +42,9 @@ model TrainingRun {
 model Vote {
   id         String   @id @default(cuid())
   proposalId String
-  voter      String
-  decision   String
-  reason     String?
+  actor      String   // "human" | "synthient"
+  decision   String   // "approve" | "veto"
+  reason     String
   createdAt  DateTime @default(now())
-  Proposal   Proposal @relation(fields: [proposalId], references: [id])
+  Proposal   Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
 }

@@ -5,6 +5,18 @@
   --color-card: #0a0a0a;
 }
 
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 255, 136, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 255, 136, 0);
+  }
+}
+
 :root { 
   --safe-top: env(safe-area-inset-top); 
   --safe-bottom: env(safe-area-inset-bottom); 

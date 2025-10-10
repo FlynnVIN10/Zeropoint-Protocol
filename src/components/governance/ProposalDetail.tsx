@@ -32,7 +32,7 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
       <div className="mb-3">
         <h4 className="text-sm font-semibold mb-1">Votes</h4>
         <ul className="space-y-1 text-xs">
-          {p.votes.map((v:any)=>(
+          {p.votes?.map((v:any)=>(
             <li key={v.id}>
               <span className={`px-2 py-0.5 rounded ${v.decision==='approve'?'bg-emerald-700/30 text-emerald-300':'bg-amber-700/30 text-amber-200'}`}>
                 {v.actor}:{v.decision}
@@ -41,6 +41,9 @@ export default function ProposalDetail({ id, apiBase, onClose }:{
               <span className="text-zinc-400 ml-2">{v.reason}</span>
             </li>
           ))}
+          {(!p.votes || p.votes.length === 0) && (
+            <li className="text-zinc-500">No votes yet</li>
+          )}
         </ul>
       </div>
 

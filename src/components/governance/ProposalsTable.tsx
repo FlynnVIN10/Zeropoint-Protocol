@@ -82,8 +82,17 @@ function ProposalPanel({
 export function ProposalsTable({ onOpen, apiBase='/api/governance' }:{
   onOpen:(p:any)=>void; apiBase?:string;
 }) {
-  const { data, mutate } = useSWR(`${apiBase}/proposals`, fetcher, { refreshInterval: 4000 });
+  const { data, error, mutate } = useSWR(`${apiBase}/proposals`, fetcher, { refreshInterval: 4000 });
   const proposals: Proposal[] = data?.proposals ?? [];
+  
+  if (error) {
+    console.error('Failed to fetch proposals:', error);
+    return (
+      <div className="bg-zinc-950/70 border border-white/10 rounded-xl p-4">
+        <div className="text-red-400">Failed to load proposals: {error.message}</div>
+      </div>
+    );
+  }
   
   // Group proposals by status
   const waitingApproval = proposals.filter(p => 

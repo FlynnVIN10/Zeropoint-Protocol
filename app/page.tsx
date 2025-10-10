@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { ConsensusPulse } from "@/components/governance/ConsensusPulse";
 
 // Single-screen, no-scroll, black UI dashboard for Next.js App Router.
 // Drop this as app/page.tsx or app/(dashboard)/page.tsx.
@@ -60,6 +62,8 @@ function Spark({ values }: { values: number[] }) {
 }
 
 export default function Dashboard() {
+  const router = useRouter();
+  
   // ---------- State ----------
   const [health, setHealth] = useState<{ ok?: boolean } | null>(null);
   const [ready, setReady] = useState<{ ready?: boolean } | null>(null);
@@ -232,6 +236,7 @@ export default function Dashboard() {
                 <Dot ok={ready?.ready ?? false} />
                 <span className="text-sm text-zinc-400">Database</span>
               </div>
+              <ConsensusPulse onClick={() => router.push("/governance")} />
               <div className="text-xs text-zinc-500">
                 {health?.now ? new Date(health.now).toLocaleTimeString() : 'N/A'}
               </div>
@@ -377,7 +382,11 @@ export default function Dashboard() {
 
           {/* Proposals - Bottom Right */}
           <div className="col-span-6 row-span-2">
-            <div className="bg-zinc-900/80 border border-zinc-800 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] h-full">
+            <button
+              onClick={() => router.push("/governance")}
+              className="w-full h-full bg-zinc-900/80 border border-zinc-800 hover:border-emerald-500/50 rounded-2xl p-4 shadow-[0_0_20px_rgba(0,0,0,0.35)] transition-all duration-200 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] text-left"
+              aria-label="Open Governance"
+            >
               <div className="text-zinc-400 text-[0.75rem] tracking-wide uppercase mb-3">Governance</div>
               <div className="space-y-2 max-h-32 overflow-y-auto">
                 {proposals.slice(0, 3).map((proposal) => (
@@ -398,7 +407,7 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </div>

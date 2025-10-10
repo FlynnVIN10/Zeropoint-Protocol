@@ -1,0 +1,27 @@
+Starting simulation run sim-1760104718467
+Scenario: smoke
+Timestamp: 2025-10-10T13:58:38.468Z
+
+Initializing Wondercraft...
+Loading UE5 headless server...
+Starting simulation scenario...
+
+Tick 1: Environment initialized
+Tick 2: Agents spawned
+Tick 3: Physics simulation started
+Tick 4: AI behavior activated
+Tick 5: Interaction protocols engaged
+Tick 6: Data collection active
+Tick 7: Performance monitoring enabled
+Tick 8: Simulation running stable
+Tick 9: Metrics being recorded
+Tick 10: Scenario completed
+
+Simulation completed successfully!
+Duration: 10 ticks
+Status: COMPLETE
+Final metrics: {
+  "agents_active": 5,
+  "interactions": 23,
+  "performance_score": 0.94
+}
